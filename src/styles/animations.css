@@ -1,0 +1,16 @@
+/* src/styles/animations.css */
+/* NEW FILE: Centralized, global animations */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-2px) scale(0.98); }
+}
+
+.anim-fadeIn {
+  animation: fadeIn 0.15s ease-out;
+}

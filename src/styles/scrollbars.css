@@ -1,0 +1,49 @@
+/* src/styles/scrollbars.css */
+/* This file contains the global styles for custom scrollbars. */
+
+/* 1. GLOBAL SCROLLBAR APPEARANCE */
+
+/* For WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--primitives-dark-tint-700);
+  border-radius: 6px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--control-bg-quaternary-hover);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--control-bg-quaternary-hover) transparent;
+  /* FIX: The global scrollbar-gutter rule is REMOVED. It caused unwanted margins. */
+}
+
+
+/*
+  FIX: Re-introduce the "stealth" scrollbar as a robust, opt-in utility class.
+  This creates an overlay-style scrollbar that does not take up space.
+  CONTRACT: An element with `.scrollbar-stealth` MUST have a direct child
+  with the class `.scrollbar-stealth-content`.
+*/
+.scrollbar-stealth {
+  /* Create a "gutter" for the scrollbar to live in, pushing it outside the content flow */
+  padding-right: 16px;
+}
+
+.scrollbar-stealth > .scrollbar-stealth-content {
+  /* Pull the content back into the padded gutter area */
+  margin-right: -16px;
+}

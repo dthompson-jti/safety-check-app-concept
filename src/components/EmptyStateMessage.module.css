@@ -1,0 +1,35 @@
+/* src/components/EmptyStateMessage.module.css */
+.emptyStateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-8) var(--spacing-4);
+  color: var(--surface-fg-secondary);
+}
+
+/* CRITICAL FIX: Target the new dedicated class to guarantee override. */
+.placeholderIcon {
+  font-size: 64px !important; /* Use !important as a final guarantee against stubborn overrides */
+  margin-bottom: var(--spacing-3);
+  color: var(--surface-fg-quinary);
+  opacity: 0.5;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 64 !important;
+}
+
+.emptyStateMessage {
+  margin: 0;
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--surface-fg-tertiary);
+}
+
+.emptyStateQuery {
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}

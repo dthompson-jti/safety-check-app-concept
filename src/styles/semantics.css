@@ -1,0 +1,202 @@
+/* src/styles/semantics.css */
+/* Contains only semantic design tokens that map to primitives. */
+
+:root {
+  /* ----------------------------------------- */
+  /*             SEMANTIC - SURFACE            */
+  /* ----------------------------------------- */
+
+  /* Background */
+  --surface-bg-primary: var(--primitives-base-white);
+  --surface-bg-primary_hover: var(--primitives-grey-30);
+  --surface-bg-secondary: var(--primitives-grey-20);
+  --surface-bg-secondary_subtle: var(--primitives-grey-10);
+  --surface-bg-secondary_strong: var(--primitives-grey-30);
+  --surface-bg-secondary_hover: var(--primitives-grey-50);
+  --surface-bg-tertiary: var(--primitives-grey-40);
+  --surface-bg-quaternary: var(--primitives-grey-60);
+  --surface-bg-primary-solid: var(--primitives-grey-950);
+  --surface-bg-secondary-solid: var(--primitives-grey-600);
+  --surface-bg-brand-primary: var(--primitives-theme-50);
+  --surface-bg-brand-solid: var(--primitives-theme-600);
+  --surface-bg-brand-solid_hover: var(--primitives-theme-700);
+  --surface-bg-error-primary: var(--primitives-red-50);
+  --surface-bg-error-secondary: var(--primitives-red-100);
+  --surface-bg-error-solid: var(--primitives-red-600);
+  --surface-bg-warning-primary: var(--primitives-yellow-50);
+  --surface-bg-warning-secondary: var(--primitives-yellow-100);
+  --surface-bg-warning-solid: var(--primitives-yellow-600);
+  --surface-bg-success: var(--primitives-green-50);
+  --surface-bg-success-secondary: var(--primitives-green-100);
+  --surface-bg-success-solid: var(--primitives-green-600);
+  --surface-bg-info: var(--primitives-blue-25);
+  --surface-bg-info-secondary: var(--primitives-blue-100);
+  --surface-bg-info-solid: var(--primitives-blue-600);
+  --surface-bg-overlay: var(--primitives-grey-950);
+  --surface-bg-brand-section_subtle: var(--primitives-theme-700);
+  --surface-bg-brand-section: var(--primitives-theme-800);
+  --surface-bg-active: var(--primitives-grey-50);
+
+  /* Foreground (Text/Icons) */
+  --surface-fg-primary: var(--primitives-grey-900);
+  --surface-fg-secondary: var(--primitives-grey-700);
+  --surface-fg-secondary_hover: var(--primitives-grey-800);
+  --surface-fg-tertiary: var(--primitives-grey-600);
+  --surface-fg-tertiary_hover: var(--primitives-grey-700);
+  --surface-fg-quaternary: var(--primitives-grey-500);
+  --surface-fg-quinary: var(--primitives-grey-400);
+  --surface-fg-white: var(--primitives-base-white);
+  --surface-fg-primary_on_brand: var(--primitives-base-white);
+  --surface-fg-secondary_on_brand: var(--primitives-theme-200);
+  --surface-fg-on-solid-faint: var(--utility-alpha-white-70);
+  --surface-fg-tertiary_on_brand: var(--primitives-theme-200);
+  --surface-fg-quaternary_on_brand: var(--primitives-theme-300);
+  --surface-fg-theme-intense: var(--primitives-theme-900);
+  --surface-fg-theme-strong: var(--primitives-theme-700);
+  --surface-fg-theme-primary: var(--primitives-theme-600);
+  --surface-fg-theme-secondary: var(--primitives-theme-500);
+  --surface-fg-alert-primary: var(--primitives-red-600);
+  --surface-fg-alert-secondary: var(--primitives-red-500);
+  --surface-fg-warning-primary: var(--primitives-yellow-600);
+  --surface-fg-warning-secondary: var(--primitives-yellow-500);
+  --surface-fg-success-primary: var(--primitives-green-600);
+  --surface-fg-success-secondary: var(--primitives-green-500);
+  --surface-fg-info-primary: var(--primitives-blue-600);
+  --surface-fg-info-secondary: var(--primitives-blue-500);
+
+  /* Border */
+  --surface-border-primary: var(--primitives-grey-300);
+  --surface-border-secondary: var(--primitives-grey-200);
+  --surface-border-tertiary: var(--primitives-grey-100);
+  --surface-border-alert: var(--primitives-red-500);
+  --surface-border-alert-hover: var(--primitives-red-600);
+  --surface-border-alert_subtle: var(--primitives-red-300);
+  --surface-border-warning: var(--primitives-yellow-500);
+  --surface-border-warning-hover: var(--primitives-yellow-600);
+  --surface-border-success: var(--primitives-green-500);
+  --surface-border-success-hover: var(--primitives-green-600);
+  --surface-border-info: var(--primitives-blue-500);
+  --surface-border-info-hover: var(--primitives-blue-600);
+  --surface-border-theme: var(--primitives-theme-500);
+  --surface-border-theme-hover: var(--primitives-theme-600);
+  --surface-border-theme_alt: var(--primitives-theme-600);
+  --surface-border-secondary_alt: #00000014;
+
+  /* Shadows */
+  --surface-shadow-xs: 0 1px 2px 0 #0A0C120C;
+  --surface-shadow-sm: 0 1px 2px -1px #0A0C1219, 0 1px 2px -1px #0A0C1219;
+  --surface-shadow-md: 0 2px 4px -2px #0A0C1219, 0 4px 8px -2px #0A0C120F;
+  --surface-shadow-lg: 0 4px 6px -2px #0A0C1214, 0 8px 16px -4px #0A0C1207, 0 0 1px 0 #0A0C120A;
+  --surface-shadow-xl: 0 8px 10px -4px #0A0C1214, 0 16px 24px -8px #0A0C1207, 0 0 1px 0 #0A0C120A;
+  --surface-shadow-2xl: 0 20px 24px -8px #0A0C122D, 0 0 1px 0 #0A0C120A;
+  --surface-shadow-3xl: 0 32px 64px -16px #0A0C1223, 0 0 1px 0 #0A0C120A;
+  
+  /* ----------------------------------------- */
+  /*             SEMANTIC - CONTROL            */
+  /* ----------------------------------------- */
+
+  /* Background */
+  --control-bg-theme: var(--primitives-theme-700);
+  --control-bg-theme-hover: var(--primitives-theme-600);
+  --control-bg-theme-pressed: var(--primitives-theme-800);
+  --control-bg-primary: var(--primitives-base-white);
+  --control-bg-primary-hover: var(--primitives-grey-30);
+  --control-bg-secondary: var(--primitives-grey-20);
+  --control-bg-secondary-hover: var(--primitives-grey-50);
+  --control-bg-secondary-pressed: var(--primitives-grey-100);
+  --control-bg-selected: var(--primitives-theme-50);
+  --control-bg-selected-hover: var(--primitives-theme-100);
+  --control-bg-tertiary: var(--utility-alpha-grey-10);
+  --control-bg-tertiary-hover: var(--utility-alpha-grey-30);
+  --control-bg-tertiary-pressed: var(--utility-alpha-grey-60);
+  --control-bg-quaternary: transparent; /* Explicitly transparent at rest for components like buttons */
+  --control-bg-quaternary-hover: var(--utility-alpha-grey-30); /* CORRECTED based on Figma */
+  --control-bg-quaternary-pressed: var(--utility-alpha-grey-60); /* CORRECTED based on Figma */
+  --control-bg-on-solid-hover: var(--utility-alpha-white-20);
+  --control-bg-on-solid-pressed: var(--utility-alpha-white-40);
+  --control-bg-disabled: var(--primitives-grey-50);
+  --control-bg-disabled_subtle: var(--primitives-grey-30);
+  --control-bg-alert: var(--primitives-red-50);
+  --control-bg-alert-hover: var(--primitives-red-600);
+  --control-bg-alert-pressed: var(--primitives-red-700);
+  --control-bg-warning: var(--primitives-yellow-50);
+  --control-bg-warning-hover: var(--primitives-yellow-200);
+  --control-bg-warning-pressed: var(--primitives-yellow-300);
+  --control-bg-success: var(--primitives-green-50);
+  --control-bg-success-hover: var(--primitives-green-200);
+  --control-bg-success-pressed: var(--primitives-green-300);
+  --control-bg-info: var(--primitives-blue-50);
+  --control-bg-info-hover: var(--primitives-blue-200);
+  --control-bg-info-pressed: var(--primitives-blue-300);
+
+  /* Foreground */
+  --control-fg-on-solid: var(--primitives-base-white);
+  --control-fg-on-solid-hover: var(--primitives-base-white);
+  --control-fg-on-theme-faint: var(--primitives-theme-300);
+  --control-fg-on-theme-faint-hover: var(--primitives-theme-200);
+  --control-fg-primary: var(--primitives-grey-900);
+  --control-fg-primary-hover: var(--primitives-grey-950);
+  --control-fg-secondary: var(--primitives-grey-700);
+  --control-fg-secondary_hover: var(--primitives-grey-800);
+  --control-fg-tertiary: var(--primitives-grey-600);
+  --control-fg-tertiary-hover: var(--primitives-grey-700);
+  --control-fg-quaternary: var(--primitives-grey-500);
+  --control-fg-quaternary-hover: var(--primitives-grey-600);
+  --control-fg-senary: var(--primitives-grey-300);
+  --control-fg-senary-hover: var(--primitives-grey-400);
+  --control-fg-selected: var(--primitives-theme-700);
+  --control-fg-selected-hover: var(--primitives-theme-800);
+  --control-fg-selected-faint: var(--primitives-theme-500);
+  --control-fg-selected-faint-hover: var(--primitives-theme-600);
+  --control-fg-placeholder: var(--primitives-grey-500);
+  --control-fg-placeholder_subtle: var(--primitives-grey-300);
+  --control-fg-disabled: var(--primitives-grey-500);
+  --control-fg-disabled-faint: var(--primitives-grey-400);
+  --control-fg-alert-hover: var(--primitives-base-white);
+  --control-fg-alert: var(--primitives-red-700);
+  --control-fg-alert-faint: var(--primitives-red-600);
+  --control-fg-alert-faint-hover: var(--primitives-red-100);
+  --control-fg-warning: var(--primitives-yellow-700);
+  --control-fg-warning-hover: var(--primitives-yellow-900);
+  --control-fg-warning-pressed: var(--primitives-yellow-950);
+  --control-fg-info: var(--primitives-blue-700);
+  --control-fg-info-hover: var(--primitives-blue-900);
+  --control-fg-info-pressed: var(--primitives-blue-950);
+  --control-fg-success: var(--primitives-green-700);
+  --control-fg-success-hover: var(--primitives-green-900);
+  --control-fg-success-pressed: var(--primitives-green-950);
+
+  /* Border */
+  --control-border-primary: var(--primitives-theme-700);
+  --control-border-primary-hover: var(--primitives-theme-900);
+  --control-border-primary-pressed: var(--primitives-theme-900);
+  --control-border-selected: var(--primitives-theme-700);
+  --control-border-selected-hover: var(--primitives-theme-700);
+  --control-border-secondary: var(--primitives-grey-600);
+  --control-border-secondary-hover: var(--primitives-grey-700);
+  --control-border-secondary-pressed: var(--primitives-grey-700);
+  --control-border-tertiary: var(--utility-alpha-black-20);
+  --control-border-tertiary-hover: var(--utility-alpha-black-50);
+  --control-border-tertiary-pressed: var(--utility-alpha-black-70);
+  --control-border-quaternary: var(--utility-alpha-black-10);
+  --control-border-quaternary-hover: var(--utility-alpha-black-30);
+  --control-border-quaternary-pressed: var(--utility-alpha-black-50);
+  --control-border-disabled: var(--primitives-grey-300);
+  --control-border-disabled-faint: var(--primitives-grey-200);
+  --control-border-alert: var(--primitives-red-600);
+  --control-border-alert-hover: var(--primitives-red-800);
+  --control-border-alert-pressed: var(--primitives-red-900);
+  --control-border-warning: var(--primitives-yellow-600);
+  --control-border-warning-hover: var(--primitives-yellow-800);
+  --control-border-warning-pressed: var(--primitives-yellow-800);
+  --control-border-success: var(--primitives-green-600);
+  --control-border-success-hover: var(--primitives-green-800);
+  --control-border-success-pressed: var(--primitives-green-800);
+  --control-border-info: var(--primitives-blue-600);
+  --control-border-info-hover: var(--primitives-blue-800);
+  --control-border-info-pressed: var(--primitives-blue-800);
+
+  /* Focus Rings */
+  --control-focus-ring-standard: var(--primitives-blue-500);
+  --control-focus-ring-error: var(--primitives-red-500);
+}
