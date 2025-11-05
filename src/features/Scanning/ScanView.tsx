@@ -2,13 +2,17 @@
 import { useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { QrScanner } from '@yudiel/react-qr-scanner';
+// FIX: Use a robust namespace import to resolve CJS/ESM interop issues.
+import * as QrScannerModule from '@yudiel/react-qr-scanner';
 import { workflowStateAtom } from '../../data/atoms';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
 import { ManualSelectionView } from '../ManualSelection/ManualSelectionView';
 import styles from './ScanView.module.css';
+
+// FIX: Assign the component from the imported module to a local const with the expected name.
+const QrScanner = QrScannerModule.QrScanner;
 
 export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
@@ -37,11 +41,8 @@ export const ScanView = () => {
   };
 
   const handleError = (error: unknown) => {
-    // FIX: Safely handle the error object by checking its type before accessing properties.
     if (error instanceof Error) {
       console.log('QR Scanner Error:', error.message);
-      // Optional: Show a user-facing toast for specific errors
-      // addToast({ message: 'Camera error. Please check permissions.', icon: 'no_photography' });
     } else {
       console.log('An unknown QR scanner error occurred:', error);
     }

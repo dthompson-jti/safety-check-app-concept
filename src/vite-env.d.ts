@@ -10,5 +10,18 @@ declare module '*.module.scss' {
   export default classes;
 }
 
-// Add a module declaration for the QR scanner library to resolve the TypeScript error.
-declare module '@yudiel/react-qr-scanner';
+// FIX: A definitive module declaration that matches the robust namespace import strategy.
+// This tells TypeScript that we will import an object which contains a QrScanner property.
+declare module '@yudiel/react-qr-scanner' {
+  import { ComponentType } from 'react';
+  
+  interface QrScannerProps {
+    onDecode: (result: string) => void;
+    onError: (error: unknown) => void;
+    constraints?: MediaTrackConstraints;
+    scanDelay?: number;
+  }
+
+  // This describes the shape of the module when using `import * as ...`
+  export const QrScanner: ComponentType<QrScannerProps>;
+}
