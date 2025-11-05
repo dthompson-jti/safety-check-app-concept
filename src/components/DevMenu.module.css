@@ -1,0 +1,13 @@
+/* src/components/DevMenu.module.css */
+.devMenuPopover {
+  min-width: 280px;
+}
+
+.popoverHeader {
+  font-size: 0.9em;
+  font-weight: 600;
+  padding: var(--spacing-2) var(--spacing-3);
+  color: var(--surface-fg-secondary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  margin-bottom: var(--spacing-1);
+}

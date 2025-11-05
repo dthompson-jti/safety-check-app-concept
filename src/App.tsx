@@ -1,10 +1,15 @@
 // src/App.tsx
 import { useAtomValue } from 'jotai';
-import { activeViewAtom, AppView } from './data/atoms';
+import { activeViewAtom, AppView, layoutModeAtom } from './data/atoms';
 
 // Features
 import { DashboardView } from './features/Dashboard/DashboardView';
-import { NavBar } from './features/NavBar/NavBar';
+
+// Layouts
+import { ClassicLayout } from './layouts/ClassicLayout';
+import { NotchedLayout } from './layouts/NotchedLayout';
+import { OverlappingLayout } from './layouts/OverlappingLayout';
+import { MinimalistLayout } from './layouts/MinimalistLayout';
 
 // Generic Components
 import { ToastContainer } from './components/ToastContainer';
@@ -14,7 +19,8 @@ import { useUrlSync } from './data/useUrlSync';
 
 function App() {
   const activeView = useAtomValue(activeViewAtom);
-  
+  const layoutMode = useAtomValue(layoutModeAtom);
+
   // Synchronize the `view` URL parameter with our state
   useUrlSync();
 
@@ -36,20 +42,29 @@ function App() {
     }
   };
 
-  return (
-    // Main app container with a mobile-first flex layout
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-      {/* The main content area takes up all available space */}
-      <main style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-        {renderMainContent(activeView)}
-      </main>
+  const mainContent = renderMainContent(activeView);
 
-      {/* The navigation bar is fixed to the bottom */}
-      <NavBar />
-      
-      {/* Global toast notifications */}
+  const renderAppShell = () => {
+    switch (layoutMode) {
+      case 'classic':
+        return <ClassicLayout>{mainContent}</ClassicLayout>;
+      case 'notched':
+        return <NotchedLayout>{mainContent}</NotchedLayout>;
+      case 'overlapping':
+        return <OverlappingLayout>{mainContent}</OverlappingLayout>;
+      case 'minimalist':
+        return <MinimalistLayout>{mainContent}</MinimalistLayout>;
+      default:
+        return <ClassicLayout>{mainContent}</ClassicLayout>;
+    }
+  };
+
+  return (
+    <>
+      {renderAppShell()}
+      {/* Global toast notifications sit outside the layout */}
       <ToastContainer />
-    </div>
+    </>
   );
 }
 

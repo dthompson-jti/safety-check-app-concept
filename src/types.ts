@@ -8,10 +8,17 @@ export interface ListItem {
   description?: string;
 }
 
+// Type for a Resident
+export interface Resident {
+  id: string;
+  name: string;
+  location: string; // e.g., "Room 101"
+}
+
 // Example type for a Safety Check item
 export interface SafetyCheck {
   id: string;
-  name: string;
+  resident: Resident;
   status: 'pending' | 'in-progress' | 'complete' | 'failed';
-  lastChecked: Date;
+  checkTime: string; // e.g., "10:00 PM"
 }
