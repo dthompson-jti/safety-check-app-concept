@@ -25,9 +25,10 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 ## 3. Prototype Features
 
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow.
--   **Toggleable App Layouts:** Four distinct navigation paradigms (Classic FAB, Notched Bar, etc.) selectable from a developer menu.
+-   **Toggleable App Layouts:** Four distinct navigation paradigms (Classic FAB, Notched Bar, etc.) selectable from the **Settings screen**.
 -   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and multiple, toggleable card layouts.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes and recording check outcomes.
+-   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete, high-feedback UI simulation for provisioning room NFC tags.
 -   **History & Supplemental Checks:** A view to review past activity and a workflow for logging unscheduled checks.
 
 ## 4. Directory Structure

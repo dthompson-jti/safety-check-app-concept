@@ -104,7 +104,7 @@ export interface Resident {
 }
 
 // Expanded type for a Safety Check item
-export type SafetyCheckStatus = 'overdue' | 'due-soon' | 'upcoming' | 'complete';
+export type SafetyCheckStatus = 'pending' | 'complete' | 'late' | 'missed' | 'supplemental';
 
 export interface SafetyCheck {
   id: string;

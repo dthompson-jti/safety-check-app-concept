@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-// FIX: Import the component under its correct name, 'Scanner', as revealed by our diagnostic logs.
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { workflowStateAtom } from '../../data/atoms';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
@@ -19,12 +18,14 @@ export const ScanView = () => {
 
   const handleDecode = (result: string) => {
     setIsScanning(false);
-    const check = allChecks.find(c => c.id === result && c.status !== 'complete');
+    const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
 
     if (check) {
       addToast({ message: `Room ${check.resident.location} found.`, icon: 'qr_code_scanner' });
+      // FIX: Set the new, more explicit workflow state for a scheduled check.
       setWorkflow({
         view: 'form',
+        type: 'scheduled',
         checkId: check.id,
         roomName: check.resident.location,
         residentName: check.resident.name,
@@ -55,7 +56,7 @@ export const ScanView = () => {
   };
 
   const handleSimulateSuccess = () => {
-    const incompleteChecks = allChecks.filter(c => c.status !== 'complete');
+    const incompleteChecks = allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed');
     if (incompleteChecks.length > 0) {
       const randomCheck = incompleteChecks[Math.floor(Math.random() * incompleteChecks.length)];
       handleDecode(randomCheck.id);
@@ -88,7 +89,6 @@ export const ScanView = () => {
         <main className={styles.cameraContainer}>
           <div className={styles.viewfinder}>
             {isScanning ? (
-              // FIX: Use the correctly named component in the JSX.
               <Scanner
                 onDecode={handleDecode}
                 onError={handleError}

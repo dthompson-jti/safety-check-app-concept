@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
-import { workflowStateAtom, WorkflowState } from '../../data/atoms';
+import { workflowStateAtom } from '../../data/atoms';
 import { Modal } from '../../components/Modal';
 import { SearchInput } from '../../components/SearchInput';
 import { SafetyCheck } from '../../types';
@@ -19,7 +19,7 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const incompleteChecks = useMemo(() => {
-    return allChecks.filter(c => c.status !== 'complete');
+    return allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed');
   }, [allChecks]);
 
   const filteredChecks = useMemo(() => {
@@ -39,14 +39,16 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   };
 
   const handleSelectCheck = (check: SafetyCheck) => {
-    const newWorkflowState: WorkflowState = {
+    // FIX: Add the mandatory 'type' property to the workflow state.
+    // This flow is for existing checks, so the type is 'scheduled'.
+    setWorkflow({
       view: 'form',
+      type: 'scheduled',
       checkId: check.id,
       roomName: check.resident.location,
       residentName: check.resident.name,
       specialClassification: check.specialClassification,
-    };
-    setWorkflow(newWorkflowState);
+    });
   };
 
   return (
@@ -56,7 +58,6 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
       width="90%"
       height="75%"
       title="Select Check Manually"
-      // FIX: Add required description prop for a11y
       description="Search for and select a resident's check from the list to proceed with recording the check."
     >
       <Modal.Header>

@@ -1,6 +1,7 @@
 // src/data/appDataAtoms.ts
 import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
+import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
 import { sortModeAtom, currentTimeAtom } from './atoms';
 
@@ -26,20 +27,21 @@ const now = new Date();
 const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
 const mockChecks: SafetyCheck[] = [
-  // Overdue
-  { id: 'chk1', resident: mockResidents[0], status: 'overdue', dueDate: inNMinutes(-15), walkingOrderIndex: 1, specialClassification: { type: 'SR', details: 'Fall Risk' } },
-  { id: 'chk2', resident: mockResidents[1], status: 'overdue', dueDate: inNMinutes(-5), walkingOrderIndex: 2 },
-  // Due Soon
-  { id: 'chk3', resident: mockResidents[2], status: 'due-soon', dueDate: inNMinutes(30), walkingOrderIndex: 3 },
-  { id: 'chk4', resident: mockResidents[3], status: 'due-soon', dueDate: inNMinutes(90), walkingOrderIndex: 4 },
+  // Late check (will become overdue)
+  { id: 'chk1', resident: mockResidents[0], status: 'pending', dueDate: inNMinutes(-2), walkingOrderIndex: 1, specialClassification: { type: 'SR', details: 'Fall Risk' } },
+  // Due soon
+  { id: 'chk2', resident: mockResidents[1], status: 'pending', dueDate: inNMinutes(10), walkingOrderIndex: 2 },
   // Upcoming
-  { id: 'chk5', resident: mockResidents[4], status: 'upcoming', dueDate: inNMinutes(150), walkingOrderIndex: 5, specialClassification: { type: 'SR', details: 'Medical Alert' } },
-  { id: 'chk6', resident: mockResidents[5], status: 'upcoming', dueDate: inNMinutes(180), walkingOrderIndex: 6 },
-  { id: 'chk7', resident: mockResidents[6], status: 'upcoming', dueDate: inNMinutes(240), walkingOrderIndex: 7 },
+  { id: 'chk3', resident: mockResidents[2], status: 'pending', dueDate: inNMinutes(30), walkingOrderIndex: 3 },
+  { id: 'chk4', resident: mockResidents[3], status: 'pending', dueDate: inNMinutes(90), walkingOrderIndex: 4 },
   // Completed
-  { id: 'chk8', resident: mockResidents[7], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 0, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.' },
-  { id: 'chk9', resident: mockResidents[8], status: 'upcoming', dueDate: inNMinutes(300), walkingOrderIndex: 8 },
-  { id: 'chk10', resident: mockResidents[9], status: 'upcoming', dueDate: inNMinutes(360), walkingOrderIndex: 9 },
+  { id: 'chk5', resident: mockResidents[4], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 0, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.', specialClassification: { type: 'SR', details: 'Medical Alert' } },
+  // Missed check (well past due)
+  { id: 'chk6', resident: mockResidents[5], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 6 },
+  { id: 'chk7', resident: mockResidents[6], status: 'pending', dueDate: inNMinutes(240), walkingOrderIndex: 7 },
+  { id: 'chk8', resident: mockResidents[7], status: 'pending', dueDate: inNMinutes(270), walkingOrderIndex: 8 },
+  { id: 'chk9', resident: mockResidents[8], status: 'pending', dueDate: inNMinutes(300), walkingOrderIndex: 9 },
+  { id: 'chk10', resident: mockResidents[9], status: 'pending', dueDate: inNMinutes(360), walkingOrderIndex: 10 },
 ];
 
 // =================================================================
@@ -57,9 +59,16 @@ type CheckCompletePayload = {
   completionTime: string;
 };
 
+type SupplementalCheckPayload = {
+  roomId: string;
+  notes: string;
+  status: string;
+};
+
 export type AppAction =
   | { type: 'CHECK_UPDATE_STATUS'; payload: { id: string; status: SafetyCheckStatus } }
-  | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload };
+  | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
+  | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload };
 
 const appDataAtom = atom<AppData>({
   checks: mockChecks,
@@ -87,6 +96,24 @@ export const dispatchActionAtom = atom(
           }
           break;
         }
+        case 'CHECK_SUPPLEMENTAL_ADD': {
+          const { roomId, notes, status } = action.payload;
+          const resident = mockResidents.find(r => r.id === roomId);
+          if (resident) {
+            const newCheck: SafetyCheck = {
+              id: `sup_${nanoid()}`,
+              resident,
+              status: 'supplemental',
+              dueDate: new Date().toISOString(),
+              walkingOrderIndex: 999, // High index to sort last
+              lastChecked: new Date().toISOString(),
+              notes,
+              completionStatus: status,
+            };
+            draft.checks.push(newCheck);
+          }
+          break;
+        }
       }
     });
     set(appDataAtom, nextState);
@@ -100,19 +127,23 @@ export const dispatchActionAtom = atom(
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const checks = get(appDataAtom).checks;
   const timeNow = get(currentTimeAtom).getTime();
-  const twoHoursFromNow = timeNow + 2 * 60 * 60 * 1000;
+  const fifteenMinutesFromNow = timeNow + 15 * 60 * 1000;
+  const sixtyMinutesAgo = timeNow - 60 * 60 * 1000;
 
-  // Update status based on current time
+  // Update status based on current time for live updates
   return checks.map(check => {
-    if (check.status === 'complete') {
+    if (check.status === 'complete' || check.status === 'supplemental') {
       return check;
     }
     const dueTime = new Date(check.dueDate).getTime();
-    let newStatus: SafetyCheckStatus = 'upcoming';
-    if (dueTime < timeNow) {
-      newStatus = 'overdue';
-    } else if (dueTime < twoHoursFromNow) {
-      newStatus = 'due-soon';
+    let newStatus: SafetyCheckStatus = 'pending';
+
+    if (dueTime < sixtyMinutesAgo) {
+      newStatus = 'missed';
+    } else if (dueTime < timeNow) {
+      newStatus = 'late';
+    } else if (dueTime < fifteenMinutesFromNow) {
+      newStatus = 'pending'; // Treat "due-soon" as a pending state for data, let UI handle presentation
     }
     return { ...check, status: newStatus };
   });
@@ -121,13 +152,20 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
 export const sortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const mode = get(sortModeAtom);
-  const sorted = [...checks]; // Create a mutable copy
+  const sorted = [...checks];
+
+  const statusOrder: Record<SafetyCheckStatus, number> = {
+    late: 0,
+    missed: 1,
+    pending: 2,
+    complete: 3,
+    supplemental: 4,
+  };
 
   if (mode === 'dueTime') {
-    // For "dueTime", we want incomplete checks first, then completed checks last
     sorted.sort((a, b) => {
-      if (a.status === 'complete' && b.status !== 'complete') return 1;
-      if (a.status !== 'complete' && b.status === 'complete') return -1;
+      const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+      if (statusDiff !== 0) return statusDiff;
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
     });
   } else { // 'walkingOrder'
@@ -139,10 +177,11 @@ export const sortedChecksAtom = atom((get) => {
 export const groupedChecksAtom = atom((get) => {
   const checks = get(sortedChecksAtom);
   const groups = {
-    overdue: [] as SafetyCheck[],
-    'due-soon': [] as SafetyCheck[],
-    upcoming: [] as SafetyCheck[],
+    late: [] as SafetyCheck[],
+    missed: [] as SafetyCheck[],
+    pending: [] as SafetyCheck[],
     complete: [] as SafetyCheck[],
+    supplemental: [] as SafetyCheck[],
   };
 
   for (const check of checks) {

@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { SafetyCheck } from '../../types';
+import { SafetyCheck, SafetyCheckStatus } from '../../types';
 import { currentTimeAtom, workflowStateAtom } from '../../data/atoms';
 import { Tooltip } from '../../components/Tooltip';
 import styles from './CheckCard.module.css';
@@ -11,20 +11,18 @@ interface CheckCardProps {
   check: SafetyCheck;
 }
 
-const formatRelativeTime = (dueDate: Date, now: Date, status: SafetyCheck['status']): string => {
-  if (status === 'complete') return 'Completed';
+const formatRelativeTime = (dueDate: Date, now: Date, status: SafetyCheckStatus): string => {
+  if (status === 'complete' || status === 'supplemental') return 'Completed';
+  if (status === 'missed') return 'Missed';
 
   const diffSeconds = Math.round((dueDate.getTime() - now.getTime()) / 1000);
   const diffMins = Math.round(diffSeconds / 60);
 
   if (diffMins < 0) {
-    return `Overdue by ${Math.abs(diffMins)}m`;
-  }
-  if (diffMins === 0) {
-    return 'Due now';
+    return `Overdue by ${Math.abs(diffMins)}m ${Math.abs(diffSeconds % 60)}s`;
   }
   if (diffMins < 60) {
-    return `Due in ${diffMins}m`;
+    return `Due in ${diffMins}m ${diffSeconds % 60}s`;
   }
   const diffHours = Math.floor(diffMins / 60);
   const remainingMins = diffMins % 60;
@@ -39,8 +37,10 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const relativeTime = useMemo(() => formatRelativeTime(dueDate, now, check.status), [dueDate, now, check.status]);
   const statusText = useMemo(() => check.status.replace('-', ' '), [check.status]);
 
+  const isActionable = check.status !== 'complete' && check.status !== 'missed' && check.status !== 'supplemental';
+
   const handleCardClick = () => {
-    if (check.status !== 'complete') {
+    if (isActionable) {
       setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
     }
   };
@@ -51,7 +51,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       className={styles.checkCard}
       data-status={check.status}
       onClick={handleCardClick}
-      aria-disabled={check.status === 'complete'}
+      aria-disabled={!isActionable}
     >
       <div className={styles.statusIndicator} />
       <div className={styles.content}>

@@ -11,6 +11,7 @@ import { Tooltip } from '../../components/Tooltip';
 import styles from './CheckFormView.module.css';
 
 type CheckFormViewProps = {
+  // FIX: Accept the new, more explicit workflow state union type.
   checkData: Extract<WorkflowState, { view: 'form' }>;
 };
 
@@ -38,18 +39,34 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   };
 
   const handleSave = () => {
-    dispatch({
-      type: 'CHECK_COMPLETE',
-      payload: {
-        checkId: checkData.checkId,
-        status,
-        notes,
-        completionTime: new Date().toISOString(),
-      },
-    });
-    addToast({ message: `Check for ${checkData.roomName} saved.`, icon: 'task_alt' });
+    // FIX: Check the type of the workflow to dispatch the correct action.
+    if (checkData.type === 'scheduled') {
+      dispatch({
+        type: 'CHECK_COMPLETE',
+        payload: {
+          checkId: checkData.checkId,
+          status,
+          notes,
+          completionTime: new Date().toISOString(),
+        },
+      });
+      addToast({ message: `Check for ${checkData.roomName} saved.`, icon: 'task_alt' });
+    } else if (checkData.type === 'supplemental') {
+      dispatch({
+        type: 'CHECK_SUPPLEMENTAL_ADD',
+        payload: {
+          roomId: checkData.roomId,
+          status,
+          notes,
+        },
+      });
+      addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
+    }
+    
     setWorkflowState({ view: 'none' });
   };
+
+  const specialClassification = checkData.type === 'scheduled' ? checkData.specialClassification : undefined;
 
   return (
     <motion.div
@@ -69,11 +86,11 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       <main className={styles.formContent}>
         <div className={styles.residentInfo}>
           <h2>{checkData.roomName} - {checkData.residentName}</h2>
-          {checkData.specialClassification && (
-            <Tooltip content={checkData.specialClassification.details}>
+          {specialClassification && (
+            <Tooltip content={specialClassification.details}>
               <div className={styles.srBadge}>
                 <span className="material-symbols-rounded">shield_person</span>
-                <span>{checkData.specialClassification.type}</span>
+                <span>{specialClassification.type}</span>
               </div>
             </Tooltip>
           )}

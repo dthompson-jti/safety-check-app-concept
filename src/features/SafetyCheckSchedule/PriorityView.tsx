@@ -6,13 +6,13 @@ import { CheckCard } from './CheckCard';
 import styles from './layouts.module.css';
 import { SafetyCheckStatus } from '../../types';
 
-const groupOrder: SafetyCheckStatus[] = ['overdue', 'due-soon', 'upcoming', 'complete'];
+const groupOrder: SafetyCheckStatus[] = ['late', 'missed', 'pending', 'complete', 'supplemental'];
 
 export const PriorityView = () => {
   const groupedChecks = useAtomValue(groupedChecksAtom);
 
-  const groupCounts = groupOrder.map(status => groupedChecks[status].length);
   const groups = groupOrder.filter(status => groupedChecks[status].length > 0);
+  const groupCounts = groups.map(status => groupedChecks[status].length);
 
   if (groups.length === 0) {
     return <div>No checks to display.</div>;
@@ -20,10 +20,11 @@ export const PriorityView = () => {
 
   return (
     <GroupedVirtuoso
-      groupCounts={groupCounts.filter(count => count > 0)}
+      groupCounts={groupCounts}
       groupContent={index => {
         const status = groups[index];
-        return <h2 className={styles.priorityGroupHeader}>{status.replace('-', ' ')}</h2>;
+        // FIX: Add a stable, unique key to the group header element.
+        return <h2 key={status} className={styles.priorityGroupHeader}>{status.replace('-', ' ')}</h2>;
       }}
       itemContent={index => {
         let accumulated = 0;

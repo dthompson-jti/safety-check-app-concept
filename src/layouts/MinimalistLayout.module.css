@@ -29,6 +29,12 @@
   flex-grow: 1;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
 .mainContent {
   flex: 1;
   min-height: 0;

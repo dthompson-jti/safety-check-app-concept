@@ -73,14 +73,28 @@ export type WorkflowState =
   | { view: 'none' }
   | { view: 'scanning'; isManualSelectionOpen: boolean }
   | {
+      // For completing an existing, scheduled check
       view: 'form';
+      type: 'scheduled';
       checkId: string;
       roomName: string;
       residentName: string;
       specialClassification?: SafetyCheck['specialClassification'];
+    }
+  | {
+      // For creating a new, unscheduled supplemental check
+      view: 'form';
+      type: 'supplemental';
+      roomId: string;
+      roomName: string;
+      residentName: string;
     };
+
 
 export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 
 // Atom to control the visibility of the Admin "Write NFC" modal
 export const isWriteNfcModalOpenAtom = atom(false);
+
+// Atom to control the visibility of the new "Select Room" modal for supplemental checks
+export const isSelectRoomModalOpenAtom = atom(false);

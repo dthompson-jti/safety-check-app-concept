@@ -44,7 +44,7 @@ Menu items (`.menu-item`) are the one justified exception to the outer focus rin
 
 #### The Shared Menu System (`menu.css`)
 
-To enforce the "Single Source of Truth" principle for our UI, we use a shared, global stylesheet for all list-based selection components. This system guarantees that primitives from multiple Radix UI packages (`DropdownMenu`, `ContextMenu`, `Select`) and custom components are visually indistinguishable. This includes the **Sort By dropdown in the schedule header**, the **Room Selection dropdown in the Admin modals**, and the **developer layout toggles in the Settings view**.
+To enforce the "Single Source of Truth" principle for our UI, we use a shared, global stylesheet for all list-based selection components. This system guarantees that primitives from multiple Radix UI packages (`DropdownMenu`, `ContextMenu`, `Select`) and custom components are visually indistinguishable. This includes the **Sort By dropdown in the schedule header**, the **Room Selection dropdown in the Admin modals**, and the **App/Schedule Layout selectors in the Settings view**.
 
 It is built on two key patterns:
 

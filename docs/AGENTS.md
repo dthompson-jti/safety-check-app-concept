@@ -49,8 +49,10 @@ These are non-negotiable rules learned from the project's history. Violating the
 
 5.  **Solve Nested Hovers with Child Targeting.** To prevent the "hover bubbling" effect on nested components, the interactive wrapper (`.selectableWrapper`) should be stylistically invisible. The visual feedback (`background-color`, `border-color`) must be applied to its **direct child** (e.g., `.selectableWrapper:hover > .formItemContent`).
 
-6.  **Precision in Imports is Mandatory.** All package names must be exact (e.g., `@dnd-kit/core`, `@floating-ui/react-dom`). All relative paths must be correct. There is no room for typos.
+6.  **Precision in Imports is Mandatory.** All package names must be exact (e.g., `@dnd-kit/core`, `@floating-ui/react-dom`). All relative paths must be correct. There is no room for typos. Be especially vigilant for typos in long, similar-sounding names (e.g., `isWriteNfcModalOpenAtom` vs `isWriteNfcTagModalOpenAtom`). A single-character mistake is a common source of "module has no exported member" errors.
 
 7.  **"Ghost Errors" are Real.** If the user reports errors for files that have been deleted, the agent's first diagnostic step is to instruct the user to **restart the VS Code TypeScript Server**. This resolves stale cache issues.
 
 8.  **Editor Systems Must Be View-Aware.** Any hook or system that provides editor-specific functionality (e.g., `useEditorHotkeys`, `useEditorInteractions`) **must** be conditionally disabled if the application's view mode is not `'editor'`. Failure to do so will cause editor logic to leak into read-only views like "Preview," breaking the user experience. Always check the `appViewModeAtom` as a guard clause.
+
+9.  **Radix Primitives Have Accessibility Contracts.** Many Radix UI components enforce accessibility best practices. For example, a `Dialog` **must** contain a `Dialog.Title` and `Dialog.Description` to be properly announced by screen readers. Always check the browser console after implementing a new component; Radix provides clear warnings for these violations. Treat them as mandatory fixes, not optional suggestions.
