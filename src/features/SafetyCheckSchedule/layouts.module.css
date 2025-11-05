@@ -1,11 +1,10 @@
 /* src/features/SafetyCheckSchedule/layouts.module.css */
-.listContainer {
-  /* DELETED: Padding is now handled by the parent layout's .mainContent */
-}
 
-.cardContainer {
-  /* DELETED: Padding is now handled by the parent layout's .mainContent */
-}
+/* 
+  DEFINITIVE FIX: The empty .listContainer and .cardContainer rulesets have been removed.
+  Padding is now handled by the parent layout's .mainContent class for better
+  architectural consistency and to prevent horizontal overflow bugs.
+*/
 
 .cardGrid {
   display: grid;

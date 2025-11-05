@@ -14,12 +14,12 @@
 }
 
 /* 
-  DEFINITIVE FIX: Use a combined selector for higher specificity to override
-  the Material Symbols library's default font-size. This is the most robust
-  way to ensure our size is applied over the CDN's stylesheet.
+  DEFINITIVE FIX: Use a combined selector for higher specificity and !important
+  to guarantee an override of the Material Symbols library's default font-size.
+  This is the correct use case for !important.
 */
 .large-feature-icon.material-symbols-rounded {
-  font-size: 4rem; /* 64px */
+  font-size: 4rem !important; /* 64px */
   line-height: 1; /* Ensure line height does not constrain the icon */
   color: var(--surface-fg-quinary);
   opacity: 0.5;
