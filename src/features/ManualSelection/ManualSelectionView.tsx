@@ -55,7 +55,9 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
       onClose={handleClose}
       width="90%"
       height="75%"
-      title="Select Check Manually" // FIX: Add required title prop for a11y
+      title="Select Check Manually"
+      // FIX: Add required description prop for a11y
+      description="Search for and select a resident's check from the list to proceed with recording the check."
     >
       <Modal.Header>
         <h3>Select Check Manually</h3>

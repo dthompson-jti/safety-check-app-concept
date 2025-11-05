@@ -1,6 +1,7 @@
 // src/features/Admin/WriteNfcTagModal.tsx
 import { useState } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
+// FIX: Corrected the typo in the imported atom name.
 import { isWriteNfcModalOpenAtom } from '../../data/atoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { mockResidents } from '../../data/appDataAtoms';
@@ -76,7 +77,8 @@ export const WriteNfcTagModal = () => {
       onClose={modalState === 'writing' ? () => {} : resetAndClose}
       width="90%"
       height="auto"
-      title="Provision NFC Tag" // FIX: Add required title prop for a11y
+      title="Provision NFC Tag"
+      description="Select a room from the dropdown to prepare its corresponding NFC tag for writing."
     >
       <Modal.Header>
         <div className={styles.headerContent}>
