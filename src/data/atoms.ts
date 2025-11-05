@@ -1,6 +1,6 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
-import { BoundData, SafetyCheck } from '../types';
+import { SafetyCheck } from '../types';
 
 // =================================================================
 //                         App State
@@ -52,26 +52,6 @@ export const currentTimeAtom = atom(new Date());
 export type HistoryFilter = 'all' | 'lateOrMissed' | 'supplemental';
 export const historyFilterAtom = atom<HistoryFilter>('all');
 
-
-// =================================================================
-//                      Editor/Modal State
-// =================================================================
-
-// Define the shape of requests for data binding and scrolling
-interface DataBindingRequest {
-  componentId: string;
-  currentBinding: BoundData | null;
-}
-interface ScrollRequest {
-  componentId: string;
-}
-
-// Strongly-typed atoms for modals and editor interactions
-export const isDataBindingModalOpenAtom = atom(false);
-export const dataBindingRequestAtom = atom<DataBindingRequest | null>(null);
-export const dataBindingResultAtom = atom<{ componentId: string; newBinding: BoundData | null } | null>(null);
-export const scrollRequestAtom = atom<ScrollRequest | null>(null);
-export const isPropertiesPanelVisibleAtom = atom(false);
 
 // =================================================================
 //                 Core Scan & Check Workflow State
