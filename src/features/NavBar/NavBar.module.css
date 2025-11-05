@@ -20,7 +20,7 @@
   cursor: pointer;
   font-family: var(--font-family-sans);
   color: var(--surface-fg-tertiary);
-  transition: color 0.2s;
+  transition: color 0.2s, background-color 0.2s;
   padding: 8px 4px;
 }
 
@@ -30,6 +30,7 @@
 
 .navButton.active {
   color: var(--surface-fg-theme-primary);
+  background-color: var(--surface-bg-theme-subtle);
 }
 
 .navButton.active .material-symbols-rounded {

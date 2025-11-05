@@ -48,6 +48,7 @@ export const LoginView = () => {
         <div className={styles.appTitle}>
           <span className="material-symbols-rounded">shield</span>
           <h3>eSupervision Mobile</h3>
+          <p className={styles.helperText}>Use your eSupervision credentials to sign in.</p>
         </div>
         <AnimatePresence>
           <motion.form
@@ -79,6 +80,10 @@ export const LoginView = () => {
             </Button>
           </motion.form>
         </AnimatePresence>
+        <div className={styles.supportLink}>
+          Trouble signing in?{' '}
+          <a href="mailto:support@esupervision.com">Contact Support</a>
+        </div>
       </div>
     </motion.div>
   );

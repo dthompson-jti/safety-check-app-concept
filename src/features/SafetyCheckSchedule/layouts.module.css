@@ -1,6 +1,6 @@
 /* src/features/SafetyCheckSchedule/layouts.module.css */
 .listContainer {
-  padding: var(--spacing-2) 0;
+  padding: var(--spacing-4);
 }
 
 .cardContainer {
