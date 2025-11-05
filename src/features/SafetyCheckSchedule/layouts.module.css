@@ -1,0 +1,44 @@
+/* src/features/SafetyCheckSchedule/layouts.module.css */
+.listContainer {
+  padding: var(--spacing-2) 0;
+}
+
+.cardContainer {
+  padding: var(--spacing-4);
+}
+
+.cardGrid {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.priorityGroupHeader {
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-2);
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  background-color: var(--surface-bg-secondary);
+  z-index: 5;
+}
+
+.scheduleHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: auto;
+}
+
+.scheduleHeader > label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--surface-fg-secondary);
+}
+
+.scheduleHeader > div { /* Targets the Select component root */
+  min-width: 150px;
+}

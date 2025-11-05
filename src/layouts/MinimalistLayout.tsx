@@ -1,6 +1,7 @@
 // src/layouts/MinimalistLayout.tsx
 import { DevMenu } from '../components/DevMenu';
 import { Button } from '../components/Button';
+import { ScheduleHeader } from '../features/SafetyCheckSchedule/ScheduleHeader';
 import styles from './MinimalistLayout.module.css';
 
 interface MinimalistLayoutProps {
@@ -15,6 +16,7 @@ export const MinimalistLayout = ({ children }: MinimalistLayoutProps) => {
           <span className="material-symbols-rounded">menu</span>
         </Button>
         <h1>Safety Check</h1>
+        <ScheduleHeader />
         <DevMenu />
       </header>
       <main className={styles.mainContent}>{children}</main>

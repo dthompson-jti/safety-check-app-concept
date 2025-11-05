@@ -1,42 +1,21 @@
 // src/features/Dashboard/DashboardView.tsx
 import { useAtomValue } from 'jotai';
-import { safetyChecksAtom } from '../../data/appDataAtoms';
-import { SafetyCheck } from '../../types';
+import { scheduleLayoutAtom } from '../../data/atoms';
+import { ListView } from '../SafetyCheckSchedule/ListView';
+import { CardView } from '../SafetyCheckSchedule/CardView';
+import { PriorityView } from '../SafetyCheckSchedule/PriorityView';
 
-// Simple placeholder styles
-const styles: { [key: string]: React.CSSProperties } = {
-  container: { padding: '16px', fontFamily: 'var(--font-family-sans)' },
-  welcomeHeader: {
-    fontSize: '1.5rem',
-    fontWeight: 600,
-    margin: '0 0 16px 0',
-  },
-  list: { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' },
-  listItem: { padding: '12px', backgroundColor: 'var(--surface-bg-primary)', borderRadius: '8px', border: '1px solid var(--surface-border-secondary)' },
-  residentName: { fontWeight: 500 },
-  checkDetails: { fontSize: '0.9rem', color: 'var(--surface-fg-tertiary)', marginTop: '4px' },
-};
+export const DashboardView = () => {
+  const layout = useAtomValue(scheduleLayoutAtom);
 
-const CheckItem = ({ check }: { check: SafetyCheck }) => (
-  <li style={styles.listItem}>
-    <div style={styles.residentName}>{check.resident.name} - {check.resident.location}</div>
-    <div style={styles.checkDetails}>Status: {check.status} | Time: {check.checkTime}</div>
-  </li>
-);
-
-interface DashboardViewProps {
-  userName: string;
-}
-
-export const DashboardView = ({ userName }: DashboardViewProps) => {
-  const checks = useAtomValue(safetyChecksAtom);
-
-  return (
-    <div style={styles.container}>
-      <h2 style={styles.welcomeHeader}>Welcome, {userName}!</h2>
-      <ul style={styles.list}>
-        {checks.map(check => <CheckItem key={check.id} check={check} />)}
-      </ul>
-    </div>
-  );
+  switch (layout) {
+    case 'list':
+      return <ListView />;
+    case 'card':
+      return <CardView />;
+    case 'priority':
+      return <PriorityView />;
+    default:
+      return <ListView />;
+  }
 };

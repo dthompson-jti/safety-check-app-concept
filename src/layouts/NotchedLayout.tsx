@@ -2,6 +2,7 @@
 import { NavBar } from '../features/NavBar/NavBar';
 import { DevMenu } from '../components/DevMenu';
 import { Button } from '../components/Button';
+import { ScheduleHeader } from '../features/SafetyCheckSchedule/ScheduleHeader';
 import styles from './NotchedLayout.module.css';
 
 interface NotchedLayoutProps {
@@ -13,6 +14,7 @@ export const NotchedLayout = ({ children }: NotchedLayoutProps) => {
     <div className={styles.appShell}>
       <header className={styles.header}>
         <h1>Safety Check</h1>
+        <ScheduleHeader />
         <DevMenu />
       </header>
       <main className={styles.mainContent}>{children}</main>
