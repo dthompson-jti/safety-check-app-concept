@@ -1,7 +1,6 @@
 // src/layouts/MinimalistLayout.tsx
 import { useSetAtom } from 'jotai';
 import { workflowStateAtom } from '../data/atoms';
-import { DevMenu } from '../components/DevMenu';
 import { Button } from '../components/Button';
 import { ScheduleHeader } from '../features/SafetyCheckSchedule/ScheduleHeader';
 import styles from './MinimalistLayout.module.css';
@@ -25,7 +24,6 @@ export const MinimalistLayout = ({ children }: MinimalistLayoutProps) => {
         </Button>
         <h1>Safety Check</h1>
         <ScheduleHeader />
-        <DevMenu />
       </header>
       <main className={styles.mainContent}>{children}</main>
       <Button variant="primary" size="m" className={styles.fab} aria-label="Start Scan" onClick={handleScanClick}>

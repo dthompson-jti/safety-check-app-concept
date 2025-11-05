@@ -8,7 +8,8 @@ import { sortModeAtom, currentTimeAtom } from './atoms';
 //                 Mock Data Store
 // =================================================================
 
-const mockResidents: Resident[] = [
+// Exporting for use in Admin tools
+export const mockResidents: Resident[] = [
   { id: 'res1', name: 'Eleanor Vance', location: 'Room 101' },
   { id: 'res2', name: 'Marcus Holloway', location: 'Room 102' },
   { id: 'res3', name: 'Clara Oswald', location: 'Room 103' },

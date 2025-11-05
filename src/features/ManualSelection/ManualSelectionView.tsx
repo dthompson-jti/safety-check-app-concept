@@ -1,6 +1,5 @@
 // src/features/ManualSelection/ManualSelectionView.tsx
 import { useState, useMemo } from 'react';
-// FIX: Removed unused 'useSetAtom' import.
 import { useAtom, useAtomValue } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
@@ -51,7 +50,13 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} width="90%" height="75%">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      width="90%"
+      height="75%"
+      title="Select Check Manually" // FIX: Add required title prop for a11y
+    >
       <Modal.Header>
         <h3>Select Check Manually</h3>
       </Modal.Header>

@@ -9,6 +9,7 @@ import { DashboardView } from './features/Dashboard/DashboardView';
 import { SettingsView } from './features/Settings/SettingsView';
 import { ScanView } from './features/Scanning/ScanView';
 import { CheckFormView } from './features/CheckForm/CheckFormView';
+import { WriteNfcTagModal } from './features/Admin/WriteNfcTagModal';
 
 // Layouts
 import { ClassicLayout } from './layouts/ClassicLayout';
@@ -81,6 +82,9 @@ export function AppShell() {
       >
         {renderAppShell()}
       </motion.div>
+
+      {/* Render global modal overlays outside the layout */}
+      <WriteNfcTagModal />
 
       <AnimatePresence>
         {workflow.view === 'scanning' && <ScanView key="scan-view" />}

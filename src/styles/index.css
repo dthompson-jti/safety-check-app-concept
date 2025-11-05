@@ -36,6 +36,7 @@
 
 /* Layer 5: Utility Classes */
 @import url('./animations.css') layer(utilities);
+@import url('./utilities.css') layer(utilities); /* FIX: Import the new utilities file */
 
 
 /* --- Global Root and Body Styles (defined outside layers) --- */

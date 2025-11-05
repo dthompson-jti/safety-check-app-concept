@@ -1,0 +1,133 @@
+/* src/features/Settings/SettingsView.module.css */
+
+.settingsContainer {
+  padding: var(--spacing-4);
+  font-family: var(--font-family-sans);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  /* Positioning context for sliding sub-views */
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --- Master List Styles --- */
+.header {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3) 0 var(--spacing-4);
+  margin-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+}
+
+.header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--surface-fg-primary);
+}
+
+.settingsGroup {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg-primary);
+  border-radius: var(--spacing-3);
+  border: 1px solid var(--surface-border-secondary);
+  overflow: hidden; /* Ensures border radius clips children */
+  margin-bottom: var(--spacing-6);
+}
+
+/* Individual row in the settings list */
+.settingsItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--surface-bg-primary);
+  border: none;
+  font-family: var(--font-family-sans);
+  font-size: 1rem;
+  color: var(--surface-fg-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  /* Separator lines between items */
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+/* Remove border from last item in a group */
+.settingsItem:last-child {
+  border-bottom: none;
+}
+
+.settingsItem:hover {
+  background-color: var(--surface-bg-primary_hover);
+}
+
+.settingsItem.destructive {
+  color: var(--surface-fg-alert-primary);
+  justify-content: center;
+  font-weight: 600;
+}
+.settingsItem.destructive:hover {
+  background-color: var(--surface-bg-alert-subtle);
+}
+
+.itemLabel {
+  font-weight: 500;
+}
+
+.itemValue {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--surface-fg-secondary);
+  font-size: 0.9rem;
+}
+
+.itemValue .material-symbols-rounded {
+  font-size: 20px;
+}
+
+/* --- Detail View Styles --- */
+/* We create an absolute wrapper for entering/exiting views to overlay correctly */
+.detailViewWrapper {
+  position: absolute;
+  inset: 0;
+  background-color: var(--surface-bg-secondary); /* Keep same bg as parent */
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding-bottom: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.detailHeader h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--surface-fg-secondary);
+}

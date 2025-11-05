@@ -81,3 +81,6 @@ export type WorkflowState =
     };
 
 export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
+
+// Atom to control the visibility of the Admin "Write NFC" modal
+export const isWriteNfcModalOpenAtom = atom(false);
