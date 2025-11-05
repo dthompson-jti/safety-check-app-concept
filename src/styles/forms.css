@@ -7,7 +7,8 @@
 */
 
 /* --- Base Text Inputs, Textareas --- */
-input[type="text"],
+/* FIX: Use :is() to target multiple input types for consistent styling. */
+:is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]),
 textarea {
   font-family: var(--font-family-sans);
   width: 100%;
@@ -22,20 +23,20 @@ textarea {
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
-input[type="text"]:not(:disabled):hover,
+:is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]):not(:disabled):hover,
 textarea:not(:disabled):hover {
     background-color: var(--surface-bg-primary);
     border-color: var(--control-border-tertiary-hover);
 }
 
-input[type="text"]:focus,
+:is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]):focus,
 textarea:focus {
     border-color: var(--surface-border-theme);
     box-shadow: 0 0 0 2px var(--control-focus-ring-standard); /* Standardized outer focus ring */
     background-color: var(--surface-bg-primary);
 }
 
-input[type="text"]:disabled,
+:is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]):disabled,
 textarea:disabled {
   background-color: var(--control-bg-disabled_subtle);
   color: var(--control-fg-disabled);

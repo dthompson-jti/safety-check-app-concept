@@ -2,10 +2,12 @@
 .appShell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100svh; /* Use svh for mobile viewport consistency */
   width: 100vw;
   overflow: hidden;
   background-color: var(--surface-bg-secondary);
+  /* CONTRACT: Define footer height for global components like Toasts */
+  --footer-height: calc(64px + env(safe-area-inset-bottom));
 }
 
 .header {
@@ -33,23 +35,33 @@
 }
 
 .mainContent {
-  flex: 1;
+  flex: 1; /* Allow content to grow and fill available space */
   min-height: 0;
   overflow-y: auto;
-  /* Safe area for content so it's not hidden by the FAB or NavBar */
-  padding-bottom: calc(64px + 80px); /* NavBar height + FAB height + buffer */
+  /* Padding is handled by the inner scrollable components now */
 }
 
 .fab {
   position: fixed;
   right: 16px;
-  /* Position above the NavBar, plus a margin, plus the OS safe area */
-  bottom: calc(64px + 16px + env(safe-area-inset-bottom));
+  /* Position above the NavBar, plus a margin */
+  bottom: calc(var(--footer-height) + 16px);
   z-index: 20;
   border-radius: 16px; /* Squircle shape */
   width: 56px;
   height: 56px;
-  box-shadow: var(--surface-shadow-lg);
+  /* High-craft, two-level theme-colored shadow */
+  box-shadow:
+    0 4px 8px -2px hsla(218, 15%, 10%, 0.25), /* 1. Sharp, darker shadow for definition */
+    0 12px 64px -12px hsla(218, 78%, 52%, 0.5);   /* 2. Softer, larger, colorful theme shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fab:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 12px -2px hsla(218, 15%, 10%, 0.3),
+    0 16px 72px -12px hsla(218, 78%, 52%, 0.55);
 }
 
 .fab .material-symbols-rounded {

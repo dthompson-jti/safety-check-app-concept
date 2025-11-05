@@ -2,10 +2,12 @@
 .appShell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100svh; /* Use svh for mobile viewport consistency */
   width: 100vw;
   overflow: hidden;
   background-color: var(--surface-bg-secondary);
+  /* CONTRACT: Define footer height for global components like Toasts */
+  --footer-height: calc(64px + 16px + 16px + env(safe-area-inset-bottom));
 }
 
 .header {
@@ -33,12 +35,10 @@
 }
 
 .mainContent {
-  flex: 1;
+  flex: 1; /* Allow content to grow and fill available space */
   min-height: 0;
   overflow-y: auto;
-  /* Safe area for content so it's not hidden by the NavBar */
-  /* 64px (bar) + 16px (bottom margin) + 16px (top margin) = 96px */
-  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  /* Padding is handled by the inner scrollable components now */
 }
 
 .navContainer {

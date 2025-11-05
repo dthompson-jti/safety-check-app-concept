@@ -2,10 +2,12 @@
 .appShell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100svh; /* Use svh for mobile viewport consistency */
   width: 100vw;
   overflow: hidden;
   background-color: var(--surface-bg-secondary);
+  /* CONTRACT: Define footer height for global components like Toasts */
+  --footer-height: calc(64px + env(safe-area-inset-bottom));
 }
 
 .header {
@@ -33,11 +35,10 @@
 }
 
 .mainContent {
-  flex: 1;
+  flex: 1; /* Allow content to grow and fill available space */
   min-height: 0;
   overflow-y: auto;
-  /* Safe area for content so it's not hidden by the NavBar */
-  padding-bottom: 80px;
+  /* Padding is handled by the inner scrollable components now */
 }
 
 .navContainer {
@@ -45,9 +46,9 @@
   width: 100%;
   height: 64px;
   flex-shrink: 0;
-  /* CRITICAL FIX: The clip-path is now applied via inline style for responsiveness */
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: content-box;
+  z-index: 10; /* Set z-index for stacking context */
 }
 
 /* Modify the NavBar to fit inside the notched container */
@@ -63,11 +64,22 @@
   bottom: calc(32px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  z-index: 20;
+  z-index: 20; /* Ensure FAB is above the nav container */
   border-radius: 16px;
   width: 56px;
   height: 56px;
-  box-shadow: var(--surface-shadow-lg);
+  /* High-craft, two-level theme-colored shadow */
+  box-shadow:
+    0 4px 8px -2px hsla(218, 15%, 10%, 0.25),
+    0 12px 64px -12px hsla(218, 78%, 52%, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fab:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 12px -2px hsla(218, 15%, 10%, 0.3),
+    0 16px 72px -12px hsla(218, 78%, 52%, 0.55);
 }
 
 .fab .material-symbols-rounded {
