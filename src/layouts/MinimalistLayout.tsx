@@ -1,4 +1,6 @@
 // src/layouts/MinimalistLayout.tsx
+import { useSetAtom } from 'jotai';
+import { workflowStateAtom } from '../data/atoms';
 import { DevMenu } from '../components/DevMenu';
 import { Button } from '../components/Button';
 import { ScheduleHeader } from '../features/SafetyCheckSchedule/ScheduleHeader';
@@ -9,6 +11,12 @@ interface MinimalistLayoutProps {
 }
 
 export const MinimalistLayout = ({ children }: MinimalistLayoutProps) => {
+  const setWorkflowState = useSetAtom(workflowStateAtom);
+
+  const handleScanClick = () => {
+    setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
+  };
+
   return (
     <div className={styles.appShell}>
       <header className={styles.header}>
@@ -20,7 +28,7 @@ export const MinimalistLayout = ({ children }: MinimalistLayoutProps) => {
         <DevMenu />
       </header>
       <main className={styles.mainContent}>{children}</main>
-      <Button variant="primary" size="m" className={styles.fab} aria-label="Start Scan">
+      <Button variant="primary" size="m" className={styles.fab} aria-label="Start Scan" onClick={handleScanClick}>
         <span className="material-symbols-rounded">qr_code_scanner</span>
       </Button>
     </div>

@@ -1,6 +1,6 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
-import { BoundData } from '../types';
+import { BoundData, SafetyCheck } from '../types';
 
 // =================================================================
 //                         App State
@@ -64,3 +64,20 @@ export const dataBindingRequestAtom = atom<DataBindingRequest | null>(null);
 export const dataBindingResultAtom = atom<{ componentId: string; newBinding: BoundData | null } | null>(null);
 export const scrollRequestAtom = atom<ScrollRequest | null>(null);
 export const isPropertiesPanelVisibleAtom = atom(false);
+
+// =================================================================
+//                 Core Scan & Check Workflow State
+// =================================================================
+
+export type WorkflowState =
+  | { view: 'none' }
+  | { view: 'scanning'; isManualSelectionOpen: boolean }
+  | {
+      view: 'form';
+      checkId: string;
+      roomName: string;
+      residentName: string;
+      specialClassification?: SafetyCheck['specialClassification'];
+    };
+
+export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });

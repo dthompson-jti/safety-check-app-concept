@@ -1,0 +1,112 @@
+/* src/features/Scanning/ScanView.module.css */
+
+.scanView {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: var(--surface-bg-primary-solid);
+  color: var(--surface-fg-white);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-secondary-solid);
+  flex-shrink: 0;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.header button {
+  color: var(--surface-fg-secondary_on_brand);
+}
+.header button:hover {
+  background-color: var(--control-bg-on-solid-hover);
+}
+
+.cameraContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+}
+
+.viewfinder {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--spacing-4);
+  overflow: hidden;
+  position: relative;
+  background-color: #000;
+  border: 2px solid var(--surface-fg-tertiary);
+}
+
+.viewfinder video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanPaused {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  color: var(--surface-fg-success-primary);
+}
+.scanPaused .material-symbols-rounded {
+  font-size: 48px;
+  font-variation-settings: 'FILL' 1;
+}
+
+.helperText {
+  margin: 0;
+  color: var(--surface-fg-secondary_on_brand);
+}
+
+.footer {
+  padding: var(--spacing-4);
+  background-color: var(--surface-bg-secondary-solid);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.footer > button {
+  width: 100%;
+  color: var(--surface-fg-white);
+  border-color: var(--surface-fg-tertiary);
+}
+
+.devControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--surface-fg-tertiary);
+}
+.devControls p {
+  margin: 0;
+  font-size: 0.8rem;
+}
+.devControls button {
+  background-color: var(--surface-fg-tertiary);
+  color: var(--surface-bg-primary-solid);
+}

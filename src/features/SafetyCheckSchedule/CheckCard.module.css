@@ -7,6 +7,20 @@
   border-radius: var(--spacing-2);
   overflow: hidden;
   position: relative;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.checkCard:not([aria-disabled='true']) {
+  cursor: pointer;
+}
+
+.checkCard:not([aria-disabled='true']):hover {
+  background-color: var(--surface-bg-primary_hover);
+  box-shadow: var(--surface-shadow-sm);
+}
+
+.checkCard[aria-disabled='true'] {
+  opacity: 0.7;
 }
 
 .statusIndicator {

@@ -36,7 +36,7 @@ const mockChecks: SafetyCheck[] = [
   { id: 'chk6', resident: mockResidents[5], status: 'upcoming', dueDate: inNMinutes(180), walkingOrderIndex: 6 },
   { id: 'chk7', resident: mockResidents[6], status: 'upcoming', dueDate: inNMinutes(240), walkingOrderIndex: 7 },
   // Completed
-  { id: 'chk8', resident: mockResidents[7], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 0 },
+  { id: 'chk8', resident: mockResidents[7], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 0, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.' },
   { id: 'chk9', resident: mockResidents[8], status: 'upcoming', dueDate: inNMinutes(300), walkingOrderIndex: 8 },
   { id: 'chk10', resident: mockResidents[9], status: 'upcoming', dueDate: inNMinutes(360), walkingOrderIndex: 9 },
 ];
@@ -49,8 +49,16 @@ interface AppData {
   checks: SafetyCheck[];
 }
 
+type CheckCompletePayload = {
+  checkId: string;
+  notes: string;
+  status: string;
+  completionTime: string;
+};
+
 export type AppAction =
-  | { type: 'CHECK_UPDATE_STATUS'; payload: { id: string; status: SafetyCheckStatus } };
+  | { type: 'CHECK_UPDATE_STATUS'; payload: { id: string; status: SafetyCheckStatus } }
+  | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload };
 
 const appDataAtom = atom<AppData>({
   checks: mockChecks,
@@ -65,6 +73,16 @@ export const dispatchActionAtom = atom(
           const check = draft.checks.find(c => c.id === action.payload.id);
           if (check) {
             check.status = action.payload.status;
+          }
+          break;
+        }
+        case 'CHECK_COMPLETE': {
+          const check = draft.checks.find(c => c.id === action.payload.checkId);
+          if (check) {
+            check.status = 'complete';
+            check.lastChecked = action.payload.completionTime;
+            check.completionStatus = action.payload.status;
+            check.notes = action.payload.notes;
           }
           break;
         }

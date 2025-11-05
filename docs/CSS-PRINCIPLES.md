@@ -1,6 +1,6 @@
 # High-Craft CSS Principles
 
-This document codifies the core principles and patterns for writing CSS in the Screen Studio project. Adhering to these guidelines is essential for maintaining a consistent, robust, and high-craft user interface.
+This document codifies the core principles and patterns for writing CSS in the Safety Check App project. Adhering to these guidelines is essential for maintaining a consistent, robust, and high-craft user interface.
 
 ---
 
@@ -44,7 +44,7 @@ Menu items (`.menu-item`) are the one justified exception to the outer focus rin
 
 #### The Shared Menu System (`menu.css`)
 
-To enforce the "Single Source of Truth" principle for our UI, we use a shared, global stylesheet for all list-based selection components. This system guarantees that primitives from multiple Radix UI packages (`DropdownMenu`, `ContextMenu`, `Select`) and custom components (like the **Data Navigator's item list in both the main panel and the data binding modal**) are visually indistinguishable.
+To enforce the "Single Source of Truth" principle for our UI, we use a shared, global stylesheet for all list-based selection components. This system guarantees that primitives from multiple Radix UI packages (`DropdownMenu`, `ContextMenu`, `Select`) and custom components are visually indistinguishable. This includes the **Sort By dropdown in the schedule header**, the **Room Selection dropdown in the Admin modals**, and the **developer layout toggles in the Settings view**.
 
 It is built on two key patterns:
 
@@ -57,6 +57,6 @@ By composing these two classes, we achieve a perfectly consistent and robust men
 
 To add secondary information to an icon without cluttering the UI, we use a CSS-only "badging" pattern.
 
--   **Problem:** A component or data field (e.g., a "transient" field) has a special status that needs to be communicated visually at a glance.
--   **Solution:** A wrapper `div` with `position: relative` is placed around the base icon. A second, smaller "badge" icon (e.g., the "T" for transient) is then absolutely positioned at the top-right corner of the wrapper.
+-   **Problem:** A component has a special status that needs to be communicated visually at a glance. For example, a `CheckCard` for a resident with a **Special Classification (e.g., Suicide Watch)** uses this pattern to overlay a small shield or alert icon on top of the main room icon.
+-   **Solution:** A wrapper `div` with `position: relative` is placed around the base icon. A second, smaller "badge" icon is then absolutely positioned at the top-right corner of the wrapper.
 -   **Implementation:** The badge icon is given a smaller `font-size` and a matching `opsz` (optical size) for clarity, and a `text-shadow` can be used to lift it visually from the base icon. This creates a clean, scalable, and high-craft way to badge icons with status indicators.

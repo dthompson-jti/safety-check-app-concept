@@ -116,4 +116,8 @@ export interface SafetyCheck {
     type: 'SR'; // "Special Resident"
     details: string; // e.g., "Fall Risk"
   };
+  // Fields for recording the outcome of a check
+  lastChecked?: string; // ISO 8601 timestamp of completion
+  notes?: string;
+  completionStatus?: string; // e.g., 'Awake', 'Sleeping'
 }

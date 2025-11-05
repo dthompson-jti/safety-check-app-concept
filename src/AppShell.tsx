@@ -1,12 +1,14 @@
 // src/AppShell.tsx
 import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { motion } from 'framer-motion';
-import { activeViewAtom, AppView, layoutModeAtom, currentTimeAtom } from './data/atoms';
+import { motion, AnimatePresence } from 'framer-motion';
+import { activeViewAtom, AppView, currentTimeAtom, layoutModeAtom, workflowStateAtom } from './data/atoms';
 
 // Features
 import { DashboardView } from './features/Dashboard/DashboardView';
 import { SettingsView } from './features/Settings/SettingsView';
+import { ScanView } from './features/Scanning/ScanView';
+import { CheckFormView } from './features/CheckForm/CheckFormView';
 
 // Layouts
 import { ClassicLayout } from './layouts/ClassicLayout';
@@ -21,6 +23,7 @@ export function AppShell() {
   const activeView = useAtomValue(activeViewAtom);
   const layoutMode = useAtomValue(layoutModeAtom);
   const setCurrentTime = useSetAtom(currentTimeAtom);
+  const workflow = useAtomValue(workflowStateAtom);
 
   // Synchronize the `view` URL parameter with our state
   useUrlSync();
@@ -68,14 +71,21 @@ export function AppShell() {
   };
 
   return (
-    <motion.div
-      key="app-shell"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      {renderAppShell()}
-    </motion.div>
+    <>
+      <motion.div
+        key="app-shell"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {renderAppShell()}
+      </motion.div>
+
+      <AnimatePresence>
+        {workflow.view === 'scanning' && <ScanView key="scan-view" />}
+        {workflow.view === 'form' && <CheckFormView key="form-view" checkData={workflow} />}
+      </AnimatePresence>
+    </>
   );
 }

@@ -1,6 +1,6 @@
-# Safety Check App: PWA Starter Kit
+# Safety Check App: PWA Prototype
 
-This project is a high-craft starter kit for building a mobile-first Progressive Web App (PWA). It is built upon a robust foundation of modern web technologies and a professional-grade styling architecture.
+This project is a high-craft prototype for a mobile-first Progressive Web App (PWA) designed for the eSupervision Safety Check workflow. It is built upon a robust foundation of modern web technologies and a professional-grade styling architecture to facilitate rapid design and interaction testing.
 
 ---
 
@@ -10,6 +10,7 @@ This project is a high-craft starter kit for building a mobile-first Progressive
 -   **High-Craft UI:** All interactions are designed to be smooth, intuitive, and visually polished, leveraging performant animations and a consistent design language.
 -   **Component-Based Architecture:** The UI is composed of small, reusable, and accessible components built on top of Radix UI primitives.
 -   **Atomic State Management:** Global state is managed with Jotai, ensuring a minimal, performant, and predictable state layer.
+-   **Rapid Design Prototyping:** The application is built to test and validate multiple UX patterns quickly. Key features, like the main layout, are toggleable to allow for direct comparison.
 
 ## 2. Technology Stack
 
@@ -21,7 +22,15 @@ This project is a high-craft starter kit for building a mobile-first Progressive
 -   **Animation:** Framer Motion
 -   **UI Primitives:** Radix UI
 
-## 3. Directory Structure
+## 3. Prototype Features
+
+-   **Simulated Login/Logout:** A complete start-of-shift session workflow.
+-   **Toggleable App Layouts:** Four distinct navigation paradigms (Classic FAB, Notched Bar, etc.) selectable from a developer menu.
+-   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and multiple, toggleable card layouts.
+-   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes and recording check outcomes.
+-   **History & Supplemental Checks:** A view to review past activity and a workflow for logging unscheduled checks.
+
+## 4. Directory Structure
 
 -   **/src**: Contains the application entry point, root container, global styles, and global types.
 -   **/src/features**: Contains the major, user-facing areas of the application (e.g., `Dashboard`, `Settings`). Each sub-directory is a "vertical slice" of functionality.
@@ -31,7 +40,7 @@ This project is a high-craft starter kit for building a mobile-first Progressive
 
 **Import Rule:** Always use relative paths (`./`, `../`). This project does not use TypeScript path aliases.
 
-## 4. Styling Architecture
+## 5. Styling Architecture
 
 The project uses a **systematic CSS architecture** organized into layers to control specificity and promote a cohesive design language.
 
@@ -40,7 +49,7 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 -   **Layered Cascade:** The global style cascade is managed in `src/index.css` using CSS `@layer`.
 -   **Robust Primitives:** Core UI patterns are built using **Radix UI** for stability and craft.
 
-## 5. State Management
+## 6. State Management
 
 The project uses **Jotai** for its minimal, atomic state management model. State is divided into two logical areas:
 

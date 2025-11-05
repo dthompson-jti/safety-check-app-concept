@@ -1,0 +1,94 @@
+/* src/features/CheckForm/CheckFormView.module.css */
+
+.checkFormView {
+  position: fixed;
+  inset: 0;
+  z-index: 101; /* Above scan view */
+  background-color: var(--surface-bg-secondary);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.formContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.residentInfo {
+  padding: var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border-radius: var(--spacing-2);
+  border: 1px solid var(--surface-border-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.residentInfo h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+.srBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-1) var(--spacing-3);
+  background-color: var(--surface-bg-info);
+  color: var(--surface-fg-info-primary);
+  border-radius: var(--spacing-2);
+  font-weight: 600;
+}
+
+.srBadge .material-symbols-rounded {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 1;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.formGroup label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  text-transform: uppercase;
+}
+
+.footer {
+  flex-shrink: 0;
+  display: flex;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  border-top: 1px solid var(--surface-border-secondary);
+  background-color: var(--surface-bg-primary);
+}
+
+.footer button {
+  flex: 1;
+}

@@ -1,0 +1,44 @@
+/* src/features/ManualSelection/ManualSelectionView.module.css */
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.searchContainer {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+}
+
+.listContainer {
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--surface-border-secondary);
+  font-size: 1rem;
+  color: var(--surface-fg-primary);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.checkItem:hover {
+  background-color: var(--surface-bg-primary_hover);
+}
+
+.srIcon {
+  color: var(--surface-fg-info-primary);
+  font-variation-settings: 'FILL' 1;
+}
