@@ -29,7 +29,6 @@
 .fullscreenPlaceholderCard .material-symbols-rounded {
   font-size: 48px;
   color: var(--surface-fg-tertiary);
-  /* UPDATED: Match opsz to font-size */
   font-variation-settings:
     'FILL' 0,
     'wght' 400,

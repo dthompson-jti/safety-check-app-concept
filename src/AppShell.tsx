@@ -9,10 +9,14 @@ import { addToastAtom } from './data/toastAtoms';
 // Features
 import { DashboardView } from './features/Dashboard/DashboardView';
 import { SettingsView } from './features/Settings/SettingsView';
+import { HistoryView } from './features/History/HistoryView';
 import { ScanView } from './features/Scanning/ScanView';
 import { CheckFormView } from './features/CheckForm/CheckFormView';
 import { WriteNfcTagModal } from './features/Admin/WriteNfcTagModal';
 import { SelectRoomModal } from './features/Admin/SelectRoomModal';
+
+// Components
+import { FullScreenPlaceholder } from './components/FullScreenPlaceholder';
 
 // Layouts
 import { ClassicLayout } from './layouts/ClassicLayout';
@@ -73,11 +77,9 @@ export function AppShell() {
       case 'dashboard':
         return <DashboardView />;
       case 'checks':
-        // Placeholder for the "Checks" view
-        return <div>Checks View</div>;
+        return <FullScreenPlaceholder icon="checklist" title="Checks" message="This view provides alternative ways to view and manage checks. Not implemented in this prototype." />;
       case 'history':
-        // Placeholder for the "History" view
-        return <div>History View</div>;
+        return <HistoryView />;
       case 'settings':
         return <SettingsView />;
       default:

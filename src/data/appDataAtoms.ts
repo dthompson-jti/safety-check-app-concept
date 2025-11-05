@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
-import { sortModeAtom, currentTimeAtom } from './atoms';
+import { sortModeAtom, currentTimeAtom, historyFilterAtom } from './atoms';
 
 // =================================================================
 //                 Mock Data Store
@@ -190,4 +190,72 @@ export const groupedChecksAtom = atom((get) => {
     }
   }
   return groups;
+});
+
+
+// =================================================================
+//                Derived Atoms for History View
+// =================================================================
+
+const formatDateGroup = (date: Date): string => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  if (targetDate.getTime() === today.getTime()) {
+      return 'Today';
+  }
+  if (targetDate.getTime() === yesterday.getTime()) {
+      return 'Yesterday';
+  }
+  return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+  });
+};
+
+export const groupedHistoryAtom = atom((get) => {
+  const allChecks = get(safetyChecksAtom);
+  const filter = get(historyFilterAtom);
+
+  // 1. Filter for historical checks
+  let historicalChecks = allChecks.filter(c => c.status !== 'pending');
+
+  // 2. Apply toggle group filter
+  if (filter === 'lateOrMissed') {
+    historicalChecks = historicalChecks.filter(c => c.status === 'late' || c.status === 'missed');
+  } else if (filter === 'supplemental') {
+    historicalChecks = historicalChecks.filter(c => c.status === 'supplemental');
+  }
+
+  // 3. Sort chronologically descending
+  historicalChecks.sort((a, b) => {
+    const dateA = new Date(a.lastChecked || a.dueDate).getTime();
+    const dateB = new Date(b.lastChecked || b.dueDate).getTime();
+    return dateB - dateA;
+  });
+
+  if (historicalChecks.length === 0) {
+    return { groupCounts: [], groups: [], flattenedChecks: [] };
+  }
+
+  // 4. Group by date
+  const grouped = historicalChecks.reduce((acc, check) => {
+    const checkDate = new Date(check.lastChecked || check.dueDate);
+    const groupName = formatDateGroup(checkDate);
+    if (!acc[groupName]) {
+      acc[groupName] = [];
+    }
+    acc[groupName].push(check);
+    return acc;
+  }, {} as Record<string, SafetyCheck[]>);
+
+  const groups = Object.keys(grouped);
+  const groupCounts = groups.map(groupName => grouped[groupName].length);
+  const flattenedChecks = groups.flatMap(groupName => grouped[groupName]);
+
+  return { groupCounts, groups, flattenedChecks };
 });

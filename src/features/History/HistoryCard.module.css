@@ -1,0 +1,61 @@
+/* src/features/History/HistoryCard.module.css */
+.historyCard {
+  display: flex;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.iconContainer {
+  flex-shrink: 0;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconContainer .material-symbols-rounded {
+  font-size: 24px;
+}
+
+/* Status Icon Colors */
+.historyCard[data-status='complete'] .iconContainer { color: var(--surface-fg-success-primary); }
+.historyCard[data-status='supplemental'] .iconContainer { color: var(--surface-fg-info-primary); }
+.historyCard[data-status='late'] .iconContainer { color: var(--surface-fg-alert-primary); }
+.historyCard[data-status='missed'] .iconContainer { color: var(--surface-fg-tertiary); }
+
+
+.content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.primaryInfo h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+.secondaryInfo p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--surface-fg-secondary);
+}
+
+.secondaryInfo p span {
+  color: var(--surface-fg-tertiary);
+}
+
+.notes {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--surface-fg-primary);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

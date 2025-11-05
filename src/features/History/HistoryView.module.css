@@ -1,0 +1,48 @@
+/* src/features/History/HistoryView.module.css */
+.historyViewContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--surface-bg-secondary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+}
+
+.header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--surface-fg-primary);
+}
+
+.filterControls {
+  margin-left: auto;
+}
+
+.list {
+  flex-grow: 1;
+  padding-bottom: var(--spacing-4);
+}
+
+.dateHeader {
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-2);
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  background-color: var(--surface-bg-secondary);
+  z-index: 5;
+}

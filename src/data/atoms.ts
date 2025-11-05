@@ -46,6 +46,14 @@ export const scheduleLayoutAtom = atom<ScheduleLayout>('list');
 export const currentTimeAtom = atom(new Date());
 
 // =================================================================
+//                       History View State
+// =================================================================
+
+export type HistoryFilter = 'all' | 'lateOrMissed' | 'supplemental';
+export const historyFilterAtom = atom<HistoryFilter>('all');
+
+
+// =================================================================
 //                      Editor/Modal State
 // =================================================================
 
