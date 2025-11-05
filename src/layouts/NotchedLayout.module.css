@@ -45,8 +45,7 @@
   width: 100%;
   height: 64px;
   flex-shrink: 0;
-  /* The clip-path is applied to the NavBar's direct parent */
-  clip-path: path("M0,12 C0,5.373 5.373,0 12,0 H155 C159.418,0 163,3.582 163,8 L163,8 C163,16.284 169.716,23 178,23 C186.284,23 193,16.284 193,8 L193,8 C193,3.582 196.582,0 201,0 H382 C388.627,0 394,5.373 394,12 V64 H0 Z");
+  /* CRITICAL FIX: The clip-path is now applied via inline style for responsiveness */
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: content-box;
 }
@@ -56,6 +55,7 @@
   height: 100%;
   box-shadow: none;
   border-top: 1px solid var(--surface-border-secondary);
+  background-color: var(--surface-bg-primary); /* Ensure it has a solid background */
 }
 
 .fab {

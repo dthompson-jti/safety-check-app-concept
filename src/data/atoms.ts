@@ -86,3 +86,6 @@ export const isWriteNfcModalOpenAtom = atom(false);
 
 // Atom to control the visibility of the new "Select Room" modal for supplemental checks
 export const isSelectRoomModalOpenAtom = atom(false);
+
+// NEW: Atom to control the visibility of the side menu in MinimalistLayout
+export const isSideMenuOpenAtom = atom(false);

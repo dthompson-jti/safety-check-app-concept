@@ -6,6 +6,8 @@ import { Button } from '../components/Button';
 import { Tooltip } from '../components/Tooltip';
 import { ScheduleHeader } from '../features/SafetyCheckSchedule/ScheduleHeader';
 import styles from './OverlappingLayout.module.css';
+import { Popover } from '../components/Popover';
+import { ActionMenu, ActionMenuItem } from '../components/ActionMenu';
 
 interface OverlappingLayoutProps {
   children: React.ReactNode;
@@ -14,23 +16,32 @@ interface OverlappingLayoutProps {
 export const OverlappingLayout = ({ children }: OverlappingLayoutProps) => {
   const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
 
+  const actionMenuItems: ActionMenuItem[] = [
+    {
+      id: 'supplemental',
+      icon: 'add_comment',
+      label: 'Add Supplemental Check',
+      onClick: () => setIsSelectRoomModalOpen(true),
+    }
+  ];
+
   return (
     <div className={styles.appShell}>
       <header className={styles.header}>
         <h1>Safety Check</h1>
         <div className={styles.headerActions}>
-          <Tooltip content="Add Supplemental Check">
-            <Button
-              variant="secondary"
-              size="s"
-              iconOnly
-              onClick={() => setIsSelectRoomModalOpen(true)}
-              aria-label="Add Supplemental Check"
-            >
-              <span className="material-symbols-rounded">add</span>
-            </Button>
-          </Tooltip>
           <ScheduleHeader />
+          <Popover
+            trigger={
+              <Tooltip content="More Actions">
+                <Button variant="secondary" size="s" iconOnly aria-label="More actions">
+                  <span className="material-symbols-rounded">more_vert</span>
+                </Button>
+              </Tooltip>
+            }
+          >
+            <ActionMenu items={actionMenuItems} />
+          </Popover>
         </div>
       </header>
       <main className={styles.mainContent}>{children}</main>
