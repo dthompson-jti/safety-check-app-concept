@@ -26,10 +26,12 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow.
 -   **Toggleable App Layouts:** Four distinct navigation paradigms (Classic FAB, Notched Bar, etc.) selectable from the **Settings screen**.
--   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and multiple, toggleable card layouts.
--   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes and recording check outcomes.
+-   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and multiple, toggleable card layouts (List, Card, Priority).
+-   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes.
+-   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature.
+-   **Comprehensive History View:** A complete, filterable, and chronologically-grouped view of all past check activity.
 -   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete, high-feedback UI simulation for provisioning room NFC tags.
--   **History & Supplemental Checks:** A view to review past activity and a workflow for logging unscheduled checks.
+-   **Simulated Connection Status:** A developer toggle in the settings allows for simulating 'Online', 'Offline', and 'Syncing' states to test the UI's responsiveness.
 
 ## 4. Directory Structure
 
