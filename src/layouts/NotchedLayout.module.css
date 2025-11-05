@@ -2,12 +2,8 @@
 .appShell {
   display: flex;
   flex-direction: column;
-  height: 100svh; /* Use svh for mobile viewport consistency */
-  width: 100vw;
-  overflow: hidden;
+  height: 100svh;
   background-color: var(--surface-bg-secondary);
-  /* CONTRACT: Define footer height for global components like Toasts */
-  --footer-height: calc(64px + env(safe-area-inset-bottom));
 }
 
 .header {
@@ -35,51 +31,51 @@
 }
 
 .mainContent {
-  flex: 1; /* Allow content to grow and fill available space */
+  flex: 1;
   min-height: 0;
   overflow-y: auto;
-  /* Padding is handled by the inner scrollable components now */
+  overflow-x: hidden;
+  padding: 0 var(--spacing-4); /* Centralize horizontal padding */
 }
 
 .navContainer {
-  position: relative;
+  position: relative; /* Establish stacking context */
   width: 100%;
   height: 64px;
   flex-shrink: 0;
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: content-box;
-  z-index: 10; /* Set z-index for stacking context */
+  z-index: 10; /* Lower z-index */
 }
 
-/* Modify the NavBar to fit inside the notched container */
 .navContainer > :global(.navBar) {
   height: 100%;
   box-shadow: none;
   border-top: 1px solid var(--surface-border-secondary);
-  background-color: var(--surface-bg-primary); /* Ensure it has a solid background */
+  background-color: var(--surface-bg-primary);
 }
 
 .fab {
-  position: absolute;
+  /* This is now positioned relative to the appShell, not the footer */
+  position: fixed; 
   bottom: calc(32px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  z-index: 20; /* Ensure FAB is above the nav container */
+  z-index: 20; /* Higher z-index, will now render above navContainer */
   border-radius: 16px;
   width: 56px;
   height: 56px;
-  /* High-craft, two-level theme-colored shadow */
   box-shadow:
-    0 4px 8px -2px hsla(218, 15%, 10%, 0.25),
-    0 12px 64px -12px hsla(218, 78%, 52%, 0.5);
+    0 8px 16px -4px hsla(218, 25%, 15%, 0.2),
+    0 24px 64px -16px hsla(218, 78%, 52%, 0.5);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .fab:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 6px 12px -2px hsla(218, 15%, 10%, 0.3),
-    0 16px 72px -12px hsla(218, 78%, 52%, 0.55);
+    0 10px 20px -4px hsla(218, 25%, 15%, 0.25),
+    0 28px 72px -16px hsla(218, 78%, 52%, 0.55);
 }
 
 .fab .material-symbols-rounded {

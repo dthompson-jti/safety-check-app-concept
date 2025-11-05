@@ -1,6 +1,6 @@
 // src/layouts/OverlappingLayout.tsx
 import { useSetAtom } from 'jotai';
-import { isSelectRoomModalOpenAtom } from '../data/atoms';
+import { isSelectRoomModalOpenAtom, footerHeightAtom } from '../data/atoms';
 import { NavBar } from '../features/NavBar/NavBar';
 import { Button } from '../components/Button';
 import { Tooltip } from '../components/Tooltip';
@@ -8,6 +8,7 @@ import { ScheduleHeader } from '../features/SafetyCheckSchedule/ScheduleHeader';
 import styles from './OverlappingLayout.module.css';
 import { Popover } from '../components/Popover';
 import { ActionMenu, ActionMenuItem } from '../components/ActionMenu';
+import { useLayoutEffect, useRef } from 'react';
 
 interface OverlappingLayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,24 @@ interface OverlappingLayoutProps {
 
 export const OverlappingLayout = ({ children }: OverlappingLayoutProps) => {
   const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
+  const setFooterHeight = useSetAtom(footerHeightAtom);
+  const footerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const measureFooter = () => {
+      if (footerRef.current) {
+        // The effective height is the nav bar height plus its top and bottom margin
+        setFooterHeight(footerRef.current.offsetHeight + 32);
+      }
+    };
+    measureFooter();
+    const resizeObserver = new ResizeObserver(measureFooter);
+    if (footerRef.current) {
+      resizeObserver.observe(footerRef.current);
+    }
+    return () => resizeObserver.disconnect();
+  }, [setFooterHeight]);
+
 
   const actionMenuItems: ActionMenuItem[] = [
     {
@@ -45,9 +64,9 @@ export const OverlappingLayout = ({ children }: OverlappingLayoutProps) => {
         </div>
       </header>
       <main className={styles.mainContent}>{children}</main>
-      <div className={styles.navContainer}>
+      <footer ref={footerRef} className={styles.navContainer}>
         <NavBar />
-      </div>
+      </footer>
     </div>
   );
 };

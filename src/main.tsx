@@ -6,16 +6,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'jotai'
-import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx'
 import './styles/index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider>
-      <Toast.Provider swipeDirection="down">
-        <App />
-      </Toast.Provider>
+      <App />
     </Provider>
   </React.StrictMode>,
 )

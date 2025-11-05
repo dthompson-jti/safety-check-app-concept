@@ -1,10 +1,10 @@
 /* src/features/SafetyCheckSchedule/layouts.module.css */
 .listContainer {
-  padding: var(--spacing-4);
+  /* DELETED: Padding is now handled by the parent layout's .mainContent */
 }
 
 .cardContainer {
-  padding: var(--spacing-4);
+  /* DELETED: Padding is now handled by the parent layout's .mainContent */
 }
 
 .cardGrid {
@@ -13,7 +13,8 @@
 }
 
 .priorityGroupHeader {
-  padding: var(--spacing-4) var(--spacing-4) var(--spacing-2);
+  /* Adjust padding since parent now handles horizontal */
+  padding: var(--spacing-4) 0 var(--spacing-2);
   margin: 0;
   font-size: 1rem;
   font-weight: 600;

@@ -1,5 +1,4 @@
 /* src/styles/utilities.css */
-/* NEW FILE */
 
 /* For hiding content from sighted users but keeping it for screen readers */
 .visually-hidden {
@@ -12,4 +11,22 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* 
+  DEFINITIVE FIX: Use a combined selector for higher specificity to override
+  the Material Symbols library's default font-size. This is the most robust
+  way to ensure our size is applied over the CDN's stylesheet.
+*/
+.large-feature-icon.material-symbols-rounded {
+  font-size: 4rem; /* 64px */
+  line-height: 1; /* Ensure line height does not constrain the icon */
+  color: var(--surface-fg-quinary);
+  opacity: 0.5;
+  /* Also override the optical size to match the new font size */
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 48;
 }

@@ -81,11 +81,18 @@ export type WorkflowState =
 
 export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 
+// =================================================================
+//                  Global UI & Layout State
+// =================================================================
+
 // Atom to control the visibility of the Admin "Write NFC" modal
 export const isWriteNfcModalOpenAtom = atom(false);
 
 // Atom to control the visibility of the new "Select Room" modal for supplemental checks
 export const isSelectRoomModalOpenAtom = atom(false);
 
-// NEW: Atom to control the visibility of the side menu in MinimalistLayout
+// Atom to control the visibility of the side menu in MinimalistLayout
 export const isSideMenuOpenAtom = atom(false);
+
+// NEW: Atom for layouts to report their footer height to global components (like Toasts)
+export const footerHeightAtom = atom(0);

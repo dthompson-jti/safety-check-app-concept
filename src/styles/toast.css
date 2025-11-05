@@ -36,6 +36,29 @@
   color: var(--surface-fg-on-solid-faint);
 }
 
+.toast-close-button {
+  all: unset; /* Reset button styles */
+  margin-left: auto;
+  padding-left: var(--spacing-4);
+  cursor: pointer;
+  border-radius: 100%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.toast-close-button:hover {
+  background-color: var(--utility-alpha-white-20);
+}
+
+.toast-close-button .material-symbols-rounded {
+  font-size: 18px;
+  color: var(--surface-fg-secondary_on_brand);
+}
+
 .toast-root[data-state='open'] {
   animation: slideIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }

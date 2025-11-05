@@ -19,7 +19,7 @@
   border: none;
   cursor: pointer;
   font-family: var(--font-family-sans);
-  color: var(--surface-fg-tertiary);
+  color: var(--surface-fg-tertiy);
   transition: color 0.2s, background-color 0.2s;
   padding: 8px 4px;
 }
@@ -28,7 +28,8 @@
   color: var(--surface-fg-secondary_hover);
 }
 
-.navButton.active {
+/* DEFINITIVE FIX: Increase specificity by adding the element type */
+button.navButton.active {
   color: var(--surface-fg-theme-primary);
   background-color: var(--surface-bg-theme-subtle);
 }

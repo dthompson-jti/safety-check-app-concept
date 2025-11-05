@@ -3,11 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100svh; /* Use svh for mobile viewport consistency */
-  width: 100vw;
-  overflow: hidden;
   background-color: var(--surface-bg-secondary);
-  /* CONTRACT: Define footer height for global components like Toasts (FAB area) */
-  --footer-height: calc(16px + env(safe-area-inset-bottom));
 }
 
 .header {
@@ -41,7 +37,8 @@
   flex: 1; /* Allow content to grow and fill available space */
   min-height: 0;
   overflow-y: auto;
-  /* Padding is handled by the inner scrollable components now */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  padding: 0 var(--spacing-4); /* Centralize horizontal padding */
 }
 
 .fab {
@@ -54,16 +51,16 @@
   height: 56px;
   /* High-craft, two-level theme-colored shadow */
   box-shadow:
-    0 4px 8px -2px hsla(218, 15%, 10%, 0.25),
-    0 12px 64px -12px hsla(218, 78%, 52%, 0.5);
+    0 8px 16px -4px hsla(218, 25%, 15%, 0.2),
+    0 24px 64px -16px hsla(218, 78%, 52%, 0.5);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .fab:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 6px 12px -2px hsla(218, 15%, 10%, 0.3),
-    0 16px 72px -12px hsla(218, 78%, 52%, 0.55);
+    0 10px 20px -4px hsla(218, 25%, 15%, 0.25),
+    0 28px 72px -16px hsla(218, 78%, 52%, 0.55);
 }
 
 .fab .material-symbols-rounded {

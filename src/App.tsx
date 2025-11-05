@@ -1,6 +1,7 @@
 // src/App.tsx
 import { useAtomValue } from 'jotai';
 import { AnimatePresence } from 'framer-motion';
+import * as Toast from '@radix-ui/react-toast';
 import { sessionAtom } from './data/atoms';
 
 // Components
@@ -12,13 +13,16 @@ function App() {
   const session = useAtomValue(sessionAtom);
 
   return (
-    <>
+    // DEFINITIVE FIX: The Toast.Provider MUST wrap the entire application
+    // to provide context for swipe gestures and viewport management.
+    <Toast.Provider swipeDirection="down">
       <AnimatePresence mode="wait">
         {session.isAuthenticated ? <AppShell /> : <LoginView />}
       </AnimatePresence>
-      {/* Global toast notifications sit outside the layout */}
+      
+      {/* The ToastContainer renders the toasts and viewport */}
       <ToastContainer />
-    </>
+    </Toast.Provider>
   );
 }
 
