@@ -10,18 +10,17 @@ declare module '*.module.scss' {
   export default classes;
 }
 
-// FIX: A definitive module declaration that matches the robust namespace import strategy.
-// This tells TypeScript that we will import an object which contains a QrScanner property.
+// FIX: The final, definitive declaration based on the console log evidence.
+// The module has a named export called 'Scanner'.
 declare module '@yudiel/react-qr-scanner' {
   import { ComponentType } from 'react';
   
-  interface QrScannerProps {
+  interface ScannerProps {
     onDecode: (result: string) => void;
     onError: (error: unknown) => void;
     constraints?: MediaTrackConstraints;
     scanDelay?: number;
   }
 
-  // This describes the shape of the module when using `import * as ...`
-  export const QrScanner: ComponentType<QrScannerProps>;
+  export const Scanner: ComponentType<ScannerProps>;
 }

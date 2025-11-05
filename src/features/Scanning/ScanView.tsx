@@ -2,17 +2,14 @@
 import { useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-// FIX: Use a robust namespace import to resolve CJS/ESM interop issues.
-import * as QrScannerModule from '@yudiel/react-qr-scanner';
+// FIX: Import the component under its correct name, 'Scanner', as revealed by our diagnostic logs.
+import { Scanner } from '@yudiel/react-qr-scanner';
 import { workflowStateAtom } from '../../data/atoms';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
 import { ManualSelectionView } from '../ManualSelection/ManualSelectionView';
 import styles from './ScanView.module.css';
-
-// FIX: Assign the component from the imported module to a local const with the expected name.
-const QrScanner = QrScannerModule.QrScanner;
 
 export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
@@ -21,7 +18,7 @@ export const ScanView = () => {
   const [isScanning, setIsScanning] = useState(true);
 
   const handleDecode = (result: string) => {
-    setIsScanning(false); // Stop scanning after a successful decode
+    setIsScanning(false);
     const check = allChecks.find(c => c.id === result && c.status !== 'complete');
 
     if (check) {
@@ -35,7 +32,6 @@ export const ScanView = () => {
       });
     } else {
       addToast({ message: 'QR Code not recognized or check already complete.', icon: 'error' });
-      // Re-enable scanning after a short delay
       setTimeout(() => setIsScanning(true), 2000);
     }
   };
@@ -58,7 +54,6 @@ export const ScanView = () => {
     }
   };
 
-  // --- DEV CONTROLS ---
   const handleSimulateSuccess = () => {
     const incompleteChecks = allChecks.filter(c => c.status !== 'complete');
     if (incompleteChecks.length > 0) {
@@ -90,11 +85,11 @@ export const ScanView = () => {
             <span className="material-symbols-rounded">close</span>
           </Button>
         </header>
-
         <main className={styles.cameraContainer}>
           <div className={styles.viewfinder}>
             {isScanning ? (
-              <QrScanner
+              // FIX: Use the correctly named component in the JSX.
+              <Scanner
                 onDecode={handleDecode}
                 onError={handleError}
                 constraints={{ facingMode: 'environment' }}
@@ -109,7 +104,6 @@ export const ScanView = () => {
           </div>
           <p className={styles.helperText}>Point your camera at the room's QR code</p>
         </main>
-
         <footer className={styles.footer}>
           <Button variant="tertiary" size="m" onClick={handleOpenManualSelection}>
             Can't Scan? Select Manually

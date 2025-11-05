@@ -110,3 +110,21 @@
   background-color: var(--surface-fg-tertiary);
   color: var(--surface-bg-primary-solid);
 }
+
+/* NEW: Styles for the defensive error view */
+.errorView {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: var(--surface-bg-error-primary);
+  color: var(--surface-fg-alert-primary);
+  padding: var(--spacing-8);
+  font-family: var(--font-family-sans);
+}
+
+.errorView p {
+  font-family: monospace;
+  background-color: var(--surface-bg-error-secondary);
+  padding: var(--spacing-2);
+  border-radius: var(--spacing-1);
+}
