@@ -145,3 +145,21 @@
   border-color: var(--control-border-tertiary-pressed); /* Re-using tertiary border seems appropriate here */
   box-shadow: none;
 }
+
+/* --- Destructive Button --- */
+.btn[data-variant="destructive"] {
+  background-color: var(--surface-bg-error-solid);
+  color: var(--control-fg-on-solid);
+  border-color: var(--primitives-red-700);
+  box-shadow: inset 0 -2px 0 0 var(--primitives-red-700);
+}
+.btn[data-variant="destructive"]:hover:not(:disabled) {
+  background-color: var(--primitives-red-700);
+  border-color: var(--primitives-red-800);
+  box-shadow: inset 0 -2px 0 0 var(--primitives-red-800);
+}
+.btn[data-variant="destructive"]:active:not(:disabled) {
+  background-color: var(--primitives-red-800);
+  border-color: var(--primitives-red-900);
+  box-shadow: inset 0 -2px 0 0 var(--primitives-red-900);
+}

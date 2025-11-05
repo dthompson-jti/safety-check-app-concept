@@ -16,3 +16,17 @@ export type LayoutMode = 'classic' | 'notched' | 'overlapping' | 'minimalist';
 
 // The single source of truth for which layout is currently active
 export const layoutModeAtom = atom<LayoutMode>('classic');
+
+// =================================================================
+//                      Session State
+// =================================================================
+
+interface Session {
+  isAuthenticated: boolean;
+  userName: string | null;
+}
+
+export const sessionAtom = atom<Session>({
+  isAuthenticated: false,
+  userName: null,
+});

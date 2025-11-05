@@ -6,6 +6,11 @@ import { SafetyCheck } from '../../types';
 // Simple placeholder styles
 const styles: { [key: string]: React.CSSProperties } = {
   container: { padding: '16px', fontFamily: 'var(--font-family-sans)' },
+  welcomeHeader: {
+    fontSize: '1.5rem',
+    fontWeight: 600,
+    margin: '0 0 16px 0',
+  },
   list: { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' },
   listItem: { padding: '12px', backgroundColor: 'var(--surface-bg-primary)', borderRadius: '8px', border: '1px solid var(--surface-border-secondary)' },
   residentName: { fontWeight: 500 },
@@ -19,11 +24,16 @@ const CheckItem = ({ check }: { check: SafetyCheck }) => (
   </li>
 );
 
-export const DashboardView = () => {
+interface DashboardViewProps {
+  userName: string;
+}
+
+export const DashboardView = ({ userName }: DashboardViewProps) => {
   const checks = useAtomValue(safetyChecksAtom);
 
   return (
     <div style={styles.container}>
+      <h2 style={styles.welcomeHeader}>Welcome, {userName}!</h2>
       <ul style={styles.list}>
         {checks.map(check => <CheckItem key={check.id} check={check} />)}
       </ul>

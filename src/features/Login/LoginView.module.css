@@ -1,0 +1,50 @@
+/* src/features/Login/LoginView.module.css */
+.loginViewWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--surface-bg-secondary);
+  padding: var(--spacing-4);
+  font-family: var(--font-family-sans);
+}
+
+.loginFormCard {
+  background-color: var(--surface-bg-primary);
+  border-radius: var(--spacing-3);
+  padding: var(--spacing-8);
+  box-shadow: var(--surface-shadow-lg);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  text-align: center;
+}
+
+.appTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.appTitle h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+.appTitle .material-symbols-rounded {
+  font-size: 48px;
+  color: var(--surface-fg-theme-primary);
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+  margin-bottom: var(--spacing-2);
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  text-align: left;
+}

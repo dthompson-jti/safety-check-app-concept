@@ -3,7 +3,7 @@ import React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'on-solid';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'on-solid' | 'destructive';
   size?: 'xs' | 's' | 'm';
   iconOnly?: boolean;
   asChild?: boolean;
