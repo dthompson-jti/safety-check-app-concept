@@ -1,0 +1,36 @@
+/* src/features/Footer/FloatingFooter.module.css */
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+
+  padding: 20px 24px;
+
+  background-color: var(--surface-bg-header-translucent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* For Safari compatibility */
+
+  border-top: 1px solid var(--surface-border-secondary);
+}
+
+.scanButton {
+  width: 100%;
+  height: 56px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  gap: var(--spacing-2);
+
+  /* Overrides for the primary button variant to match the design spec */
+  background: var(--control-bg-theme);
+  border: 1px solid var(--surface-fg-theme-secondary);
+  box-shadow: var(--surface-shadow-scan-button);
+}
+
+/* Custom icon style for the Scan button */
+.scanButton .material-symbols-rounded {
+  font-size: 24px;
+}

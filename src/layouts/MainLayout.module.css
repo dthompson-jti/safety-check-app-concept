@@ -14,9 +14,8 @@
   overflow-x: hidden;
   /* 
     The scrollable content area must allow its children to scroll all the way
-    to the top of the viewport to be visible behind the translucent header.
-    A spacer component is added to the top of the list content itself to
-    prevent the first item from being obscured by the header initially.
+    to the top and bottom of the viewport to be visible behind the translucent
+    header and footer. Spacer components are added to the list content itself
+    to prevent items from being obscured by the UI chrome.
   */
-  padding-bottom: 80px;
 }

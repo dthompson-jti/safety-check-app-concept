@@ -15,6 +15,16 @@ const ListHeader = () => {
   return <div style={{ height: '76px' }} />;
 };
 
+/**
+ * A spacer component rendered at the bottom of the virtualized list.
+ * Its purpose is to provide enough scrollable space so the last item
+ * can be scrolled fully above the FloatingFooter.
+ */
+const ListFooter = () => {
+  // Footer container (20+56+20=96) + extra margin (16px) = 112px
+  return <div style={{ height: '112px' }} />;
+};
+
 export const ListView = () => {
   const checks = useAtomValue(sortedChecksAtom);
 
@@ -22,9 +32,9 @@ export const ListView = () => {
     <Virtuoso
       className={styles.listContainer}
       data={checks}
-      // The Header component from Virtuoso ensures this spacer is always
-      // rendered at the top of the scrollable content.
-      components={{ Header: ListHeader }}
+      // Virtuoso's Header and Footer components ensure these spacers are
+      // always rendered at the top and bottom of the scrollable content.
+      components={{ Header: ListHeader, Footer: ListFooter }}
       itemContent={(_index, check) => <CheckCard check={check} />}
     />
   );

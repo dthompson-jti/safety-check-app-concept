@@ -17,7 +17,7 @@
   --surface-bg-quaternary: var(--primitives-grey-60);
   --surface-bg-primary-solid: var(--primitives-grey-950);
   --surface-bg-secondary-solid: var(--primitives-grey-600);
-  /* The translucent, blurred background for the main app header. */
+  /* The translucent, blurred background for the main app header and footer. */
   --surface-bg-header-translucent: rgba(249, 249, 249, 0.9);
   --surface-bg-brand-primary: var(--primitives-theme-50);
   --surface-bg-brand-solid: var(--primitives-theme-600);
@@ -93,7 +93,8 @@
   --surface-shadow-2xl: 0 20px 24px -8px #0A0C122D, 0 0 1px 0 #0A0C120A;
   --surface-shadow-3xl: 0 32px 64px -16px #0A0C1223, 0 0 1px 0 #0A0C120A;
   --surface-shadow-pill: 0px 1px 3px 0px rgba(10, 13, 18, 0.1), 0px 1px 2px -1px rgba(10, 13, 18, 0.1);
-
+  /* The custom, theme-colored shadow for the main Scan button. */
+  --surface-shadow-scan-button: 0 8px 16px 0 rgba(88, 144, 237, 0.25), 0 2px 2px 0 rgba(88, 144, 237, 0.25);
   
   /* ----------------------------------------- */
   /*             SEMANTIC - CONTROL            */
