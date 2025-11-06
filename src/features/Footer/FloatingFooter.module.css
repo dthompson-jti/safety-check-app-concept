@@ -8,6 +8,7 @@
   z-index: 50;
 
   padding: 20px 24px;
+  pointer-events: none; /* Allows clicks to pass through to content below */
 
   background-color: var(--surface-bg-header-translucent);
   backdrop-filter: blur(8px);
@@ -23,11 +24,26 @@
   font-size: 1rem;
   font-weight: 600;
   gap: var(--spacing-2);
+  pointer-events: auto; /* Re-enables pointer events for the button itself */
+  
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s; /* Added box-shadow transition */
 
-  /* Overrides for the primary button variant to match the design spec */
+  /* Applying base styles from buttons.css with explicit overrides */
   background: var(--control-bg-theme);
   border: 1px solid var(--surface-fg-theme-secondary);
   box-shadow: var(--surface-shadow-scan-button);
+}
+
+/* FIX: Explicitly apply primary button hover and pressed states by targeting the specific button's variant */
+.scanButton:hover:not(:disabled) {
+  background-color: var(--control-bg-theme-hover);
+  border-color: var(--control-border-primary-hover); /* Using primary border hover for consistency */
+  box-shadow: 0 10px 20px -4px hsla(218, 25%, 15%, 0.25), 0 28px 72px -16px hsla(218, 78%, 52%, 0.55); /* Hover shadow */
+}
+.scanButton:active:not(:disabled) {
+  background-color: var(--control-bg-theme-pressed);
+  border-color: var(--control-border-primary-pressed); /* Using primary border pressed for consistency */
+  box-shadow: 0 8px 16px -4px hsla(218, 25%, 15%, 0.2), 0 24px 64px -16px hsla(218, 78%, 52%, 0.5); /* Pressed shadow */
 }
 
 /* Custom icon style for the Scan button */

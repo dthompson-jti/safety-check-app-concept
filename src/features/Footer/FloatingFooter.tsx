@@ -19,7 +19,7 @@ export const FloatingFooter = () => {
   return (
     <footer className={styles.footer}>
       <Button
-        variant="primary"
+        variant="primary" /* Ensures primary states are applied */
         className={styles.scanButton}
         onClick={handleScanClick}
       >

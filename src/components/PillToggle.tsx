@@ -1,6 +1,6 @@
 // src/components/PillToggle.tsx
 import { useAtom } from 'jotai';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ScheduleView, scheduleViewAtom } from '../data/atoms';
 import styles from './PillToggle.module.css';
 
@@ -14,29 +14,54 @@ export const PillToggle = () => {
 
   return (
     <div className={styles.pillToggleContainer}>
-      {options.map((option) => (
-        <button
-          key={option.id}
-          onClick={() => setActiveView(option.id)}
-          className={`${styles.pillButton} ${activeView === option.id ? styles.active : ''}`}
-        >
-          {/* 
-            The animated pill is only rendered inside the currently active button.
-            The `layoutId` prop tells Framer Motion to treat this as the *same*
-            element moving between buttons, creating the smooth slide animation.
-          */}
-          {activeView === option.id && (
-            <motion.div
-              layoutId="active-pill"
-              className={styles.activePill}
-              // A 'tween' transition is used for a direct, snappy animation.
-              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.25 }}
-            />
-          )}
-          {/* The label is wrapped to control its stacking order. */}
-          <span className={styles.pillLabel}>{option.label}</span>
-        </button>
-      ))}
+      {options.map((option) => {
+        const isActive = activeView === option.id;
+        return (
+          <button
+            key={option.id}
+            onClick={() => setActiveView(option.id)}
+            className={`${styles.pillButton} ${isActive ? styles.active : ''}`}
+          >
+            {isActive && (
+              <motion.div
+                layoutId="active-pill"
+                className={styles.activePill}
+                transition={{ type: 'tween', ease: 'easeInOut', duration: 0.25 }}
+              />
+            )}
+            
+            <AnimatePresence>
+              {isActive && (
+                <motion.span
+                  className={`material-symbols-rounded ${styles.dropdownIcon}`}
+                  // Animate the width from 0 to its natural size and back.
+                  // This drives a gradual layout change in the parent flexbox,
+                  // which is the key to preventing the "janky" text jump.
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ type: 'tween', ease: 'easeInOut', duration: 0.2 }}
+                >
+                  south
+                </motion.span>
+              )}
+            </AnimatePresence>
+
+            {/* 
+              The `layout="position"` prop animates the text's position. It smoothly
+              reacts to the gradual layout change caused by the icon's width
+              animation, ensuring the text slides gracefully on both enter and exit.
+            */}
+            <motion.span 
+              layout="position" 
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.2 }}
+              className={styles.pillLabel}
+            >
+              {option.label}
+            </motion.span>
+          </button>
+        );
+      })}
     </div>
   );
 };

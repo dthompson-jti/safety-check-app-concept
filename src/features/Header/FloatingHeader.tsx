@@ -30,8 +30,10 @@ export const FloatingHeader = () => {
         </Button>
       </Tooltip>
       
-      {/* The primary view switcher for the dashboard */}
-      <PillToggle />
+      {/* A wrapper for absolute centering of the toggle, ensuring a stable layout. */}
+      <div className={styles.centerContent}>
+        <PillToggle />
+      </div>
 
       {/* The trigger for adding a new, unscheduled check */}
       <Tooltip content="Add Supplemental Check">

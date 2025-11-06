@@ -9,8 +9,8 @@
   
   display: flex;
   align-items: center;
+  /* This pushes the outer buttons to the absolute edges of the container. */
   justify-content: space-between;
-  /* Button (44px) + vertical padding (8px * 2) = 60px total height */
   height: 60px; 
   padding: 8px 12px;
   
@@ -19,4 +19,19 @@
   -webkit-backdrop-filter: blur(8px); /* For Safari compatibility */
   
   border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+/* This container uses absolute positioning to guarantee the toggle is
+   perfectly centered in the header, regardless of other content or screen width. */
+.centerContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Allow clicks to pass through the wrapper to the content below. */
+  pointer-events: none;
+}
+/* Re-enable pointer events for the toggle itself so it remains interactive. */
+.centerContent > :first-child {
+  pointer-events: auto;
 }
