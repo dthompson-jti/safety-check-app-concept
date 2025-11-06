@@ -1,0 +1,27 @@
+/* src/features/SafetyCheckSchedule/layouts.module.css */
+
+/* 
+  DEFINITIVE FIX: The empty .listContainer and .cardContainer rulesets have been removed.
+  Padding is now handled by the parent layout's .mainContent class for better
+  architectural consistency and to prevent horizontal overflow bugs.
+*/
+
+.cardGrid {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.priorityGroupHeader {
+  /* Adjust padding since parent now handles horizontal */
+  padding: var(--spacing-4) 0 var(--spacing-2);
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  background-color: var(--surface-bg-secondary);
+  z-index: 5;
+}

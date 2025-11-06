@@ -2,8 +2,8 @@
 
 .toast-viewport {
   position: fixed;
-  /* Use the --footer-height variable from the layout, with a fallback and extra margin */
-  bottom: calc(var(--footer-height, 0px) + 16px);
+  /* Adjust bottom positioning to avoid the floating header area, with a fallback */
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;

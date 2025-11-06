@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
-import { activeViewAtom, AppView, currentTimeAtom, layoutModeAtom, workflowStateAtom } from './data/atoms';
+import { activeViewAtom, AppView, currentTimeAtom, workflowStateAtom } from './data/atoms';
 import { safetyChecksAtom } from './data/appDataAtoms';
 import { addToastAtom } from './data/toastAtoms';
 
@@ -19,17 +19,13 @@ import { SelectRoomModal } from './features/Admin/SelectRoomModal';
 import { FullScreenPlaceholder } from './components/FullScreenPlaceholder';
 
 // Layouts
-import { ClassicLayout } from './layouts/ClassicLayout';
-import { NotchedLayout } from './layouts/NotchedLayout';
-import { OverlappingLayout } from './layouts/OverlappingLayout';
-import { MinimalistLayout } from './layouts/MinimalistLayout';
+import { MainLayout } from './layouts/MainLayout';
 
 // Data and Hooks
 import { useUrlSync } from './data/useUrlSync';
 
 export function AppShell() {
   const activeView = useAtomValue(activeViewAtom);
-  const layoutMode = useAtomValue(layoutModeAtom);
   const workflow = useAtomValue(workflowStateAtom);
   const setCurrentTime = useSetAtom(currentTimeAtom);
   const addToast = useSetAtom(addToastAtom);
@@ -89,21 +85,6 @@ export function AppShell() {
 
   const mainContent = renderMainContent(activeView);
 
-  const renderAppShell = () => {
-    switch (layoutMode) {
-      case 'classic':
-        return <ClassicLayout>{mainContent}</ClassicLayout>;
-      case 'notched':
-        return <NotchedLayout>{mainContent}</NotchedLayout>;
-      case 'overlapping':
-        return <OverlappingLayout>{mainContent}</OverlappingLayout>;
-      case 'minimalist':
-        return <MinimalistLayout>{mainContent}</MinimalistLayout>;
-      default:
-        return <ClassicLayout>{mainContent}</ClassicLayout>;
-    }
-  };
-
   return (
     <>
       <motion.div
@@ -113,7 +94,7 @@ export function AppShell() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {renderAppShell()}
+        <MainLayout>{mainContent}</MainLayout>
       </motion.div>
 
       {/* Render global modal overlays outside the layout */}

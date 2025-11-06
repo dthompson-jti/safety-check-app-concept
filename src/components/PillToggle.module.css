@@ -1,0 +1,56 @@
+/* src/components/PillToggle.module.css */
+
+.pillToggleContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--surface-bg-tertiary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-lg);
+  padding: 1px;
+  flex-shrink: 0;
+}
+
+.pillButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 var(--spacing-3);
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--surface-fg-quaternary);
+  /* Establishes a stacking context so its children can be layered. */
+  position: relative;
+  z-index: 2; /* The button itself is the top-most layer. */
+  transition: color 0.25s ease;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pillButton.active {
+  color: var(--control-fg-secondary);
+  font-weight: 600;
+}
+
+.activePill {
+  position: absolute;
+  /* Fills the parent button completely. */
+  inset: 0;
+  background-color: var(--surface-bg-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--surface-shadow-pill);
+  /* The animated pill sits behind the label but inside the button. */
+  z-index: 1;
+}
+
+.pillLabel {
+  /* This ensures the text is rendered on top of the animated pill. */
+  position: relative;
+  z-index: 2;
+}

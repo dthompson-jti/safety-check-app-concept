@@ -1,13 +1,16 @@
 /* src/features/SafetyCheckSchedule/CheckCard.module.css */
+
+/* FIX: Complete redesign to match the new list item style */
+
 .checkCard {
   display: flex;
-  align-items: stretch;
+  align-items: center; /* Vertically center content */
+  gap: var(--spacing-3);
   background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
-  border-radius: var(--spacing-2);
-  overflow: hidden;
+  border-bottom: 1px solid var(--surface-border-secondary);
   position: relative;
-  transition: background-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+  transition: background-color 0.2s;
+  padding: var(--spacing-3) var(--spacing-4);
 }
 
 .checkCard:not([aria-disabled='true']) {
@@ -16,7 +19,6 @@
 
 .checkCard:not([aria-disabled='true']):hover {
   background-color: var(--surface-bg-primary_hover);
-  box-shadow: var(--surface-shadow-sm);
 }
 
 .checkCard[aria-disabled='true'] {
@@ -24,17 +26,17 @@
 }
 
 .statusIndicator {
-  flex-shrink: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 4px;
-  background-color: var(--surface-fg-tertiary); /* Default for pending */
+  background-color: var(--surface-border-secondary); /* Default for pending/missed */
 }
 
-/* Status colors */
+/* Status colors for the indicator bar */
 .checkCard[data-status='late'] .statusIndicator {
   background-color: var(--surface-fg-alert-primary);
-}
-.checkCard[data-status='missed'] .statusIndicator {
-  background-color: var(--surface-fg-tertiary);
 }
 .checkCard[data-status='complete'] .statusIndicator,
 .checkCard[data-status='supplemental'] .statusIndicator {
@@ -43,26 +45,15 @@
 
 .content {
   flex-grow: 1;
-  padding: var(--spacing-3);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
 }
 
 .primaryInfo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-2);
   font-size: 1rem;
   font-weight: 600;
   color: var(--surface-fg-primary);
-}
-
-.primaryInfo span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .secondaryInfo {
@@ -79,22 +70,17 @@
 .checkCard[data-status='late'] .secondaryInfo {
   color: var(--surface-fg-alert-primary);
 }
-.checkCard[data-status='missed'] .secondaryInfo {
-  color: var(--surface-fg-secondary);
-}
 .checkCard[data-status='complete'] .secondaryInfo,
 .checkCard[data-status='supplemental'] .secondaryInfo {
   color: var(--surface-fg-success-primary);
 }
 
 .specialClassification {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-shrink: 0;
   color: var(--surface-fg-info-primary);
 }
 
 .specialClassification .material-symbols-rounded {
-  font-size: 20px;
-  font-variation-settings: 'FILL' 1;
+  font-size: 24px;
+  font-variation-settings: 'FILL' 0;
 }

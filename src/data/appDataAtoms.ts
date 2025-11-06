@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
-import { sortModeAtom, currentTimeAtom, historyFilterAtom } from './atoms';
+import { scheduleViewAtom, currentTimeAtom, historyFilterAtom } from './atoms';
 
 // =================================================================
 //                 Mock Data Store
@@ -28,20 +28,20 @@ const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOS
 
 const mockChecks: SafetyCheck[] = [
   // Late check (will become overdue)
-  { id: 'chk1', resident: mockResidents[0], status: 'pending', dueDate: inNMinutes(-2), walkingOrderIndex: 1, specialClassification: { type: 'SR', details: 'Fall Risk' } },
-  // Due soon
-  { id: 'chk2', resident: mockResidents[1], status: 'pending', dueDate: inNMinutes(10), walkingOrderIndex: 2 },
-  // Upcoming
-  { id: 'chk3', resident: mockResidents[2], status: 'pending', dueDate: inNMinutes(30), walkingOrderIndex: 3 },
-  { id: 'chk4', resident: mockResidents[3], status: 'pending', dueDate: inNMinutes(90), walkingOrderIndex: 4 },
-  // Completed
-  { id: 'chk5', resident: mockResidents[4], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 0, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.', specialClassification: { type: 'SR', details: 'Medical Alert' } },
+  { id: 'chk1', resident: mockResidents[0], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SR', details: 'Fall Risk' } },
   // Missed check (well past due)
-  { id: 'chk6', resident: mockResidents[5], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 6 },
-  { id: 'chk7', resident: mockResidents[6], status: 'pending', dueDate: inNMinutes(240), walkingOrderIndex: 7 },
-  { id: 'chk8', resident: mockResidents[7], status: 'pending', dueDate: inNMinutes(270), walkingOrderIndex: 8 },
-  { id: 'chk9', resident: mockResidents[8], status: 'pending', dueDate: inNMinutes(300), walkingOrderIndex: 9 },
-  { id: 'chk10', resident: mockResidents[9], status: 'pending', dueDate: inNMinutes(360), walkingOrderIndex: 10 },
+  { id: 'chk6', resident: mockResidents[5], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 2 },
+  // Due soon
+  { id: 'chk2', resident: mockResidents[1], status: 'pending', dueDate: inNMinutes(9.5), walkingOrderIndex: 3 },
+  // Upcoming
+  { id: 'chk3', resident: mockResidents[2], status: 'pending', dueDate: inNMinutes(29.5), walkingOrderIndex: 4 },
+  { id: 'chk4', resident: mockResidents[3], status: 'pending', dueDate: inNMinutes(89.5), walkingOrderIndex: 5 },
+  { id: 'chk7', resident: mockResidents[6], status: 'pending', dueDate: inNMinutes(239.5), walkingOrderIndex: 6 },
+  { id: 'chk8', resident: mockResidents[7], status: 'pending', dueDate: inNMinutes(269.5), walkingOrderIndex: 7 },
+  { id: 'chk9', resident: mockResidents[8], status: 'pending', dueDate: inNMinutes(299.5), walkingOrderIndex: 8 },
+  { id: 'chk10', resident: mockResidents[9], status: 'pending', dueDate: inNMinutes(359.5), walkingOrderIndex: 9 },
+  // Completed
+  { id: 'chk5', resident: mockResidents[4], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 11, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.', specialClassification: { type: 'SR', details: 'Medical Alert' } },
 ];
 
 // =================================================================
@@ -89,7 +89,8 @@ export const dispatchActionAtom = atom(
         case 'CHECK_COMPLETE': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
-            check.status = 'complete';
+            const isLate = new Date(action.payload.completionTime) > new Date(check.dueDate);
+            check.status = isLate ? 'late' : 'complete';
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = action.payload.status;
             check.notes = action.payload.notes;
@@ -127,32 +128,29 @@ export const dispatchActionAtom = atom(
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const checks = get(appDataAtom).checks;
   const timeNow = get(currentTimeAtom).getTime();
-  const fifteenMinutesFromNow = timeNow + 15 * 60 * 1000;
   const sixtyMinutesAgo = timeNow - 60 * 60 * 1000;
 
-  // Update status based on current time for live updates
   return checks.map(check => {
     if (check.status === 'complete' || check.status === 'supplemental') {
       return check;
     }
     const dueTime = new Date(check.dueDate).getTime();
-    let newStatus: SafetyCheckStatus = 'pending';
+    const updatedCheck = { ...check };
 
     if (dueTime < sixtyMinutesAgo) {
-      newStatus = 'missed';
+      updatedCheck.status = 'missed';
     } else if (dueTime < timeNow) {
-      newStatus = 'late';
-    } else if (dueTime < fifteenMinutesFromNow) {
-      newStatus = 'pending'; // Treat "due-soon" as a pending state for data, let UI handle presentation
+      updatedCheck.status = 'late';
+    } else {
+      updatedCheck.status = 'pending';
     }
-    return { ...check, status: newStatus };
+    return updatedCheck;
   });
 });
 
 export const sortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
-  const mode = get(sortModeAtom);
-  const sorted = [...checks];
+  const mode = get(scheduleViewAtom);
 
   const statusOrder: Record<SafetyCheckStatus, number> = {
     late: 0,
@@ -162,16 +160,28 @@ export const sortedChecksAtom = atom((get) => {
     supplemental: 4,
   };
 
-  if (mode === 'dueTime') {
+  // FIX: Implement more robust sorting logic that handles view changes correctly.
+  if (mode === 'time') {
+    const sorted = [...checks];
     sorted.sort((a, b) => {
       const statusDiff = statusOrder[a.status] - statusOrder[b.status];
       if (statusDiff !== 0) return statusDiff;
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
     });
-  } else { // 'walkingOrder'
-    sorted.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
+    return sorted;
+  } else { // 'route'
+    const actionable = checks.filter(c => c.status === 'late' || c.status === 'missed' || c.status === 'pending');
+    const nonActionable = checks.filter(c => c.status === 'complete' || c.status === 'supplemental');
+
+    actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
+    nonActionable.sort((a, b) => {
+      const timeB = b.lastChecked ? new Date(b.lastChecked).getTime() : 0;
+      const timeA = a.lastChecked ? new Date(a.lastChecked).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    return [...actionable, ...nonActionable];
   }
-  return sorted;
 });
 
 export const groupedChecksAtom = atom((get) => {
@@ -221,17 +231,14 @@ export const groupedHistoryAtom = atom((get) => {
   const allChecks = get(safetyChecksAtom);
   const filter = get(historyFilterAtom);
 
-  // 1. Filter for historical checks
   let historicalChecks = allChecks.filter(c => c.status !== 'pending');
 
-  // 2. Apply toggle group filter
   if (filter === 'lateOrMissed') {
     historicalChecks = historicalChecks.filter(c => c.status === 'late' || c.status === 'missed');
   } else if (filter === 'supplemental') {
     historicalChecks = historicalChecks.filter(c => c.status === 'supplemental');
   }
 
-  // 3. Sort chronologically descending
   historicalChecks.sort((a, b) => {
     const dateA = new Date(a.lastChecked || a.dueDate).getTime();
     const dateB = new Date(b.lastChecked || b.dueDate).getTime();
@@ -242,7 +249,6 @@ export const groupedHistoryAtom = atom((get) => {
     return { groupCounts: [], groups: [], flattenedChecks: [] };
   }
 
-  // 4. Group by date
   const grouped = historicalChecks.reduce((acc, check) => {
     const checkDate = new Date(check.lastChecked || check.dueDate);
     const groupName = formatDateGroup(checkDate);

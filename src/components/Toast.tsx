@@ -1,17 +1,20 @@
 // src/components/Toast.tsx
-import React from 'react';
-import * as RadixToast from '@radix-ui/react-toast';
-import { Toast as ToastType } from '../data/toastAtoms';
+import * as ToastPrimitive from '@radix-ui/react-toast';
 
-interface ToastProps {
-  toast: ToastType;
+interface ToastMessageProps {
+  message: string;
+  icon: string;
 }
 
-export const Toast: React.FC<ToastProps> = ({ toast }) => {
+// This component renders a single toast message.
+export const ToastMessage = ({ message, icon }: ToastMessageProps) => {
   return (
-    <RadixToast.Root className="toast-root">
-      <span className="material-symbols-rounded">{toast.icon}</span>
-      <RadixToast.Description>{toast.message}</RadixToast.Description>
-    </RadixToast.Root>
+    <ToastPrimitive.Root className="toast-root" duration={5000}>
+        <span className="material-symbols-rounded">{icon}</span>
+        <ToastPrimitive.Description>{message}</ToastPrimitive.Description>
+        <ToastPrimitive.Close className="toast-close-button" aria-label="Close">
+            <span className="material-symbols-rounded">close</span>
+        </ToastPrimitive.Close>
+    </ToastPrimitive.Root>
   );
 };

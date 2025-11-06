@@ -1,19 +1,16 @@
 // src/features/Settings/SettingsView.tsx
 import { useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
-import { sessionAtom, layoutModeAtom, scheduleLayoutAtom } from '../../data/atoms';
-import { DeveloperSettingsView } from './DeveloperSettingsView';
+import { sessionAtom } from '../../data/atoms';
 import { AdminSettingsView } from './AdminSettingsView';
 import styles from './SettingsView.module.css';
 
-type SettingsScreen = 'master' | 'developer' | 'admin';
+type SettingsScreen = 'master' | 'admin';
 
 export const SettingsView = () => {
   const [activeScreen, setActiveScreen] = useState<SettingsScreen>('master');
   const setSession = useSetAtom(sessionAtom);
-  const layoutMode = useAtomValue(layoutModeAtom);
-  const scheduleLayout = useAtomValue(scheduleLayoutAtom);
 
   const handleLogout = () => {
     setSession({ isAuthenticated: false, userName: null });
@@ -63,16 +60,6 @@ export const SettingsView = () => {
             </header>
 
             <div className={styles.settingsGroup}>
-              <button className={styles.settingsItem} onClick={() => navigateTo('developer')}>
-                <span className={styles.itemLabel}>Developer Options</span>
-                <div className={styles.itemValue}>
-                  <span>
-                    {layoutMode.charAt(0).toUpperCase() + layoutMode.slice(1)},{' '}
-                    {scheduleLayout.charAt(0).toUpperCase() + scheduleLayout.slice(1)}
-                  </span>
-                  <span className="material-symbols-rounded">chevron_right</span>
-                </div>
-              </button>
               <button className={styles.settingsItem} onClick={() => navigateTo('admin')}>
                 <span className={styles.itemLabel}>Admin Tools</span>
                 <div className={styles.itemValue}>
@@ -89,19 +76,6 @@ export const SettingsView = () => {
                 Log Out
               </button>
             </div>
-          </motion.div>
-        ) : activeScreen === 'developer' ? (
-          <motion.div
-            key="developer"
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: 'tween', ease: 'easeInOut', duration: 0.3 }}
-            style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
-          >
-            <DeveloperSettingsView onBack={navigateBack} />
           </motion.div>
         ) : (
           <motion.div

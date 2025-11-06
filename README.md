@@ -25,8 +25,8 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 ## 3. Prototype Features
 
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow.
--   **Toggleable App Layouts:** Four distinct navigation paradigms (Classic FAB, Notched Bar, etc.) selectable from the **Settings screen**.
--   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and multiple, toggleable card layouts (List, Card, Priority).
+-   **Floating Header Navigation:** The application uses a single, downselected navigation paradigm featuring a translucent, full-width header that remains fixed at the top of the viewport. This header contains primary navigation, the main schedule view toggle, and an action button for supplemental checks.
+-   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and two sorting modes (Time and Route).
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes.
 -   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature.
 -   **Comprehensive History View:** A complete, filterable, and chronologically-grouped view of all past check activity.

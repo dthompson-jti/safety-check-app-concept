@@ -12,12 +12,6 @@ export type AppView = 'dashboard' | 'checks' | 'history' | 'settings';
 // The single source of truth for which view is currently active
 export const activeViewAtom = atom<AppView>('dashboard');
 
-// Defines the four high-level layout patterns for the app shell
-export type LayoutMode = 'classic' | 'notched' | 'overlapping' | 'minimalist';
-
-// The single source of truth for which layout is currently active
-export const layoutModeAtom = atom<LayoutMode>('classic');
-
 // =================================================================
 //                      Session State
 // =================================================================
@@ -36,11 +30,9 @@ export const sessionAtom = atom<Session>({
 //                   Schedule View State
 // =================================================================
 
-export type SortMode = 'dueTime' | 'walkingOrder';
-export const sortModeAtom = atom<SortMode>('dueTime');
-
-export type ScheduleLayout = 'list' | 'card' | 'priority';
-export const scheduleLayoutAtom = atom<ScheduleLayout>('list');
+// Defines the two primary sort/view modes for the main dashboard schedule.
+export type ScheduleView = 'time' | 'route';
+export const scheduleViewAtom = atom<ScheduleView>('time');
 
 // Atom for the "live" timer, updated by a single global interval
 export const currentTimeAtom = atom(new Date());
@@ -91,8 +83,5 @@ export const isWriteNfcModalOpenAtom = atom(false);
 // Atom to control the visibility of the new "Select Room" modal for supplemental checks
 export const isSelectRoomModalOpenAtom = atom(false);
 
-// Atom to control the visibility of the side menu in MinimalistLayout
+// Atom to control the visibility of the side menu
 export const isSideMenuOpenAtom = atom(false);
-
-// NEW: Atom for layouts to report their footer height to global components (like Toasts)
-export const footerHeightAtom = atom(0);

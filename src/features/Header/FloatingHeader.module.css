@@ -1,0 +1,22 @@
+/* src/features/Header/FloatingHeader.module.css */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Button (44px) + vertical padding (8px * 2) = 60px total height */
+  height: 60px; 
+  padding: 8px 12px;
+  
+  background-color: var(--surface-bg-header-translucent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* For Safari compatibility */
+  
+  border-bottom: 1px solid var(--surface-border-secondary);
+}

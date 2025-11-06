@@ -17,6 +17,8 @@
   --surface-bg-quaternary: var(--primitives-grey-60);
   --surface-bg-primary-solid: var(--primitives-grey-950);
   --surface-bg-secondary-solid: var(--primitives-grey-600);
+  /* The translucent, blurred background for the main app header. */
+  --surface-bg-header-translucent: rgba(249, 249, 249, 0.9);
   --surface-bg-brand-primary: var(--primitives-theme-50);
   --surface-bg-brand-solid: var(--primitives-theme-600);
   --surface-bg-brand-solid_hover: var(--primitives-theme-700);
@@ -90,6 +92,8 @@
   --surface-shadow-xl: 0 8px 10px -4px #0A0C1214, 0 16px 24px -8px #0A0C1207, 0 0 1px 0 #0A0C120A;
   --surface-shadow-2xl: 0 20px 24px -8px #0A0C122D, 0 0 1px 0 #0A0C120A;
   --surface-shadow-3xl: 0 32px 64px -16px #0A0C1223, 0 0 1px 0 #0A0C120A;
+  --surface-shadow-pill: 0px 1px 3px 0px rgba(10, 13, 18, 0.1), 0px 1px 2px -1px rgba(10, 13, 18, 0.1);
+
   
   /* ----------------------------------------- */
   /*             SEMANTIC - CONTROL            */
@@ -109,9 +113,9 @@
   --control-bg-tertiary: var(--utility-alpha-grey-10);
   --control-bg-tertiary-hover: var(--utility-alpha-grey-30);
   --control-bg-tertiary-pressed: var(--utility-alpha-grey-60);
-  --control-bg-quaternary: transparent; /* Explicitly transparent at rest for components like buttons */
-  --control-bg-quaternary-hover: var(--utility-alpha-grey-30); /* CORRECTED based on Figma */
-  --control-bg-quaternary-pressed: var(--utility-alpha-grey-60); /* CORRECTED based on Figma */
+  --control-bg-quaternary: transparent;
+  --control-bg-quaternary-hover: var(--utility-alpha-grey-30);
+  --control-bg-quaternary-pressed: var(--utility-alpha-grey-60);
   --control-bg-on-solid-hover: var(--utility-alpha-white-20);
   --control-bg-on-solid-pressed: var(--utility-alpha-white-40);
   --control-bg-disabled: var(--primitives-grey-50);

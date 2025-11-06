@@ -14,6 +14,12 @@ The CSS Box Model is not optional knowledge. Before using `position: absolute` o
 -   **How will it get its width and height?** Have I provided explicit dimensions (`width`, `height`) or constraints (`top`, `right`, `bottom`, `left`)?
 -   Never assume an element will "just know" its size. You must declare it.
 
+##### The Fixed Header & Spacer Contract
+When an element is taken out of the document flow with `position: fixed` (like our main `FloatingHeader`), it no longer pushes content down. To prevent the initial content from being hidden underneath it, we use a "spacer" pattern.
+
+-   **The Contract:** The scrollable container (`<main>`) must have `padding-top: 0` to allow content to scroll fully behind the header. The first element *inside* the scrollable content must be a spacer `div` whose `height` is calculated to push the first real item below the header.
+-   **Example:** Our `ListView` uses a `ListHeader` component with `height: 76px` (60px for the header + 16px for margin) to correctly position the schedule on load. This is the canonical implementation of this pattern in the project.
+
 #### 2. Diagnose, Don't Guess
 
 When debugging a UI issue, follow this simple diagnostic process to find the root cause instead of guessing at solutions:

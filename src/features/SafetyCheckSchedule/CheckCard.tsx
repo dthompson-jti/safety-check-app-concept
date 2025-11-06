@@ -11,22 +11,32 @@ interface CheckCardProps {
   check: SafetyCheck;
 }
 
+// FIX: Update time formatting logic to match the new design screenshot.
 const formatRelativeTime = (dueDate: Date, now: Date, status: SafetyCheckStatus): string => {
   if (status === 'complete' || status === 'supplemental') return 'Completed';
   if (status === 'missed') return 'Missed';
 
   const diffSeconds = Math.round((dueDate.getTime() - now.getTime()) / 1000);
-  const diffMins = Math.round(diffSeconds / 60);
 
-  if (diffMins < 0) {
-    return `Overdue by ${Math.abs(diffMins)}m ${Math.abs(diffSeconds % 60)}s`;
+  if (status === 'late') {
+    const absSeconds = Math.abs(diffSeconds);
+    const mins = Math.floor(absSeconds / 60);
+    const secs = absSeconds % 60;
+    return `Overdue by ${mins}m ${secs}s`;
   }
-  if (diffMins < 60) {
-    return `Due in ${diffMins}m ${diffSeconds % 60}s`;
+
+  // Pending checks
+  if (diffSeconds < 60) {
+    return `Due in ${diffSeconds}s`;
   }
-  const diffHours = Math.floor(diffMins / 60);
-  const remainingMins = diffMins % 60;
-  return `Due in ${diffHours}h ${remainingMins}m`;
+  if (diffSeconds < 3600) {
+    const mins = Math.floor(diffSeconds / 60);
+    const secs = diffSeconds % 60;
+    return `Due in ${mins}m ${secs}s`;
+  }
+  const hours = Math.floor(diffSeconds / 3600);
+  const mins = Math.floor((diffSeconds % 3600) / 60);
+  return `Due in ${hours}h ${mins}m`;
 };
 
 export const CheckCard = ({ check }: CheckCardProps) => {
@@ -46,6 +56,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   };
 
   return (
+    // FIX: Update JSX structure to match the new design
     <motion.div
       layout
       className={styles.checkCard}
@@ -56,21 +67,19 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       <div className={styles.statusIndicator} />
       <div className={styles.content}>
         <div className={styles.primaryInfo}>
-          <span>
-            {check.resident.location} &middot; {check.resident.name}
-          </span>
-          {check.specialClassification && (
-            <Tooltip content={check.specialClassification.details}>
-              <div className={styles.specialClassification}>
-                <span className="material-symbols-rounded">shield_person</span>
-              </div>
-            </Tooltip>
-          )}
+          {check.resident.location} &middot; {check.resident.name}
         </div>
         <div className={styles.secondaryInfo}>
           <span>{statusText}</span> &middot; <span>{relativeTime}</span>
         </div>
       </div>
+      {check.specialClassification && (
+        <Tooltip content={check.specialClassification.details}>
+          <div className={styles.specialClassification}>
+            <span className="material-symbols-rounded">shield_person</span>
+          </div>
+        </Tooltip>
+      )}
     </motion.div>
   );
 };
