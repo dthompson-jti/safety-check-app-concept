@@ -55,11 +55,13 @@
 }
 
 .dropdownIcon {
-  font-size: 20px;
+  font-size: 18px; /* FIX: Reduced size by one stop (from 20px to 18px) */
   position: relative;
   z-index: 2;
   /* These properties ensure that as the icon's container animates to width: 0,
-     the text inside ("south") is cleanly clipped instead of overflowing. */
+     the text inside is cleanly clipped instead of overflowing. */
   overflow: hidden;
   white-space: nowrap;
+  /* FIX: Ensure the optical size matches the new font size */
+  font-variation-settings: 'opsz' 18;
 }

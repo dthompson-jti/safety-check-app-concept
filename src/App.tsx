@@ -6,7 +6,6 @@ import { sessionAtom } from './data/atoms';
 
 // Components
 import { AppShell } from './AppShell';
-// REORG: Updated import path for LoginView
 import { LoginView } from './features/Session/LoginView';
 import { ToastContainer } from './components/ToastContainer';
 

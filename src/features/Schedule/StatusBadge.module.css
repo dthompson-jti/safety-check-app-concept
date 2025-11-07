@@ -38,8 +38,7 @@
   border-color: var(--primitives-green-200);
 }
 
-/* Variant: Due / Pending (Default) */
-.badge[data-status='pending'],
+/* Variant: Missed (uses default grey) */
 .badge[data-status='missed'] {
   background: var(--primitives-grey-50);
   color: var(--surface-fg-secondary);

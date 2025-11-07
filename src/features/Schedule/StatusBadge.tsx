@@ -18,6 +18,11 @@ const statusTextMap: Record<SafetyCheckStatus, string> = {
 };
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+  // Do not render a badge for the default 'pending' state.
+  if (status === 'pending') {
+    return null;
+  }
+
   const text = statusTextMap[status] || 'Scheduled';
 
   return (

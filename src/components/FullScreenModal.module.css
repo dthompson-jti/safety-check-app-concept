@@ -11,7 +11,8 @@
 .backdrop {
   position: absolute;
   inset: 0;
-  background-color: var(--surface-bg-secondary);
+  /* FIX: Backdrop is now transparent as the content slides over */
+  background-color: transparent;
 }
 
 .modalContainer {

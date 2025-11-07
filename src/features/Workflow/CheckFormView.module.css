@@ -117,8 +117,10 @@
   font-weight: 500;
   line-height: 1.5;
 }
+/* FIX: Ensure all text, including strong tags, inherits the warning color */
+.classificationDetails p,
 .classificationDetails p strong {
-  color: var(--surface-fg-primary);
+  color: var(--surface-fg-warning-primary);
 }
 
 

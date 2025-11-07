@@ -1,16 +1,17 @@
 /* src/features/SafetyCheckSchedule/CheckCard.module.css */
 
 /* --- Keyframe Animations for State Change Flash --- */
+/* FIX: Updated animation to be a larger, fading pulse */
 @keyframes card-flash-due-soon {
   0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(206, 100%, 40%, 0.7); }
-  60% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(206, 100%, 40%, 0.7); }
-  100% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(206, 100%, 40%, 0); }
+  60% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(206, 100%, 40%, 0); }
+  100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(206, 100%, 40%, 0); }
 }
 
 @keyframes card-flash-late {
   0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(30, 100%, 40%, 0.7); }
-  60% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(30, 100%, 40%, 0.7); }
-  100% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(30, 100%, 40%, 0); }
+  60% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
+  100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
 }
 
 
@@ -23,14 +24,17 @@
   transition: background-color 0.2s, box-shadow 0.2s;
   overflow: hidden;
   padding: 8px 16px 8px 20px;
+  /* FIX: Added default border */
+  border: 1px solid var(--surface-border-secondary);
 }
 
 /* --- Trigger Animations on State Change --- */
 .checkCard[data-status='due-soon'] {
-  animation: card-flash-due-soon 0.8s ease-out;
+  /* FIX: Use longer animation duration */
+  animation: card-flash-due-soon 1s ease-out;
 }
 .checkCard[data-status='late'] {
-  animation: card-flash-late 0.8s ease-out;
+  animation: card-flash-late 1s ease-out;
 }
 
 
@@ -38,9 +42,11 @@
   cursor: pointer;
 }
 
+/* FIX: Updated hover state with inset shadow */
 .checkCard:not([aria-disabled='true']):hover {
   background-color: var(--surface-bg-primary_hover);
-  box-shadow: var(--surface-shadow-md);
+  border-color: var(--control-border-tertiary-hover);
+  box-shadow: var(--surface-shadow-md), inset 0 -1px 0 0 var(--control-border-tertiary-hover);
 }
 
 .statusIndicator {
@@ -53,10 +59,12 @@
   transition: background-color 0.2s, width 0.2s;
 }
 
-/* The indicator is thicker for more urgent states. */
-.statusIndicator[data-status='pending'],
-.statusIndicator[data-status='due-soon'] {
+/* FIX: The indicator is thicker for more urgent states. */
+.statusIndicator[data-status='pending'] {
   width: 2px;
+}
+.statusIndicator[data-status='due-soon'] {
+  width: 3px;
 }
 .statusIndicator[data-status='late'] {
   width: 4px;
@@ -93,13 +101,8 @@
   min-width: 0;
 }
 
-/*
-  This locally-scoped class is used to override the global icon style.
-  This pattern is robust and avoids conflicts with global selectors
-  that can be problematic within CSS module systems.
-*/
 .filledIcon {
-  color: var(--surface-fg-primary);
+  color: var(--surface-fg-warning-primary); /* Changed to warning color for better visibility */
   font-size: 16px;
   font-variation-settings: 
     'FILL' 1,

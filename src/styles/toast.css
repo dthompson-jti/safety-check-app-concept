@@ -61,8 +61,10 @@
   padding-left: var(--spacing-4);
   cursor: pointer;
   border-radius: 100%;
+  /* FIX: Apply fixed dimensions to prevent distortion */
   width: 24px;
   height: 24px;
+  flex-shrink: 0; /* Prevent the button from shrinking */
   display: flex;
   align-items: center;
   justify-content: center;

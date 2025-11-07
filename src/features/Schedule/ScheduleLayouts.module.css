@@ -8,7 +8,7 @@
 
 /* FIX: Add a wrapper class to provide vertical spacing between check cards */
 .cardWrapper {
-  padding-bottom: var(--spacing-3); /* 12px */
+  padding-bottom: var(--spacing-2); /* 8px */
 }
 
 .cardGrid {

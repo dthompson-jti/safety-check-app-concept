@@ -30,6 +30,15 @@ export const PillToggle = () => {
               />
             )}
             
+            {/* FIX: Moved label before the icon */}
+            <motion.span 
+              layout="position" 
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.2 }}
+              className={styles.pillLabel}
+            >
+              {option.label}
+            </motion.span>
+
             <AnimatePresence>
               {isActive && (
                 <motion.span
@@ -39,18 +48,10 @@ export const PillToggle = () => {
                   exit={{ opacity: 0, width: 0 }}
                   transition={{ type: 'tween', ease: 'easeInOut', duration: 0.2 }}
                 >
-                  south
+                  arrow_downward_alt
                 </motion.span>
               )}
             </AnimatePresence>
-            
-            <motion.span 
-              layout="position" 
-              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.2 }}
-              className={styles.pillLabel}
-            >
-              {option.label}
-            </motion.span>
           </button>
         );
       })}

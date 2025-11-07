@@ -17,18 +17,21 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
       {isOpen && (
         <motion.div
           className={styles.modalWrapper}
-          initial={{ scale: 1.3, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 1.3, opacity: 0 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
           <div className={styles.backdrop} />
           <div className={styles.modalContainer}>
             <header className={styles.header}>
-              <h2>{title}</h2>
-              <Button variant="quaternary" size="m" iconOnly onClick={onClose} aria-label="Close">
-                <span className="material-symbols-rounded">close</span>
+              {/* FIX: Replaced 'close' button on right with 'back' button on left */}
+              <Button variant="quaternary" size="m" iconOnly onClick={onClose} aria-label="Back">
+                <span className="material-symbols-rounded">arrow_back</span>
               </Button>
+              <h2>{title}</h2>
+              {/* Empty div to balance flexbox and keep title centered */}
+              <div style={{ width: '38px' }} />
             </header>
             <main className={styles.content}>{children}</main>
           </div>

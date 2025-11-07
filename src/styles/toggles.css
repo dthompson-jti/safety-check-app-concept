@@ -1,5 +1,4 @@
 /* src/styles/toggles.css */
-/* CACHE BUST: v14 - Added active state for stateless action buttons */
 
 /*
   This file provides global, unified styles for toggle buttons.
@@ -62,9 +61,9 @@
 
 /* On hover, bring the item forward so its border is on top */
 .toggle-group .toggle-group-item:not([aria-checked='true']):hover:not([data-disabled]) {
-  background-color: var(--control-bg-tertiary-hover);
-  color: var(--control-fg-tertiary-hover);
-  border-color: var(--control-border-tertiary-hover);
+  background-color: var(--control-bg-secondary-hover);
+  color: var(--control-fg-secondary_hover);
+  border-color: var(--control-border-secondary-hover);
   z-index: 1;
 }
 
@@ -125,5 +124,10 @@
   correct in the selected state.
 */
 .toggle-group .toggle-group-item[aria-checked='true'] .material-symbols-rounded {
+  color: var(--control-fg-selected);
+}
+
+/* FIX: Add a high-specificity rule for the active (pressed) state icon color */
+.toggle-group .toggle-group-item:not([aria-checked='true']):active:not([data-disabled]) .material-symbols-rounded {
   color: var(--control-fg-selected);
 }

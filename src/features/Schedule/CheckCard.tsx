@@ -36,6 +36,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const { residents, specialClassification, status } = check;
   const roomName = residents[0]?.location || 'N/A';
 
+  // FIX: Logic to determine if the indicator bar should be shown.
   const showIndicator = status !== 'complete' && status !== 'supplemental' && status !== 'missed';
 
   return (
