@@ -16,16 +16,12 @@ const filterOptions: { value: HistoryFilter; label: string; icon: string }[] = [
 
 export const HistoryView = () => {
   const [filter, setFilter] = useAtom(historyFilterAtom);
-  // FIX: Get the entire object from the atom first to allow for type guarding.
   const historyData = useAtomValue(groupedHistoryAtom);
 
-  // This check now acts as a type guard. If this condition is false,
-  // TypeScript knows that groupCounts, groups, and flattenedChecks exist.
   if (historyData.flattenedChecks.length === 0) {
     return (
       <div className={styles.historyViewContainer}>
         <header className={styles.header}>
-          <h2>History</h2>
           <div className={styles.filterControls}>
             <IconToggleGroup
               options={filterOptions}
@@ -44,13 +40,11 @@ export const HistoryView = () => {
     );
   }
 
-  // FIX: Destructure the properties *after* the type guard.
   const { groupCounts, groups, flattenedChecks } = historyData;
 
   return (
     <div className={styles.historyViewContainer}>
       <header className={styles.header}>
-        <h2>History</h2>
         <div className={styles.filterControls}>
           <IconToggleGroup
             options={filterOptions}

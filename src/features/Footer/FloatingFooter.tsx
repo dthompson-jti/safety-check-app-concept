@@ -1,7 +1,7 @@
 // src/features/Footer/FloatingFooter.tsx
 import { useLayoutEffect, useRef } from 'react';
-import { useSetAtom } from 'jotai';
-import { workflowStateAtom } from '../../data/atoms';
+import { useSetAtom, useAtomValue } from 'jotai';
+import { workflowStateAtom, appConfigAtom } from '../../data/atoms';
 import { Button } from '../../components/Button';
 import styles from './FloatingFooter.module.css';
 
@@ -12,6 +12,7 @@ import styles from './FloatingFooter.module.css';
  */
 export const FloatingFooter = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
+  const appConfig = useAtomValue(appConfigAtom);
   const footerRef = useRef<HTMLElement>(null);
 
   // This effect measures the footer's height after it renders and sets a
@@ -24,16 +25,16 @@ export const FloatingFooter = () => {
         document.documentElement.style.setProperty('--footer-height', `${height}px`);
       }
     };
-    
+
     updateHeight(); // Initial measurement
-    
+
     // Also update on resize in case content wraps
     window.addEventListener('resize', updateHeight);
 
     return () => {
       document.documentElement.style.removeProperty('--footer-height');
       window.removeEventListener('resize', updateHeight);
-    }
+    };
   }, []);
 
   const handleScanClick = () => {
@@ -42,13 +43,14 @@ export const FloatingFooter = () => {
     setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
   };
 
+  // Conditionally render the footer based on the scan mode
+  if (appConfig.scanMode === 'nfc') {
+    return null;
+  }
+
   return (
     <footer className={styles.footer} ref={footerRef}>
-      <Button
-        variant="primary"
-        className={styles.scanButton}
-        onClick={handleScanClick}
-      >
+      <Button variant="primary" className={styles.scanButton} onClick={handleScanClick}>
         <span className="material-symbols-rounded">qr_code_scanner</span>
         <span>Scan</span>
       </Button>

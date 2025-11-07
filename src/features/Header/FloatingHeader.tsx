@@ -1,12 +1,12 @@
 // src/features/Header/FloatingHeader.tsx
 import { useAtom, useSetAtom } from 'jotai';
-import { appViewAtom } from '../../data/atoms';
+import { appViewAtom, isSelectRoomModalOpenAtom } from '../../data/atoms';
 import { PillToggle } from '../../components/PillToggle';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 import { Popover } from '../../components/Popover';
 import { ActionMenu, ActionMenuItem } from '../../components/ActionMenu';
-import { isSelectRoomModalOpenAtom } from '../../data/atoms';
+import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 import styles from './FloatingHeader.module.css';
 
 /**
@@ -33,7 +33,7 @@ export const FloatingHeader = () => {
       label: 'Another Action',
       onClick: () => {},
       disabled: true,
-    }
+    },
   ];
 
   const handleMenuClick = () => {
@@ -49,33 +49,28 @@ export const FloatingHeader = () => {
   return (
     <header className={styles.header}>
       <Tooltip content="Open Navigation">
-        <Button 
-          variant="tertiary" 
-          size="m" 
-          iconOnly 
-          onClick={handleMenuClick} 
+        <Button
+          variant="tertiary"
+          size="m"
+          iconOnly
+          onClick={handleMenuClick}
           aria-label="Open navigation menu"
         >
           <span className="material-symbols-rounded">menu</span>
         </Button>
       </Tooltip>
-      
-      <div className={styles.centerContent}>
-        {isDashboard && <PillToggle />}
-      </div>
 
-      <Popover trigger={
-        <Tooltip content="Add Actions">
-          <Button 
-            variant="tertiary" 
-            size="m" 
-            iconOnly 
-            aria-label="Add supplemental check"
-          >
-            <span className="material-symbols-rounded">add</span>
-          </Button>
-        </Tooltip>
-      }>
+      <div className={styles.centerContent}>{isDashboard ? <PillToggle /> : <ConnectionStatusIndicator />}</div>
+
+      <Popover
+        trigger={
+          <Tooltip content="Add Actions">
+            <Button variant="tertiary" size="m" iconOnly aria-label="Add supplemental check">
+              <span className="material-symbols-rounded">add</span>
+            </Button>
+          </Tooltip>
+        }
+      >
         <div className="menu-popover">
           <ActionMenu items={supplementalCheckItems} />
         </div>

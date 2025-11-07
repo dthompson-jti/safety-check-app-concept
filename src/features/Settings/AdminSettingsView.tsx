@@ -1,15 +1,27 @@
 // src/features/Settings/AdminSettingsView.tsx
-import { useSetAtom } from 'jotai';
-import { isWriteNfcModalOpenAtom } from '../../data/atoms';
+import { useAtom, useSetAtom } from 'jotai';
+import { isWriteNfcModalOpenAtom, appConfigAtom } from '../../data/atoms';
 import { Button } from '../../components/Button';
+import { IconToggleGroup } from '../../components/IconToggleGroup';
 import styles from './SettingsView.module.css';
 
 interface AdminSettingsViewProps {
   onBack: () => void;
 }
 
+// FIX: Add 'as const' to infer literal types ('qr', 'nfc') instead of 'string'.
+const scanModeOptions = [
+  { value: 'qr', label: 'QR Code', icon: 'qr_code_2' },
+  { value: 'nfc', label: 'NFC', icon: 'nfc' },
+] as const;
+
 export const AdminSettingsView = ({ onBack }: AdminSettingsViewProps) => {
   const setIsModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
+  const [appConfig, setAppConfig] = useAtom(appConfigAtom);
+
+  const handleScanModeChange = (scanMode: 'qr' | 'nfc') => {
+    setAppConfig((prev) => ({ ...prev, scanMode }));
+  };
 
   return (
     <div className={styles.detailViewWrapper}>
@@ -27,6 +39,16 @@ export const AdminSettingsView = ({ onBack }: AdminSettingsViewProps) => {
             <span className="material-symbols-rounded">chevron_right</span>
           </div>
         </button>
+        {/* New Scan Mode setting */}
+        <div className={styles.settingsItem}>
+          <span className={styles.itemLabel}>Scan Mode</span>
+          <IconToggleGroup
+            options={scanModeOptions}
+            value={appConfig.scanMode}
+            onValueChange={handleScanModeChange}
+            id="scan-mode-toggle"
+          />
+        </div>
       </div>
     </div>
   );

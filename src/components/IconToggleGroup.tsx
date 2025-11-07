@@ -9,7 +9,8 @@ interface IconToggleOption<T extends string> {
 }
 
 interface IconToggleGroupProps<T extends string> {
-  options: IconToggleOption<T>[];
+  // FIX: Accept a readonly array to be compatible with `as const` assertions.
+  options: readonly IconToggleOption<T>[];
   value: T;
   onValueChange: (value: T) => void;
   id?: string;

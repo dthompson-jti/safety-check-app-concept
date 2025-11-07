@@ -41,6 +41,7 @@ export const SettingsView = () => {
     setActiveScreen('master');
   };
 
+  // This wrapper ensures the content starts below the parent modal's header
   return (
     <div className={styles.settingsContainer}>
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
@@ -53,12 +54,8 @@ export const SettingsView = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', ease: 'easeInOut', duration: 0.3 }}
-            style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
+            style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, padding: 'var(--spacing-4)' }}
           >
-            <header className={styles.header}>
-              <h2>Settings</h2>
-            </header>
-
             <div className={styles.settingsGroup}>
               <button className={styles.settingsItem} onClick={() => navigateTo('admin')}>
                 <span className={styles.itemLabel}>Admin Tools</span>
@@ -69,10 +66,7 @@ export const SettingsView = () => {
             </div>
 
             <div className={styles.settingsGroup}>
-              <button
-                className={`${styles.settingsItem} ${styles.destructive}`}
-                onClick={handleLogout}
-              >
+              <button className={`${styles.settingsItem} ${styles.destructive}`} onClick={handleLogout}>
                 Log Out
               </button>
             </div>

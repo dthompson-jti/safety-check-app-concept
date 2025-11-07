@@ -5,9 +5,7 @@ import { AppView, appViewAtom } from '../data/atoms';
 import { FloatingHeader } from '../features/Header/FloatingHeader';
 import { FloatingFooter } from '../features/Footer/FloatingFooter';
 import { SideMenu } from '../features/NavBar/SideMenu';
-import { DashboardView } from '../features/Dashboard/DashboardView';
-import { HistoryView } from '../features/History/HistoryView';
-import { SettingsView } from '../features/Settings/SettingsView';
+import { ListView } from '../features/SafetyCheckSchedule/ListView';
 import styles from './MainLayout.module.css';
 
 // This map translates the semantic AppView state into a numeric index
@@ -16,9 +14,6 @@ const viewMap: Record<AppView, number> = {
   sideMenu: 0,
   dashboardTime: 1,
   dashboardRoute: 2,
-  // Non-carousel views default to the center panel's index for seamless transitions.
-  history: 1,
-  settings: 1,
 };
 
 /**
@@ -28,18 +23,7 @@ const viewMap: Record<AppView, number> = {
  */
 const ContentPanels = () => {
   const view = useAtomValue(appViewAtom);
-  const isCarouselView = ['sideMenu', 'dashboardTime', 'dashboardRoute'].includes(view);
   const viewIndex = viewMap[view];
-
-  // For standalone views like History, we render them directly without the carousel.
-  if (!isCarouselView) {
-    return (
-      <main className={styles.mainContent}>
-        {view === 'history' && <HistoryView />}
-        {view === 'settings' && <SettingsView />}
-      </main>
-    );
-  }
 
   // The "film strip" is a three-panel container that is translated horizontally
   // to show the correct view.
@@ -56,12 +40,12 @@ const ContentPanels = () => {
         <main className={styles.mainContent}>
           {/* Using a key is critical here. It tells React to treat this as a
               distinct component instance, preventing the vertical re-sort animation. */}
-          <DashboardView key="time" viewType="time" />
+          <ListView key="time" viewType="time" />
         </main>
       </div>
       <div className={styles.panel}>
         <main className={styles.mainContent}>
-          <DashboardView key="route" viewType="route" />
+          <ListView key="route" viewType="route" />
         </main>
       </div>
     </motion.div>

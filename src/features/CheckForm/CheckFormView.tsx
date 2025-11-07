@@ -1,8 +1,8 @@
 // src/features/CheckForm/CheckFormView.tsx
 import { useState, useMemo } from 'react';
-import { useSetAtom } from 'jotai';
+import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { WorkflowState, workflowStateAtom } from '../../data/atoms';
+import { WorkflowState, workflowStateAtom, connectionStatusAtom } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
@@ -22,6 +22,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
+  const connectionStatus = useAtomValue(connectionStatusAtom);
 
   const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState('');
@@ -33,7 +34,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const handleCancel = () => {
     setWorkflowState({ view: 'none' });
   };
-  
+
   const handleSetAll = (status: string) => {
     if (!status) return;
     const newStatuses = checkData.residents.reduce((acc, resident) => {
@@ -45,17 +46,24 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
   const handleSetIndividualStatus = (residentId: string, status: string) => {
     if (!status) return;
-    setStatuses(prev => ({ ...prev, [residentId]: status }));
+    setStatuses((prev) => ({ ...prev, [residentId]: status }));
   };
 
   const allResidentsHaveStatus = useMemo(() => {
-    return checkData.residents.length === Object.keys(statuses).length &&
-           checkData.residents.every(res => statuses[res.id]);
+    return (
+      checkData.residents.length === Object.keys(statuses).length &&
+      checkData.residents.every((res) => statuses[res.id])
+    );
   }, [statuses, checkData.residents]);
-
 
   const handleSave = () => {
     if (!allResidentsHaveStatus) return;
+
+    if (connectionStatus === 'offline') {
+      addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
+      setWorkflowState({ view: 'none' });
+      return;
+    }
 
     if (checkData.type === 'scheduled') {
       dispatch({
@@ -79,10 +87,10 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       });
       addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
     }
-    
+
     setWorkflowState({ view: 'none' });
   };
-  
+
   const headerTitle = useMemo(() => {
     if (checkData.residents.length > 1) {
       return `${checkData.roomName} - Multiple Residents`;
@@ -114,7 +122,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         </div>
 
         {checkData.residents.length > 1 && (
-           <div className={styles.formGroup}>
+          <div className={styles.formGroup}>
             <label>SET ALL TO</label>
             <IconToggleGroup
               id="set-all-status-group"

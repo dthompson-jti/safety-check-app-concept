@@ -1,13 +1,23 @@
 // src/AppShell.tsx
 import { useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { AnimatePresence } from 'framer-motion';
-import { workflowStateAtom, currentTimeAtom } from './data/atoms';
+import {
+  workflowStateAtom,
+  currentTimeAtom,
+  isHistoryModalOpenAtom,
+  isSettingsModalOpenAtom,
+  isDevToolsModalOpenAtom,
+} from './data/atoms';
 import { MainLayout } from './layouts/MainLayout';
 import { ScanView } from './features/Scanning/ScanView';
 import { CheckFormView } from './features/CheckForm/CheckFormView';
 import { WriteNfcTagModal } from './features/Admin/WriteNfcTagModal';
 import { SelectRoomModal } from './features/Admin/SelectRoomModal';
+import { FullScreenModal } from './components/FullScreenModal';
+import { HistoryView } from './features/History/HistoryView';
+import { SettingsView } from './features/Settings/SettingsView';
+import { DeveloperToolsView } from './features/Developer/DeveloperToolsView';
 
 /**
  * AppShell is the top-level component that orchestrates the entire UI.
@@ -17,6 +27,10 @@ import { SelectRoomModal } from './features/Admin/SelectRoomModal';
 export const AppShell = () => {
   const workflowState = useAtomValue(workflowStateAtom);
   const setCurrentTime = useSetAtom(currentTimeAtom);
+
+  const [isHistoryOpen, setIsHistoryOpen] = useAtom(isHistoryModalOpenAtom);
+  const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
+  const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
 
   // This effect starts a global timer to update the `currentTimeAtom`
   // every second. This drives all countdown timers in the application.
@@ -28,7 +42,7 @@ export const AppShell = () => {
     // Cleanup the interval when the component unmounts.
     return () => clearInterval(intervalId);
   }, [setCurrentTime]);
-  
+
   useEffect(() => {
     if (workflowState.view === 'form' && workflowState.residents && workflowState.residents.length > 0) {
       const location = workflowState.residents[0].location;
@@ -49,6 +63,17 @@ export const AppShell = () => {
 
       <WriteNfcTagModal />
       <SelectRoomModal />
+
+      {/* Render the new full-screen modals at the top level */}
+      <FullScreenModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} title="History">
+        <HistoryView />
+      </FullScreenModal>
+      <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
+        <SettingsView />
+      </FullScreenModal>
+      <FullScreenModal isOpen={isDevToolsOpen} onClose={() => setIsDevToolsOpen(false)} title="Developer Tools">
+        <DeveloperToolsView />
+      </FullScreenModal>
     </>
   );
-}
+};

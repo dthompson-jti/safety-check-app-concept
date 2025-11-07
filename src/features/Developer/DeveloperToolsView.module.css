@@ -1,0 +1,32 @@
+/* src/features/Developer/DeveloperToolsView.module.css */
+
+.container {
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.settingSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.sectionHeader {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.sectionHelper {
+  margin: 0;
+  color: var(--surface-fg-secondary);
+  line-height: 1.5;
+  font-size: 0.9em;
+}

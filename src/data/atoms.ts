@@ -7,9 +7,9 @@ import { Resident, SafetyCheck } from '../types';
 // =================================================================
 
 // This is the single source of truth for the application's primary view state.
-// It controls which panel is visible in the main carousel or if a standalone
-// view like 'history' should be rendered.
-export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute' | 'history' | 'settings';
+// It controls which panel is visible in the main carousel.
+// 'history' and 'settings' are removed as they are now modals.
+export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute';
 export const appViewAtom = atom<AppView>('dashboardTime');
 
 
@@ -49,13 +49,13 @@ export const historyFilterAtom = atom<HistoryFilter>('all');
 
 export type WorkflowState =
   | { view: 'none' }
-  | { 
-      view: 'scanning'; 
+  | {
+      view: 'scanning';
       isManualSelectionOpen: boolean;
       // When a user clicks a specific check card to start the workflow,
       // its ID is stored here. This allows the scanner's dev tools
       // to simulate scanning the correct, context-aware QR code.
-      targetCheckId?: string; 
+      targetCheckId?: string;
     }
   | {
       // For completing an existing, scheduled check
@@ -87,3 +87,23 @@ export const isWriteNfcModalOpenAtom = atom(false);
 
 // Atom to control the visibility of the new "Select Room" modal for supplemental checks
 export const isSelectRoomModalOpenAtom = atom(false);
+
+// [NEW] Atoms to control the visibility of the new full-screen modals
+export const isHistoryModalOpenAtom = atom(false);
+export const isSettingsModalOpenAtom = atom(false);
+export const isDevToolsModalOpenAtom = atom(false);
+
+
+// =================================================================
+//                App Configuration & Dev Tools State
+// =================================================================
+
+// [NEW] Atom for simulated connection status
+export type ConnectionStatus = 'online' | 'offline' | 'syncing';
+export const connectionStatusAtom = atom<ConnectionStatus>('online');
+
+// [NEW] Atom for global, configurable application settings
+interface AppConfig {
+  scanMode: 'qr' | 'nfc';
+}
+export const appConfigAtom = atom<AppConfig>({ scanMode: 'qr' });
