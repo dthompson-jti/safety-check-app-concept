@@ -1,21 +1,49 @@
 /* src/layouts/MainLayout.module.css */
 
-.appShell {
+.appViewContainer {
   display: flex;
   flex-direction: column;
   height: 100svh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
   background-color: var(--surface-bg-secondary);
 }
 
+.contentWrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.filmStrip {
+  display: flex;
+  height: 100%;
+  width: 300%; /* For three panels */
+  will-change: transform;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.panel {
+  width: 33.3333%; /* Each panel is a third of the filmstrip */
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* This is the primary scrollable area for ALL views */
 .mainContent {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* 
-    The scrollable content area must allow its children to scroll all the way
-    to the top and bottom of the viewport to be visible behind the translucent
-    header and footer. Spacer components are added to the list content itself
-    to prevent items from being obscured by the UI chrome.
-  */
+  /* DEFINITIVE FIX: Add symmetric horizontal padding */
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
 }

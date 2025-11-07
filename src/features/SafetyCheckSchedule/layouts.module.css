@@ -1,54 +1,15 @@
 /* src/features/SafetyCheckSchedule/layouts.module.css */
 
 /*
-  FIX: Add background-color to .listContainer to ensure it has the correct
-  --surface-bg-secondary, matching the PriorityView.
+  DEFINITIVE FIX: All padding is now handled by the parent MainLayout's
+  .mainContent class for architectural consistency. This file now only
+  handles spacing between cards.
 */
 .listContainer {
   background-color: var(--surface-bg-secondary);
-}
-
-/* Styles for PriorityView */
-.priorityViewContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: var(--surface-bg-secondary);
-}
-
-.unitHeader {
-  padding: var(--spacing-4) var(--spacing-4) 0;
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--surface-fg-primary);
-  flex-shrink: 0;
-}
-
-.virtuosoScroller {
-  flex-grow: 1;
-}
-
-.priorityGroupHeader {
-  padding: var(--spacing-4) var(--spacing-4) var(--spacing-2);
-  margin: 0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--surface-fg-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  position: sticky;
-  top: 0;
-  background-color: var(--surface-bg-secondary);
-  z-index: 5;
+  box-sizing: border-box;
 }
 
 .cardWrapper {
-  padding: 0 var(--spacing-4) var(--spacing-3);
-}
-
-.emptyView {
-  padding: var(--spacing-8);
-  text-align: center;
-  color: var(--surface-fg-secondary);
+  padding-bottom: var(--spacing-3);
 }

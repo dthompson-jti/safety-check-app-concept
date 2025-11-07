@@ -1,21 +1,28 @@
 // src/data/useUrlSync.ts
 import { useEffect } from 'react';
 import { useAtom } from 'jotai'; 
-import { activeViewAtom, AppView } from './atoms';
+import { appViewAtom, AppView } from './atoms';
+
+// DEFINITIVE FIX: A type guard to safely check if a string is a valid AppView.
+// This satisfies TypeScript's type checker and resolves the unsafe assignment errors.
+const isAppView = (view: string | null): view is AppView => {
+  if (!view) return false;
+  return ['sideMenu', 'dashboardTime', 'dashboardRoute', 'history', 'settings', 'checks'].includes(view);
+}
 
 /**
  * A custom hook to synchronize the application's active view 
  * with the URL's `view` query parameter.
  */
 export const useUrlSync = () => {
-  const [view, setView] = useAtom(activeViewAtom);
+  const [view, setView] = useAtom(appViewAtom);
   
   // Effect 1: Read from URL on initial component mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const viewFromUrl = params.get('view') as AppView;
+    const viewFromUrl = params.get('view');
 
-    if (viewFromUrl && ['dashboard', 'checks', 'history', 'settings'].includes(viewFromUrl)) {
+    if (isAppView(viewFromUrl)) {
       setView(viewFromUrl);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,7 +33,7 @@ export const useUrlSync = () => {
     const params = new URLSearchParams(window.location.search);
     params.set('view', view);
     
-    const newUrl = `${window.location.pathname}?${params}`;
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, '', newUrl);
   }, [view]);
 };

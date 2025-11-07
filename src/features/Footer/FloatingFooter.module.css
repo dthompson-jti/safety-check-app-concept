@@ -7,6 +7,7 @@
   right: 0;
   z-index: 50;
 
+  /* DEFINITIVE FIX: Use symmetric horizontal padding */
   padding: 20px 24px;
   pointer-events: none; /* Allows clicks to pass through to content below */
 
@@ -34,19 +35,17 @@
   box-shadow: var(--surface-shadow-scan-button);
 }
 
-/* FIX: Explicitly apply primary button hover and pressed states by targeting the specific button's variant */
 .scanButton:hover:not(:disabled) {
   background-color: var(--control-bg-theme-hover);
-  border-color: var(--control-border-primary-hover); /* Using primary border hover for consistency */
-  box-shadow: 0 10px 20px -4px hsla(218, 25%, 15%, 0.25), 0 28px 72px -16px hsla(218, 78%, 52%, 0.55); /* Hover shadow */
+  border-color: var(--control-border-primary-hover);
+  box-shadow: 0 10px 20px -4px hsla(218, 25%, 15%, 0.25), 0 28px 72px -16px hsla(218, 78%, 52%, 0.55);
 }
 .scanButton:active:not(:disabled) {
   background-color: var(--control-bg-theme-pressed);
-  border-color: var(--control-border-primary-pressed); /* Using primary border pressed for consistency */
-  box-shadow: 0 8px 16px -4px hsla(218, 25%, 15%, 0.2), 0 24px 64px -16px hsla(218, 78%, 52%, 0.5); /* Pressed shadow */
+  border-color: var(--control-border-primary-pressed);
+  box-shadow: 0 8px 16px -4px hsla(218, 25%, 15%, 0.2), 0 24px 64px -16px hsla(218, 78%, 52%, 0.5);
 }
 
-/* Custom icon style for the Scan button */
 .scanButton .material-symbols-rounded {
   font-size: 24px;
 }

@@ -2,33 +2,31 @@
 
 .toast-viewport {
   position: fixed;
+  /* DEFINITIVE FIX: Use the CSS variable contract for dynamic positioning. */
   bottom: calc(var(--footer-height, 16px) + 16px);
   
-  /* FIX: A robust, modern centering technique. The viewport spans the width of the
-     screen with padding on both sides. Flexbox is then used to center the actual
-     toast components horizontally within this container. */
   left: 16px;
   right: 16px;
   
   display: flex;
   flex-direction: column;
-  align-items: center; /* This centers the toast stack horizontally */
+  align-items: center;
   gap: 10px;
   
   margin: 0;
+  /* The parent of the list items is now the ol */
+  padding: 0;
   list-style: none;
   z-index: 2147483647;
   outline: none;
   
-  /* Allow clicks to pass through the empty parts of the container. */
   pointer-events: none;
 }
 
 .toast-root {
-  /* Re-enable pointer events on the toasts themselves. */
   pointer-events: auto;
   max-width: 500px;
-  width: 100%; /* The toast is responsive, up to its max-width */
+  width: 100%;
   
   display: flex;
   align-items: center;
@@ -41,6 +39,8 @@
   font-size: 0.9em;
   font-weight: 500;
   border: 1px solid var(--primitives-grey-800);
+  /* Ensure gestures work on mobile */
+  touch-action: pan-y;
 }
 
 .toast-root .material-symbols-rounded {
@@ -49,7 +49,7 @@
 }
 
 .toast-close-button {
-  all: unset; /* Reset button styles */
+  all: unset;
   margin-left: auto;
   padding-left: var(--spacing-4);
   cursor: pointer;
@@ -69,36 +69,4 @@
 .toast-close-button .material-symbols-rounded {
   font-size: 18px;
   color: var(--surface-fg-secondary_on_brand);
-}
-
-.toast-root[data-state='open'] {
-  animation: slideIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.toast-root[data-state='closed'] {
-  animation: hide 100ms ease-in forwards;
-}
-.toast-root[data-swipe='move'] {
-  transform: translateY(var(--radix-toast-swipe-move-y));
-}
-.toast-root[data-swipe='cancel'] {
-  transform: translateY(0);
-  transition: transform 200ms ease-out;
-}
-.toast-root[data-swipe='end'] {
-  animation: swipeOut 100ms ease-out forwards;
-}
-
-@keyframes hide {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
-@keyframes slideIn {
-  from { transform: translateY(calc(100% + 16px)); }
-  to { transform: translateY(0); }
-}
-
-@keyframes swipeOut {
-  from { transform: translateY(var(--radix-toast-swipe-end-y)); }
-  to { transform: translateY(calc(100% + 16px)); }
 }

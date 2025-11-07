@@ -14,13 +14,25 @@ export const FloatingFooter = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const footerRef = useRef<HTMLElement>(null);
 
-  // FIX: Use a layout effect to measure the footer's height after it renders
-  // and set a CSS variable on the root element. This allows other components,
-  // like the Toast container, to position themselves relative to the footer.
+  // This effect measures the footer's height after it renders and sets a
+  // CSS variable on the root element. This allows other components, like the
+  // Toast container, to position themselves relative to the footer.
   useLayoutEffect(() => {
-    if (footerRef.current) {
-      const height = footerRef.current.offsetHeight;
-      document.documentElement.style.setProperty('--footer-height', `${height}px`);
+    const updateHeight = () => {
+      if (footerRef.current) {
+        const height = footerRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--footer-height', `${height}px`);
+      }
+    };
+    
+    updateHeight(); // Initial measurement
+    
+    // Also update on resize in case content wraps
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      document.documentElement.style.removeProperty('--footer-height');
+      window.removeEventListener('resize', updateHeight);
     }
   }, []);
 

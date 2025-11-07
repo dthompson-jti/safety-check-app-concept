@@ -1,9 +1,12 @@
 // src/features/Header/FloatingHeader.tsx
-import { useSetAtom } from 'jotai';
-import { isSelectRoomModalOpenAtom, isSideMenuOpenAtom } from '../../data/atoms';
+import { useAtom, useSetAtom } from 'jotai';
+import { appViewAtom } from '../../data/atoms';
 import { PillToggle } from '../../components/PillToggle';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
+import { Popover } from '../../components/Popover';
+import { ActionMenu, ActionMenuItem } from '../../components/ActionMenu';
+import { isSelectRoomModalOpenAtom } from '../../data/atoms';
 import styles from './FloatingHeader.module.css';
 
 /**
@@ -12,41 +15,71 @@ import styles from './FloatingHeader.module.css';
  * view controls, and top-level actions.
  */
 export const FloatingHeader = () => {
-  const setIsSideMenuOpen = useSetAtom(isSideMenuOpenAtom);
+  const [view, setView] = useAtom(appViewAtom);
   const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
+
+  const isDashboard = view === 'dashboardTime' || view === 'dashboardRoute';
+
+  const supplementalCheckItems: (ActionMenuItem | 'separator')[] = [
+    {
+      id: 'supplemental-check',
+      icon: 'add_comment',
+      label: 'Supplemental Check',
+      onClick: () => setIsSelectRoomModalOpen(true),
+    },
+    {
+      id: 'placeholder-action',
+      icon: 'build_circle',
+      label: 'Another Action',
+      onClick: () => {},
+      disabled: true,
+    }
+  ];
+
+  const handleMenuClick = () => {
+    // If we're on a non-carousel view, go to the dashboard.
+    // Otherwise, toggle to the side menu.
+    if (!isDashboard && view !== 'sideMenu') {
+      setView('dashboardTime');
+    } else {
+      setView('sideMenu');
+    }
+  };
 
   return (
     <header className={styles.header}>
-      {/* The side menu trigger, using the standard tertiary button style */}
       <Tooltip content="Open Navigation">
         <Button 
           variant="tertiary" 
           size="m" 
           iconOnly 
-          onClick={() => setIsSideMenuOpen(true)} 
+          onClick={handleMenuClick} 
           aria-label="Open navigation menu"
         >
           <span className="material-symbols-rounded">menu</span>
         </Button>
       </Tooltip>
       
-      {/* A wrapper for absolute centering of the toggle, ensuring a stable layout. */}
       <div className={styles.centerContent}>
-        <PillToggle />
+        {isDashboard && <PillToggle />}
       </div>
 
-      {/* The trigger for adding a new, unscheduled check */}
-      <Tooltip content="Add Supplemental Check">
-        <Button 
-          variant="tertiary" 
-          size="m" 
-          iconOnly 
-          onClick={() => setIsSelectRoomModalOpen(true)} 
-          aria-label="Add supplemental check"
-        >
-          <span className="material-symbols-rounded">add</span>
-        </Button>
-      </Tooltip>
+      <Popover trigger={
+        <Tooltip content="Add Actions">
+          <Button 
+            variant="tertiary" 
+            size="m" 
+            iconOnly 
+            aria-label="Add supplemental check"
+          >
+            <span className="material-symbols-rounded">add</span>
+          </Button>
+        </Tooltip>
+      }>
+        <div className="menu-popover">
+          <ActionMenu items={supplementalCheckItems} />
+        </div>
+      </Popover>
     </header>
   );
 };

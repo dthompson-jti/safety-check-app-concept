@@ -1,9 +1,14 @@
 // src/features/SafetyCheckSchedule/ListView.tsx
 import { useAtomValue } from 'jotai';
+import { motion } from 'framer-motion';
 import { Virtuoso } from 'react-virtuoso';
-import { sortedChecksAtom } from '../../data/appDataAtoms';
+import { timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
 import { CheckCard } from './CheckCard';
 import styles from './layouts.module.css';
+
+interface ListViewProps {
+  viewType: 'time' | 'route';
+}
 
 /**
  * A spacer component rendered at the top of the virtualized list.
@@ -25,8 +30,9 @@ const ListFooter = () => {
   return <div style={{ height: '112px' }} />;
 };
 
-export const ListView = () => {
-  const checks = useAtomValue(sortedChecksAtom);
+export const ListView = ({ viewType }: ListViewProps) => {
+  // DEFINITIVE FIX: Use the appropriate stable atom based on the viewType prop.
+  const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
 
   return (
     <Virtuoso
@@ -34,11 +40,11 @@ export const ListView = () => {
       data={checks}
       components={{ Header: ListHeader, Footer: ListFooter }}
       itemContent={(_index, check) => (
-        // FIX: Wrap the CheckCard in the .cardWrapper div to ensure consistent
-        // horizontal padding and vertical margin between list items.
-        <div className={styles.cardWrapper}>
+        // DEFINITIVE FIX: Remove the `layout` prop to prevent re-shuffling animation.
+        // The carousel now handles the view transition.
+        <motion.div className={styles.cardWrapper}>
           <CheckCard check={check} />
-        </div>
+        </motion.div>
       )}
     />
   );

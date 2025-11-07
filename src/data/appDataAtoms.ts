@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
-import { scheduleViewAtom, currentTimeAtom, historyFilterAtom } from './atoms';
+import { currentTimeAtom, historyFilterAtom } from './atoms';
 
 // =================================================================
 //                 Mock Data Store
@@ -76,8 +76,8 @@ const appDataAtom = atom<AppData>({
 
 export const dispatchActionAtom = atom(
   null,
-  (get, set, action: AppAction) => {
-    const nextState = produce(get(appDataAtom), (draft: Draft<AppData>) => {
+  (_get, set, action: AppAction) => {
+    const nextState = produce(_get(appDataAtom), (draft: Draft<AppData>) => {
       switch (action.type) {
         case 'CHECK_COMPLETE': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
@@ -145,59 +145,41 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   });
 });
 
-export const sortedChecksAtom = atom((get) => {
+const statusOrder: Record<SafetyCheckStatus, number> = {
+  late: 0,
+  'due-soon': 1,
+  pending: 2,
+  missed: 3,
+  complete: 4,
+  supplemental: 5,
+};
+
+// DEFINITIVE FIX: Create two separate, stable atoms for each sort order.
+// This prevents the re-shuffling animation when switching views.
+export const timeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
-  const mode = get(scheduleViewAtom);
-
-  const statusOrder: Record<SafetyCheckStatus, number> = {
-    late: 0,
-    'due-soon': 1,
-    pending: 2,
-    missed: 3, // Missed is less urgent than active checks
-    complete: 4,
-    supplemental: 5,
-  };
-
-  if (mode === 'time') {
-    const sorted = [...checks];
-    sorted.sort((a, b) => {
-      const statusDiff = statusOrder[a.status] - statusOrder[b.status];
-      if (statusDiff !== 0) return statusDiff;
-      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-    });
-    return sorted;
-  } else { // 'route'
-    const actionable = checks.filter(c => c.status === 'late' || c.status === 'due-soon' || c.status === 'pending' || c.status === 'missed');
-    const nonActionable = checks.filter(c => c.status === 'complete' || c.status === 'supplemental');
-
-    actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
-    nonActionable.sort((a, b) => {
-      const timeB = b.lastChecked ? new Date(b.lastChecked).getTime() : 0;
-      const timeA = a.lastChecked ? new Date(a.lastChecked).getTime() : 0;
-      return timeB - timeA;
-    });
-
-    return [...actionable, ...nonActionable];
-  }
+  const sorted = [...checks];
+  sorted.sort((a, b) => {
+    const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+    if (statusDiff !== 0) return statusDiff;
+    return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+  });
+  return sorted;
 });
 
-export const groupedChecksAtom = atom((get) => {
-  const checks = get(sortedChecksAtom);
-  const groups = {
-    late: [] as SafetyCheck[],
-    'due-soon': [] as SafetyCheck[],
-    pending: [] as SafetyCheck[],
-    missed: [] as SafetyCheck[],
-    complete: [] as SafetyCheck[],
-    supplemental: [] as SafetyCheck[],
-  };
+export const routeSortedChecksAtom = atom((get) => {
+  const checks = get(safetyChecksAtom);
+  const actionable = checks.filter(c => c.status === 'late' || c.status === 'due-soon' || c.status === 'pending' || c.status === 'missed');
+  const nonActionable = checks.filter(c => c.status === 'complete' || c.status === 'supplemental');
 
-  for (const check of checks) {
-    if (groups[check.status]) {
-      groups[check.status].push(check);
-    }
-  }
-  return groups;
+  actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
+  nonActionable.sort((a, b) => {
+    const timeB = b.lastChecked ? new Date(b.lastChecked).getTime() : 0;
+    const timeA = a.lastChecked ? new Date(a.lastChecked).getTime() : 0;
+    return timeB - timeA;
+  });
+
+  return [...actionable, ...nonActionable];
 });
 
 

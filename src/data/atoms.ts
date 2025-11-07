@@ -6,11 +6,11 @@ import { Resident, SafetyCheck } from '../types';
 //                         App State
 // =================================================================
 
-// Defines the main views or "tabs" of the PWA
-export type AppView = 'dashboard' | 'checks' | 'history' | 'settings';
+// DEFINITIVE FIX: This is the new single source of truth for navigation.
+// It replaces activeViewAtom.
+export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute' | 'history' | 'settings' | 'checks';
+export const appViewAtom = atom<AppView>('dashboardTime');
 
-// The single source of truth for which view is currently active
-export const activeViewAtom = atom<AppView>('dashboard');
 
 // =================================================================
 //                      Session State
@@ -29,10 +29,6 @@ export const sessionAtom = atom<Session>({
 // =================================================================
 //                   Schedule View State
 // =================================================================
-
-// Defines the two primary sort/view modes for the main dashboard schedule.
-export type ScheduleView = 'time' | 'route';
-export const scheduleViewAtom = atom<ScheduleView>('time');
 
 // Atom for the "live" timer, updated by a single global interval
 export const currentTimeAtom = atom(new Date());
@@ -58,7 +54,7 @@ export type WorkflowState =
       type: 'scheduled';
       checkId: string;
       roomName: string;
-      residents: Resident[]; // MODIFIED: Pass the full resident array
+      residents: Resident[];
       specialClassification?: SafetyCheck['specialClassification'];
     }
   | {
@@ -67,7 +63,7 @@ export type WorkflowState =
       type: 'supplemental';
       roomId: string;
       roomName: string;
-      residents: Resident[]; // MODIFIED: Pass the full resident array
+      residents: Resident[];
     };
 
 
@@ -82,6 +78,3 @@ export const isWriteNfcModalOpenAtom = atom(false);
 
 // Atom to control the visibility of the new "Select Room" modal for supplemental checks
 export const isSelectRoomModalOpenAtom = atom(false);
-
-// Atom to control the visibility of the side menu
-export const isSideMenuOpenAtom = atom(false);
