@@ -39,9 +39,6 @@
   background-color: var(--surface-bg-primary);
   border-radius: var(--spacing-2);
   border: 1px solid var(--surface-border-secondary);
-  display: flex;
-  flex-direction: column; /* Changed for banner */
-  gap: var(--spacing-3);
 }
 
 .residentInfo h2 {
@@ -51,29 +48,6 @@
   color: var(--surface-fg-primary);
   width: 100%;
 }
-
-/* NEW: Banner for global special classification notice */
-.specialClassificationBanner {
-  display: flex;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3);
-  background-color: var(--surface-bg-info);
-  border: 1px solid var(--primitives-blue-200);
-  border-radius: var(--radius-md);
-  color: var(--primitives-blue-700);
-}
-.specialClassificationBanner .material-symbols-rounded {
-  font-size: 24px;
-  font-variation-settings: 'FILL' 1;
-  color: var(--surface-fg-info-primary);
-}
-.specialClassificationBanner p {
-  margin: 0;
-  font-weight: 500;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
 
 .formGroup {
   display: flex;
@@ -110,7 +84,6 @@
   color: var(--surface-fg-primary);
 }
 
-/* NEW: Wrapper for a resident with a classification */
 .classifiedResidentWrapper {
   display: flex;
   flex-direction: column;

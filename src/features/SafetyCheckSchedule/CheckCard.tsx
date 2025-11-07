@@ -53,7 +53,12 @@ export const CheckCard = ({ check }: CheckCardProps) => {
 
   const handleCardClick = () => {
     if (isActionable) {
-      setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
+      // REFINED: Set the targetCheckId when clicking a specific card.
+      setWorkflowState({ 
+        view: 'scanning', 
+        isManualSelectionOpen: false,
+        targetCheckId: check.id,
+      });
     }
   };
 
@@ -77,11 +82,10 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       <div className={styles.mainContent}>
         <div className={styles.topRow}>
           <div className={styles.locationInfo}>
-            {/* ENHANCEMENT: Step 1 of Progressive Elaboration */}
             {specialClassification && (
               <Tooltip content={`${specialClassification.type}: ${specialClassification.details}`}>
                 <span className={`material-symbols-rounded ${styles.filledIcon}`}>
-                  shield_person
+                  warning
                 </span>
               </Tooltip>
             )}

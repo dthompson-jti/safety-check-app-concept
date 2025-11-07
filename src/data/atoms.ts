@@ -9,7 +9,6 @@ import { Resident, SafetyCheck } from '../types';
 // This is the single source of truth for the application's primary view state.
 // It controls which panel is visible in the main carousel or if a standalone
 // view like 'history' should be rendered.
-// ENHANCEMENT: Removed 'checks' as it is redundant with the dashboard.
 export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute' | 'history' | 'settings';
 export const appViewAtom = atom<AppView>('dashboardTime');
 
@@ -50,7 +49,12 @@ export const historyFilterAtom = atom<HistoryFilter>('all');
 
 export type WorkflowState =
   | { view: 'none' }
-  | { view: 'scanning'; isManualSelectionOpen: boolean }
+  | { 
+      view: 'scanning'; 
+      isManualSelectionOpen: boolean;
+      // REFINED: Add an optional target to make simulations consistent.
+      targetCheckId?: string; 
+    }
   | {
       // For completing an existing, scheduled check
       view: 'form';

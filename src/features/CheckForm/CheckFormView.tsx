@@ -108,15 +108,9 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       </header>
 
       <main className={styles.formContent}>
+        {/* REFINED: Removed the verbose global banner. The per-resident wrapper is sufficient. */}
         <div className={styles.residentInfo}>
           <h2>{headerTitle}</h2>
-          {/* REFINED: Use a prominent banner for the global notice */}
-          {specialClassification && (
-            <div className={styles.specialClassificationBanner}>
-              <span className="material-symbols-rounded">shield_person</span>
-              <p>Please note the special classification detailed below before completing this check.</p>
-            </div>
-          )}
         </div>
 
         {checkData.residents.length > 1 && (
@@ -136,7 +130,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
             const isClassified = specialClassification?.residentId === resident.id;
 
             if (isClassified) {
-              // REFINED: Render a detailed wrapper for the classified resident
               return (
                 <div key={resident.id} className={styles.classifiedResidentWrapper}>
                   <div className={styles.classifiedResidentHeader}>
@@ -158,7 +151,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
               );
             }
 
-            // Render the standard simple row for other residents
             return (
               <div key={resident.id} className={styles.residentRow}>
                 <span className={styles.residentName}>{resident.name}</span>

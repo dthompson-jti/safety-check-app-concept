@@ -37,6 +37,8 @@ export const FloatingFooter = () => {
   }, []);
 
   const handleScanClick = () => {
+    // This generic entry point does NOT set a targetCheckId,
+    // allowing for random simulation.
     setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
   };
 
