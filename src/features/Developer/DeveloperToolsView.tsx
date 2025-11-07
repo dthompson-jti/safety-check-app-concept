@@ -20,7 +20,9 @@ export const DeveloperToolsView = () => {
         <IconToggleGroup
           options={connectionOptions}
           value={connectionStatus}
-          onValueChange={(val) => setConnectionStatus(val as ConnectionStatus)}
+          // FIX: The `val` parameter is already correctly typed by inference.
+          // The function can be passed directly for maximum simplicity.
+          onValueChange={setConnectionStatus}
           id="connection-status-toggle"
         />
       </div>

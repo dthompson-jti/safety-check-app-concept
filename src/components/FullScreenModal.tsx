@@ -17,10 +17,10 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
       {isOpen && (
         <motion.div
           className={styles.modalWrapper}
-          initial={{ scale: 1.2, opacity: 0 }}
+          initial={{ scale: 1.3, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 1.2, opacity: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
+          exit={{ scale: 1.3, opacity: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
         >
           <div className={styles.backdrop} />
           <div className={styles.modalContainer}>
