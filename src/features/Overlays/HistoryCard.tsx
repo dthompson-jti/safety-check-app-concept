@@ -1,4 +1,4 @@
-// src/features/History/HistoryCard.tsx
+// src/features/Overlays/HistoryCard.tsx
 import { useMemo } from 'react';
 import { SafetyCheck } from '../../types';
 import styles from './HistoryCard.module.css';

@@ -27,16 +27,16 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow.
 -   **Workspace-Based Navigation:** The application uses a sliding panel architecture for its primary navigation. The main workspaces (Side Menu, Time-Sorted Schedule, Route-Sorted Schedule) exist on a horizontal "film strip." A persistent header and footer provide global actions and view controls, creating a stable application shell around the sliding content.
 -   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and two sorting modes (Time and Route).
--   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes.
--   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature.
--   **Comprehensive History View:** A complete, filterable, and chronologically-grouped view of all past check activity.
+-   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes. This includes a "pre-scan alert" to notify caregivers of critical resident information *before* a scan is completed.
+-   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature and a visually distinct UI for residents with special classifications.
+-   **Comprehensive History View:** A complete, filterable, and chronologically-grouped view of all past check activity, rendered in a full-screen modal.
 -   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete, high-feedback UI simulation for provisioning room NFC tags.
--   **Simulated Connection Status:** A developer toggle in the settings allows for simulating 'Online', 'Offline', and 'Syncing' states to test the UI's responsiveness.
+-   **Simulated Connection Status:** A developer toggle in the settings allows for simulating 'Online' and 'Offline' states to test the UI's responsiveness.
 
 ## 4. Directory Structure
 
 -   **/src**: Contains the application entry point, root container, global styles, and global types.
--   **/src/features**: Contains the major, user-facing areas of the application (e.g., `Dashboard`, `Settings`). Each sub-directory is a "vertical slice" of functionality.
+-   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality (e.g., `/Shell`, `/Schedule`, `/Workflow`).
 -   **/src/components**: Contains only **truly generic and reusable** UI primitives that are application-agnostic.
 -   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, etc.).
 -   **/src/styles**: Contains the global styling architecture, including design tokens, base styles, and component themes.
@@ -49,12 +49,12 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 
 -   **Design Tokens:** A three-tiered token system (`primitives.css`, `utility.css`, `semantics.css`).
 -   **Data-Attribute Styling:** Components use `data-*` attributes for styling variants.
--   **Layered Cascade:** The global style cascade is managed in `src/index.css` using CSS `@layer`.
+-   **Layered Cascade:** The global style cascade is managed in `src/styles/index.css` using CSS `@import ... layer()`. This file is the single source of truth for cascade order.
 -   **Robust Primitives:** Core UI patterns are built using **Radix UI** for stability and craft.
 
 ## 6. State Management
 
 The project uses **Jotai** for its minimal, atomic state management model. State is divided into two logical areas:
 
-1.  **UI State (`src/data/atoms.ts`):** Manages the "control panel" of the UI. The primary state is managed by a single `appViewAtom`, which dictates which main workspace or view is visible. This includes the active dashboard sort order and side menu visibility.
+1.  **UI State (`src/data/atoms.ts`):** Manages the "control panel" of the UI. The primary state is managed by a single `appViewAtom`, which dictates which main workspace or view is visible. Other atoms control the visibility of global overlays like the History and Settings modals.
 2.  **Application Data (`src/data/appDataAtoms.ts`):** Manages the core data of the application. It uses a reducer-like pattern with a write-only `dispatchActionAtom` to ensure all mutations are centralized and predictable.

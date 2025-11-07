@@ -1,4 +1,4 @@
-// src/features/SafetyCheckSchedule/CheckCard.tsx
+// src/features/Schedule/CheckCard.tsx
 import { useMemo } from 'react';
 import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
@@ -6,6 +6,7 @@ import { SafetyCheck } from '../../types';
 import { workflowStateAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
 import { Tooltip } from '../../components/Tooltip';
+// REFACTOR: Import the new StatusBadge component
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckCard.module.css';
 
@@ -61,6 +62,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
             )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
+          {/* REFACTOR: Use the new StatusBadge component */}
           <StatusBadge status={status} />
         </div>
         <div className={styles.bottomRow}>

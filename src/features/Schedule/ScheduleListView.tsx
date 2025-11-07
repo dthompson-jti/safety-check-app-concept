@@ -43,7 +43,8 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
       data={checks}
       components={{ Header: ListHeader, Footer: ListFooter }}
       itemContent={(_index, check) => (
-        <motion.div>
+        /* FIX: Add the wrapper class back to the motion.div to apply vertical spacing */
+        <motion.div className={styles.cardWrapper}>
           <CheckCard check={check} />
         </motion.div>
       )}

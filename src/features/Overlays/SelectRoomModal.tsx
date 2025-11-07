@@ -1,4 +1,4 @@
-// src/features/Admin/SelectRoomModal.tsx
+// src/features/Overlays/SelectRoomModal.tsx
 import { useState, useMemo } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { isSelectRoomModalOpenAtom, workflowStateAtom } from '../../data/atoms';

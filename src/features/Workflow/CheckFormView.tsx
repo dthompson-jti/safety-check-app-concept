@@ -1,4 +1,4 @@
-// src/features/CheckForm/CheckFormView.tsx
+// src/features/Workflow/CheckFormView.tsx
 import { useState, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';

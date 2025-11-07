@@ -1,5 +1,5 @@
 /* src/styles/toggles.css */
-/* CACHE BUST: v13 - Correct Border Token & Icon Fill */
+/* CACHE BUST: v14 - Added active state for stateless action buttons */
 
 /*
   This file provides global, unified styles for toggle buttons.
@@ -67,6 +67,19 @@
   border-color: var(--control-border-tertiary-hover);
   z-index: 1;
 }
+
+/*
+  FIX: Add an :active state for un-checked items. This provides immediate
+  visual feedback for stateless action buttons (like "SET ALL TO") so they
+  feel responsive and use the correct "pressed" theme colors.
+*/
+.toggle-group .toggle-group-item:not([aria-checked='true']):active:not([data-disabled]) {
+  background-color: var(--control-bg-selected-hover);
+  color: var(--control-fg-selected);
+  border-color: var(--control-border-selected-hover);
+  z-index: 2;
+}
+
 
 /* The selected item gets blue styles and the highest z-index */
 .toggle-group .toggle-group-item[aria-checked='true'] {

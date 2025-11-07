@@ -14,11 +14,12 @@ The CSS Box Model is not optional knowledge. Before using `position: absolute` o
 -   **How will it get its width and height?** Have I provided explicit dimensions (`width`, `height`) or constraints (`top`, `right`, `bottom`, `left`)?
 -   Never assume an element will "just know" its size. You must declare it.
 
-##### The Fixed Header & Spacer Contract
-This contract applies to any scrollable content area within a view panel. When an element is taken out of the document flow with `position: fixed` (like our main `FloatingHeader`), it no longer pushes content down. To prevent the initial content from being hidden underneath it, we use a "spacer" pattern.
+##### The Component Variable Contract
+This powerful pattern allows components to communicate layout information to the rest of the application.
 
--   **The Contract:** The scrollable container (`<main>`) must have `padding-top: 0` to allow content to scroll fully behind the header. The first element *inside* the scrollable content must be a spacer `div` whose `height` is calculated to push the first real item below the header.
--   **Example:** Our `ListView` uses a `ListHeader` component with `height: 76px` (60px for the header + 16px for margin) to correctly position the schedule on load. This is the canonical implementation of this pattern in the project.
+-   **The Contract:** A component can measure its own dimensions (e.g., height) after it renders and set that value as a CSS Custom Property (variable) on the `:root` element (i.e., `document.documentElement.style.setProperty(...)`).
+-   **The Benefit:** Other components, even in completely different parts of the DOM tree, can then use this variable in their own CSS (e.g., with `calc()`) to dynamically position themselves relative to the first component. This creates a robust, decoupled layout system that adapts automatically.
+-   **Example:** The `FloatingFooter` sets `--footer-height`. The global `toast.css` stylesheet uses `bottom: calc(var(--footer-height) + 16px)` to ensure toasts always appear perfectly above the footer, no matter its size.
 
 #### 2. Diagnose, Don't Guess
 
@@ -45,12 +46,9 @@ To ensure visual consistency and prevent UI bugs, we have standardized on a **`2
 -   **Solution (The Contract):** Any container component that must use `overflow: hidden` **must also provide an internal "safe zone" of padding** to accommodate the focus rings of its children.
 -   **Implementation:** The standard safe zone is a `2px` padding (`var(--spacing-0p5)`). For example, our `Accordion` component's content area has this padding, guaranteeing that any form input placed inside can display its full `2px` outer focus ring without being clipped.
 
-**The Exception: Menu Items**
-Menu items (`.menu-item`) are the one justified exception to the outer focus ring rule. Because they are flush with the edges of a rounded-corner popover, an outer shadow would be clipped. Therefore, menu items use a robust **`inset 0 0 0 2px var(...)` box-shadow** for their keyboard focus state (`[data-highlighted]:focus-visible`).
-
 #### The Shared Menu System (`menu.css`)
 
-To enforce the "Single Source of Truth" principle for our UI, we use a shared, global stylesheet for all list-based selection components. This system guarantees that primitives from multiple Radix UI packages (`DropdownMenu`, `ContextMenu`, `Select`) and custom components are visually indistinguishable. This includes the **Sort By dropdown in the schedule header**, the **Room Selection dropdown in the Admin modals**, and the **App/Schedule Layout selectors in the Settings view**.
+To enforce the "Single Source of Truth" principle for our UI, we use a shared, global stylesheet for all list-based selection components. This system guarantees that primitives from multiple Radix UI packages (`DropdownMenu`, `ContextMenu`, `Select`) and custom components are visually indistinguishable.
 
 It is built on two key patterns:
 
@@ -68,4 +66,4 @@ To add secondary information or communicate status visually, we use a consistent
 -   **Implementation Examples:**
     -   A `CheckCard` for a resident with a Special Classification uses a `warning` icon to draw immediate attention in the schedule list.
     -   The **pre-scan alert banner** in `ScanView` uses this same pattern to provide a persistent, high-visibility warning to the caregiver while they are aiming the camera.
-    -   The resident-specific w
+    -   The resident-specific wrapper in `CheckFormView` uses this pattern to highlight a resident with a special classification within the form.

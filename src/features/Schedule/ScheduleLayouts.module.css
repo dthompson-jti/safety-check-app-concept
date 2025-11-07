@@ -1,10 +1,15 @@
-/* src/features/SafetyCheckSchedule/layouts.module.css */
+/* src/features/Schedule/ScheduleLayouts.module.css */
 
 /* 
   DEFINITIVE FIX: The empty .listContainer and .cardContainer rulesets have been removed.
   Padding is now handled by the parent layout's .mainContent class for better
   architectural consistency and to prevent horizontal overflow bugs.
 */
+
+/* FIX: Add a wrapper class to provide vertical spacing between check cards */
+.cardWrapper {
+  padding-bottom: var(--spacing-3); /* 12px */
+}
 
 .cardGrid {
   display: grid;

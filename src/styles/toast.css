@@ -2,7 +2,13 @@
 
 .toast-viewport {
   position: fixed;
-  /* DEFINITIVE FIX: Use the CSS variable contract for dynamic positioning. */
+  
+  /* 
+    This positioning is determined by a CSS variable contract. The FloatingFooter
+    component measures its own height and sets `--footer-height` on the root.
+    This allows the toast viewport to position itself dynamically and robustly,
+    adapting to any changes in the footer's size.
+  */
   bottom: calc(var(--footer-height, 16px) + 16px);
   
   left: 16px;
@@ -14,16 +20,17 @@
   gap: 10px;
   
   margin: 0;
-  /* The parent of the list items is now the ol */
   padding: 0;
   list-style: none;
   z-index: 2147483647;
   outline: none;
   
+  /* Clicks should pass through the viewport to the content underneath. */
   pointer-events: none;
 }
 
 .toast-root {
+  /* Re-enable pointer events for the toast itself. */
   pointer-events: auto;
   max-width: 500px;
   width: 100%;
@@ -39,7 +46,7 @@
   font-size: 0.9em;
   font-weight: 500;
   border: 1px solid var(--primitives-grey-800);
-  /* Ensure gestures work on mobile */
+  /* This is critical for swipe-to-dismiss gestures to work on mobile. */
   touch-action: pan-y;
 }
 
