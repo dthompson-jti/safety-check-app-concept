@@ -32,7 +32,7 @@
   justify-content: center;
   gap: var(--spacing-1);
 
-  min-width: 6rem;
+  min-width: 7rem;
 }
 
 .pillButton.active {
@@ -55,13 +55,17 @@
 }
 
 .dropdownIcon {
-  font-size: 18px; /* FIX: Reduced size by one stop (from 20px to 18px) */
+  font-size: 18px;
   position: relative;
   z-index: 2;
   /* These properties ensure that as the icon's container animates to width: 0,
      the text inside is cleanly clipped instead of overflowing. */
   overflow: hidden;
   white-space: nowrap;
-  /* FIX: Ensure the optical size matches the new font size */
   font-variation-settings: 'opsz' 18;
+}
+
+/* FIX: Target the first icon (the leading one) and apply the quaternary color */
+.dropdownIcon:first-of-type {
+  color: var(--surface-fg-quaternary);
 }
