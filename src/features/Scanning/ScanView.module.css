@@ -15,8 +15,10 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-3) var(--spacing-4);
-  background-color: var(--surface-bg-secondary-solid);
+  background-color: var(--surface-bg-primary-solid);
   flex-shrink: 0;
+  position: relative;
+  z-index: 2; 
 }
 
 .header h3 {
@@ -24,6 +26,42 @@
   font-size: 1.1rem;
   font-weight: 600;
 }
+
+.preScanAlert {
+  position: absolute;
+  top: 60px; /* Position below the header */
+  left: var(--spacing-4);
+  right: var(--spacing-4);
+  z-index: 10;
+  display: flex;
+  align-items: center; /* Center vertically */
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--surface-bg-warning-secondary);
+  border-radius: var(--radius-lg);
+  color: var(--surface-fg-warning-primary);
+  box-shadow: var(--surface-shadow-lg);
+}
+.preScanAlert .material-symbols-rounded {
+  font-size: 24px;
+  font-variation-settings: 'FILL' 1;
+}
+.preScanAlert p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600; /* Bolder for legibility */
+  line-height: 1.5;
+  /* REFINED: Ensure all text within the alert uses the warning color for contrast */
+  color: var(--surface-fg-warning-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+.alertSeparator {
+  font-weight: 300;
+  opacity: 0.6;
+}
+
 
 .cameraContainer {
   flex: 1;
@@ -33,6 +71,7 @@
   justify-content: center;
   gap: var(--spacing-4);
   padding: var(--spacing-4);
+  min-height: 0;
 }
 
 .viewfinder {
@@ -74,12 +113,14 @@
 
 .footer {
   padding: var(--spacing-4);
-  background-color: var(--surface-bg-secondary-solid);
+  background-color: var(--surface-bg-primary-solid);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-4);
+  position: relative;
+  z-index: 2;
 }
 
 .subtlePrompt {
@@ -95,7 +136,7 @@
 
 .devControlsContainer {
   width: 100%;
-  background-color: var(--surface-bg-secondary-solid);
+  background-color: var(--surface-bg-primary-solid);
   border-radius: var(--spacing-2);
   padding: var(--spacing-2);
   display: flex;

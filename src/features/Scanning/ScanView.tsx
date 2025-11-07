@@ -1,14 +1,20 @@
 // src/features/Scanning/ScanView.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { workflowStateAtom } from '../../data/atoms';
-import { safetyChecksAtom } from '../../data/appDataAtoms';
+import { safetyChecksAtom, mockResidents } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
 import { ManualSelectionView } from '../ManualSelection/ManualSelectionView';
+// REFINED: Removed the unused SafetyCheck import.
 import styles from './ScanView.module.css';
+
+interface PreScanAlertInfo {
+  residentName: string;
+  classificationType: string;
+}
 
 export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
@@ -16,17 +22,31 @@ export const ScanView = () => {
   const addToast = useSetAtom(addToastAtom);
   
   const [isScanning, setIsScanning] = useState(true);
+  const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
+
+  useEffect(() => {
+    if (workflow.view === 'scanning' && workflow.targetCheckId) {
+      const targetCheck = allChecks.find(c => c.id === workflow.targetCheckId);
+      if (targetCheck?.specialClassification) {
+        const resident = mockResidents.find(r => r.id === targetCheck.specialClassification!.residentId);
+        if (resident) {
+          setPreScanAlert({
+            residentName: resident.name,
+            classificationType: targetCheck.specialClassification.type,
+          });
+        }
+      }
+    }
+  }, [workflow, allChecks]);
 
   const handleDecode = (result: string) => {
-    // Prevent multiple decodes while processing
-    if (!isScanning) return;
-    
+    if (!isScanning) return; 
     setIsScanning(false);
+    
     const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
 
     if (check) {
-      addToast({ message: `Room ${check.residents[0].location} found.`, icon: 'qr_code_scanner' });
-      
+      addToast({ message: `Scan successful for ${check.residents[0].location}.`, icon: 'qr_code_scanner' });
       setWorkflow({
         view: 'form',
         type: 'scheduled',
@@ -35,27 +55,18 @@ export const ScanView = () => {
         residents: check.residents,
         specialClassification: check.specialClassification,
       });
-
     } else {
       addToast({ message: 'QR Code not recognized or check already complete.', icon: 'error' });
-      // Reset to allow scanning again
-      setTimeout(() => {
-        setIsScanning(true);
-      }, 2000);
+      setTimeout(() => setIsScanning(true), 2000);
     }
   };
 
   const handleError = (error: unknown) => {
-    if (error instanceof Error) {
-      console.log('QR Scanner Error:', error.message);
-    } else {
-      console.log('An unknown QR scanner error occurred:', error);
-    }
+    if (error instanceof Error) console.log('QR Scanner Error:', error.message);
+    else console.log('An unknown QR scanner error occurred:', error);
   };
 
-  const handleClose = () => {
-    setWorkflow({ view: 'none' });
-  };
+  const handleClose = () => setWorkflow({ view: 'none' });
 
   const handleOpenManualSelection = () => {
     if (workflow.view === 'scanning') {
@@ -64,16 +75,10 @@ export const ScanView = () => {
   };
 
   const handleSimulateSuccess = () => {
-    // REFINED: Make simulation context-aware.
-    if (workflow.view === 'scanning') {
-      // If a specific check was targeted (by clicking a card), use it.
-      if (workflow.targetCheckId) {
-        handleDecode(workflow.targetCheckId);
-        return;
-      }
+    if (workflow.view === 'scanning' && workflow.targetCheckId) {
+      handleDecode(workflow.targetCheckId);
+      return;
     }
-
-    // Otherwise, fall back to the random simulation for generic testing.
     const incompleteChecks = allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed');
     if (incompleteChecks.length > 0) {
       const randomCheck = incompleteChecks[Math.floor(Math.random() * incompleteChecks.length)];
@@ -83,9 +88,7 @@ export const ScanView = () => {
     }
   };
 
-  const handleSimulateFail = () => {
-    handleDecode('invalid-qr-code-id');
-  };
+  const handleSimulateFail = () => handleDecode('invalid-qr-code-id');
 
   const isManualSelectionOpen = workflow.view === 'scanning' && workflow.isManualSelectionOpen;
 
@@ -104,6 +107,26 @@ export const ScanView = () => {
             <span className="material-symbols-rounded">close</span>
           </Button>
         </header>
+
+        <AnimatePresence>
+          {preScanAlert && (
+            <motion.div
+              className={styles.preScanAlert}
+              initial={{ y: '-100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '-100%', opacity: 0 }}
+              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.35 }}
+            >
+              <span className="material-symbols-rounded">warning</span>
+              <p>
+                <span>{preScanAlert.residentName}</span>
+                <span className={styles.alertSeparator}>|</span>
+                <span>{preScanAlert.classificationType}</span>
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <main className={styles.cameraContainer}>
           <div className={styles.viewfinder}>
             {isScanning ? (
