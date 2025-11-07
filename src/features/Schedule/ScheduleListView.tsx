@@ -1,12 +1,14 @@
-// src/features/SafetyCheckSchedule/ListView.tsx
+// src/features/Schedule/ScheduleListView.tsx
 import { useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { Virtuoso } from 'react-virtuoso';
 import { timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
+// REORG: Updated import path for local component
 import { CheckCard } from './CheckCard';
-import styles from './layouts.module.css';
+// REORG: Updated import path for CSS module
+import styles from './ScheduleLayouts.module.css';
 
-interface ListViewProps {
+interface ScheduleListViewProps {
   viewType: 'time' | 'route';
 }
 
@@ -30,7 +32,7 @@ const ListFooter = () => {
   return <div style={{ height: '112px' }} />;
 };
 
-export const ListView = ({ viewType }: ListViewProps) => {
+export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   // Consume the appropriate stable, pre-sorted atom based on the viewType prop.
   // This is the key to preventing the vertical re-shuffling animation.
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
@@ -41,7 +43,7 @@ export const ListView = ({ viewType }: ListViewProps) => {
       data={checks}
       components={{ Header: ListHeader, Footer: ListFooter }}
       itemContent={(_index, check) => (
-        <motion.div className={styles.cardWrapper}>
+        <motion.div>
           <CheckCard check={check} />
         </motion.div>
       )}

@@ -1,4 +1,4 @@
-// src/features/NavBar/SideMenu.tsx
+// src/features/Shell/AppSideMenu.tsx
 import { useAtom, useSetAtom } from 'jotai';
 import {
   appViewAtom,
@@ -6,9 +6,11 @@ import {
   isHistoryModalOpenAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
+// REORG: Updated import path for atoms
 } from '../../data/atoms';
 import { Button } from '../../components/Button';
-import styles from './SideMenu.module.css';
+// REORG: Updated import path for CSS module
+import styles from './AppSideMenu.module.css';
 
 interface NavItem {
   id: AppView | 'history' | 'settings' | 'devtools';
@@ -24,7 +26,7 @@ const navItems: NavItem[] = [
 
 const devNavItems: NavItem[] = [{ id: 'devtools', label: 'Developer Tools', icon: 'construction' }];
 
-export const SideMenu = () => {
+export const AppSideMenu = () => {
   const [activeView, setView] = useAtom(appViewAtom);
   const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);

@@ -2,10 +2,12 @@
 import { useAtomValue } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppView, appViewAtom } from '../data/atoms';
-import { FloatingHeader } from '../features/Header/FloatingHeader';
-import { FloatingFooter } from '../features/Footer/FloatingFooter';
-import { SideMenu } from '../features/NavBar/SideMenu';
-import { ListView } from '../features/SafetyCheckSchedule/ListView';
+// REORG: Updated import paths and component names for Shell components
+import { FloatingHeader } from '../features/Shell/FloatingHeader';
+import { FloatingFooter } from '../features/Shell/FloatingFooter';
+import { AppSideMenu } from '../features/Shell/AppSideMenu';
+// REORG: Updated import path and component name for Schedule component
+import { ScheduleListView } from '../features/Schedule/ScheduleListView';
 import styles from './MainLayout.module.css';
 
 // This map translates the semantic AppView state into a numeric index
@@ -34,18 +36,18 @@ const ContentPanels = () => {
       transition={{ type: 'tween', ease: 'easeInOut', duration: 0.35 }}
     >
       <div className={styles.panel}>
-        <SideMenu />
+        <AppSideMenu />
       </div>
       <div className={styles.panel}>
         <main className={styles.mainContent}>
           {/* Using a key is critical here. It tells React to treat this as a
               distinct component instance, preventing the vertical re-sort animation. */}
-          <ListView key="time" viewType="time" />
+          <ScheduleListView key="time" viewType="time" />
         </main>
       </div>
       <div className={styles.panel}>
         <main className={styles.mainContent}>
-          <ListView key="route" viewType="route" />
+          <ScheduleListView key="route" viewType="route" />
         </main>
       </div>
     </motion.div>

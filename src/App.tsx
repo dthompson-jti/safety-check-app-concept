@@ -6,7 +6,8 @@ import { sessionAtom } from './data/atoms';
 
 // Components
 import { AppShell } from './AppShell';
-import { LoginView } from './features/Login/LoginView';
+// REORG: Updated import path for LoginView
+import { LoginView } from './features/Session/LoginView';
 import { ToastContainer } from './components/ToastContainer';
 
 function App() {

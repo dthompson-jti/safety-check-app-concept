@@ -1,14 +1,16 @@
-// src/features/Settings/SettingsView.tsx
+// src/features/Overlays/SettingsOverlay.tsx
 import { useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import { sessionAtom } from '../../data/atoms';
+// REORG: Updated import path for local component
 import { AdminSettingsView } from './AdminSettingsView';
-import styles from './SettingsView.module.css';
+// REORG: Updated import path for CSS module
+import styles from './SettingsOverlay.module.css';
 
 type SettingsScreen = 'master' | 'admin';
 
-export const SettingsView = () => {
+export const SettingsOverlay = () => {
   const [activeScreen, setActiveScreen] = useState<SettingsScreen>('master');
   const setSession = useSetAtom(sessionAtom);
 

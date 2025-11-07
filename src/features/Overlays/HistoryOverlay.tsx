@@ -1,12 +1,14 @@
-// src/features/History/HistoryView.tsx
+// src/features/Overlays/HistoryOverlay.tsx
 import { useAtom, useAtomValue } from 'jotai';
 import { GroupedVirtuoso } from 'react-virtuoso';
 import { HistoryFilter, historyFilterAtom } from '../../data/atoms';
 import { groupedHistoryAtom } from '../../data/appDataAtoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { FullScreenPlaceholder } from '../../components/FullScreenPlaceholder';
+// REORG: Updated import path for local component
 import { HistoryCard } from './HistoryCard';
-import styles from './HistoryView.module.css';
+// REORG: Updated import path for CSS module
+import styles from './HistoryOverlay.module.css';
 
 const filterOptions: { value: HistoryFilter; label: string; icon: string }[] = [
   { value: 'all', label: 'All', icon: 'list' },
@@ -14,7 +16,7 @@ const filterOptions: { value: HistoryFilter; label: string; icon: string }[] = [
   { value: 'supplemental', label: 'Supplemental', icon: 'add_circle' },
 ];
 
-export const HistoryView = () => {
+export const HistoryOverlay = () => {
   const [filter, setFilter] = useAtom(historyFilterAtom);
   const historyData = useAtomValue(groupedHistoryAtom);
 

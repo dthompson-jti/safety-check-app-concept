@@ -1,9 +1,10 @@
-// src/features/Settings/AdminSettingsView.tsx
+// src/features/Overlays/AdminSettingsView.tsx
 import { useAtom, useSetAtom } from 'jotai';
 import { isWriteNfcModalOpenAtom, appConfigAtom } from '../../data/atoms';
 import { Button } from '../../components/Button';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
-import styles from './SettingsView.module.css';
+// REORG: Updated import path for shared CSS module
+import styles from './SettingsOverlay.module.css';
 
 interface AdminSettingsViewProps {
   onBack: () => void;

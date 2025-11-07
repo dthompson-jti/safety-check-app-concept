@@ -1,4 +1,4 @@
-// src/features/Scanning/ScanView.tsx
+// src/features/Workflow/ScanView.tsx
 import { useState, useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,7 +7,8 @@ import { workflowStateAtom } from '../../data/atoms';
 import { safetyChecksAtom, mockResidents } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
-import { ManualSelectionView } from '../ManualSelection/ManualSelectionView';
+// REORG: Updated import path for local component
+import { ManualSelectionView } from './ManualSelectionView';
 import styles from './ScanView.module.css';
 
 // Defines the shape of the concise data needed for the pre-scan alert.

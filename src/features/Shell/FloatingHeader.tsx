@@ -1,4 +1,4 @@
-// src/features/Header/FloatingHeader.tsx
+// src/features/Shell/FloatingHeader.tsx
 import { useAtom, useSetAtom } from 'jotai';
 import { appViewAtom, isSelectRoomModalOpenAtom } from '../../data/atoms';
 import { PillToggle } from '../../components/PillToggle';
@@ -6,6 +6,7 @@ import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 import { Popover } from '../../components/Popover';
 import { ActionMenu, ActionMenuItem } from '../../components/ActionMenu';
+// REORG: Updated import path for local component
 import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 import styles from './FloatingHeader.module.css';
 

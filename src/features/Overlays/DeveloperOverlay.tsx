@@ -1,15 +1,17 @@
-// src/features/Developer/DeveloperToolsView.tsx
+// src/features/Overlays/DeveloperOverlay.tsx
 import { useAtom } from 'jotai';
 import { connectionStatusAtom, ConnectionStatus } from '../../data/atoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
-import styles from './DeveloperToolsView.module.css';
+// REORG: Updated import path for CSS module to match filename
+import styles from './DeveloperOverlay.module.css';
 
 const connectionOptions: { value: ConnectionStatus; label: string; icon: string }[] = [
   { value: 'online', label: 'Online', icon: 'cloud' },
   { value: 'offline', label: 'Offline', icon: 'cloud_off' },
 ];
 
-export const DeveloperToolsView = () => {
+// REORG: Renamed component to match filename
+export const DeveloperOverlay = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
 
   return (

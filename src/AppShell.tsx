@@ -10,14 +10,17 @@ import {
   isDevToolsModalOpenAtom,
 } from './data/atoms';
 import { MainLayout } from './layouts/MainLayout';
-import { ScanView } from './features/Scanning/ScanView';
-import { CheckFormView } from './features/CheckForm/CheckFormView';
-import { WriteNfcTagModal } from './features/Admin/WriteNfcTagModal';
-import { SelectRoomModal } from './features/Admin/SelectRoomModal';
+// REORG: Updated import paths for workflow components
+import { ScanView } from './features/Workflow/ScanView';
+import { CheckFormView } from './features/Workflow/CheckFormView';
+// REORG: Updated import paths and component names for overlay components
+import { WriteNfcTagModal } from './features/Overlays/WriteNfcTagModal';
+import { SelectRoomModal } from './features/Overlays/SelectRoomModal';
 import { FullScreenModal } from './components/FullScreenModal';
-import { HistoryView } from './features/History/HistoryView';
-import { SettingsView } from './features/Settings/SettingsView';
-import { DeveloperToolsView } from './features/Developer/DeveloperToolsView';
+import { HistoryOverlay } from './features/Overlays/HistoryOverlay';
+import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
+// REORG: Correctly import the renamed component
+import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
 
 /**
  * AppShell is the top-level component that orchestrates the entire UI.
@@ -66,13 +69,13 @@ export const AppShell = () => {
 
       {/* Render the new full-screen modals at the top level */}
       <FullScreenModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} title="History">
-        <HistoryView />
+        <HistoryOverlay />
       </FullScreenModal>
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
-        <SettingsView />
+        <SettingsOverlay />
       </FullScreenModal>
       <FullScreenModal isOpen={isDevToolsOpen} onClose={() => setIsDevToolsOpen(false)} title="Developer Tools">
-        <DeveloperToolsView />
+        <DeveloperOverlay />
       </FullScreenModal>
     </>
   );
