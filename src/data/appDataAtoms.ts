@@ -84,7 +84,6 @@ export const dispatchActionAtom = atom(
           if (check) {
             check.status = 'complete'; // Simplified status update
             check.lastChecked = action.payload.completionTime;
-            // For prototype, we'll just record the first status as the overall status
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
           }
@@ -92,7 +91,6 @@ export const dispatchActionAtom = atom(
         }
         case 'CHECK_SUPPLEMENTAL_ADD': {
           const { roomId, notes, statuses } = action.payload;
-          // Find all residents for the given location (room)
           const roomLocation = mockResidents.find(r => r.id === roomId)?.location;
           const residentsInRoom = mockResidents.filter(r => r.location === roomLocation);
 
@@ -127,7 +125,6 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const twoMinutesFromNow = timeNow + 2 * 60 * 1000;
 
   return checks.map(check => {
-    // If check is already done, return it as is.
     if (check.status === 'complete' || check.status === 'supplemental') {
       return check;
     }
@@ -154,8 +151,10 @@ const statusOrder: Record<SafetyCheckStatus, number> = {
   supplemental: 5,
 };
 
-// DEFINITIVE FIX: Create two separate, stable atoms for each sort order.
-// This prevents the re-shuffling animation when switching views.
+// Two separate, stable atoms are created for each sort order.
+// This is an architectural choice to prevent the list from re-shuffling
+// vertically when the user navigates between the Time and Route views.
+// Each view consumes its own stable, pre-sorted list.
 export const timeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const sorted = [...checks];
@@ -208,7 +207,7 @@ const formatDateGroup = (date: Date): string => {
 };
 
 export const groupedHistoryAtom = atom((get) => {
-  const allChecks = get(appDataAtom).checks; // Use raw data for history
+  const allChecks = get(appDataAtom).checks;
   const filter = get(historyFilterAtom);
 
   let historicalChecks = allChecks.filter(c => c.status !== 'pending' && c.status !== 'due-soon');

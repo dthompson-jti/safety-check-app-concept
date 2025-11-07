@@ -6,8 +6,9 @@ import { Resident, SafetyCheck } from '../types';
 //                         App State
 // =================================================================
 
-// DEFINITIVE FIX: This is the new single source of truth for navigation.
-// It replaces activeViewAtom.
+// This is the single source of truth for the application's primary view state.
+// It controls which panel is visible in the main carousel or if a standalone
+// view like 'history' should be rendered.
 export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute' | 'history' | 'settings' | 'checks';
 export const appViewAtom = atom<AppView>('dashboardTime');
 
@@ -30,7 +31,8 @@ export const sessionAtom = atom<Session>({
 //                   Schedule View State
 // =================================================================
 
-// Atom for the "live" timer, updated by a single global interval
+// A global atom that is updated every second to drive all time-sensitive UI
+// elements, such as countdown timers on check cards.
 export const currentTimeAtom = atom(new Date());
 
 // =================================================================

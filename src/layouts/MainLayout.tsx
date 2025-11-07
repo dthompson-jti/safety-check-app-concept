@@ -10,22 +10,30 @@ import { HistoryView } from '../features/History/HistoryView';
 import { FullScreenPlaceholder } from '../components/FullScreenPlaceholder';
 import styles from './MainLayout.module.css';
 
+// This map translates the semantic AppView state into a numeric index
+// for driving the carousel's position.
 const viewMap: Record<AppView, number> = {
   sideMenu: 0,
   dashboardTime: 1,
   dashboardRoute: 2,
+  // Non-carousel views default to the center panel's index for seamless transitions.
   history: 1,
   settings: 1,
   checks: 1,
 };
 
+/**
+ * Renders the correct content panel based on the global appViewAtom.
+ * This component is responsible for the main content area that lives "under"
+ * the persistent Header and Footer.
+ */
 const ContentPanels = () => {
   const view = useAtomValue(appViewAtom);
   const isCarouselView = ['sideMenu', 'dashboardTime', 'dashboardRoute'].includes(view);
   const viewIndex = viewMap[view];
 
+  // For standalone views like History, we render them directly without the carousel.
   if (!isCarouselView) {
-    // Render non-carousel views directly in the main content area
     return (
       <main className={styles.mainContent}>
         {view === 'history' && <HistoryView />}
@@ -35,7 +43,8 @@ const ContentPanels = () => {
     );
   }
 
-  // Render the sliding carousel for dashboard and menu views
+  // The "film strip" is a three-panel container that is translated horizontally
+  // to show the correct view.
   return (
     <motion.div
       className={styles.filmStrip}
@@ -47,6 +56,8 @@ const ContentPanels = () => {
       </div>
       <div className={styles.panel}>
         <main className={styles.mainContent}>
+          {/* Using a key is critical here. It tells React to treat this as a
+              distinct component instance, preventing the vertical re-sort animation. */}
           <DashboardView key="time" viewType="time" />
         </main>
       </div>
@@ -59,9 +70,15 @@ const ContentPanels = () => {
   );
 };
 
-
+/**
+ * The main architectural layout of the application.
+ * It establishes a persistent "shell" with the Header and Footer, and a content
+ * area in between that can render either a sliding panel carousel or a
+ * standalone view.
+ */
 export const MainLayout = () => {
   const view = useAtomValue(appViewAtom);
+  // The persistent UI chrome is hidden only when the side menu is active.
   const isChromeVisible = view !== 'sideMenu';
 
   return (

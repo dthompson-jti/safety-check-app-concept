@@ -25,10 +25,10 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 ## 3. Prototype Features
 
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow.
--   **Floating Header Navigation:** The application uses a single, downselected navigation paradigm featuring a translucent, full-width header that remains fixed at the top of the viewport. This header contains primary navigation, the main schedule view toggle, and an action button for supplemental checks.
--   **Dynamic Check Schedule:** A performant, virtualized list of checks featuring a high-craft card design with dynamic status indicators, live countdown timers, and support for multi-resident rooms.
+-   **Workspace-Based Navigation:** The application uses a sliding panel architecture for its primary navigation. The main workspaces (Side Menu, Time-Sorted Schedule, Route-Sorted Schedule) exist on a horizontal "film strip." A persistent header and footer provide global actions and view controls, creating a stable application shell around the sliding content.
+-   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and two sorting modes (Time and Route).
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes.
--   **Multi-Resident Check Form:** The check recording form dynamically adapts to rooms with multiple residents, providing individual status toggles and a "Set All" convenience feature for efficient data entry.
+-   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature.
 -   **Comprehensive History View:** A complete, filterable, and chronologically-grouped view of all past check activity.
 -   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete, high-feedback UI simulation for provisioning room NFC tags.
 -   **Simulated Connection Status:** A developer toggle in the settings allows for simulating 'Online', 'Offline', and 'Syncing' states to test the UI's responsiveness.
@@ -56,5 +56,5 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 
 The project uses **Jotai** for its minimal, atomic state management model. State is divided into two logical areas:
 
-1.  **UI State (`src/data/atoms.ts`):** Manages the "control panel" of the UI—active tabs, modal states, side menu visibility, etc.
+1.  **UI State (`src/data/atoms.ts`):** Manages the "control panel" of the UI. The primary state is managed by a single `appViewAtom`, which dictates which main workspace or view is visible. This includes the active dashboard sort order and side menu visibility.
 2.  **Application Data (`src/data/appDataAtoms.ts`):** Manages the core data of the application. It uses a reducer-like pattern with a write-only `dispatchActionAtom` to ensure all mutations are centralized and predictable.

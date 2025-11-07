@@ -31,7 +31,8 @@ const ListFooter = () => {
 };
 
 export const ListView = ({ viewType }: ListViewProps) => {
-  // DEFINITIVE FIX: Use the appropriate stable atom based on the viewType prop.
+  // Consume the appropriate stable, pre-sorted atom based on the viewType prop.
+  // This is the key to preventing the vertical re-shuffling animation.
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
 
   return (
@@ -40,8 +41,6 @@ export const ListView = ({ viewType }: ListViewProps) => {
       data={checks}
       components={{ Header: ListHeader, Footer: ListFooter }}
       itemContent={(_index, check) => (
-        // DEFINITIVE FIX: Remove the `layout` prop to prevent re-shuffling animation.
-        // The carousel now handles the view transition.
         <motion.div className={styles.cardWrapper}>
           <CheckCard check={check} />
         </motion.div>

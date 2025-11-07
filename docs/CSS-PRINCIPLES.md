@@ -15,7 +15,7 @@ The CSS Box Model is not optional knowledge. Before using `position: absolute` o
 -   Never assume an element will "just know" its size. You must declare it.
 
 ##### The Fixed Header & Spacer Contract
-When an element is taken out of the document flow with `position: fixed` (like our main `FloatingHeader`), it no longer pushes content down. To prevent the initial content from being hidden underneath it, we use a "spacer" pattern.
+This contract applies to any scrollable content area within a view panel. When an element is taken out of the document flow with `position: fixed` (like our main `FloatingHeader`), it no longer pushes content down. To prevent the initial content from being hidden underneath it, we use a "spacer" pattern.
 
 -   **The Contract:** The scrollable container (`<main>`) must have `padding-top: 0` to allow content to scroll fully behind the header. The first element *inside* the scrollable content must be a spacer `div` whose `height` is calculated to push the first real item below the header.
 -   **Example:** Our `ListView` uses a `ListHeader` component with `height: 76px` (60px for the header + 16px for margin) to correctly position the schedule on load. This is the canonical implementation of this pattern in the project.
@@ -66,11 +66,3 @@ To add secondary information to an icon without cluttering the UI, we use a CSS-
 -   **Problem:** A component has a special status that needs to be communicated visually at a glance. For example, a `CheckCard` for a resident with a **Special Classification (e.g., Suicide Watch)** uses this pattern to overlay a small shield or alert icon on top of the main room icon.
 -   **Solution:** A wrapper `div` with `position: relative` is placed around the base icon. A second, smaller "badge" icon is then absolutely positioned at the top-right corner of the wrapper.
 -   **Implementation:** The badge icon is given a smaller `font-size` and a matching `opsz` (optical size) for clarity, and a `text-shadow` can be used to lift it visually from the base icon. This creates a clean, scalable, and high-craft way to badge icons with status indicators.
-
-#### The Fixed Footer & CSS Variable Contract
-
-To ensure UI elements like toasts can reliably appear *above* the `FloatingFooter` without hardcoding pixel values, we use a CSS variable contract.
-
--   **The Contract:** The `<FloatingFooter>` component uses a `useLayoutEffect` hook to measure its own rendered height. It then sets this value as a global CSS variable on the root `<html>` element: `--footer-height`.
--   **Consumption:** Any absolutely positioned element (like the `.toast-viewport`) can then use this variable in a `calc()` function to dynamically position itself relative to the footer (e.g., `bottom: calc(var(--footer-height) + 16px)`).
--   This decouples the components, allowing the footer's design to change without breaking the layout of other elements.
