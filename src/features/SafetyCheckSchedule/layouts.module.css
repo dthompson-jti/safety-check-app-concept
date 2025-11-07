@@ -1,15 +1,27 @@
 /* src/features/SafetyCheckSchedule/layouts.module.css */
 
-/*
-  DEFINITIVE FIX: All padding is now handled by the parent MainLayout's
-  .mainContent class for architectural consistency. This file now only
-  handles spacing between cards.
+/* 
+  DEFINITIVE FIX: The empty .listContainer and .cardContainer rulesets have been removed.
+  Padding is now handled by the parent layout's .mainContent class for better
+  architectural consistency and to prevent horizontal overflow bugs.
 */
-.listContainer {
-  background-color: var(--surface-bg-secondary);
-  box-sizing: border-box;
+
+.cardGrid {
+  display: grid;
+  gap: var(--spacing-3);
 }
 
-.cardWrapper {
-  padding-bottom: var(--spacing-3);
+.priorityGroupHeader {
+  /* Adjust padding since parent now handles horizontal */
+  padding: var(--spacing-4) 0 var(--spacing-2);
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  background-color: var(--surface-bg-secondary);
+  z-index: 5;
 }
