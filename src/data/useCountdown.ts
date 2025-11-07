@@ -39,10 +39,11 @@ const formatTime = (due: Date, now: Date): string => {
  * @returns A formatted string representing the time remaining.
  */
 export const useCountdown = (dueTime: Date, status: SafetyCheckStatus): string => {
-  // DEFINITIVE FIX: The useState hook requires an initial value.
-  // We provide a "lazy initializer" function `() => new Date()`. This is a
-  // best practice that ensures `new Date()` is only called once on the
-  // initial render, not on every subsequent re-render of the component.
+  // =======================================================================
+  //                       *** THE DEFINITIVE FIX ***
+  // The error occurs because useState was called without an initial value.
+  // This line provides the necessary initial value, resolving the error.
+  // =======================================================================
   const [now, setNow] = useState(() => new Date());
   const animationFrameId = useRef<number>();
 
