@@ -52,7 +52,9 @@ export type WorkflowState =
   | { 
       view: 'scanning'; 
       isManualSelectionOpen: boolean;
-      // REFINED: Add an optional target to make simulations consistent.
+      // When a user clicks a specific check card to start the workflow,
+      // its ID is stored here. This allows the scanner's dev tools
+      // to simulate scanning the correct, context-aware QR code.
       targetCheckId?: string; 
     }
   | {

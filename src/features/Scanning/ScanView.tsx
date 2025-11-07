@@ -8,9 +8,9 @@ import { safetyChecksAtom, mockResidents } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
 import { ManualSelectionView } from '../ManualSelection/ManualSelectionView';
-// REFINED: Removed the unused SafetyCheck import.
 import styles from './ScanView.module.css';
 
+// Defines the shape of the concise data needed for the pre-scan alert.
 interface PreScanAlertInfo {
   residentName: string;
   classificationType: string;
@@ -24,6 +24,9 @@ export const ScanView = () => {
   const [isScanning, setIsScanning] = useState(true);
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
 
+  // This effect runs once when the scanner opens. It checks if the workflow
+  // was initiated with a specific target (from clicking a card) and prepares
+  // the alert information if that check has a special classification.
   useEffect(() => {
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       const targetCheck = allChecks.find(c => c.id === workflow.targetCheckId);
@@ -74,6 +77,8 @@ export const ScanView = () => {
     }
   };
 
+  // The simulation is context-aware. If a target was set by clicking a card,
+  // it simulates scanning that specific card. Otherwise, it picks a random one.
   const handleSimulateSuccess = () => {
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       handleDecode(workflow.targetCheckId);
@@ -108,6 +113,8 @@ export const ScanView = () => {
           </Button>
         </header>
 
+        {/* This pre-scan alert provides an immediate, high-level "heads up"
+            to the user about a critical classification *before* they complete the scan. */}
         <AnimatePresence>
           {preScanAlert && (
             <motion.div

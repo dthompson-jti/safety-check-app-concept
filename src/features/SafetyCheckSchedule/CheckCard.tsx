@@ -53,7 +53,9 @@ export const CheckCard = ({ check }: CheckCardProps) => {
 
   const handleCardClick = () => {
     if (isActionable) {
-      // REFINED: Set the targetCheckId when clicking a specific card.
+      // When a user clicks a specific card, we set a targetCheckId.
+      // This makes the prototype feel more intentional, as the dev tools
+      // in the scanner will now "scan" this specific check.
       setWorkflowState({ 
         view: 'scanning', 
         isManualSelectionOpen: false,
