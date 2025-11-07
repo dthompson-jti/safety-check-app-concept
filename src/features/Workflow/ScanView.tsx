@@ -7,7 +7,6 @@ import { workflowStateAtom } from '../../data/atoms';
 import { safetyChecksAtom, mockResidents } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
-// REORG: Updated import path for local component
 import { ManualSelectionView } from './ManualSelectionView';
 import styles from './ScanView.module.css';
 
@@ -25,9 +24,6 @@ export const ScanView = () => {
   const [isScanning, setIsScanning] = useState(true);
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
 
-  // This effect runs once when the scanner opens. It checks if the workflow
-  // was initiated with a specific target (from clicking a card) and prepares
-  // the alert information if that check has a special classification.
   useEffect(() => {
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       const targetCheck = allChecks.find(c => c.id === workflow.targetCheckId);
@@ -78,8 +74,6 @@ export const ScanView = () => {
     }
   };
 
-  // The simulation is context-aware. If a target was set by clicking a card,
-  // it simulates scanning that specific card. Otherwise, it picks a random one.
   const handleSimulateSuccess = () => {
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       handleDecode(workflow.targetCheckId);
@@ -105,7 +99,8 @@ export const ScanView = () => {
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
-        transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+        // FIX: Apply the specified high-craft transition curve
+        transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >
         <header className={styles.header}>
           <h3>Scan Room QR Code</h3>
@@ -114,8 +109,6 @@ export const ScanView = () => {
           </Button>
         </header>
 
-        {/* This pre-scan alert provides an immediate, high-level "heads up"
-            to the user about a critical classification *before* they complete the scan. */}
         <AnimatePresence>
           {preScanAlert && (
             <motion.div

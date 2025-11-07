@@ -2,11 +2,9 @@
 import { useAtomValue } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppView, appViewAtom } from '../data/atoms';
-// REORG: Updated import paths and component names for Shell components
 import { FloatingHeader } from '../features/Shell/FloatingHeader';
 import { FloatingFooter } from '../features/Shell/FloatingFooter';
 import { AppSideMenu } from '../features/Shell/AppSideMenu';
-// REORG: Updated import path and component name for Schedule component
 import { ScheduleListView } from '../features/Schedule/ScheduleListView';
 import styles from './MainLayout.module.css';
 
@@ -17,6 +15,14 @@ const viewMap: Record<AppView, number> = {
   dashboardTime: 1,
   dashboardRoute: 2,
 };
+
+// Define the shared, slower transition profile
+// FIX: Add 'as const' to provide a specific literal type for 'tween', resolving the TS error.
+const viewTransition = {
+  type: 'tween',
+  duration: 0.4,
+  ease: [0.16, 1, 0.3, 1],
+} as const;
 
 /**
  * Renders the correct content panel based on the global appViewAtom.
@@ -33,7 +39,7 @@ const ContentPanels = () => {
     <motion.div
       className={styles.filmStrip}
       animate={{ x: `-${viewIndex * (100 / 3)}%` }}
-      transition={{ type: 'tween', ease: 'easeInOut', duration: 0.35 }}
+      transition={viewTransition}
     >
       <div className={styles.panel}>
         <AppSideMenu />
@@ -73,7 +79,7 @@ export const MainLayout = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={viewTransition}
           >
             <FloatingHeader />
           </motion.div>
@@ -90,7 +96,7 @@ export const MainLayout = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={viewTransition}
           >
             <FloatingFooter />
           </motion.div>

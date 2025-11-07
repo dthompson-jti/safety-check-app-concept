@@ -106,7 +106,8 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       initial={{ x: '100%' }}
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
-      transition={{ type: 'tween', ease: 'easeInOut', duration: 0.4 }}
+      // FIX: Apply the specified high-craft transition curve
+      transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
       <header className={styles.header}>
         <Button variant="quaternary" size="m" iconOnly onClick={handleBack} aria-label="Back to scanner">
@@ -116,7 +117,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       </header>
 
       <main className={styles.formContent}>
-        {/* REFINED: Removed the verbose global banner. The per-resident wrapper is sufficient. */}
         <div className={styles.residentInfo}>
           <h2>{headerTitle}</h2>
         </div>

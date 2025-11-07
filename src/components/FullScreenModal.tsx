@@ -20,12 +20,12 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({ isOpen, onClos
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          // FIX: Apply the specified high-craft transition curve
+          transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className={styles.backdrop} />
           <div className={styles.modalContainer}>
             <header className={styles.header}>
-              {/* FIX: Replaced 'close' button on right with 'back' button on left */}
               <Button variant="quaternary" size="m" iconOnly onClick={onClose} aria-label="Back">
                 <span className="material-symbols-rounded">arrow_back</span>
               </Button>
