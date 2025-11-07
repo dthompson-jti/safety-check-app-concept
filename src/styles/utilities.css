@@ -30,3 +30,11 @@
     'GRAD' 0,
     'opsz' 48;
 }
+
+/*
+  NEW: High-specificity utility to force a Material Symbol to be filled.
+  This rule will robustly override the global default of 'FILL' 0.
+*/
+.material-symbols-rounded[data-fill="true"] {
+  font-variation-settings: 'FILL' 1;
+}

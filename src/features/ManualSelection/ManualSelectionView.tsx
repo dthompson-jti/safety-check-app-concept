@@ -19,16 +19,18 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const incompleteChecks = useMemo(() => {
-    return allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed');
+    return allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental');
   }, [allChecks]);
 
   const filteredChecks = useMemo(() => {
     if (!searchQuery) return incompleteChecks;
     const lowerCaseQuery = searchQuery.toLowerCase();
-    return incompleteChecks.filter(
-      c =>
-        c.resident.name.toLowerCase().includes(lowerCaseQuery) ||
-        c.resident.location.toLowerCase().includes(lowerCaseQuery)
+    return incompleteChecks.filter(c =>
+      c.residents.some(
+        r =>
+          r.name.toLowerCase().includes(lowerCaseQuery) ||
+          r.location.toLowerCase().includes(lowerCaseQuery)
+      )
     );
   }, [incompleteChecks, searchQuery]);
 
@@ -39,14 +41,12 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   };
 
   const handleSelectCheck = (check: SafetyCheck) => {
-    // FIX: Add the mandatory 'type' property to the workflow state.
-    // This flow is for existing checks, so the type is 'scheduled'.
     setWorkflow({
       view: 'form',
       type: 'scheduled',
       checkId: check.id,
-      roomName: check.resident.location,
-      residentName: check.resident.name,
+      roomName: check.residents[0].location,
+      residents: check.residents,
       specialClassification: check.specialClassification,
     });
   };
@@ -79,7 +79,9 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
               data={filteredChecks}
               itemContent={(_index, check) => (
                 <button className={styles.checkItem} onClick={() => handleSelectCheck(check)}>
-                  <span>{check.resident.location} - {check.resident.name}</span>
+                  <span className={styles.checkItemText}>
+                    {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
+                  </span>
                   {check.specialClassification && (
                     <span className={`material-symbols-rounded ${styles.srIcon}`}>shield_person</span>
                   )}

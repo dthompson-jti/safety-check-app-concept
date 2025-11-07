@@ -32,10 +32,14 @@ export const ListView = () => {
     <Virtuoso
       className={styles.listContainer}
       data={checks}
-      // Virtuoso's Header and Footer components ensure these spacers are
-      // always rendered at the top and bottom of the scrollable content.
       components={{ Header: ListHeader, Footer: ListFooter }}
-      itemContent={(_index, check) => <CheckCard check={check} />}
+      itemContent={(_index, check) => (
+        // FIX: Wrap the CheckCard in the .cardWrapper div to ensure consistent
+        // horizontal padding and vertical margin between list items.
+        <div className={styles.cardWrapper}>
+          <CheckCard check={check} />
+        </div>
+      )}
     />
   );
 };

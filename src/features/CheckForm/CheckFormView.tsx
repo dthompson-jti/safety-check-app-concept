@@ -1,5 +1,5 @@
 // src/features/CheckForm/CheckFormView.tsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { WorkflowState, workflowStateAtom } from '../../data/atoms';
@@ -11,7 +11,6 @@ import { Tooltip } from '../../components/Tooltip';
 import styles from './CheckFormView.module.css';
 
 type CheckFormViewProps = {
-  // FIX: Accept the new, more explicit workflow state union type.
   checkData: Extract<WorkflowState, { view: 'form' }>;
 };
 
@@ -25,27 +24,46 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
 
-  const [status, setStatus] = useState('Awake');
+  const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState('');
 
   const handleBack = () => {
-    // Go back to the scanner view
     setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
   };
 
   const handleCancel = () => {
-    // Exit the entire workflow
     setWorkflowState({ view: 'none' });
   };
+  
+  const handleSetAll = (status: string) => {
+    if (!status) return;
+    const newStatuses = checkData.residents.reduce((acc, resident) => {
+      acc[resident.id] = status;
+      return acc;
+    }, {} as Record<string, string>);
+    setStatuses(newStatuses);
+  };
+
+  const handleSetIndividualStatus = (residentId: string, status: string) => {
+    if (!status) return;
+    setStatuses(prev => ({ ...prev, [residentId]: status }));
+  };
+
+  const allResidentsHaveStatus = useMemo(() => {
+    return checkData.residents.length === Object.keys(statuses).length &&
+           checkData.residents.every(res => statuses[res.id]);
+  }, [statuses, checkData.residents]);
+
 
   const handleSave = () => {
-    // FIX: Check the type of the workflow to dispatch the correct action.
+    if (!allResidentsHaveStatus) return;
+
     if (checkData.type === 'scheduled') {
       dispatch({
         type: 'CHECK_COMPLETE',
         payload: {
           checkId: checkData.checkId,
-          status,
+          statuses,
           notes,
           completionTime: new Date().toISOString(),
         },
@@ -56,7 +74,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         type: 'CHECK_SUPPLEMENTAL_ADD',
         payload: {
           roomId: checkData.roomId,
-          status,
+          statuses,
           notes,
         },
       });
@@ -65,6 +83,13 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     
     setWorkflowState({ view: 'none' });
   };
+  
+  const headerTitle = useMemo(() => {
+    if (checkData.residents.length > 1) {
+      return `${checkData.roomName} - Multiple Residents`;
+    }
+    return `${checkData.roomName} - ${checkData.residents[0]?.name}`;
+  }, [checkData.roomName, checkData.residents]);
 
   const specialClassification = checkData.type === 'scheduled' ? checkData.specialClassification : undefined;
 
@@ -85,7 +110,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
       <main className={styles.formContent}>
         <div className={styles.residentInfo}>
-          <h2>{checkData.roomName} - {checkData.residentName}</h2>
+          <h2>{headerTitle}</h2>
           {specialClassification && (
             <Tooltip content={specialClassification.details}>
               <div className={styles.srBadge}>
@@ -96,14 +121,30 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
           )}
         </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="status-group">STATUS</label>
-          <IconToggleGroup
-            id="status-group"
-            options={statusOptions}
-            value={status}
-            onValueChange={(val) => setStatus(val)}
-          />
+        {checkData.residents.length > 1 && (
+           <div className={styles.formGroup}>
+            <label>SET ALL TO</label>
+            <IconToggleGroup
+              id="set-all-status-group"
+              options={statusOptions}
+              value={''} // This is a one-way, fire-and-forget control
+              onValueChange={handleSetAll}
+            />
+          </div>
+        )}
+
+        <div className={styles.residentListContainer}>
+          {checkData.residents.map((resident) => (
+            <div key={resident.id} className={styles.residentRow}>
+              <span className={styles.residentName}>{resident.name}</span>
+              <IconToggleGroup
+                id={`status-group-${resident.id}`}
+                options={statusOptions}
+                value={statuses[resident.id] || ''}
+                onValueChange={(val) => handleSetIndividualStatus(resident.id, val)}
+              />
+            </div>
+          ))}
         </div>
 
         <div className={styles.formGroup}>
@@ -122,7 +163,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         <Button variant="secondary" size="m" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button variant="primary" size="m" onClick={handleSave}>
+        <Button variant="primary" size="m" onClick={handleSave} disabled={!allResidentsHaveStatus}>
           Save
         </Button>
       </footer>

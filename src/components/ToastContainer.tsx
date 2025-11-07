@@ -9,11 +9,11 @@ export const ToastContainer = () => {
   const toasts = useAtomValue(toastsAtom);
 
   return (
-    <>
+    <ToastPrimitive.Provider swipeDirection="down">
       {toasts.map(({ id, message, icon }) => (
-        <ToastMessage key={id} message={message} icon={icon} />
+        <ToastMessage key={id} id={id} message={message} icon={icon} />
       ))}
       <ToastPrimitive.Viewport className="toast-viewport" />
-    </>
+    </ToastPrimitive.Provider>
   );
 };

@@ -26,14 +26,19 @@ export const SelectRoomModal = () => {
   const handleContinue = () => {
     if (!selectedResident) return;
 
-    // FIX: Add the mandatory 'type' property to the workflow state.
-    // This flow is for new checks, so the type is 'supplemental'.
+    // FIX: Find all residents who share the same location as the selected resident.
+    const residentsInRoom = mockResidents.filter(
+      r => r.location === selectedResident.location
+    );
+
+    // FIX: Set the workflow state with the correct `residents` array property,
+    // matching the updated `WorkflowState` type. This resolves the downstream crash.
     setWorkflowState({
       view: 'form',
       type: 'supplemental',
       roomId: selectedResident.id,
       roomName: selectedResident.location,
-      residentName: selectedResident.name,
+      residents: residentsInRoom,
     });
     resetAndClose();
   };

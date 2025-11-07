@@ -1,21 +1,38 @@
 /* src/features/SafetyCheckSchedule/layouts.module.css */
 
-/* 
-  DEFINITIVE FIX: The empty .listContainer and .cardContainer rulesets have been removed.
-  Padding is now handled by the parent layout's .mainContent class for better
-  architectural consistency and to prevent horizontal overflow bugs.
+/*
+  FIX: Add background-color to .listContainer to ensure it has the correct
+  --surface-bg-secondary, matching the PriorityView.
 */
+.listContainer {
+  background-color: var(--surface-bg-secondary);
+}
 
-.cardGrid {
-  display: grid;
-  gap: var(--spacing-3);
+/* Styles for PriorityView */
+.priorityViewContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--surface-bg-secondary);
+}
+
+.unitHeader {
+  padding: var(--spacing-4) var(--spacing-4) 0;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--surface-fg-primary);
+  flex-shrink: 0;
+}
+
+.virtuosoScroller {
+  flex-grow: 1;
 }
 
 .priorityGroupHeader {
-  /* Adjust padding since parent now handles horizontal */
-  padding: var(--spacing-4) 0 var(--spacing-2);
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-2);
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--surface-fg-secondary);
   text-transform: uppercase;
@@ -26,19 +43,12 @@
   z-index: 5;
 }
 
-.scheduleHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  margin-left: auto;
+.cardWrapper {
+  padding: 0 var(--spacing-4) var(--spacing-3);
 }
 
-.scheduleHeader > label {
-  font-size: 0.9rem;
-  font-weight: 500;
+.emptyView {
+  padding: var(--spacing-8);
+  text-align: center;
   color: var(--surface-fg-secondary);
-}
-
-.scheduleHeader > div { /* Targets the Select component root */
-  min-width: 150px;
 }

@@ -1,16 +1,14 @@
 /* src/features/SafetyCheckSchedule/CheckCard.module.css */
 
-/* FIX: Complete redesign to match the new list item style */
-
 .checkCard {
   display: flex;
-  align-items: center; /* Vertically center content */
-  gap: var(--spacing-3);
+  position: relative; /* Establishes the positioning context for the status indicator. */
   background-color: var(--surface-bg-primary);
-  border-bottom: 1px solid var(--surface-border-secondary);
-  position: relative;
-  transition: background-color 0.2s;
-  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  box-shadow: var(--surface-shadow-xs);
+  transition: background-color 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  padding: 8px 16px 8px 20px;
 }
 
 .checkCard:not([aria-disabled='true']) {
@@ -19,68 +17,110 @@
 
 .checkCard:not([aria-disabled='true']):hover {
   background-color: var(--surface-bg-primary_hover);
-}
-
-.checkCard[aria-disabled='true'] {
-  opacity: 0.7;
+  box-shadow: var(--surface-shadow-md);
 }
 
 .statusIndicator {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  left: 7px;
+  top: 5px;
+  bottom: 5px;
+  border-radius: 4px;
+  background-color: var(--surface-border-primary); /* Default for 'pending' state */
+  transition: background-color 0.2s, width 0.2s;
+}
+
+/* The indicator is thicker for more urgent states. */
+.statusIndicator[data-status='pending'],
+.statusIndicator[data-status='due-soon'] {
+  width: 2px;
+}
+.statusIndicator[data-status='late'] {
   width: 4px;
-  background-color: var(--surface-border-secondary); /* Default for pending/missed */
 }
 
-/* Status colors for the indicator bar */
-.checkCard[data-status='late'] .statusIndicator {
-  background-color: var(--surface-fg-alert-primary);
+/* State-specific colors for the indicator. */
+.statusIndicator[data-status='late'] {
+  background-color: var(--surface-fg-warning-primary);
 }
-.checkCard[data-status='complete'] .statusIndicator,
-.checkCard[data-status='supplemental'] .statusIndicator {
-  background-color: var(--surface-fg-success-primary);
+.statusIndicator[data-status='due-soon'] {
+  background-color: var(--surface-fg-info-primary);
 }
 
-.content {
+
+.mainContent {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.topRow, .bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.locationInfo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+/*
+  This locally-scoped class is used to override the global icon style.
+  This pattern is robust and avoids conflicts with global selectors
+  that can be problematic within CSS module systems.
+*/
+.filledIcon {
+  color: var(--surface-fg-primary);
+  font-size: 16px;
+  font-variation-settings: 
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 16;
+}
+
+.locationText {
+  color: var(--surface-fg-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.residentList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--surface-fg-tertiary);
+  font-size: 1rem;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
 }
 
-.primaryInfo {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--surface-fg-primary);
-}
-
-.secondaryInfo {
-  font-size: 0.85rem;
-  font-weight: 500;
+.timeDisplay {
+  font-size: 14px;
   color: var(--surface-fg-secondary);
-}
-
-.secondaryInfo > span:first-child {
-  text-transform: capitalize;
-}
-
-/* Status text colors */
-.checkCard[data-status='late'] .secondaryInfo {
-  color: var(--surface-fg-alert-primary);
-}
-.checkCard[data-status='complete'] .secondaryInfo,
-.checkCard[data-status='supplemental'] .secondaryInfo {
-  color: var(--surface-fg-success-primary);
-}
-
-.specialClassification {
+  font-weight: 500;
+  /* Ensures the countdown timer does not cause layout shifting. */
+  font-variant-numeric: tabular-nums;
   flex-shrink: 0;
-  color: var(--surface-fg-info-primary);
 }
 
-.specialClassification .material-symbols-rounded {
-  font-size: 24px;
-  font-variation-settings: 'FILL' 0;
+.checkCard[data-status='late'] .timeDisplay,
+.checkCard[data-status='due-soon'] .timeDisplay {
+  font-weight: 600;
+}
+.checkCard[data-status='late'] .timeDisplay {
+  color: var(--surface-fg-warning-primary);
+}
+.checkCard[data-status='due-soon'] .timeDisplay {
+  color: var(--surface-fg-info-primary);
 }

@@ -10,12 +10,16 @@
 
 
 /* Layer 1: Design Tokens */
-/* DEFINITIVE FIX: Add terminating semicolons to all @import rules. */
 @import url('./primitives.css') layer(tokens);
 @import url('./utility.css') layer(tokens);
 @import url('./semantics.css') layer(tokens);
 
-/* Layer 2: Base Styles */
+/* 
+  Layer 2: Base Styles 
+  FIX: Import the new base.css file here. All rules from it are now correctly
+  scoped to the 'base' layer. The loose rules have been removed from this file.
+*/
+@import url('./base.css') layer(base);
 @import url('./forms.css') layer(base);
 @import url('./scrollbars.css') layer(base);
 
@@ -36,57 +40,10 @@
 
 /* Layer 5: Utility Classes */
 @import url('./animations.css') layer(utilities);
-@import url('./utilities.css') layer(utilities); /* FIX: Import the new utilities file */
+@import url('./utilities.css') layer(utilities);
 
 
-/* --- Global Root and Body Styles (defined outside layers) --- */
+/* --- Global Root Styles (defined outside layers) --- */
 :root {
   --font-family-sans: 'Inter', sans-serif;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: var(--font-family-sans);
-  background-color: var(--surface-bg-secondary);
-  color: var(--surface-fg-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.material-symbols-outlined, .material-symbols-rounded {
-  font-family: 'Material Symbols Rounded', sans-serif;
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 20;
-  vertical-align: middle;
-  font-size: 20px;
-}
-
-.material-symbols-outlined.outlined {
-    font-family: 'Material Symbols Outlined', sans-serif;
-}
-
-
-.resizer {
-  width: 1px;
-  cursor: col-resize;
-  background-color: var(--surface-border-secondary);
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 100;
-  transition: background-color 0.2s, width 0.2s ease, right 0.2s ease;
-}
-
-.resizer:hover {
-  background-color: var(--control-border-primary);
-  width: 4px;
-  right: -2px;
 }

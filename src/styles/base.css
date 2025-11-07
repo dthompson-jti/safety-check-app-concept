@@ -1,0 +1,43 @@
+/* src/styles/base.css */
+/* Contains foundational, global styles for the 'base' layer. */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-sans);
+  background-color: var(--surface-bg-secondary);
+  color: var(--surface-fg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 
+  This rule establishes the global default for all Material Symbols icons.
+  It is intentionally placed in the 'base' cascade layer to give it the
+  lowest precedence, allowing component-level styles to easily override it.
+*/
+.material-symbols-outlined, .material-symbols-rounded {
+  font-family: 'Material Symbols Rounded', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  /* Add standard property for full browser compatibility */
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-size: 20px;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 20;
+}

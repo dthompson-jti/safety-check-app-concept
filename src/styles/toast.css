@@ -2,22 +2,34 @@
 
 .toast-viewport {
   position: fixed;
-  /* Adjust bottom positioning to avoid the floating header area, with a fallback */
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: calc(var(--footer-height, 16px) + 16px);
+  
+  /* FIX: A robust, modern centering technique. The viewport spans the width of the
+     screen with padding on both sides. Flexbox is then used to center the actual
+     toast components horizontally within this container. */
+  left: 16px;
+  right: 16px;
+  
   display: flex;
   flex-direction: column;
+  align-items: center; /* This centers the toast stack horizontally */
   gap: 10px;
-  width: 95%;
-  max-width: 390px;
+  
   margin: 0;
   list-style: none;
   z-index: 2147483647;
   outline: none;
+  
+  /* Allow clicks to pass through the empty parts of the container. */
+  pointer-events: none;
 }
 
 .toast-root {
+  /* Re-enable pointer events on the toasts themselves. */
+  pointer-events: auto;
+  max-width: 500px;
+  width: 100%; /* The toast is responsive, up to its max-width */
+  
   display: flex;
   align-items: center;
   gap: var(--spacing-3);

@@ -32,13 +32,21 @@
   color: var(--surface-fg-primary);
   cursor: pointer;
   transition: background-color 0.2s;
+  gap: var(--spacing-4);
 }
 
 .checkItem:hover {
   background-color: var(--surface-bg-primary_hover);
 }
 
+.checkItemText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .srIcon {
   color: var(--surface-fg-info-primary);
   font-variation-settings: 'FILL' 1;
+  flex-shrink: 0;
 }

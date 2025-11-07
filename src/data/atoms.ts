@@ -1,6 +1,6 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
-import { SafetyCheck } from '../types';
+import { Resident, SafetyCheck } from '../types';
 
 // =================================================================
 //                         App State
@@ -58,7 +58,7 @@ export type WorkflowState =
       type: 'scheduled';
       checkId: string;
       roomName: string;
-      residentName: string;
+      residents: Resident[]; // MODIFIED: Pass the full resident array
       specialClassification?: SafetyCheck['specialClassification'];
     }
   | {
@@ -67,7 +67,7 @@ export type WorkflowState =
       type: 'supplemental';
       roomId: string;
       roomName: string;
-      residentName: string;
+      residents: Resident[]; // MODIFIED: Pass the full resident array
     };
 
 

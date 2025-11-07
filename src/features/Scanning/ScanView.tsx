@@ -21,14 +21,13 @@ export const ScanView = () => {
     const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
 
     if (check) {
-      addToast({ message: `Room ${check.resident.location} found.`, icon: 'qr_code_scanner' });
-      // FIX: Set the new, more explicit workflow state for a scheduled check.
+      addToast({ message: `Room ${check.residents[0].location} found.`, icon: 'qr_code_scanner' });
       setWorkflow({
         view: 'form',
         type: 'scheduled',
         checkId: check.id,
-        roomName: check.resident.location,
-        residentName: check.resident.name,
+        roomName: check.residents[0].location,
+        residents: check.residents,
         specialClassification: check.specialClassification,
       });
     } else {

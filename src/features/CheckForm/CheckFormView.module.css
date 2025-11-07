@@ -80,6 +80,27 @@
   text-transform: uppercase;
 }
 
+.residentListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) 0;
+  border-top: 1px solid var(--surface-border-secondary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.residentRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.residentName {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--surface-fg-primary);
+}
+
 .footer {
   flex-shrink: 0;
   display: flex;

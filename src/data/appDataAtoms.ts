@@ -16,32 +16,33 @@ export const mockResidents: Resident[] = [
   { id: 'res3', name: 'Clara Oswald', location: 'Room 103' },
   { id: 'res4', name: 'Arthur Pendelton', location: 'Room 201' },
   { id: 'res5', name: 'Beatrix Kiddo', location: 'Room 202' },
-  { id: 'res6', name: 'James Holden', location: 'Room 203' },
+  { id: 'res6', name: 'James Holden', location: 'RM 531' },
   { id: 'res7', name: 'Naomi Nagata', location: 'Room 204' },
   { id: 'res8', name: 'Alex Kamal', location: 'Room 205' },
   { id: 'res9', name: 'Amos Burton', location: 'Room 206' },
   { id: 'res10', name: 'Chrisjen Avasarala', location: 'Room 301' },
+  // Additional residents for multi-resident check
+  { id: 'res11', name: 'Aria Stark', location: 'RM 531' },
+  { id: 'res12', name: 'Dave Thompson', location: 'RM 531' },
 ];
 
 const now = new Date();
 const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
 const mockChecks: SafetyCheck[] = [
-  // Late check (will become overdue)
-  { id: 'chk1', resident: mockResidents[0], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SR', details: 'Fall Risk' } },
-  // Missed check (well past due)
-  { id: 'chk6', resident: mockResidents[5], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 2 },
-  // Due soon
-  { id: 'chk2', resident: mockResidents[1], status: 'pending', dueDate: inNMinutes(9.5), walkingOrderIndex: 3 },
+  // Late check
+  { id: 'chk1', residents: [mockResidents[0]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'Suicide Watch' } },
+  // Due soon (within 2 minutes)
+  { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1.5), walkingOrderIndex: 3 },
+  // Multi-resident check
+  { id: 'chk6', residents: [mockResidents[5], mockResidents[10], mockResidents[11]], status: 'pending', dueDate: inNMinutes(8), walkingOrderIndex: 2, specialClassification: { type: 'SW', details: 'Suicide Watch' } },
   // Upcoming
-  { id: 'chk3', resident: mockResidents[2], status: 'pending', dueDate: inNMinutes(29.5), walkingOrderIndex: 4 },
-  { id: 'chk4', resident: mockResidents[3], status: 'pending', dueDate: inNMinutes(89.5), walkingOrderIndex: 5 },
-  { id: 'chk7', resident: mockResidents[6], status: 'pending', dueDate: inNMinutes(239.5), walkingOrderIndex: 6 },
-  { id: 'chk8', resident: mockResidents[7], status: 'pending', dueDate: inNMinutes(269.5), walkingOrderIndex: 7 },
-  { id: 'chk9', resident: mockResidents[8], status: 'pending', dueDate: inNMinutes(299.5), walkingOrderIndex: 8 },
-  { id: 'chk10', resident: mockResidents[9], status: 'pending', dueDate: inNMinutes(359.5), walkingOrderIndex: 9 },
+  { id: 'chk3', residents: [mockResidents[2]], status: 'pending', dueDate: inNMinutes(29.5), walkingOrderIndex: 4 },
+  { id: 'chk4', residents: [mockResidents[3]], status: 'pending', dueDate: inNMinutes(89.5), walkingOrderIndex: 5 },
+  // Missed check (well past due)
+  { id: 'chk7', residents: [mockResidents[6]], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 6 },
   // Completed
-  { id: 'chk5', resident: mockResidents[4], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 11, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.', specialClassification: { type: 'SR', details: 'Medical Alert' } },
+  { id: 'chk5', residents: [mockResidents[4]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 11, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.', specialClassification: { type: 'SR', details: 'Medical Alert' } },
 ];
 
 // =================================================================
@@ -55,18 +56,17 @@ interface AppData {
 type CheckCompletePayload = {
   checkId: string;
   notes: string;
-  status: string;
+  statuses: Record<string, string>; // residentId -> status
   completionTime: string;
 };
 
 type SupplementalCheckPayload = {
-  roomId: string;
+  roomId: string; // This is the resident ID for now in the mock data
   notes: string;
-  status: string;
+  statuses: Record<string, string>;
 };
 
 export type AppAction =
-  | { type: 'CHECK_UPDATE_STATUS'; payload: { id: string; status: SafetyCheckStatus } }
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload };
 
@@ -79,37 +79,33 @@ export const dispatchActionAtom = atom(
   (get, set, action: AppAction) => {
     const nextState = produce(get(appDataAtom), (draft: Draft<AppData>) => {
       switch (action.type) {
-        case 'CHECK_UPDATE_STATUS': {
-          const check = draft.checks.find(c => c.id === action.payload.id);
-          if (check) {
-            check.status = action.payload.status;
-          }
-          break;
-        }
         case 'CHECK_COMPLETE': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
-            const isLate = new Date(action.payload.completionTime) > new Date(check.dueDate);
-            check.status = isLate ? 'late' : 'complete';
+            check.status = 'complete'; // Simplified status update
             check.lastChecked = action.payload.completionTime;
-            check.completionStatus = action.payload.status;
+            // For prototype, we'll just record the first status as the overall status
+            check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
           }
           break;
         }
         case 'CHECK_SUPPLEMENTAL_ADD': {
-          const { roomId, notes, status } = action.payload;
-          const resident = mockResidents.find(r => r.id === roomId);
-          if (resident) {
+          const { roomId, notes, statuses } = action.payload;
+          // Find all residents for the given location (room)
+          const roomLocation = mockResidents.find(r => r.id === roomId)?.location;
+          const residentsInRoom = mockResidents.filter(r => r.location === roomLocation);
+
+          if (residentsInRoom.length > 0) {
             const newCheck: SafetyCheck = {
               id: `sup_${nanoid()}`,
-              resident,
+              residents: residentsInRoom,
               status: 'supplemental',
               dueDate: new Date().toISOString(),
-              walkingOrderIndex: 999, // High index to sort last
+              walkingOrderIndex: 999,
               lastChecked: new Date().toISOString(),
               notes,
-              completionStatus: status,
+              completionStatus: Object.values(statuses)[0] || 'Complete',
             };
             draft.checks.push(newCheck);
           }
@@ -128,19 +124,20 @@ export const dispatchActionAtom = atom(
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const checks = get(appDataAtom).checks;
   const timeNow = get(currentTimeAtom).getTime();
-  const sixtyMinutesAgo = timeNow - 60 * 60 * 1000;
+  const twoMinutesFromNow = timeNow + 2 * 60 * 1000;
 
   return checks.map(check => {
+    // If check is already done, return it as is.
     if (check.status === 'complete' || check.status === 'supplemental') {
       return check;
     }
     const dueTime = new Date(check.dueDate).getTime();
     const updatedCheck = { ...check };
 
-    if (dueTime < sixtyMinutesAgo) {
-      updatedCheck.status = 'missed';
-    } else if (dueTime < timeNow) {
+    if (dueTime < timeNow) {
       updatedCheck.status = 'late';
+    } else if (dueTime < twoMinutesFromNow) {
+      updatedCheck.status = 'due-soon';
     } else {
       updatedCheck.status = 'pending';
     }
@@ -154,13 +151,13 @@ export const sortedChecksAtom = atom((get) => {
 
   const statusOrder: Record<SafetyCheckStatus, number> = {
     late: 0,
-    missed: 1,
+    'due-soon': 1,
     pending: 2,
-    complete: 3,
-    supplemental: 4,
+    missed: 3, // Missed is less urgent than active checks
+    complete: 4,
+    supplemental: 5,
   };
 
-  // FIX: Implement more robust sorting logic that handles view changes correctly.
   if (mode === 'time') {
     const sorted = [...checks];
     sorted.sort((a, b) => {
@@ -170,7 +167,7 @@ export const sortedChecksAtom = atom((get) => {
     });
     return sorted;
   } else { // 'route'
-    const actionable = checks.filter(c => c.status === 'late' || c.status === 'missed' || c.status === 'pending');
+    const actionable = checks.filter(c => c.status === 'late' || c.status === 'due-soon' || c.status === 'pending' || c.status === 'missed');
     const nonActionable = checks.filter(c => c.status === 'complete' || c.status === 'supplemental');
 
     actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
@@ -188,8 +185,9 @@ export const groupedChecksAtom = atom((get) => {
   const checks = get(sortedChecksAtom);
   const groups = {
     late: [] as SafetyCheck[],
-    missed: [] as SafetyCheck[],
+    'due-soon': [] as SafetyCheck[],
     pending: [] as SafetyCheck[],
+    missed: [] as SafetyCheck[],
     complete: [] as SafetyCheck[],
     supplemental: [] as SafetyCheck[],
   };
@@ -228,10 +226,10 @@ const formatDateGroup = (date: Date): string => {
 };
 
 export const groupedHistoryAtom = atom((get) => {
-  const allChecks = get(safetyChecksAtom);
+  const allChecks = get(appDataAtom).checks; // Use raw data for history
   const filter = get(historyFilterAtom);
 
-  let historicalChecks = allChecks.filter(c => c.status !== 'pending');
+  let historicalChecks = allChecks.filter(c => c.status !== 'pending' && c.status !== 'due-soon');
 
   if (filter === 'lateOrMissed') {
     historicalChecks = historicalChecks.filter(c => c.status === 'late' || c.status === 'missed');
