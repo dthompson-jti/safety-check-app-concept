@@ -10,9 +10,9 @@ interface NavItem {
   icon: string;
 }
 
+// ENHANCEMENT: Removed 'Checks' from navigation for simplification.
 const navItems: NavItem[] = [
   { id: 'dashboardTime', label: 'Dashboard', icon: 'dashboard' },
-  { id: 'checks', label: 'Checks', icon: 'checklist' },
   { id: 'history', label: 'History', icon: 'history' },
   { id: 'settings', label: 'Settings', icon: 'settings' },
 ];

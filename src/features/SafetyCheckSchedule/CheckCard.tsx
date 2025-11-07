@@ -77,15 +77,11 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       <div className={styles.mainContent}>
         <div className={styles.topRow}>
           <div className={styles.locationInfo}>
+            {/* ENHANCEMENT: Step 1 of Progressive Elaboration */}
             {specialClassification && (
-              <Tooltip content={specialClassification.details}>
-                {/* 
-                  DEFINITIVE FIX: Apply both the global icon class and our new local
-                  modifier class directly to the same element. This is the most
-                  robust and idiomatic way to solve this in a CSS module system.
-                */}
+              <Tooltip content={`${specialClassification.type}: ${specialClassification.details}`}>
                 <span className={`material-symbols-rounded ${styles.filledIcon}`}>
-                  warning
+                  shield_person
                 </span>
               </Tooltip>
             )}

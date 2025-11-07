@@ -25,13 +25,6 @@
   font-weight: 600;
 }
 
-.header button {
-  color: var(--surface-fg-secondary_on_brand);
-}
-.header button:hover {
-  background-color: var(--control-bg-on-solid-hover);
-}
-
 .cameraContainer {
   flex: 1;
   display: flex;
@@ -51,6 +44,9 @@
   position: relative;
   background-color: #000;
   border: 2px solid var(--surface-fg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .viewfinder video {
@@ -59,7 +55,8 @@
   object-fit: cover;
 }
 
-.scanPaused {
+/* NEW: Post-scan info display */
+.postScanInfo {
   width: 100%;
   height: 100%;
   display: flex;
@@ -67,12 +64,45 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  color: var(--surface-fg-success-primary);
+  padding: var(--spacing-4);
+  text-align: center;
 }
-.scanPaused .material-symbols-rounded {
+.successIcon {
   font-size: 48px;
   font-variation-settings: 'FILL' 1;
+  color: var(--surface-fg-success-primary);
 }
+.postScanInfo h4 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--surface-fg-white);
+}
+
+.classificationNotice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-bg-warning-secondary);
+  color: var(--surface-fg-warning-primary);
+}
+.classificationNotice .material-symbols-rounded {
+  font-size: 24px;
+  font-variation-settings: 'FILL' 1;
+}
+.classificationNotice p {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.classificationNotice p strong {
+  color: var(--surface-fg-white);
+}
+
 
 .helperText {
   margin: 0;
@@ -89,42 +119,40 @@
   gap: var(--spacing-4);
 }
 
+.subtlePrompt {
+  margin: 0;
+  margin-bottom: -12px; /* Pull button up slightly */
+  font-size: 0.9rem;
+  color: var(--surface-fg-on-solid-faint);
+}
+
 .footer > button {
   width: 100%;
-  color: var(--surface-fg-white);
-  border-color: var(--surface-fg-tertiary);
+}
+
+.devControlsContainer {
+  width: 100%;
+  background-color: var(--surface-bg-secondary-solid);
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.devControlsHeader {
+  text-align: center;
+  color: var(--surface-fg-tertiary);
+  font-size: 0.8rem;
+  margin: 0;
 }
 
 .devControls {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: var(--spacing-2);
-  color: var(--surface-fg-tertiary);
 }
-.devControls p {
-  margin: 0;
-  font-size: 0.8rem;
-}
+
 .devControls button {
-  background-color: var(--surface-fg-tertiary);
-  color: var(--surface-bg-primary-solid);
-}
-
-/* NEW: Styles for the defensive error view */
-.errorView {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background-color: var(--surface-bg-error-primary);
-  color: var(--surface-fg-alert-primary);
-  padding: var(--spacing-8);
-  font-family: var(--font-family-sans);
-}
-
-.errorView p {
-  font-family: monospace;
-  background-color: var(--surface-bg-error-secondary);
-  padding: var(--spacing-2);
-  border-radius: var(--spacing-1);
+  flex: 1;
+  gap: var(--spacing-2);
 }

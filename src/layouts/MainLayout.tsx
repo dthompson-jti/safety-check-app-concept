@@ -7,7 +7,7 @@ import { FloatingFooter } from '../features/Footer/FloatingFooter';
 import { SideMenu } from '../features/NavBar/SideMenu';
 import { DashboardView } from '../features/Dashboard/DashboardView';
 import { HistoryView } from '../features/History/HistoryView';
-import { FullScreenPlaceholder } from '../components/FullScreenPlaceholder';
+import { SettingsView } from '../features/Settings/SettingsView';
 import styles from './MainLayout.module.css';
 
 // This map translates the semantic AppView state into a numeric index
@@ -19,7 +19,6 @@ const viewMap: Record<AppView, number> = {
   // Non-carousel views default to the center panel's index for seamless transitions.
   history: 1,
   settings: 1,
-  checks: 1,
 };
 
 /**
@@ -37,8 +36,7 @@ const ContentPanels = () => {
     return (
       <main className={styles.mainContent}>
         {view === 'history' && <HistoryView />}
-        {view === 'checks' && <FullScreenPlaceholder icon="checklist" title="Checks" message="This view has not been implemented." />}
-        {view === 'settings' && <FullScreenPlaceholder icon="settings" title="Settings" message="This view has not been implemented." />}
+        {view === 'settings' && <SettingsView />}
       </main>
     );
   }

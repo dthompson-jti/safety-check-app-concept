@@ -21,28 +21,50 @@ export const mockResidents: Resident[] = [
   { id: 'res8', name: 'Alex Kamal', location: 'Room 205' },
   { id: 'res9', name: 'Amos Burton', location: 'Room 206' },
   { id: 'res10', name: 'Chrisjen Avasarala', location: 'Room 301' },
-  // Additional residents for multi-resident check
   { id: 'res11', name: 'Aria Stark', location: 'RM 531' },
   { id: 'res12', name: 'Dave Thompson', location: 'RM 531' },
+  // ENHANCEMENT: Added more residents for data fidelity
+  { id: 'res13', name: 'Dr. Evelyn Reed-Jones', location: 'Wing C, Room 304-A' },
+  { id: 'res14', name: 'Geralt of Rivia', location: 'Kaer Morhen Suite' },
+  { id: 'res15', name: 'Yennefer of Vengerberg', location: 'Kaer Morhen Suite' },
+  { id: 'res16', name: 'Ciri Riannon', location: 'Kaer Morhen Suite' },
+  { id: 'res17', name: 'John Wick', location: 'Continental NYC' },
+  { id: 'res18', name: 'Sarah Connor', location: 'Cyberdyne Annex' },
+  { id: 'res19', name: 'Kyle Reese', location: 'Cyberdyne Annex' },
+  { id: 'res20', name: 'Ellen Ripley', location: 'LV-426 Colony' },
+  { id: 'res21', name: 'Kara "Starbuck" Thrace', location: 'Galactica CIC' },
+  { id: 'res22', name: 'William Adama', location: 'Galactica CIC' },
+  { id: 'res23', name: 'Laura Roslin', location: 'Colonial One' },
+  { id: 'res24', name: 'Gaius Baltar', location: 'Colonial One' },
+  { id: 'res25', name: 'Leto Atreides', location: 'Arrakis Palace' },
 ];
 
 const now = new Date();
 const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
 const mockChecks: SafetyCheck[] = [
-  // Late check
-  { id: 'chk1', residents: [mockResidents[0]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'Suicide Watch' } },
+  // Late check with special classification
+  { id: 'chk1', residents: [mockResidents[0]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'Suicide Watch - High Risk', residentId: 'res1' } },
   // Due soon (within 2 minutes)
   { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1.5), walkingOrderIndex: 3 },
-  // Multi-resident check
-  { id: 'chk6', residents: [mockResidents[5], mockResidents[10], mockResidents[11]], status: 'pending', dueDate: inNMinutes(8), walkingOrderIndex: 2, specialClassification: { type: 'SW', details: 'Suicide Watch' } },
+  // Multi-resident check with one classified resident
+  { id: 'chk6', residents: [mockResidents[5], mockResidents[10], mockResidents[11]], status: 'pending', dueDate: inNMinutes(8), walkingOrderIndex: 2, specialClassification: { type: 'MA', details: 'Medication Alert: Ensure meds taken by 8 PM.', residentId: 'res11' } },
   // Upcoming
   { id: 'chk3', residents: [mockResidents[2]], status: 'pending', dueDate: inNMinutes(29.5), walkingOrderIndex: 4 },
   { id: 'chk4', residents: [mockResidents[3]], status: 'pending', dueDate: inNMinutes(89.5), walkingOrderIndex: 5 },
   // Missed check (well past due)
   { id: 'chk7', residents: [mockResidents[6]], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 6 },
-  // Completed
-  { id: 'chk5', residents: [mockResidents[4]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 11, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.', specialClassification: { type: 'SR', details: 'Medical Alert' } },
+  // Completed with special classification
+  { id: 'chk5', residents: [mockResidents[4]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 11, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Resident was watching TV.', specialClassification: { type: 'SR', details: 'Medical Alert', residentId: 'res5' } },
+  // ENHANCEMENT: Added more checks for data fidelity
+  { id: 'chk8', residents: [mockResidents[12]], status: 'pending', dueDate: inNMinutes(45), walkingOrderIndex: 7 },
+  { id: 'chk9', residents: [mockResidents[13], mockResidents[14], mockResidents[15]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 8, specialClassification: { type: 'FA', details: 'Fall Risk Assessment Required', residentId: 'res14' } },
+  { id: 'chk10', residents: [mockResidents[16]], status: 'pending', dueDate: inNMinutes(120), walkingOrderIndex: 9 },
+  { id: 'chk11', residents: [mockResidents[17], mockResidents[18]], status: 'pending', dueDate: inNMinutes(150), walkingOrderIndex: 10 },
+  { id: 'chk12', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(-240), walkingOrderIndex: 12 }, // Very late
+  { id: 'chk13', residents: [mockResidents[20], mockResidents[21]], status: 'pending', dueDate: inNMinutes(200), walkingOrderIndex: 13 },
+  { id: 'chk14', residents: [mockResidents[22], mockResidents[23]], status: 'complete', dueDate: inNMinutes(-300), lastChecked: inNMinutes(-301), completionStatus: 'Sleeping', walkingOrderIndex: 14 },
+  { id: 'chk15', residents: [mockResidents[24]], status: 'pending', dueDate: inNMinutes(240), walkingOrderIndex: 15 },
 ];
 
 // =================================================================

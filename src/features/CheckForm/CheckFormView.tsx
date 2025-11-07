@@ -7,7 +7,6 @@ import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { Button } from '../../components/Button';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
-import { Tooltip } from '../../components/Tooltip';
 import styles from './CheckFormView.module.css';
 
 type CheckFormViewProps = {
@@ -111,13 +110,12 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       <main className={styles.formContent}>
         <div className={styles.residentInfo}>
           <h2>{headerTitle}</h2>
+          {/* REFINED: Use a prominent banner for the global notice */}
           {specialClassification && (
-            <Tooltip content={specialClassification.details}>
-              <div className={styles.srBadge}>
-                <span className="material-symbols-rounded">shield_person</span>
-                <span>{specialClassification.type}</span>
-              </div>
-            </Tooltip>
+            <div className={styles.specialClassificationBanner}>
+              <span className="material-symbols-rounded">shield_person</span>
+              <p>Please note the special classification detailed below before completing this check.</p>
+            </div>
           )}
         </div>
 
@@ -134,17 +132,45 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         )}
 
         <div className={styles.residentListContainer}>
-          {checkData.residents.map((resident) => (
-            <div key={resident.id} className={styles.residentRow}>
-              <span className={styles.residentName}>{resident.name}</span>
-              <IconToggleGroup
-                id={`status-group-${resident.id}`}
-                options={statusOptions}
-                value={statuses[resident.id] || ''}
-                onValueChange={(val) => handleSetIndividualStatus(resident.id, val)}
-              />
-            </div>
-          ))}
+          {checkData.residents.map((resident) => {
+            const isClassified = specialClassification?.residentId === resident.id;
+
+            if (isClassified) {
+              // REFINED: Render a detailed wrapper for the classified resident
+              return (
+                <div key={resident.id} className={styles.classifiedResidentWrapper}>
+                  <div className={styles.classifiedResidentHeader}>
+                    <span className={styles.residentName}>{resident.name}</span>
+                    <IconToggleGroup
+                      id={`status-group-${resident.id}`}
+                      options={statusOptions}
+                      value={statuses[resident.id] || ''}
+                      onValueChange={(val) => handleSetIndividualStatus(resident.id, val)}
+                    />
+                  </div>
+                  <div className={styles.classificationDetails}>
+                    <span className="material-symbols-rounded">warning</span>
+                    <p>
+                      <strong>{specialClassification.type}:</strong> {specialClassification.details}
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            // Render the standard simple row for other residents
+            return (
+              <div key={resident.id} className={styles.residentRow}>
+                <span className={styles.residentName}>{resident.name}</span>
+                <IconToggleGroup
+                  id={`status-group-${resident.id}`}
+                  options={statusOptions}
+                  value={statuses[resident.id] || ''}
+                  onValueChange={(val) => handleSetIndividualStatus(resident.id, val)}
+                />
+              </div>
+            );
+          })}
         </div>
 
         <div className={styles.formGroup}>

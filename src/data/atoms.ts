@@ -9,7 +9,8 @@ import { Resident, SafetyCheck } from '../types';
 // This is the single source of truth for the application's primary view state.
 // It controls which panel is visible in the main carousel or if a standalone
 // view like 'history' should be rendered.
-export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute' | 'history' | 'settings' | 'checks';
+// ENHANCEMENT: Removed 'checks' as it is redundant with the dashboard.
+export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute' | 'history' | 'settings';
 export const appViewAtom = atom<AppView>('dashboardTime');
 
 

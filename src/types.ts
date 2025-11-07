@@ -9,16 +9,17 @@ export type SafetyCheckStatus = 'late' | 'due-soon' | 'pending' | 'complete' | '
 
 export interface SafetyCheck {
   id: string;
-  residents: Resident[]; // MODIFIED: Changed from a single resident to an array
+  residents: Resident[];
   status: SafetyCheckStatus;
   dueDate: string;
   walkingOrderIndex: number;
   lastChecked?: string;
-  // NOTE: Storing the multi-resident outcome as a single string for prototype simplicity.
   completionStatus?: string;
   notes?: string;
   specialClassification?: {
     type: string;
     details: string;
+    // DEFINITIVE FIX: Add residentId to pinpoint which resident the classification applies to.
+    residentId: string; 
   };
 }

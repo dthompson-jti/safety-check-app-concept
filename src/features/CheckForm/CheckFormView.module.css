@@ -40,8 +40,8 @@
   border-radius: var(--spacing-2);
   border: 1px solid var(--surface-border-secondary);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column; /* Changed for banner */
+  gap: var(--spacing-3);
 }
 
 .residentInfo h2 {
@@ -49,23 +49,31 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--surface-fg-primary);
+  width: 100%;
 }
 
-.srBadge {
+/* NEW: Banner for global special classification notice */
+.specialClassificationBanner {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-1) var(--spacing-3);
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
   background-color: var(--surface-bg-info);
+  border: 1px solid var(--primitives-blue-200);
+  border-radius: var(--radius-md);
+  color: var(--primitives-blue-700);
+}
+.specialClassificationBanner .material-symbols-rounded {
+  font-size: 24px;
+  font-variation-settings: 'FILL' 1;
   color: var(--surface-fg-info-primary);
-  border-radius: var(--spacing-2);
-  font-weight: 600;
+}
+.specialClassificationBanner p {
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-.srBadge .material-symbols-rounded {
-  font-size: 20px;
-  font-variation-settings: 'FILL' 1;
-}
 
 .formGroup {
   display: flex;
@@ -83,16 +91,17 @@
 .residentListContainer {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
-  padding: var(--spacing-4) 0;
-  border-top: 1px solid var(--surface-border-secondary);
-  border-bottom: 1px solid var(--surface-border-secondary);
+  gap: var(--spacing-2);
 }
 
 .residentRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-md);
 }
 
 .residentName {
@@ -100,6 +109,45 @@
   font-weight: 500;
   color: var(--surface-fg-primary);
 }
+
+/* NEW: Wrapper for a resident with a classification */
+.classifiedResidentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-fg-warning-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 2px var(--primitives-yellow-100);
+}
+.classifiedResidentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.classificationDetails {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--surface-border-secondary);
+  color: var(--surface-fg-warning-primary);
+}
+.classificationDetails .material-symbols-rounded {
+  margin-top: 2px;
+  font-size: 20px;
+  font-variation-settings: 'FILL' 1;
+}
+.classificationDetails p {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.classificationDetails p strong {
+  color: var(--surface-fg-primary);
+}
+
 
 .footer {
   flex-shrink: 0;
