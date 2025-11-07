@@ -1,5 +1,19 @@
 /* src/features/SafetyCheckSchedule/CheckCard.module.css */
 
+/* --- Keyframe Animations for State Change Flash --- */
+@keyframes card-flash-due-soon {
+  0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(206, 100%, 40%, 0.7); }
+  60% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(206, 100%, 40%, 0.7); }
+  100% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(206, 100%, 40%, 0); }
+}
+
+@keyframes card-flash-late {
+  0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(30, 100%, 40%, 0.7); }
+  60% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(30, 100%, 40%, 0.7); }
+  100% { box-shadow: var(--surface-shadow-xs), 0 0 0 4px hsla(30, 100%, 40%, 0); }
+}
+
+
 .checkCard {
   display: flex;
   position: relative; /* Establishes the positioning context for the status indicator. */
@@ -10,6 +24,15 @@
   overflow: hidden;
   padding: 8px 16px 8px 20px;
 }
+
+/* --- Trigger Animations on State Change --- */
+.checkCard[data-status='due-soon'] {
+  animation: card-flash-due-soon 0.8s ease-out;
+}
+.checkCard[data-status='late'] {
+  animation: card-flash-late 0.8s ease-out;
+}
+
 
 .checkCard:not([aria-disabled='true']) {
   cursor: pointer;

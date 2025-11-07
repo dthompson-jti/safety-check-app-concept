@@ -27,27 +27,4 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   Simulate the changes in the most critical files first.
     *   **Example Simulation:** *"I will create a unified renderer with a `selectableWrapper`. The old CSS targeted `.selected > .formComponentWrapper`. This selector will fail. Therefore, I must update `EditorCanvas.module.css` to target `.selectableWrapper.selected` to prevent a visual regression."*
     *   **Example Simulation:** *"I will add a hover effect to `.selectableWrapper`. Since these wrappers can be nested, this will cause a hover-bubbling bug. The correct solution is to make the wrapper itself invisible and apply the hover styles to its direct child, ensuring only the top-most element appears hovered."*
-    *   **Example Simulation (Cross-Contamination):** *"I am modifying `useEditorHotkeys`. This is a global hook. Does it run in Preview Mode? Yes. Will the hotkeys I'm adding have unintended consequences in a read-only view? Yes, the user could delete components from the preview. Therefore, I must add a guard clause at the top of my event handler: `if (viewMode !== 'editor') return;` to prevent this architectural leak."*
-    *   **Example Simulation (Layout & View Transitions):** *"I need to create a sliding panel navigator. A naive approach would be to make the header and footer `position: fixed` and slide only the content `div` underneath. This is architecturally fragile; it creates complex z-index and event-capturing issues. The architecturally superior solution is to create a persistent **outer shell** that contains the header and footer, and a separate **content container** that holds the sliding "film strip." When transitioning to a view that shouldn't have the header/footer (like the side menu), the animation should happen on the outer shell elements (fade them out), while the content panel slides independently. This decouples the chrome from the content, ensuring clean, predictable transitions and preventing layout bugs."*
-    *   This is the most critical step. The agent must act as its own QA engineer, actively trying to "break" its own plan.
-
-4.  **Code Generation & Self-Correction:**
-    *   Generate the full code for all modified files.
-    *   Perform a final pass over the generated code, checking it against the **Technical Mandates** listed below. This is a fast, final check for common, known errors.
-
-
-## Technical Mandates & Known Pitfalls
-
-These are non-negotiable rules learned from the project's history. Violating them will result in rework.
-
-1.  **The Rules of Hooks are Absolute.** All React Hooks (`useRef`, `useState`, `useAtomValue`, etc.) **must** be called unconditionally at the top level of a component. Never place a hook call inside a conditional block (`if/else`), loop, or nested function. If a component has different logic paths, hoist all hooks to the top.
-
-2.  **CSS Selectors Must Match the Final DOM.** When refactoring a component's JSX structure, the corresponding CSS **must** be updated. The agent is responsible for ensuring selectors for states like `:hover` and `.selected` target the new, correct class names and element hierarchy.
-
-3.  **Solve Nested Hovers with Child Targeting.** To prevent a "hover bubbling" effect where nested interactive elements all show a hover state simultaneously, the interactive wrapper element should be stylistically invisible. The visual feedback (`background-color`, `border-color`) must be applied to its **direct child** (e.g., `.wrapper:hover > .content`). This ensures only the top-most element appears hovered.
-
-4.  **Precision in Imports is Mandatory.** All package names must be exact (e.g., `@radix-ui/react-dialog`). All relative paths must be correct. There is no room for typos. Be especially vigilant for typos in long, similar-sounding names (e.g., `isWriteNfcModalOpenAtom` vs `isWriteNfcTagModalOpenAtom`). A single-character mistake is a common source of "module has no exported member" errors.
-
-5.  **"Ghost Errors" are Real.** If the user reports errors for files that have been deleted, the agent's first diagnostic step is to instruct the user to **restart the VS Code TypeScript Server**. This resolves stale cache issues.
-
-6.  **Radix Primitives Have Accessibility Contracts.** Many Radix UI components enforce accessibility best practices. For example, a `Dialog` **must** contain a `Dialog.Title` and `Dialog.Description` to be properly announced by screen readers. Always check the browser console after implementing a new component; Radix provides clear warnings for these violations. Treat them as mandatory fixes, not optional suggestions.
+    *   **Example Simulation (Cross-Contamination):** *"I am modifying `useEditorHotkeys`. This is a global hook. Does it run in Preview Mode? Yes. Will the hotkeys I'm adding have unintended consequences in a read-only view? Yes, the user could delete components

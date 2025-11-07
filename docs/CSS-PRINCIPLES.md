@@ -61,8 +61,11 @@ By composing these two classes, we achieve a perfectly consistent and robust men
 
 #### The Icon Badging Pattern for Visual Status
 
-To add secondary information to an icon without cluttering the UI, we use a CSS-only "badging" pattern.
+To add secondary information or communicate status visually, we use a consistent pattern of icons and semantic colors.
 
--   **Problem:** A component has a special status that needs to be communicated visually at a glance. For example, a `CheckCard` for a resident with a **Special Classification (e.g., Suicide Watch)** uses this pattern to overlay a small shield or alert icon on top of the main room icon.
--   **Solution:** A wrapper `div` with `position: relative` is placed around the base icon. A second, smaller "badge" icon is then absolutely positioned at the top-right corner of the wrapper.
--   **Implementation:** The badge icon is given a smaller `font-size` and a matching `opsz` (optical size) for clarity, and a `text-shadow` can be used to lift it visually from the base icon. This creates a clean, scalable, and high-craft way to badge icons with status indicators.
+-   **Problem:** A component or view has a special status that needs to be communicated at a glance.
+-   **Solution:** We use a prominent icon (like the `warning` triangle) paired with a semantic background color (like `--surface-bg-warning-secondary`) to create an unmistakable visual cue. The text content is also given a matching semantic color to ensure high contrast and legibility.
+-   **Implementation Examples:**
+    -   A `CheckCard` for a resident with a Special Classification uses a `warning` icon to draw immediate attention in the schedule list.
+    -   The **pre-scan alert banner** in `ScanView` uses this same pattern to provide a persistent, high-visibility warning to the caregiver while they are aiming the camera.
+    -   The resident-specific w

@@ -1,9 +1,10 @@
 // src/features/SafetyCheckSchedule/CheckCard.tsx
 import { useMemo } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { SafetyCheck, SafetyCheckStatus } from '../../types';
-import { currentTimeAtom, workflowStateAtom } from '../../data/atoms';
+import { SafetyCheck } from '../../types';
+import { workflowStateAtom } from '../../data/atoms';
+import { useCountdown } from '../../data/useCountdown';
 import { Tooltip } from '../../components/Tooltip';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckCard.module.css';
@@ -12,50 +13,17 @@ interface CheckCardProps {
   check: SafetyCheck;
 }
 
-const formatCheckTime = (dueDate: Date, now: Date, status: SafetyCheckStatus): string => {
-  const diffSeconds = Math.round((dueDate.getTime() - now.getTime()) / 1000);
-
-  switch (status) {
-    case 'complete':
-    case 'supplemental':
-      return '';
-    case 'missed':
-      return 'Missed';
-    case 'late': {
-      const absSeconds = Math.abs(diffSeconds);
-      const mins = Math.floor(absSeconds / 60);
-      return `Overdue ${mins}m`;
-    }
-    case 'due-soon':
-    case 'pending': {
-      if (diffSeconds < 0) return `Due Now`;
-      if (diffSeconds < 60) return `${diffSeconds}s`;
-      const mins = Math.floor(diffSeconds / 60);
-      const secs = diffSeconds % 60;
-      return `${mins}m ${String(secs).padStart(2, '0')}s`;
-    }
-    default:
-      return '';
-  }
-};
-
 export const CheckCard = ({ check }: CheckCardProps) => {
-  const now = useAtomValue(currentTimeAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
 
-  const relativeTime = useMemo(
-    () => formatCheckTime(dueDate, now, check.status),
-    [dueDate, now, check.status]
-  );
+  // The new high-performance countdown hook replaces the old formatting logic.
+  const relativeTime = useCountdown(dueDate, check.status);
 
   const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
 
   const handleCardClick = () => {
     if (isActionable) {
-      // When a user clicks a specific card, we set a targetCheckId.
-      // This makes the prototype feel more intentional, as the dev tools
-      // in the scanner will now "scan" this specific check.
       setWorkflowState({ 
         view: 'scanning', 
         isManualSelectionOpen: false,
