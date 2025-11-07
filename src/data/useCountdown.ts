@@ -39,13 +39,9 @@ const formatTime = (due: Date, now: Date): string => {
  * @returns A formatted string representing the time remaining.
  */
 export const useCountdown = (dueTime: Date, status: SafetyCheckStatus): string => {
-  // =======================================================================
-  //                       *** THE DEFINITIVE FIX ***
-  // The error occurs because useState was called without an initial value.
-  // This line provides the necessary initial value, resolving the error.
-  // =======================================================================
   const [now, setNow] = useState(() => new Date());
-  const animationFrameId = useRef<number>();
+  // FIX: Initialize the ref with `null` and update the type accordingly.
+  const animationFrameId = useRef<number | null>(null);
 
   const isActionable = status === 'pending' || status === 'due-soon' || status === 'late';
 
