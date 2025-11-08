@@ -1,5 +1,4 @@
 /* src/features/Shell/OfflineBanner.module.css */
-/* NEW FILE */
 
 .banner {
   display: flex;
@@ -13,20 +12,15 @@
   text-align: center;
   flex-shrink: 0;
   z-index: 60; /* Above header */
-}
 
-.banner[data-status='offline'] {
-  background-color: var(--surface-bg-warning-secondary);
-  color: var(--surface-fg-warning-primary);
-}
-
-.banner[data-status='syncing'] {
-  background-color: var(--surface-bg-info-secondary);
-  color: var(--surface-fg-info-primary);
+  /* DEFINITIVE FIX: Use solid background and on-solid text colors */
+  background-color: var(--surface-bg-secondary-solid);
+  color: var(--surface-fg-on-solid);
 }
 
 .banner .material-symbols-rounded {
   font-size: 20px;
+  color: var(--surface-fg-on-solid-faint); /* Faint color for icon */
 }
 
 .syncButton {

@@ -1,14 +1,10 @@
 /* src/features/Schedule/ScheduleLayouts.module.css */
 
-/* 
-  DEFINITIVE FIX: The empty .listContainer and .cardContainer rulesets have been removed.
-  Padding is now handled by the parent layout's .mainContent class for better
-  architectural consistency and to prevent horizontal overflow bugs.
-*/
-
-/* FIX: Add a wrapper class to provide vertical spacing between check cards */
+/* DEFINITIVE FIX: This wrapper re-introduces the symmetric 1rem (16px) horizontal margin for card view. */
 .cardWrapper {
-  padding-bottom: var(--spacing-2); /* 8px */
+  padding-left: var(--spacing-4); /* 16px */
+  padding-right: var(--spacing-4); /* 16px */
+  padding-bottom: var(--spacing-2); /* 8px vertical spacing between cards */
 }
 
 .cardGrid {

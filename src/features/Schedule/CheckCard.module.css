@@ -13,19 +13,42 @@
   100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
 }
 
+/* DEFINITIVE FIX: High-craft animation using semantic tokens. */
+/* It animates TO the success state, then resolves TO the final completed state. */
+@keyframes card-pulse-success {
+  0% {
+    background-color: var(--surface-bg-primary);
+    border-color: var(--surface-border-secondary);
+    box-shadow: var(--surface-shadow-xs);
+  }
+  30% {
+    background-color: var(--surface-bg-success);
+    border-color: var(--surface-border-success);
+    box-shadow: var(--surface-shadow-xs), 0 0 0 4px var(--surface-bg-success-secondary);
+  }
+  100% {
+    background-color: var(--surface-bg-secondary);
+    border-color: var(--surface-border-tertiary);
+    box-shadow: none;
+  }
+}
+
 .checkCard {
   display: flex;
-  position: relative; /* Establishes the positioning context for the status indicator. */
+  position: relative;
   background-color: var(--surface-bg-primary);
   border-radius: var(--radius-md);
   box-shadow: var(--surface-shadow-xs);
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
   overflow: hidden;
   padding: 8px 16px 8px 20px;
   border: 1px solid var(--surface-border-secondary);
 }
 
-/* --- Trigger Animations on State Change --- */
+.checkCard.is-completing {
+  animation: card-pulse-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .checkCard[data-status='due-soon'] {
   animation: card-flash-due-soon 1s ease-out;
 }
@@ -33,15 +56,22 @@
   animation: card-flash-late 1s ease-out;
 }
 
-
 .checkCard:not([aria-disabled='true']) {
   cursor: pointer;
 }
 
-.checkCard:not([aria-disabled='true']):hover {
+/* DEFINITIVE FIX: Disable hover state for completed/supplemental cards */
+.checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):hover {
   background-color: var(--surface-bg-primary_hover);
   border-color: var(--control-border-tertiary-hover);
   box-shadow: var(--surface-shadow-md), inset 0 -1px 0 0 var(--control-border-tertiary-hover);
+}
+
+.checkCard[data-status='complete'],
+.checkCard[data-status='supplemental'] {
+  background-color: var(--surface-bg-secondary);
+  border-color: var(--surface-border-tertiary);
+  box-shadow: none;
 }
 
 .statusIndicator {
@@ -50,7 +80,7 @@
   top: 5px;
   bottom: 5px;
   border-radius: 4px;
-  background-color: var(--surface-border-primary); /* Default for 'pending' state */
+  background-color: var(--surface-border-primary);
   transition: background-color 0.2s, width 0.2s;
 }
 
@@ -64,7 +94,6 @@
   width: 4px;
 }
 
-/* State-specific colors for the indicator. */
 .statusIndicator[data-status='late'] {
   background-color: var(--surface-fg-warning-primary);
 }
@@ -88,7 +117,6 @@
   gap: var(--spacing-2);
 }
 
-/* REFINED: Use align-items: flex-end to vertically anchor time display */
 .bottomRow {
   display: flex;
   justify-content: space-between;
@@ -135,10 +163,8 @@
 
 .timeDisplay {
   font-size: 14px;
-  /* REFINED: Change default color to tertiary */
   color: var(--surface-fg-tertiary);
   font-weight: 500;
-  /* Ensures the countdown timer does not cause layout shifting. */
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
@@ -152,12 +178,4 @@
 }
 .checkCard[data-status='due-soon'] .timeDisplay {
   color: var(--surface-fg-info-primary);
-}
-
-.completedBadge {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  color: var(--surface-fg-success-primary);
-  font-weight: 600;
 }

@@ -1,5 +1,5 @@
 // src/features/Shell/FloatingHeader.tsx
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   appViewAtom,
@@ -20,7 +20,7 @@ export const FloatingHeader = () => {
   const [view, setView] = useAtom(appViewAtom);
   const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
-  const [isOverviewOpen, setIsOverviewOpen] = useAtom(isStatusOverviewOpenAtom);
+  const isOverviewOpen = useAtomValue(isStatusOverviewOpenAtom);
 
   const isDashboard = view === 'dashboardTime' || view === 'dashboardRoute';
 
@@ -55,21 +55,6 @@ export const FloatingHeader = () => {
         <div className={styles.centerContent}>{isDashboard ? <PillToggle /> : <ConnectionStatusIndicator />}</div>
 
         <div className={styles.rightActions}>
-          {isDashboard && (
-            <Tooltip content={isOverviewOpen ? 'Hide Overview' : 'Show Overview'}>
-              <Button
-                variant="tertiary"
-                size="m"
-                iconOnly
-                onClick={() => setIsOverviewOpen(!isOverviewOpen)}
-                aria-pressed={isOverviewOpen}
-              >
-                <span className="material-symbols-rounded">
-                  {isOverviewOpen ? 'visibility_off' : 'visibility'}
-                </span>
-              </Button>
-            </Tooltip>
-          )}
           <Popover
             trigger={
               <Tooltip content="More Actions">

@@ -34,4 +34,11 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  /* DEFINITIVE FIX: Hide the scrollbar visually while keeping content scrollable. */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+/* For Webkit browsers (Chrome, Safari, etc.) */
+.mainContent::-webkit-scrollbar {
+  display: none;
 }

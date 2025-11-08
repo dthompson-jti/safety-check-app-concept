@@ -1,7 +1,7 @@
 // src/features/Schedule/CheckCard.tsx
 import { useState, useEffect, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { SafetyCheck } from '../../types';
 import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
@@ -16,16 +16,29 @@ interface CheckCardProps {
 export const CheckCard = ({ check }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const [isRecentlyCompleted, setIsRecentlyCompleted] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
+  // DEFINITIVE FIX: This robust useEffect handles component recycling.
+  // It ensures the animation state is correctly set or reset whenever the
+  // component's props change or the global completion atom updates.
   useEffect(() => {
+    let timerId: number | undefined;
+
     if (recentlyCompletedCheckId === check.id) {
-      setIsRecentlyCompleted(true);
-      const timer = setTimeout(() => {
-        setIsRecentlyCompleted(false);
-      }, 2000); // Display success state for 2 seconds
-      return () => clearTimeout(timer);
+      setIsCompleting(true);
+      timerId = window.setTimeout(() => {
+        setIsCompleting(false);
+      }, 1200); // Duration must match the CSS animation
+    } else {
+      // Explicitly reset state if this component is recycled for a different check
+      setIsCompleting(false);
     }
+
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
   }, [recentlyCompletedCheckId, check.id]);
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
@@ -46,10 +59,12 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const roomName = residents[0]?.location || 'N/A';
   const showIndicator = status !== 'complete' && status !== 'supplemental' && status !== 'missed';
 
+  const cardClassName = `${styles.checkCard} ${isCompleting ? styles.isCompleting : ''}`;
+
   return (
     <motion.div
       layout
-      className={styles.checkCard}
+      className={cardClassName}
       data-status={status}
       onClick={handleCardClick}
       aria-disabled={!isActionable}
@@ -68,31 +83,8 @@ export const CheckCard = ({ check }: CheckCardProps) => {
             )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          <AnimatePresence mode="wait">
-            {isRecentlyCompleted ? (
-              <motion.div
-                key="completed-badge"
-                className={styles.completedBadge}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <span className="material-symbols-rounded">check_circle</span>
-                <span>Completed</span>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="status-badge"
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <StatusBadge status={status} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* DEFINITIVE FIX: Always render the common StatusBadge, removing the intermediate state */}
+          <StatusBadge status={isCompleting ? 'complete' : status} />
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>

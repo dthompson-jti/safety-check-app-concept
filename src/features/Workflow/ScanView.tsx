@@ -10,7 +10,6 @@ import { Button } from '../../components/Button';
 import { ManualSelectionView } from './ManualSelectionView';
 import styles from './ScanView.module.css';
 
-// Defines the shape of the concise data needed for the pre-scan alert.
 interface PreScanAlertInfo {
   residentName: string;
   classificationType: string;
@@ -46,7 +45,7 @@ export const ScanView = () => {
     const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
 
     if (check) {
-      addToast({ message: `Scan successful for ${check.residents[0].location}.`, icon: 'qr_code_scanner' });
+      // DEFINITIVE FIX: The success toast is removed.
       setWorkflow({
         view: 'form',
         type: 'scheduled',
@@ -99,7 +98,6 @@ export const ScanView = () => {
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
-        // FIX: Apply the specified high-craft transition curve
         transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >
         <header className={styles.header}>

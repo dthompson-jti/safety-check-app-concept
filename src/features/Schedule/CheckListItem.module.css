@@ -1,13 +1,11 @@
 /* src/features/Schedule/CheckListItem.module.css */
-/* NEW FILE */
 
 .checkListItem {
   display: flex;
-  align-items: center;
   position: relative;
   background-color: var(--surface-bg-primary);
   transition: background-color 0.2s;
-  padding: 10px 16px 10px 20px;
+  padding: 8px 16px 8px 20px;
   border-bottom: 1px solid var(--surface-border-secondary);
 }
 
@@ -15,8 +13,14 @@
   cursor: pointer;
 }
 
-.checkListItem:not([aria-disabled='true']):hover {
+/* DEFINITIVE FIX: Disable hover state for completed/supplemental list items */
+.checkListItem:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):hover {
   background-color: var(--surface-bg-primary_hover);
+}
+
+.checkListItem[data-status='complete'],
+.checkListItem[data-status='supplemental'] {
+  background-color: var(--surface-bg-secondary);
 }
 
 .statusIndicator {
@@ -35,35 +39,63 @@
 .statusIndicator[data-status='late'] { background-color: var(--surface-fg-warning-primary); }
 .statusIndicator[data-status='due-soon'] { background-color: var(--surface-fg-info-primary); }
 
-.content {
+.mainContent {
   flex-grow: 1;
   display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--spacing-2);
 }
 
 .locationInfo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: 7px;
   min-width: 0;
-  flex: 1;
+}
+
+.filledIcon {
+  color: var(--surface-fg-warning-primary);
+  font-size: 16px;
+  font-variation-settings: 
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 16;
 }
 
 .locationText {
-  color: var(--surface-fg-primary);
+  color: var(--surface-fg-secondary);
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.filledIcon {
-  color: var(--surface-fg-warning-primary);
-  font-size: 18px;
-  font-variation-settings: 'FILL' 1;
+.residentList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--surface-fg-tertiary);
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
 }
 
 .timeDisplay {
@@ -72,8 +104,6 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
-  width: 100px;
-  text-align: right;
 }
 
 .checkListItem[data-status='late'] .timeDisplay,

@@ -12,7 +12,8 @@ interface ScheduleListViewProps {
 }
 
 const ListHeader = () => <div style={{ height: '16px' }} />;
-const ListFooter = () => <div style={{ height: '112px' }} />;
+// Increase footer height to ensure last item can scroll well above the footer
+const ListFooter = () => <div style={{ height: '128px' }} />;
 
 export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
@@ -20,7 +21,6 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
 
   return (
     <Virtuoso
-      className={styles.listContainer}
       data={checks}
       components={{ Header: ListHeader, Footer: ListFooter }}
       itemContent={(_index, check) => {
@@ -31,6 +31,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
             <CheckListItem check={check} />
           );
 
+        // The wrapper with horizontal margins is now only applied for card view
         return (
           <div className={scheduleViewMode === 'card' ? styles.cardWrapper : ''}>
             {content}

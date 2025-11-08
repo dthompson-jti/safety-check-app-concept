@@ -5,6 +5,7 @@ import {
   sessionAtom,
   isWriteNfcModalOpenAtom,
   appConfigAtom,
+  isStatusOverviewOpenAtom,
 } from '../../data/atoms';
 import { Switch } from '../../components/Switch';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
@@ -31,6 +32,7 @@ const viewModeOptions = [
 export const SettingsOverlay = () => {
   const [session, setSession] = useAtom(sessionAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
+  const [isOverviewOpen, setIsOverviewOpen] = useAtom(isStatusOverviewOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
 
   const handleLogout = () => {
@@ -68,6 +70,16 @@ export const SettingsOverlay = () => {
             id="haptics-toggle"
             checked={appConfig.hapticsEnabled}
             onCheckedChange={(checked) => setAppConfig((c) => ({ ...c, hapticsEnabled: checked }))}
+          />
+        </div>
+        <div className={styles.settingsItem}>
+          <label htmlFor="overview-toggle" className={styles.itemLabel}>
+            Show Status Overview
+          </label>
+          <Switch
+            id="overview-toggle"
+            checked={isOverviewOpen}
+            onCheckedChange={setIsOverviewOpen}
           />
         </div>
       </SettingsSection>
