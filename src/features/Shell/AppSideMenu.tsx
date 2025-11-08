@@ -9,6 +9,9 @@ import {
 } from '../../data/atoms';
 import styles from './AppSideMenu.module.css';
 
+/**
+ * A reusable, styled button component specific to the AppSideMenu layout.
+ */
 const NavButton = ({ icon, label, onClick, disabled = false }: { icon: string; label: string; onClick: () => void; disabled?: boolean }) => (
   <button className={styles.navButton} onClick={onClick} disabled={disabled}>
     <span className="material-symbols-rounded">{icon}</span>
@@ -16,6 +19,8 @@ const NavButton = ({ icon, label, onClick, disabled = false }: { icon: string; l
   </button>
 );
 
+// Mock data for the list of units. In a real application, this would
+// likely come from a global state store or an API call.
 const units = [
   { id: 'unit1', name: 'Unit 1' },
   { id: 'unit2', name: 'Unit 2' },
@@ -28,6 +33,11 @@ const units = [
   { id: 'cyberdyne', name: 'Terminator: Cyberdyne' },
 ];
 
+/**
+ * AppSideMenu provides the main navigation and action hub for the application.
+ * It features a scrollable content area with a sticky header and footer,
+ * ensuring key information and actions are always accessible.
+ */
 export const AppSideMenu = () => {
   const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
@@ -43,13 +53,14 @@ export const AppSideMenu = () => {
         <div className={styles.headerSeparator} />
       </header>
 
+      {/* The main content area contains all the navigation items. */}
+      {/* It is a simple flex container; the parent <aside> handles scrolling. */}
       <main className={styles.content}>
         <NavButton icon="add_comment" label="Supplemental Check" onClick={() => setIsSelectRoomModalOpen(true)} />
         <NavButton icon="nfc" label="Write NFC Tag" onClick={() => setIsWriteNfcModalOpen(true)} />
         <NavButton icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
         <NavButton icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
         
-        {/* DEFINITIVE FIX: Separator is moved to group the actions above. */}
         <div className={styles.separator} />
 
         {units.map(unit => (

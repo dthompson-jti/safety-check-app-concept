@@ -25,7 +25,9 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 ## 3. Prototype Features
 
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow.
--   **Workspace-Based Navigation:** The application uses a sliding panel architecture for its primary navigation. The main workspaces (Side Menu, Time-Sorted Schedule, Route-Sorted Schedule) exist on a horizontal "film strip." A persistent header and footer provide global actions and view controls, creating a stable application shell around the sliding content.
+-   **High-Craft Navigation Model:** The application uses a dual-pattern navigation system.
+    -   **Push Layout (Side Menu):** The main navigation menu uses a "push" animation. When opened, it slides into view from the left, smoothly pushing the entire main application view to the right. This creates a sophisticated spatial relationship and preserves context.
+    -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted and Route-Sorted Schedules) exist on a horizontal "film strip." Switching between them uses a sliding panel animation. This is all contained within a persistent application shell (header and footer) that provides global actions and view controls.
 -   **Dynamic Check Schedule:** A performant list of checks with live timers and two sorting modes (Time and Route). The list is rendered using a standard component map to ensure high-fidelity animations, prioritizing craft over premature optimization.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes. This includes a "pre-scan alert" to notify caregivers of critical resident information *before* a scan is completed.
 -   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature and a visually distinct UI for residents with special classifications.
