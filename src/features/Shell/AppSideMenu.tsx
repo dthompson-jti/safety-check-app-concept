@@ -16,7 +16,6 @@ const NavButton = ({ icon, label, onClick, disabled = false }: { icon: string; l
   </button>
 );
 
-// DEFINITIVE FIX: Added an expanded list of units with themed names.
 const units = [
   { id: 'unit1', name: 'Unit 1' },
   { id: 'unit2', name: 'Unit 2' },
@@ -49,10 +48,10 @@ export const AppSideMenu = () => {
         <NavButton icon="nfc" label="Write NFC Tag" onClick={() => setIsWriteNfcModalOpen(true)} />
         <NavButton icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
         <NavButton icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
-
+        
+        {/* DEFINITIVE FIX: Separator is moved to group the actions above. */}
         <div className={styles.separator} />
 
-        {/* Map over the new units array to render the buttons */}
         {units.map(unit => (
           <NavButton 
             key={unit.id}
