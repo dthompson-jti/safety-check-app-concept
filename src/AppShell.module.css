@@ -28,7 +28,6 @@
   flex-direction: column;
   z-index: 1;
   background-color: var(--surface-bg-secondary);
-  /* DEFINITIVE FIX: Removed transform-origin to prevent the gap during animation. */
   will-change: transform;
   overflow: hidden; /* This is critical for border-radius to apply correctly */
 }

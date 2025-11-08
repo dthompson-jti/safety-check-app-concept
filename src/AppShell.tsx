@@ -1,5 +1,5 @@
 // src/AppShell.tsx
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -26,19 +26,12 @@ import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
 import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
 import styles from './AppShell.module.css';
 
-// DEFINITIVE FIX: Use 'as const' to give TypeScript the specific literal
-// types that Framer Motion's 'transition' prop expects.
 const viewTransition = {
   type: 'tween',
   duration: 0.4,
   ease: [0.16, 1, 0.3, 1],
 } as const;
 
-/**
- * AppShell is the top-level component that orchestrates the entire UI.
- * It manages the root layout animation (side menu vs. main content) and
- * conditionally displays overlay views based on global state.
- */
 export const AppShell = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const workflowState = useAtomValue(workflowStateAtom);
@@ -49,12 +42,23 @@ export const AppShell = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
 
+  // DEFINITIVE FIX: State and ref for dynamically measuring the side menu width.
+  const [sideMenuWidth, setSideMenuWidth] = useState(0);
+  const sideMenuRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(intervalId);
   }, [setCurrentTime]);
+
+  useEffect(() => {
+    // Measure the side menu's width after it has rendered.
+    if (sideMenuRef.current) {
+      setSideMenuWidth(sideMenuRef.current.offsetWidth);
+    }
+  }, []); // Runs once on mount.
 
   useEffect(() => {
     if (workflowState.view === 'form' && workflowState.residents && workflowState.residents.length > 0) {
@@ -68,15 +72,16 @@ export const AppShell = () => {
   const isChromeVisible = workflowState.view !== 'scanning' && workflowState.view !== 'form';
 
   const closeMenu = () => {
-    setAppView('dashboardTime'); // Default back to time view
+    setAppView('dashboardTime');
   };
 
   return (
     <div className={styles.appContainer}>
       <motion.div
+        ref={sideMenuRef} // Attach the ref here
         className={styles.sideMenuContainer}
         initial={false}
-        animate={{ x: isMenuOpen ? '0%' : '-100%' }}
+        animate={{ x: isMenuOpen ? 0 : -sideMenuWidth }}
         transition={viewTransition}
       >
         <AppSideMenu />
@@ -86,7 +91,7 @@ export const AppShell = () => {
         className={styles.mainViewWrapper}
         initial={false}
         animate={{
-          x: isMenuOpen ? '85%' : '0%',
+          x: isMenuOpen ? sideMenuWidth : 0, // Animate using the measured width
         }}
         transition={viewTransition}
       >

@@ -12,7 +12,7 @@
 
 .header {
   padding: var(--spacing-4);
-  padding-bottom: 0; /* Padding will be handled by the separator's margin */
+  padding-bottom: 0;
   flex-shrink: 0;
 }
 
@@ -29,7 +29,6 @@
   margin: 0;
 }
 
-/* DEFINITIVE FIX: Added a separator line under the header title. */
 .headerSeparator {
   height: 1px;
   background-color: var(--surface-border-secondary);
@@ -42,7 +41,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
+  /* DEFINITIVE FIX: Enable scrolling for the main content area */
   overflow-y: auto;
+  min-height: 0; /* Necessary for flexbox scrolling */
 }
 
 .separator {
@@ -85,12 +86,17 @@
 }
 
 .footer {
-  padding: var(--spacing-2);
+  /* DEFINITIVE FIX: The footer is now the sticky container */
   flex-shrink: 0;
-  margin-top: auto; /* Pushes footer to the bottom */
+  padding: var(--spacing-2);
+  padding-top: var(--spacing-1); /* Reduce top padding to feel tighter */
+  margin-top: auto; /* Pushes footer to the bottom of the flex container */
+  position: sticky;
+  bottom: 0;
+  /* This ensures content scrolls underneath the floating footer */
+  background-image: linear-gradient(to top, var(--surface-bg-primary) 85%, transparent);
 }
 
-/* DEFINITIVE FIX: New styles for the single, combined user/settings button. */
 .userSettingsButton {
   display: flex;
   align-items: center;
@@ -100,17 +106,18 @@
   padding: var(--spacing-3);
   cursor: pointer;
   text-align: left;
-
-  /* Base state styles */
-  background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-tertiary);
   border-radius: var(--radius-md);
+
+  /* DEFINITIVE FIX: Apply floating header/footer styles */
+  background-color: var(--surface-bg-header-translucent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--surface-border-secondary);
   
-  /* High-craft transition */
+  /* Apply requested tertiary hover state */
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Hover state implementing the tertiary button style with inset shadow */
 .userSettingsButton:hover {
   background-color: var(--control-bg-tertiary-hover);
   color: var(--control-fg-tertiary-hover);
