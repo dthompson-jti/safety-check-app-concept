@@ -16,6 +16,19 @@ const NavButton = ({ icon, label, onClick, disabled = false }: { icon: string; l
   </button>
 );
 
+// DEFINITIVE FIX: Added an expanded list of units with themed names.
+const units = [
+  { id: 'unit1', name: 'Unit 1' },
+  { id: 'unit2', name: 'Unit 2' },
+  { id: 'unit3', name: 'Unit 3' },
+  { id: 'unit4', name: 'Unit 4' },
+  { id: 'death-star', name: 'Star Wars: Death Star' },
+  { id: 'rocinante', name: 'The Expanse: Rocinante' },
+  { id: 'hogwarts', name: 'Harry Potter: Hogwarts' },
+  { id: 'lv-426', name: 'Aliens: LV-426' },
+  { id: 'cyberdyne', name: 'Terminator: Cyberdyne' },
+];
+
 export const AppSideMenu = () => {
   const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
@@ -32,7 +45,6 @@ export const AppSideMenu = () => {
       </header>
 
       <main className={styles.content}>
-        {/* DEFINITIVE FIX: Developer Settings moved into this main scrollable block */}
         <NavButton icon="add_comment" label="Supplemental Check" onClick={() => setIsSelectRoomModalOpen(true)} />
         <NavButton icon="nfc" label="Write NFC Tag" onClick={() => setIsWriteNfcModalOpen(true)} />
         <NavButton icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
@@ -40,10 +52,16 @@ export const AppSideMenu = () => {
 
         <div className={styles.separator} />
 
-        <NavButton icon="apps" label="Unit 1" onClick={() => {}} disabled />
-        <NavButton icon="apps" label="Unit 2" onClick={() => {}} disabled />
-        <NavButton icon="apps" label="Unit 3" onClick={() => {}} disabled />
-        {/* Add more units here to test scrolling */}
+        {/* Map over the new units array to render the buttons */}
+        {units.map(unit => (
+          <NavButton 
+            key={unit.id}
+            icon="apps" 
+            label={unit.name} 
+            onClick={() => {}} 
+            disabled 
+          />
+        ))}
       </main>
 
       <footer className={styles.footer}>
