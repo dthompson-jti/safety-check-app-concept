@@ -18,18 +18,20 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const [isPulsing, setIsPulsing] = useState(false);
 
-  // DEFINITIVE FIX: Create a "visual state snapshot" to prevent state reversion during exit animation.
+  // Use a local "visual" state to snapshot the completed appearance. This prevents
+  // the item from flashing back to its old state during the exit animation if
+  // the underlying data changes before the animation is complete.
   const [visualStatus, setVisualStatus] = useState(check.status);
 
   useEffect(() => {
     let timerId: number | undefined;
     if (recentlyCompletedCheckId === check.id) {
       setIsPulsing(true);
-      setVisualStatus('complete'); // Snapshot the final state
+      setVisualStatus('complete'); // Snapshot the final state for the animation.
       timerId = window.setTimeout(() => setIsPulsing(false), 1200);
     } else {
       setIsPulsing(false);
-      // Ensure visual state is in sync when not pulsing
+      // Ensure visual state is in sync with props when not animating.
       setVisualStatus(check.status);
     }
     return () => clearTimeout(timerId);
@@ -61,7 +63,7 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={listItemClassName}
-      data-status={visualStatus} // Use visual status for styling
+      data-status={visualStatus} // All styling is driven by the snapshot visual state.
       onClick={handleItemClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.99, backgroundColor: 'var(--surface-bg-primary_hover)' } : {}}

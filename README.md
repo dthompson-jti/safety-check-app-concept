@@ -15,7 +15,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 ## 2. Technology Stack
 
 -   **Build Tool:** Vite
--   **Framework:** React 19
+-   **Framework:** React 18
 -   **Language:** TypeScript
 -   **Styling:** Global CSS with a layered cascade (`@layer`), design tokens, and data-attribute styling.
 -   **State Management:** Jotai
@@ -26,7 +26,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow.
 -   **Workspace-Based Navigation:** The application uses a sliding panel architecture for its primary navigation. The main workspaces (Side Menu, Time-Sorted Schedule, Route-Sorted Schedule) exist on a horizontal "film strip." A persistent header and footer provide global actions and view controls, creating a stable application shell around the sliding content.
--   **Dynamic Check Schedule:** A performant, virtualized list of checks with live timers and two sorting modes (Time and Route).
+-   **Dynamic Check Schedule:** A performant list of checks with live timers and two sorting modes (Time and Route). The list is rendered using a standard component map to ensure high-fidelity animations, prioritizing craft over premature optimization.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes. This includes a "pre-scan alert" to notify caregivers of critical resident information *before* a scan is completed.
 -   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature and a visually distinct UI for residents with special classifications.
 -   **Comprehensive History View:** A complete, filterable, and chronologically-grouped view of all past check activity, rendered in a full-screen modal.

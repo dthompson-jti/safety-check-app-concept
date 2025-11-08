@@ -69,11 +69,17 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   return (
     <div className={styles.scrollContainer}>
       <div style={{ height: '16px' }} />
+      {/*
+        Using `mode="popLayout"` tells Framer Motion to handle layout changes (reflowing the list)
+        BEFORE handling exit/enter animations. This prevents visual glitches when an item
+        is removed from one group and re-added to another simultaneously.
+      */}
       <AnimatePresence mode="popLayout">
         {itemsToRender.map(item => {
           if (item.type === 'header') {
             return (
-              // DEFINITIVE FIX: Animate the header's exit to prevent jank when the last item in a group is removed.
+              // The header also animates its exit. This prevents jank when the last
+              // item in a group is removed, as both the item and header leave together.
               <motion.div
                 key={item.id}
                 className={styles.headerWrapper}

@@ -21,6 +21,12 @@ This powerful pattern allows components to communicate layout information to the
 -   **The Benefit:** Other components, even in completely different parts of the DOM tree, can then use this variable in their own CSS (e.g., with `calc()`) to dynamically position themselves relative to the first component. This creates a robust, decoupled layout system that adapts automatically.
 -   **Example:** The `FloatingFooter` sets `--footer-height`. The global `toast.css` stylesheet uses `bottom: calc(var(--footer-height) + 16px)` to ensure toasts always appear perfectly above the footer, no matter its size.
 
+##### The Sticky Positioning Contract
+`position: sticky` is powerful but has a critical dependency on its parent container.
+
+-   **Problem:** A sticky element (`top: 0`) will not stick to the top of the viewport if its direct scrolling parent has `padding-top`. It will stick to the edge of the *content box*, leaving an unwanted gap.
+-   **Solution (The Contract):** To create a robust sticky header, the scrolling container itself should have **no vertical padding**. Instead, add a static "spacer" `div` element at the top of the container to create the necessary visual space. This decouples the padding from the positioning context, ensuring the sticky header behaves predictably.
+
 #### 2. Diagnose, Don't Guess
 
 When debugging a UI issue, follow this simple diagnostic process to find the root cause instead of guessing at solutions:

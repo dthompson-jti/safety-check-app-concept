@@ -21,16 +21,20 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const [isPulsing, setIsPulsing] = useState(false);
   
+  // Use a local "visual" state to snapshot the completed appearance. This prevents
+  // the card from flashing back to its old state during the exit animation if
+  // the underlying data changes before the animation is complete.
   const [visualStatus, setVisualStatus] = useState(check.status);
 
   useEffect(() => {
     let timerId: number | undefined;
     if (recentlyCompletedCheckId === check.id) {
       setIsPulsing(true);
-      setVisualStatus('complete'); 
+      setVisualStatus('complete'); // Snapshot the final state for the animation.
       timerId = window.setTimeout(() => setIsPulsing(false), 1200);
     } else {
       setIsPulsing(false);
+      // Ensure visual state is in sync with props when not animating.
       setVisualStatus(check.status);
     }
     return () => clearTimeout(timerId);
@@ -62,7 +66,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cardClassName}
-      data-status={visualStatus} 
+      data-status={visualStatus} // All styling is driven by the snapshot visual state.
       onClick={handleCardClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}

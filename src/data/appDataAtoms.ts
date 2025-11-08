@@ -36,11 +36,13 @@ export const mockResidents: Resident[] = [
   { id: 'res24', name: 'Sheev Palpatine', location: 'Death Star Throne Room' },
 ];
 
+// Generate mock checks dynamically. This ensures that the relative times
+// are always calculated against the CURRENT time when the app loads, not a
+// stale time from when the module was first imported.
 const initialChecks: SafetyCheck[] = (() => {
     const now = new Date();
     const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
-    // DEFINITIVE FIX: Explicitly type the returned array as SafetyCheck[] to fix the type inference error.
     return [
       { id: 'chk1', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'High-risk Sith Lord. Approach with caution.', residentId: 'res22' } },
       { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1.5), walkingOrderIndex: 3 },
@@ -60,6 +62,8 @@ const initialChecks: SafetyCheck[] = (() => {
     ];
 })();
 
+// This is the "source of truth" atom for the raw check data.
+// It is made writable to allow the reducer-style appDataAtom to update it.
 const baseChecksAtom = atom(initialChecks, (_get, set, update: SafetyCheck[]) => {
     set(baseChecksAtom, update);
 });
@@ -90,6 +94,7 @@ export type AppAction =
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload };
 
+// This atom provides a reducer-like interface for mutating the app's core data.
 const appDataAtom = atom<AppData, [AppAction], void>(
   (get) => ({ checks: get(baseChecksAtom) }),
   (get, set, action) => {
@@ -132,6 +137,7 @@ const appDataAtom = atom<AppData, [AppAction], void>(
   }
 );
 
+// This is the public-facing atom used by components to dispatch actions.
 export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
     set(appDataAtom, action);
 });
@@ -141,6 +147,8 @@ export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
 //                Derived, Read-Only Atoms for UI
 // =================================================================
 
+// This derived atom calculates the real-time status of each check.
+// It depends on the low-frequency `minuteTickerAtom` to prevent performance issues.
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const { checks } = get(appDataAtom);
   const timeNow = get(minuteTickerAtom);
@@ -181,6 +189,7 @@ const statusOrder: Record<SafetyCheckStatus, number> = {
   supplemental: 5,
 };
 
+// This derived atom sorts checks for the "Time View".
 export const timeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const sorted = [...checks];
@@ -192,6 +201,7 @@ export const timeSortedChecksAtom = atom((get) => {
   return sorted;
 });
 
+// This derived atom sorts checks for the "Route View".
 export const routeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const actionable = checks.filter(c => c.status !== 'complete' && c.status !== 'supplemental');
@@ -207,6 +217,7 @@ export const routeSortedChecksAtom = atom((get) => {
   return [...actionable, ...nonActionable];
 });
 
+// This derived atom provides summary counts for the Status Overview bar.
 export const statusCountsAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const counts = {
