@@ -36,7 +36,7 @@
   z-index: 5;
 }
 
-/* --- NEW: Text-based Filter Controls --- */
+/* --- Text-based Filter Controls --- */
 .filterToggleGroup {
   display: flex;
   align-items: center;
@@ -89,10 +89,13 @@
   font-weight: 600;
   background-color: var(--surface-bg-tertiary);
   color: var(--surface-fg-secondary);
-  transition: background-color 0.2s, color 0.2s;
+  border: 1px solid var(--surface-border-primary);
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
+/* Apply a more subtle styling for the selected badge. */
 .filterToggleButton[data-state='on'] .countBadge {
-  background-color: var(--control-bg-theme);
-  color: var(--control-fg-on-solid);
+  background-color: var(--surface-bg-secondary);
+  color: var(--surface-fg-secondary);
+  border-color: var(--surface-border-tertiary);
 }

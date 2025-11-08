@@ -1,6 +1,8 @@
 // src/features/Shell/FloatingHeader.tsx
+import { useState } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
+import * as RadixPopover from '@radix-ui/react-popover';
 import {
   appViewAtom,
   isSelectRoomModalOpenAtom,
@@ -10,7 +12,6 @@ import {
 import { PillToggle } from '../../components/PillToggle';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
-import { Popover } from '../../components/Popover';
 import { ActionMenu, ActionMenuItem } from '../../components/ActionMenu';
 import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 import { StatusOverviewBar } from './StatusOverviewBar';
@@ -22,20 +23,30 @@ export const FloatingHeader = () => {
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
   const isOverviewOpen = useAtomValue(isStatusOverviewOpenAtom);
 
+  // Use a controlled state for the popover to ensure reliability.
+  const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
+
   const isDashboard = view === 'dashboardTime' || view === 'dashboardRoute';
 
+  // onClick handlers now close the menu after performing their action.
   const actionMenuItems: (ActionMenuItem | 'separator')[] = [
     {
       id: 'supplemental-check',
       icon: 'add_comment',
       label: 'Add Supplemental Check',
-      onClick: () => setIsSelectRoomModalOpen(true),
+      onClick: () => {
+        setIsSelectRoomModalOpen(true);
+        setIsActionMenuOpen(false);
+      },
     },
     {
       id: 'write-nfc-tag',
       icon: 'nfc',
       label: 'Write NFC Tag',
-      onClick: () => setIsWriteNfcModalOpen(true),
+      onClick: () => {
+        setIsWriteNfcModalOpen(true);
+        setIsActionMenuOpen(false);
+      },
     },
   ];
 
@@ -55,19 +66,25 @@ export const FloatingHeader = () => {
         <div className={styles.centerContent}>{isDashboard ? <PillToggle /> : <ConnectionStatusIndicator />}</div>
 
         <div className={styles.rightActions}>
-          <Popover
-            trigger={
-              <Tooltip content="More Actions">
+          {/*
+            This is the robust, officially supported pattern for nesting a Tooltip and a Popover
+            to ensure their trigger events do not conflict. The Radix `Root` components are nested,
+            then their `Trigger` components are nested, which guarantees correct event propagation.
+          */}
+          <RadixPopover.Root open={isActionMenuOpen} onOpenChange={setIsActionMenuOpen}>
+            <Tooltip content="More Actions">
+              <RadixPopover.Trigger asChild>
                 <Button variant="tertiary" size="m" iconOnly aria-label="More actions">
                   <span className="material-symbols-rounded">add</span>
                 </Button>
-              </Tooltip>
-            }
-          >
-            <div className="menu-popover">
-              <ActionMenu items={actionMenuItems} />
-            </div>
-          </Popover>
+              </RadixPopover.Trigger>
+            </Tooltip>
+            <RadixPopover.Portal>
+              <RadixPopover.Content className="menu-popover" sideOffset={5} align="end">
+                <ActionMenu items={actionMenuItems} />
+              </RadixPopover.Content>
+            </RadixPopover.Portal>
+          </RadixPopover.Root>
         </div>
       </div>
       <AnimatePresence>

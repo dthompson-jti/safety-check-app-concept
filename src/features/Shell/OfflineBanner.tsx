@@ -7,9 +7,6 @@ import styles from './OfflineBanner.module.css';
 export const OfflineBanner = () => {
   const [status, setStatus] = useAtom(connectionStatusAtom);
 
-  // DEFINITIVE FIX: Bail out early if the status is 'online'.
-  // This satisfies TypeScript's control flow analysis and prevents
-  // trying to access properties on a potentially undefined `content` object.
   if (status === 'online') {
     return null;
   }
@@ -43,10 +40,11 @@ export const OfflineBanner = () => {
         exit={{ y: -40, opacity: 0 }}
         transition={{ type: 'tween', duration: 0.3 }}
       >
-        <span className={`material-symbols-rounded ${status === 'syncing' ? styles.spinner : ''}`}>
+        {/* Add the dedicated `styles.icon` class for unambiguous styling. */}
+        <span className={`material-symbols-rounded ${styles.icon} ${status === 'syncing' ? styles.spinner : ''}`}>
           {content.icon}
         </span>
-        <span>{content.text}</span>
+        <span className={styles.bannerText}>{content.text}</span>
         {status === 'offline' && (
           <button className={styles.syncButton} onClick={handleSync}>
             Sync Now

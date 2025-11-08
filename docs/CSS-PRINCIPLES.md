@@ -63,17 +63,6 @@ It is built on two key patterns:
 
 By composing these two classes, we achieve a perfectly consistent and robust menu system across the entire application.
 
-#### The Sticky Header/Footer Contract for Scrollable Panels
-
-To create self-contained UI panels with fixed headers and footers (like the `AppSideMenu`), we use a robust pattern combining Flexbox and Sticky Positioning.
-
--   **Problem:** You need a panel with a header that always stays visible at the top and a footer that always stays visible at the bottom, while the content in between scrolls independently.
--   **Solution (The Contract):**
-    1.  The top-level container of the panel becomes the scroll container (`overflow-y: auto`). It must also be a flex column (`display: flex; flex-direction: column`).
-    2.  The header and footer elements inside are set to `position: sticky` with `top: 0` and `bottom: 0` respectively. They must also have a `z-index` to ensure they render above the scrolling content.
-    3.  The main content area does not need any special properties. The flexbox layout will cause it to fill the available space naturally.
--   **High-Craft Detail:** To prevent content from abruptly clipping behind a sticky footer, apply a `background-image` gradient to the footer that fades from the panel's background color to transparent. This creates a soft edge for the scrollable area.
-
 #### The Icon Badging Pattern for Visual Status
 
 To add secondary information or communicate status visually, we use a consistent pattern of icons and semantic colors.
