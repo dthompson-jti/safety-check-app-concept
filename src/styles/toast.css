@@ -55,27 +55,45 @@
   color: var(--surface-fg-on-solid-faint);
 }
 
+/* 
+  DEFINITIVE FIX: Use a hard reset and precisely replicate the `xs` `on-solid`
+  icon-only button styles from `buttons.css`. This is the most robust way
+  to guarantee the correct appearance and behavior.
+*/
 .toast-close-button {
+  /* 1. Hard Reset */
   all: unset;
-  margin-left: auto;
-  padding-left: var(--spacing-4);
-  cursor: pointer;
-  border-radius: 100%;
-  /* FIX: Apply fixed dimensions to prevent distortion */
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0; /* Prevent the button from shrinking */
-  display: flex;
+  box-sizing: border-box;
+
+  /* 2. Layout & Dimensions (from .btn[data-size="xs"][data-icon-only="true"]) */
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  width: 1.5rem; /* 24px */
+  height: 1.5rem; /* 24px */
+  border-radius: var(--radius-md); /* 6px */
+  flex-shrink: 0;
+  cursor: pointer;
+  
+  /* 3. Appearance (from .btn[data-variant="on-solid"]) */
+  background: none;
+  color: var(--control-fg-on-solid);
+  border: 1px solid transparent; /* Reserve space */
+  
+  /* 4. Transitions */
+  transition: background-color 0.2s, border-color 0.2s;
+  
+  /* 5. Positional Tweaks */
+  margin-left: auto;
 }
 
 .toast-close-button:hover {
-  background-color: var(--utility-alpha-white-20);
+  /* from .btn[data-variant="on-solid"]:hover */
+  background-color: var(--control-bg-on-solid-hover);
 }
 
 .toast-close-button .material-symbols-rounded {
+  /* Style the icon inside the button */
   font-size: 18px;
   color: var(--surface-fg-secondary_on_brand);
 }

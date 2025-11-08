@@ -1,4 +1,4 @@
-/* src/features/History/HistoryView.module.css */
+/* src/features/Overlays/HistoryOverlay.module.css */
 .historyViewContainer {
   display: flex;
   flex-direction: column;
@@ -10,8 +10,7 @@
 .header {
   display: flex;
   align-items: center;
-  /* Justify to the right */
-  justify-content: flex-end;
+  justify-content: center; /* Center the filter controls */
   padding: var(--spacing-3) var(--spacing-4);
   background-color: var(--surface-bg-primary);
   border-bottom: 1px solid var(--surface-border-secondary);
@@ -35,4 +34,65 @@
   top: 0;
   background-color: var(--surface-bg-secondary);
   z-index: 5;
+}
+
+/* --- NEW: Text-based Filter Controls --- */
+.filterToggleGroup {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--surface-bg-tertiary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-lg);
+  padding: 1px;
+  flex-shrink: 0;
+}
+
+.filterToggleButton {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+  padding: 0 var(--spacing-3);
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--surface-fg-quaternary);
+  position: relative;
+  z-index: 2;
+  transition: color 0.25s ease;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  height: 44px;
+  border-radius: var(--radius-sm);
+}
+
+.filterToggleButton[data-state='on'] {
+  background-color: var(--surface-bg-primary);
+  box-shadow: var(--surface-shadow-pill);
+  color: var(--control-fg-secondary);
+  font-weight: 600;
+}
+
+.countBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: var(--surface-bg-tertiary);
+  color: var(--surface-fg-secondary);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.filterToggleButton[data-state='on'] .countBadge {
+  background-color: var(--control-bg-theme);
+  color: var(--control-fg-on-solid);
 }

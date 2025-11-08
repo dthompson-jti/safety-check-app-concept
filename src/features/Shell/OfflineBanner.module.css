@@ -13,14 +13,17 @@
   flex-shrink: 0;
   z-index: 60; /* Above header */
 
-  /* DEFINITIVE FIX: Use solid background and on-solid text colors */
   background-color: var(--surface-bg-secondary-solid);
+  
+  /* DEFINITIVE FIX: Explicitly set the color for the banner's direct text content and children. */
+  /* This creates a higher-specificity rule that overrides the global `body` color. */
   color: var(--surface-fg-on-solid);
 }
 
 .banner .material-symbols-rounded {
   font-size: 20px;
-  color: var(--surface-fg-on-solid-faint); /* Faint color for icon */
+  /* Faint color for icon, this rule is more specific and will apply correctly. */
+  color: var(--surface-fg-on-solid-faint); 
 }
 
 .syncButton {
@@ -29,6 +32,7 @@
   cursor: pointer;
   background: none;
   border: none;
+  /* Use 'inherit' to guarantee it takes the parent's white color. */
   color: inherit;
   padding: var(--spacing-1);
 }

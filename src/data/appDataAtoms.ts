@@ -249,6 +249,22 @@ export const statusCountsAtom = atom((get) => {
 //                Derived Atoms for History View
 // =================================================================
 
+const baseHistoricalChecksAtom = atom((get) => {
+  const { checks } = get(appDataAtom);
+  return checks.filter(c => c.status !== 'pending' && c.status !== 'due-soon');
+});
+
+// NEW ATOM: Provides counts for the filter badges in the History view.
+export const historyCountsAtom = atom((get) => {
+  const historicalChecks = get(baseHistoricalChecksAtom);
+  return {
+    all: historicalChecks.length,
+    lateOrMissed: historicalChecks.filter(c => c.status === 'late' || c.status === 'missed').length,
+    supplemental: historicalChecks.filter(c => c.status === 'supplemental').length,
+  };
+});
+
+
 const formatDateGroup = (date: Date): string => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -270,28 +286,28 @@ const formatDateGroup = (date: Date): string => {
 };
 
 export const groupedHistoryAtom = atom((get) => {
-  const { checks } = get(appDataAtom);
+  const historicalChecksBase = get(baseHistoricalChecksAtom);
   const filter = get(historyFilterAtom);
 
-  let historicalChecks = checks.filter(c => c.status !== 'pending' && c.status !== 'due-soon');
+  let filteredChecks = historicalChecksBase;
 
   if (filter === 'lateOrMissed') {
-    historicalChecks = historicalChecks.filter(c => c.status === 'late' || c.status === 'missed');
+    filteredChecks = historicalChecksBase.filter(c => c.status === 'late' || c.status === 'missed');
   } else if (filter === 'supplemental') {
-    historicalChecks = historicalChecks.filter(c => c.status === 'supplemental');
+    filteredChecks = historicalChecksBase.filter(c => c.status === 'supplemental');
   }
 
-  historicalChecks.sort((a, b) => {
+  filteredChecks.sort((a, b) => {
     const dateA = new Date(a.lastChecked || a.dueDate).getTime();
     const dateB = new Date(b.lastChecked || b.dueDate).getTime();
     return dateB - dateA;
   });
 
-  if (historicalChecks.length === 0) {
+  if (filteredChecks.length === 0) {
     return { groupCounts: [], groups: [], flattenedChecks: [] };
   }
 
-  const grouped = historicalChecks.reduce((acc, check) => {
+  const grouped = filteredChecks.reduce((acc, check) => {
     const checkDate = new Date(check.lastChecked || check.dueDate);
     const groupName = formatDateGroup(checkDate);
     if (!acc[groupName]) {

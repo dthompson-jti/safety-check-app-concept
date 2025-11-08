@@ -1,37 +1,58 @@
 // src/features/Overlays/HistoryOverlay.tsx
 import { useAtom, useAtomValue } from 'jotai';
 import { GroupedVirtuoso } from 'react-virtuoso';
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { HistoryFilter, historyFilterAtom } from '../../data/atoms';
-import { groupedHistoryAtom } from '../../data/appDataAtoms';
-import { IconToggleGroup } from '../../components/IconToggleGroup';
+import { groupedHistoryAtom, historyCountsAtom } from '../../data/appDataAtoms';
 import { FullScreenPlaceholder } from '../../components/FullScreenPlaceholder';
-// REORG: Updated import path for local component
 import { HistoryCard } from './HistoryCard';
-// REORG: Updated import path for CSS module
 import styles from './HistoryOverlay.module.css';
 
-const filterOptions: { value: HistoryFilter; label: string; icon: string }[] = [
-  { value: 'all', label: 'All', icon: 'list' },
-  { value: 'lateOrMissed', label: 'Late/Missed', icon: 'error' },
-  { value: 'supplemental', label: 'Supplemental', icon: 'add_circle' },
+const filterOptions: { value: HistoryFilter; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'lateOrMissed', label: 'Late/Missed' },
+  { value: 'supplemental', label: 'Supplemental' },
 ];
 
 export const HistoryOverlay = () => {
   const [filter, setFilter] = useAtom(historyFilterAtom);
   const historyData = useAtomValue(groupedHistoryAtom);
+  const counts = useAtomValue(historyCountsAtom);
+
+  const handleFilterChange = (value: HistoryFilter) => {
+    if (value) { // Radix onValueChange can be empty if all are deselected
+      setFilter(value);
+    }
+  };
+
+  const renderFilterControls = () => (
+    <div className={styles.filterControls}>
+      <ToggleGroup.Root
+        type="single"
+        value={filter}
+        onValueChange={handleFilterChange}
+        className={styles.filterToggleGroup}
+        aria-label="Filter history"
+      >
+        {filterOptions.map((option) => (
+          <ToggleGroup.Item
+            key={option.value}
+            value={option.value}
+            className={styles.filterToggleButton}
+          >
+            {option.label}
+            <span className={styles.countBadge}>{counts[option.value]}</span>
+          </ToggleGroup.Item>
+        ))}
+      </ToggleGroup.Root>
+    </div>
+  );
 
   if (historyData.flattenedChecks.length === 0) {
     return (
       <div className={styles.historyViewContainer}>
         <header className={styles.header}>
-          <div className={styles.filterControls}>
-            <IconToggleGroup
-              options={filterOptions}
-              value={filter}
-              onValueChange={(val) => setFilter(val)}
-              id="history-filter"
-            />
-          </div>
+          {renderFilterControls()}
         </header>
         <FullScreenPlaceholder
           icon="manage_search"
@@ -47,14 +68,7 @@ export const HistoryOverlay = () => {
   return (
     <div className={styles.historyViewContainer}>
       <header className={styles.header}>
-        <div className={styles.filterControls}>
-          <IconToggleGroup
-            options={filterOptions}
-            value={filter}
-            onValueChange={(val) => setFilter(val)}
-            id="history-filter"
-          />
-        </div>
+        {renderFilterControls()}
       </header>
       <GroupedVirtuoso
         groupCounts={groupCounts}
