@@ -1,5 +1,6 @@
 // src/features/Schedule/ScheduleListView.tsx
 import { useAtomValue } from 'jotai';
+import { AnimatePresence } from 'framer-motion';
 import { Virtuoso } from 'react-virtuoso';
 import { timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
 import { appConfigAtom } from '../../data/atoms';
@@ -12,7 +13,6 @@ interface ScheduleListViewProps {
 }
 
 const ListHeader = () => <div style={{ height: '16px' }} />;
-// Increase footer height to ensure last item can scroll well above the footer
 const ListFooter = () => <div style={{ height: '128px' }} />;
 
 export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
@@ -22,16 +22,25 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   return (
     <Virtuoso
       data={checks}
-      components={{ Header: ListHeader, Footer: ListFooter }}
+      components={{
+        Header: ListHeader,
+        Footer: ListFooter,
+        // Wrap the list in AnimatePresence to handle exit animations
+        List: ({ children, ...props }) => (
+          <div {...props}>
+            <AnimatePresence>{children}</AnimatePresence>
+          </div>
+        ),
+      }}
+      // Use the check ID as the key for stable identity
       itemContent={(_index, check) => {
         const content =
           scheduleViewMode === 'card' ? (
-            <CheckCard check={check} />
+            <CheckCard key={check.id} check={check} />
           ) : (
-            <CheckListItem check={check} />
+            <CheckListItem key={check.id} check={check} />
           );
 
-        // The wrapper with horizontal margins is now only applied for card view
         return (
           <div className={scheduleViewMode === 'card' ? styles.cardWrapper : ''}>
             {content}

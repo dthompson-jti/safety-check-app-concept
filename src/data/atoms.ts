@@ -6,8 +6,6 @@ import { Resident, SafetyCheck } from '../types';
 //                         App State
 // =================================================================
 
-// This is the single source of truth for the application's primary view state.
-// It controls which panel is visible in the main carousel.
 export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute';
 export const appViewAtom = atom<AppView>('dashboardTime');
 
@@ -30,15 +28,17 @@ export const sessionAtom = atom<Session>({
 //                   Schedule View State
 // =================================================================
 
-// A global atom that is updated every second to drive all time-sensitive UI
-// elements, such as countdown timers on check cards.
 export const currentTimeAtom = atom(new Date());
 
-// [NEW] Atom to control the visibility of the Status Overview Bar in the header.
 export const isStatusOverviewOpenAtom = atom(false);
 
-// [NEW] Atom to track the most recently completed check for in-place feedback.
+// This atom now ONLY triggers the one-time pulse animation.
 export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
+
+// This atom now tracks checks that have been completed and are in the process of their exit animation.
+// It prevents them from being rendered in the list during their exit.
+// DEFINITIVE FIX: Explicitly type the atom to resolve the 'unknown' type inference.
+export const completingChecksAtom = atom<Set<string>>(new Set());
 
 // =================================================================
 //                       History View State
@@ -57,13 +57,9 @@ export type WorkflowState =
   | {
       view: 'scanning';
       isManualSelectionOpen: boolean;
-      // When a user clicks a specific check card to start the workflow,
-      // its ID is stored here. This allows the scanner's dev tools
-      // to simulate scanning the correct, context-aware QR code.
       targetCheckId?: string;
     }
   | {
-      // For completing an existing, scheduled check
       view: 'form';
       type: 'scheduled';
       checkId: string;
@@ -72,7 +68,6 @@ export type WorkflowState =
       specialClassification?: SafetyCheck['specialClassification'];
     }
   | {
-      // For creating a new, unscheduled supplemental check
       view: 'form';
       type: 'supplemental';
       roomId: string;
@@ -87,13 +82,8 @@ export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 //                  Global UI & Layout State
 // =================================================================
 
-// Atom to control the visibility of the Admin "Write NFC" modal
 export const isWriteNfcModalOpenAtom = atom(false);
-
-// Atom to control the visibility of the new "Select Room" modal for supplemental checks
 export const isSelectRoomModalOpenAtom = atom(false);
-
-// Atoms to control the visibility of the new full-screen modals
 export const isHistoryModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
@@ -103,11 +93,9 @@ export const isDevToolsModalOpenAtom = atom(false);
 //                App Configuration & Dev Tools State
 // =================================================================
 
-// Atom for simulated connection status
 export type ConnectionStatus = 'online' | 'offline' | 'syncing';
 export const connectionStatusAtom = atom<ConnectionStatus>('online');
 
-// Atom for global, configurable application settings
 interface AppConfig {
   scanMode: 'qr' | 'nfc';
   hapticsEnabled: boolean;

@@ -2,7 +2,13 @@
 import { useState, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { WorkflowState, workflowStateAtom, connectionStatusAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
+import {
+  WorkflowState,
+  workflowStateAtom,
+  connectionStatusAtom,
+  recentlyCompletedCheckIdAtom,
+  completingChecksAtom,
+} from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
@@ -24,6 +30,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
   const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
+  const setCompletingChecks = useSetAtom(completingChecksAtom);
   const connectionStatus = useAtomValue(connectionStatusAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
@@ -40,10 +47,10 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
   const handleSetAll = (status: string) => {
     if (!status) return;
-    const newStatuses = checkData.residents.reduce((acc, resident) => {
+    const newStatuses = checkData.residents.reduce<Record<string, string>>((acc, resident) => {
       acc[resident.id] = status;
       return acc;
-    }, {} as Record<string, string>);
+    }, {});
     setStatuses(newStatuses);
   };
 
@@ -71,16 +78,31 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
 
     if (checkData.type === 'scheduled') {
-      dispatch({
-        type: 'CHECK_COMPLETE',
-        payload: {
-          checkId: checkData.checkId,
-          statuses,
-          notes,
-          completionTime: new Date().toISOString(),
-        },
-      });
       setRecentlyCompletedCheckId(checkData.checkId);
+
+      setTimeout(() => {
+        // DEFINITIVE FIX: Explicitly type 'prev' to satisfy TypeScript.
+        setCompletingChecks((prev: Set<string>) => new Set(prev).add(checkData.checkId));
+      }, 1200);
+
+      setTimeout(() => {
+        dispatch({
+          type: 'CHECK_COMPLETE',
+          payload: {
+            checkId: checkData.checkId,
+            statuses,
+            notes,
+            completionTime: new Date().toISOString(),
+          },
+        });
+        // DEFINITIVE FIX: Explicitly type 'prev' to satisfy TypeScript.
+        setCompletingChecks((prev: Set<string>) => {
+          const next = new Set(prev);
+          next.delete(checkData.checkId);
+          return next;
+        });
+      }, 1700);
+
     } else if (checkData.type === 'supplemental') {
       dispatch({
         type: 'CHECK_SUPPLEMENTAL_ADD',
@@ -131,7 +153,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
             <IconToggleGroup
               id="set-all-status-group"
               options={statusOptions}
-              value={''} // This is a one-way, fire-and-forget control
+              value={''} 
               onValueChange={handleSetAll}
             />
           </div>

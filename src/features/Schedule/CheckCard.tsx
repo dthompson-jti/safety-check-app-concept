@@ -3,7 +3,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { SafetyCheck } from '../../types';
-import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
+import {
+  workflowStateAtom,
+  recentlyCompletedCheckIdAtom,
+} from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
 import { Tooltip } from '../../components/Tooltip';
 import { StatusBadge } from './StatusBadge';
@@ -16,29 +19,17 @@ interface CheckCardProps {
 export const CheckCard = ({ check }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const [isCompleting, setIsCompleting] = useState(false);
+  const [isPulsing, setIsPulsing] = useState(false);
 
-  // DEFINITIVE FIX: This robust useEffect handles component recycling.
-  // It ensures the animation state is correctly set or reset whenever the
-  // component's props change or the global completion atom updates.
   useEffect(() => {
     let timerId: number | undefined;
-
     if (recentlyCompletedCheckId === check.id) {
-      setIsCompleting(true);
-      timerId = window.setTimeout(() => {
-        setIsCompleting(false);
-      }, 1200); // Duration must match the CSS animation
+      setIsPulsing(true);
+      timerId = window.setTimeout(() => setIsPulsing(false), 1200);
     } else {
-      // Explicitly reset state if this component is recycled for a different check
-      setIsCompleting(false);
+      setIsPulsing(false);
     }
-
-    return () => {
-      if (timerId) {
-        clearTimeout(timerId);
-      }
-    };
+    return () => clearTimeout(timerId);
   }, [recentlyCompletedCheckId, check.id]);
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
@@ -59,7 +50,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const roomName = residents[0]?.location || 'N/A';
   const showIndicator = status !== 'complete' && status !== 'supplemental' && status !== 'missed';
 
-  const cardClassName = `${styles.checkCard} ${isCompleting ? styles.isCompleting : ''}`;
+  const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (
     <motion.div
@@ -70,6 +61,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      exit={{ x: '110%', opacity: 0, transition: { duration: 0.3, delay: 0.2 } }}
     >
       {showIndicator && <div className={styles.statusIndicator} data-status={status} />}
 
@@ -83,8 +75,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
             )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          {/* DEFINITIVE FIX: Always render the common StatusBadge, removing the intermediate state */}
-          <StatusBadge status={isCompleting ? 'complete' : status} />
+          <StatusBadge status={isPulsing ? 'complete' : status} />
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>

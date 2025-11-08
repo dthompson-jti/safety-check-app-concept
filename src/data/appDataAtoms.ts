@@ -3,40 +3,31 @@ import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
-import { currentTimeAtom, historyFilterAtom } from './atoms';
+import { currentTimeAtom, historyFilterAtom, completingChecksAtom } from './atoms';
 
 // =================================================================
 //                 Mock Data Store
 // =================================================================
 
-// Exporting for use in Admin tools
 export const mockResidents: Resident[] = [
-  // The Expanse
   { id: 'res1', name: 'James Holden', location: 'Rocinante Cockpit' },
   { id: 'res2', name: 'Naomi Nagata', location: 'Rocinante Engineering' },
   { id: 'res3', name: 'Amos Burton', location: 'Rocinante Galley' },
   { id: 'res4', name: 'Alex Kamal', location: 'Rocinante Cockpit' },
   { id: 'res5', name: 'Chrisjen Avasarala', location: 'UN-One' },
-  // The Witcher
   { id: 'res6', name: 'Geralt of Rivia', location: 'Kaer Morhen' },
   { id: 'res7', name: 'Yennefer of Vengerberg', location: 'Kaer Morhen' },
   { id: 'res8', name: 'Ciri Riannon', location: 'Kaer Morhen' },
-  // John Wick
   { id: 'res9', name: 'John Wick', location: 'Continental NYC' },
-  // Terminator
   { id: 'res10', name: 'Sarah Connor', location: 'Cyberdyne Annex' },
   { id: 'res11', name: 'Kyle Reese', location: 'Cyberdyne Annex' },
-  // Aliens
   { id: 'res12', name: 'Ellen Ripley', location: 'LV-426 Colony' },
-  // Dune
   { id: 'res13', name: 'Leto Atreides', location: 'Arrakis Palace' },
-  // Harry Potter
   { id: 'res14', name: 'Harry Potter', location: 'Gryffindor Tower' },
   { id: 'res15', name: 'Hermione Granger', location: 'Gryffindor Tower' },
   { id: 'res16', name: 'Ron Weasley', location: 'Gryffindor Tower' },
   { id: 'res17', name: 'Albus Dumbledore', location: "Headmaster's Office" },
   { id: 'res18', name: 'Severus Snape', location: 'Potions Classroom' },
-  // Star Wars
   { id: 'res19', name: 'Luke Skywalker', location: 'Tatooine Homestead' },
   { id: 'res20', name: 'Leia Organa', location: 'Tantive IV' },
   { id: 'res21', name: 'Han Solo', location: 'Millennium Falcon' },
@@ -49,24 +40,18 @@ const now = new Date();
 const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
 const mockChecks: SafetyCheck[] = [
-  // Late check with special classification
   { id: 'chk1', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'High-risk Sith Lord. Approach with caution.', residentId: 'res22' } },
-  // Due soon (within 2 minutes)
   { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1.5), walkingOrderIndex: 3 },
-  // Multi-resident check with one classified resident
   { id: 'chk6', residents: [mockResidents[5], mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(8), walkingOrderIndex: 2, specialClassification: { type: 'MA', details: 'Medication Alert: Swallow potion by 8 PM.', residentId: 'res7' } },
-  // Upcoming
   { id: 'chk3', residents: [mockResidents[13], mockResidents[14], mockResidents[15]], status: 'pending', dueDate: inNMinutes(29.5), walkingOrderIndex: 4 },
   { id: 'chk4', residents: [mockResidents[3], mockResidents[0]], status: 'pending', dueDate: inNMinutes(89.5), walkingOrderIndex: 5 },
-  // Missed check (well past due)
   { id: 'chk7', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 6 },
-  // Completed with special classification
   { id: 'chk5', residents: [mockResidents[4]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 11, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Discussing galactic politics.', specialClassification: { type: 'SR', details: 'Medical Alert', residentId: 'res5' } },
   { id: 'chk8', residents: [mockResidents[12]], status: 'pending', dueDate: inNMinutes(45), walkingOrderIndex: 7 },
   { id: 'chk9', residents: [mockResidents[18], mockResidents[22]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 8, specialClassification: { type: 'FA', details: 'Fall Risk Assessment Required', residentId: 'res19' } },
   { id: 'chk10', residents: [mockResidents[16]], status: 'pending', dueDate: inNMinutes(120), walkingOrderIndex: 9 },
   { id: 'chk11', residents: [mockResidents[9], mockResidents[10]], status: 'pending', dueDate: inNMinutes(150), walkingOrderIndex: 10 },
-  { id: 'chk12', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(-240), walkingOrderIndex: 12 }, // Very late
+  { id: 'chk12', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(-240), walkingOrderIndex: 12 }, 
   { id: 'chk13', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(200), walkingOrderIndex: 13 },
   { id: 'chk14', residents: [mockResidents[17]], status: 'complete', dueDate: inNMinutes(-300), lastChecked: inNMinutes(-301), completionStatus: 'Sleeping', walkingOrderIndex: 14 },
   { id: 'chk15', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(240), walkingOrderIndex: 15 },
@@ -83,12 +68,12 @@ interface AppData {
 type CheckCompletePayload = {
   checkId: string;
   notes: string;
-  statuses: Record<string, string>; // residentId -> status
+  statuses: Record<string, string>; 
   completionTime: string;
 };
 
 type SupplementalCheckPayload = {
-  roomId: string; // This is the resident ID for now in the mock data
+  roomId: string;
   notes: string;
   statuses: Record<string, string>;
 };
@@ -109,7 +94,7 @@ export const dispatchActionAtom = atom(
         case 'CHECK_COMPLETE': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
-            check.status = 'complete'; // Simplified status update
+            check.status = 'complete';
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
@@ -150,23 +135,26 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const checks = get(appDataAtom).checks;
   const timeNow = get(currentTimeAtom).getTime();
   const twoMinutesFromNow = timeNow + 2 * 60 * 1000;
+  const completing = get(completingChecksAtom);
 
-  return checks.map(check => {
-    if (check.status === 'complete' || check.status === 'supplemental') {
-      return check;
-    }
-    const dueTime = new Date(check.dueDate).getTime();
-    const updatedCheck = { ...check };
+  return checks
+    .filter(check => !completing.has(check.id)) // Exclude checks during their exit animation
+    .map(check => {
+      if (check.status === 'complete' || check.status === 'supplemental') {
+        return check;
+      }
+      const dueTime = new Date(check.dueDate).getTime();
+      const updatedCheck = { ...check };
 
-    if (dueTime < timeNow) {
-      updatedCheck.status = 'late';
-    } else if (dueTime < twoMinutesFromNow) {
-      updatedCheck.status = 'due-soon';
-    } else {
-      updatedCheck.status = 'pending';
-    }
-    return updatedCheck;
-  });
+      if (dueTime < timeNow) {
+        updatedCheck.status = 'late';
+      } else if (dueTime < twoMinutesFromNow) {
+        updatedCheck.status = 'due-soon';
+      } else {
+        updatedCheck.status = 'pending';
+      }
+      return updatedCheck;
+    });
 });
 
 const statusOrder: Record<SafetyCheckStatus, number> = {
@@ -178,10 +166,6 @@ const statusOrder: Record<SafetyCheckStatus, number> = {
   supplemental: 5,
 };
 
-// Two separate, stable atoms are created for each sort order.
-// This is an architectural choice to prevent the list from re-shuffling
-// vertically when the user navigates between the Time and Route views.
-// Each view consumes its own stable, pre-sorted list.
 export const timeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const sorted = [...checks];
@@ -208,7 +192,6 @@ export const routeSortedChecksAtom = atom((get) => {
   return [...actionable, ...nonActionable];
 });
 
-// [NEW] Derived atom for the Status Overview Bar counts
 export const statusCountsAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const counts = {
