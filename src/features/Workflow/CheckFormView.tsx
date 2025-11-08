@@ -78,13 +78,18 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
 
     if (checkData.type === 'scheduled') {
+      // Stage 1: Trigger the in-place "pulse" animation on the card/list item.
+      // The animation is 1.2s long.
       setRecentlyCompletedCheckId(checkData.checkId);
 
+      // Stage 2: After the pulse, add the check to the 'completing' set.
+      // This removes it from the Virtuoso list, triggering its 0.5s exit animation.
       setTimeout(() => {
-        // DEFINITIVE FIX: Explicitly type 'prev' to satisfy TypeScript.
         setCompletingChecks((prev: Set<string>) => new Set(prev).add(checkData.checkId));
       }, 1200);
 
+      // Stage 3: After the exit animation (1.2s + 0.5s), update the master data source
+      // and remove the check from the 'completing' set. The list reflows.
       setTimeout(() => {
         dispatch({
           type: 'CHECK_COMPLETE',
@@ -95,7 +100,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
             completionTime: new Date().toISOString(),
           },
         });
-        // DEFINITIVE FIX: Explicitly type 'prev' to satisfy TypeScript.
         setCompletingChecks((prev: Set<string>) => {
           const next = new Set(prev);
           next.delete(checkData.checkId);

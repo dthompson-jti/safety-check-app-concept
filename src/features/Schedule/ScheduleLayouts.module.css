@@ -1,20 +1,19 @@
 /* src/features/Schedule/ScheduleLayouts.module.css */
 
-/* DEFINITIVE FIX: This wrapper re-introduces the symmetric 1rem (16px) horizontal margin for card view. */
-.cardWrapper {
-  padding-left: var(--spacing-4); /* 16px */
-  padding-right: var(--spacing-4); /* 16px */
-  padding-bottom: var(--spacing-2); /* 8px vertical spacing between cards */
+/* This is the new top-level container that replaces Virtuoso. It's now a simple scrollable div. */
+.scrollContainer {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
 }
 
-.cardGrid {
-  display: grid;
-  gap: var(--spacing-3);
+/* A simple wrapper for the header to participate in the layout animation */
+.headerWrapper {
+  padding: 0 var(--spacing-4);
 }
 
 .priorityGroupHeader {
-  /* Adjust padding since parent now handles horizontal */
-  padding: var(--spacing-4) 0 var(--spacing-2);
+  padding-bottom: var(--spacing-2);
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
@@ -22,7 +21,9 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   position: sticky;
+  /* DEFINITIVE FIX: Stick to the absolute top of the scroll container. */
   top: 0;
+  padding-top: 16px; /* Use padding to prevent content from going under the floating header */
   background-color: var(--surface-bg-secondary);
   z-index: 5;
 }

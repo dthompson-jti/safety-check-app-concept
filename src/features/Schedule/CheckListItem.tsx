@@ -1,7 +1,7 @@
 // src/features/Schedule/CheckListItem.tsx
 import { useState, useEffect, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { SafetyCheck } from '../../types';
 import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
@@ -16,15 +16,24 @@ interface CheckListItemProps {
 export const CheckListItem = ({ check }: CheckListItemProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const [isRecentlyCompleted, setIsRecentlyCompleted] = useState(false);
+  const [isPulsing, setIsPulsing] = useState(false);
+
+  // DEFINITIVE FIX: Create a "visual state snapshot" to prevent state reversion during exit animation.
+  const [visualStatus, setVisualStatus] = useState(check.status);
 
   useEffect(() => {
+    let timerId: number | undefined;
     if (recentlyCompletedCheckId === check.id) {
-      setIsRecentlyCompleted(true);
-      const timer = setTimeout(() => setIsRecentlyCompleted(false), 2000);
-      return () => clearTimeout(timer);
+      setIsPulsing(true);
+      setVisualStatus('complete'); // Snapshot the final state
+      timerId = window.setTimeout(() => setIsPulsing(false), 1200);
+    } else {
+      setIsPulsing(false);
+      // Ensure visual state is in sync when not pulsing
+      setVisualStatus(check.status);
     }
-  }, [recentlyCompletedCheckId, check.id]);
+    return () => clearTimeout(timerId);
+  }, [recentlyCompletedCheckId, check.id, check.status]);
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
@@ -40,21 +49,26 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
     }
   };
 
-  const { residents, specialClassification, status } = check;
+  const { residents, specialClassification } = check;
   const roomName = residents[0]?.location || 'N/A';
-  const showIndicator = status !== 'complete' && status !== 'supplemental' && status !== 'missed';
+  
+  const showIndicator = visualStatus !== 'complete' && visualStatus !== 'supplemental' && visualStatus !== 'missed';
+  const listItemClassName = `${styles.checkListItem} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (
     <motion.div
       layout
-      className={styles.checkListItem}
-      data-status={status}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={listItemClassName}
+      data-status={visualStatus} // Use visual status for styling
       onClick={handleItemClick}
       aria-disabled={!isActionable}
-      whileTap={isActionable ? { scale: 0.995, backgroundColor: 'var(--surface-bg-primary_hover)' } : {}}
+      whileTap={isActionable ? { scale: 0.99, backgroundColor: 'var(--surface-bg-primary_hover)' } : {}}
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      exit={{ x: '110%', opacity: 0, transition: { duration: 0.3, delay: 0.2 } }}
     >
-      {showIndicator && <div className={styles.statusIndicator} data-status={status} />}
+      {showIndicator && <div className={styles.statusIndicator} data-status={visualStatus} />}
       <div className={styles.mainContent}>
         <div className={styles.topRow}>
           <div className={styles.locationInfo}>
@@ -65,31 +79,7 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
             )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          <AnimatePresence mode="wait">
-            {isRecentlyCompleted ? (
-              <motion.div
-                key="completed-badge"
-                className={styles.completedBadge}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <span className="material-symbols-rounded">check_circle</span>
-                <span>Completed</span>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="status-badge"
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <StatusBadge status={status} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <StatusBadge status={visualStatus} />
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>
@@ -97,7 +87,7 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
               <li key={resident.id}>{resident.name}</li>
             ))}
           </ul>
-          <div className={styles.timeDisplay}>{relativeTime}</div>
+          <div className={styles.timeDisplay}>{visualStatus === 'complete' || visualStatus === 'supplemental' ? '' : relativeTime}</div>
         </div>
       </div>
     </motion.div>

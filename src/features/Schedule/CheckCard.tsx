@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { SafetyCheck } from '../../types';
+import { SafetyCheck, SafetyCheckStatus } from '../../types';
 import {
   workflowStateAtom,
   recentlyCompletedCheckIdAtom,
@@ -20,17 +20,23 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const [isPulsing, setIsPulsing] = useState(false);
+  
+  // DEFINITIVE FIX: Create a "visual state snapshot" to prevent state reversion during exit animation.
+  const [visualStatus, setVisualStatus] = useState(check.status);
 
   useEffect(() => {
     let timerId: number | undefined;
     if (recentlyCompletedCheckId === check.id) {
       setIsPulsing(true);
+      setVisualStatus('complete'); // Snapshot the final state
       timerId = window.setTimeout(() => setIsPulsing(false), 1200);
     } else {
       setIsPulsing(false);
+      // Ensure visual state is in sync when not pulsing
+      setVisualStatus(check.status);
     }
     return () => clearTimeout(timerId);
-  }, [recentlyCompletedCheckId, check.id]);
+  }, [recentlyCompletedCheckId, check.id, check.status]);
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
@@ -46,24 +52,26 @@ export const CheckCard = ({ check }: CheckCardProps) => {
     }
   };
 
-  const { residents, specialClassification, status } = check;
+  const { residents, specialClassification } = check;
   const roomName = residents[0]?.location || 'N/A';
-  const showIndicator = status !== 'complete' && status !== 'supplemental' && status !== 'missed';
-
+  
+  const showIndicator = visualStatus !== 'complete' && visualStatus !== 'supplemental' && visualStatus !== 'missed';
   const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (
     <motion.div
       layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       className={cardClassName}
-      data-status={status}
+      data-status={visualStatus} // Use visual status for styling
       onClick={handleCardClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
       exit={{ x: '110%', opacity: 0, transition: { duration: 0.3, delay: 0.2 } }}
     >
-      {showIndicator && <div className={styles.statusIndicator} data-status={status} />}
+      {showIndicator && <div className={styles.statusIndicator} data-status={visualStatus} />}
 
       <div className={styles.mainContent}>
         <div className={styles.topRow}>
@@ -75,7 +83,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
             )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          <StatusBadge status={isPulsing ? 'complete' : status} />
+          <StatusBadge status={visualStatus} />
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>
@@ -83,7 +91,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
               <li key={resident.id}>{resident.name}</li>
             ))}
           </ul>
-          <div className={styles.timeDisplay}>{relativeTime}</div>
+          <div className={styles.timeDisplay}>{visualStatus === 'complete' || visualStatus === 'supplemental' ? '' : relativeTime}</div>
         </div>
       </div>
     </motion.div>

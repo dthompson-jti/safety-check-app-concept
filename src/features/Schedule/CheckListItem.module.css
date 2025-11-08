@@ -1,5 +1,22 @@
 /* src/features/Schedule/CheckListItem.module.css */
 
+/* --- Keyframe Animation for Completion Pulse --- */
+@keyframes listItem-pulse-success {
+  0% {
+    background-color: var(--surface-bg-primary);
+  }
+  30% {
+    background-color: var(--surface-bg-success);
+  }
+  100% {
+    background-color: var(--surface-bg-secondary);
+  }
+}
+
+.isCompleting {
+  animation: listItem-pulse-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .checkListItem {
   display: flex;
   position: relative;

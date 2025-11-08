@@ -28,7 +28,25 @@ export const sessionAtom = atom<Session>({
 //                   Schedule View State
 // =================================================================
 
+// This atom is for high-frequency updates, e.g., if a global clock UI were needed.
+// Components requiring smooth sub-second timers (like useCountdown) should use
+// their own internal `requestAnimationFrame` loop for performance.
 export const currentTimeAtom = atom(new Date());
+
+// DEFINITIVE FIX: Create a "ticker" atom that only updates once per minute.
+// Derived atoms for business logic (like check status) should depend on this
+// to prevent excessive re-calculations and re-renders.
+export const minuteTickerAtom = atom((get) => {
+  const now = get(currentTimeAtom);
+  // Return a value that only changes when the minute changes.
+  return new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    now.getHours(),
+    now.getMinutes()
+  ).getTime();
+});
 
 export const isStatusOverviewOpenAtom = atom(false);
 

@@ -45,7 +45,6 @@ export const ScanView = () => {
     const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
 
     if (check) {
-      // DEFINITIVE FIX: The success toast is removed.
       setWorkflow({
         view: 'form',
         type: 'scheduled',
