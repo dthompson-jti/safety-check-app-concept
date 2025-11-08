@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { SafetyCheck, SafetyCheckStatus } from '../../types';
+import { SafetyCheck } from '../../types';
 import {
   workflowStateAtom,
   recentlyCompletedCheckIdAtom,
@@ -21,18 +21,16 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const [isPulsing, setIsPulsing] = useState(false);
   
-  // DEFINITIVE FIX: Create a "visual state snapshot" to prevent state reversion during exit animation.
   const [visualStatus, setVisualStatus] = useState(check.status);
 
   useEffect(() => {
     let timerId: number | undefined;
     if (recentlyCompletedCheckId === check.id) {
       setIsPulsing(true);
-      setVisualStatus('complete'); // Snapshot the final state
+      setVisualStatus('complete'); 
       timerId = window.setTimeout(() => setIsPulsing(false), 1200);
     } else {
       setIsPulsing(false);
-      // Ensure visual state is in sync when not pulsing
       setVisualStatus(check.status);
     }
     return () => clearTimeout(timerId);
@@ -64,7 +62,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cardClassName}
-      data-status={visualStatus} // Use visual status for styling
+      data-status={visualStatus} 
       onClick={handleCardClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}

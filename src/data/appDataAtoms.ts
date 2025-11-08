@@ -36,14 +36,12 @@ export const mockResidents: Resident[] = [
   { id: 'res24', name: 'Sheev Palpatine', location: 'Death Star Throne Room' },
 ];
 
-// DEFINITIVE FIX: Generate mock checks inside an atom. This ensures that the
-// relative times are always calculated against the CURRENT time when the app loads,
-// not a stale time from when the module was first imported.
-const baseChecksAtom = atom(() => {
+const initialChecks: SafetyCheck[] = (() => {
     const now = new Date();
     const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
-    const mockChecks: SafetyCheck[] = [
+    // DEFINITIVE FIX: Explicitly type the returned array as SafetyCheck[] to fix the type inference error.
+    return [
       { id: 'chk1', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'High-risk Sith Lord. Approach with caution.', residentId: 'res22' } },
       { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1.5), walkingOrderIndex: 3 },
       { id: 'chk6', residents: [mockResidents[5], mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(8), walkingOrderIndex: 2, specialClassification: { type: 'MA', details: 'Medication Alert: Swallow potion by 8 PM.', residentId: 'res7' } },
@@ -60,7 +58,10 @@ const baseChecksAtom = atom(() => {
       { id: 'chk14', residents: [mockResidents[17]], status: 'complete', dueDate: inNMinutes(-300), lastChecked: inNMinutes(-301), completionStatus: 'Sleeping', walkingOrderIndex: 14 },
       { id: 'chk15', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(240), walkingOrderIndex: 15 },
     ];
-    return mockChecks;
+})();
+
+const baseChecksAtom = atom(initialChecks, (_get, set, update: SafetyCheck[]) => {
+    set(baseChecksAtom, update);
 });
 
 
@@ -127,8 +128,6 @@ const appDataAtom = atom<AppData, [AppAction], void>(
         }
       }
     });
-    // This is a simplified reducer; we replace the base atom's value.
-    // For a real app, you might use atomWithReducer or a more complex setup.
     set(baseChecksAtom, nextState.checks);
   }
 );
