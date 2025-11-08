@@ -1,0 +1,44 @@
+/* src/AppShell.module.css */
+
+.appContainer {
+  position: relative;
+  width: 100%;
+  height: 100svh; /* Use svh for mobile viewport consistency */
+  overflow: hidden;
+  background-color: var(--surface-bg-secondary);
+}
+
+.sideMenuContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 85%;
+  max-width: 400px;
+  height: 100%;
+  z-index: 100; /* Ensure menu is on top */
+  will-change: transform;
+  box-shadow: var(--surface-shadow-2xl);
+}
+
+.mainViewWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  background-color: var(--surface-bg-secondary);
+  /* DEFINITIVE FIX: Removed transform-origin to prevent the gap during animation. */
+  will-change: transform;
+  overflow: hidden; /* This is critical for border-radius to apply correctly */
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  /* DEFINITIVE FIX: Updated to a darker, branded color with higher opacity for a more high-craft feel. */
+  /* --surface-bg-primary-solid (#0A0C12) at 75% opacity */
+  background-color: rgba(10, 12, 18, 0.75);
+  z-index: 99; /* Sits on top of content, below menu */
+  cursor: pointer;
+}

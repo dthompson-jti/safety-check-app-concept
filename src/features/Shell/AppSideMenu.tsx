@@ -1,89 +1,61 @@
 // src/features/Shell/AppSideMenu.tsx
-import { useAtom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import {
-  appViewAtom,
-  AppView,
   isHistoryModalOpenAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
-// REORG: Updated import path for atoms
+  isSelectRoomModalOpenAtom,
+  isWriteNfcModalOpenAtom,
 } from '../../data/atoms';
-import { Button } from '../../components/Button';
-// REORG: Updated import path for CSS module
 import styles from './AppSideMenu.module.css';
 
-interface NavItem {
-  id: AppView | 'history' | 'settings' | 'devtools';
-  label: string;
-  icon: string;
-}
-
-const navItems: NavItem[] = [
-  { id: 'dashboardTime', label: 'Dashboard', icon: 'dashboard' },
-  { id: 'history', label: 'History', icon: 'history' },
-  { id: 'settings', label: 'Settings', icon: 'settings' },
-];
-
-const devNavItems: NavItem[] = [{ id: 'devtools', label: 'Developer Tools', icon: 'construction' }];
+// A reusable button component for the menu
+const NavButton = ({ icon, label, onClick, disabled = false }: { icon: string; label: string; onClick: () => void; disabled?: boolean }) => (
+  <button className={styles.navButton} onClick={onClick} disabled={disabled}>
+    <span className="material-symbols-rounded">{icon}</span>
+    {label}
+  </button>
+);
 
 export const AppSideMenu = () => {
-  const [activeView, setView] = useAtom(appViewAtom);
   const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
   const setIsDevToolsOpen = useSetAtom(isDevToolsModalOpenAtom);
-
-  const handleNavigation = (id: NavItem['id']) => {
-    switch (id) {
-      case 'history':
-        setIsHistoryOpen(true);
-        break;
-      case 'settings':
-        setIsSettingsOpen(true);
-        break;
-      case 'devtools':
-        setIsDevToolsOpen(true);
-        break;
-      default:
-        setView(id);
-    }
-  };
-
-  const handleCloseMenu = () => {
-    setView('dashboardTime'); // Default back to the time view
-  };
-
-  const isDashboard = activeView === 'dashboardTime' || activeView === 'dashboardRoute';
+  const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
+  const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
 
   return (
     <aside className={styles.sideMenu}>
-      <div className={styles.header}>
-        <Button variant="tertiary" size="m" iconOnly onClick={handleCloseMenu} aria-label="Close menu">
-          <span className="material-symbols-rounded">close</span>
-        </Button>
-        <h3>eSupervision</h3>
-        <Button variant="tertiary" size="m" iconOnly onClick={handleCloseMenu} aria-label="Close menu">
-          <span className="material-symbols-rounded">double_arrow</span>
-        </Button>
-      </div>
-      <nav className={styles.navList}>
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            className={`${styles.navItem} ${isDashboard && item.id === 'dashboardTime' ? styles.active : ''}`}
-            onClick={() => handleNavigation(item.id)}
-          >
-            <span className="material-symbols-rounded">{item.icon}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
+      <header className={styles.header}>
+        <h1 className={styles.title}>eSupervision</h1>
+        <h2 className={styles.subtitle}>Room Check</h2>
+        {/* DEFINITIVE FIX: Added header separator */}
+        <div className={styles.headerSeparator} />
+      </header>
+
+      <main className={styles.content}>
+        <NavButton icon="add_comment" label="Supplemental Check" onClick={() => setIsSelectRoomModalOpen(true)} />
+        <NavButton icon="nfc" label="Write NFC Tag" onClick={() => setIsWriteNfcModalOpen(true)} />
+        <NavButton icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
+
         <div className={styles.separator} />
-        {devNavItems.map((item) => (
-          <button key={item.id} className={styles.navItem} onClick={() => handleNavigation(item.id)}>
-            <span className="material-symbols-rounded">{item.icon}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </nav>
+
+        <NavButton icon="apps" label="Unit 1" onClick={() => {}} disabled />
+        <NavButton icon="apps" label="Unit 2" onClick={() => {}} disabled />
+        <NavButton icon="apps" label="Unit 3" onClick={() => {}} disabled />
+      </main>
+
+      <footer className={styles.footer}>
+        {/* DEFINITIVE FIX: Replaced the separate buttons with a single combined, clickable button */}
+        <button className={styles.userSettingsButton} onClick={() => setIsSettingsOpen(true)}>
+          <div className={styles.userInfo}>
+            <span className={styles.userName}>Jane Doe</span>
+            <span className={styles.userRole}>Officier #12344</span>
+          </div>
+          <span className="material-symbols-rounded">settings</span>
+        </button>
+        <NavButton icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
+      </footer>
     </aside>
   );
 };

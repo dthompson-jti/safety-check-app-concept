@@ -1,4 +1,4 @@
-/* src/features/NavBar/SideMenu.module.css */
+/* src/features/Shell/AppSideMenu.module.css */
 
 .sideMenu {
   height: 100%;
@@ -6,63 +6,135 @@
   background-color: var(--surface-bg-primary);
   display: flex;
   flex-direction: column;
+  color: var(--surface-fg-primary);
+  font-family: var(--font-family-sans);
 }
 
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  height: 60px;
-  border-bottom: 1px solid var(--surface-border-secondary);
+  padding: var(--spacing-4);
+  padding-bottom: 0; /* Padding will be handled by the separator's margin */
   flex-shrink: 0;
 }
 
-.header h3 {
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
 }
 
-.navList {
-  padding: var(--spacing-2) 0;
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--surface-fg-secondary);
+  margin: 0;
+}
+
+/* DEFINITIVE FIX: Added a separator line under the header title. */
+.headerSeparator {
+  height: 1px;
+  background-color: var(--surface-border-secondary);
+  margin-top: var(--spacing-3);
+}
+
+.content {
+  flex-grow: 1;
+  padding: var(--spacing-2);
   display: flex;
   flex-direction: column;
-}
-
-.navItem {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-  padding: var(--spacing-3) var(--spacing-4);
-  background: none;
-  border: none;
-  font-size: 1rem;
-  font-family: var(--font-family-sans);
-  font-weight: 500;
-  color: var(--surface-fg-secondary);
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-  border-left: 4px solid transparent;
-}
-
-.navItem:hover {
-  background-color: var(--surface-bg-primary_hover);
-}
-
-.navItem.active {
-  color: var(--surface-fg-theme-primary);
-  background-color: var(--surface-bg-theme-subtle);
-  border-left-color: var(--surface-border-theme);
-}
-
-.navItem.active .material-symbols-rounded {
-  font-variation-settings: 'FILL' 1;
+  gap: var(--spacing-1);
+  overflow-y: auto;
 }
 
 .separator {
   height: 1px;
   background-color: var(--surface-border-secondary);
-  margin: var(--spacing-2) var(--spacing-4);
+  margin: var(--spacing-2);
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  padding: var(--spacing-3);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: var(--font-family-sans);
+  color: var(--surface-fg-primary);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: var(--surface-bg-primary_hover);
+}
+
+.navButton:disabled {
+  color: var(--control-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.navButton .material-symbols-rounded {
+  font-size: 24px;
+  color: var(--surface-fg-secondary);
+}
+
+.footer {
+  padding: var(--spacing-2);
+  flex-shrink: 0;
+  margin-top: auto; /* Pushes footer to the bottom */
+}
+
+/* DEFINITIVE FIX: New styles for the single, combined user/settings button. */
+.userSettingsButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  cursor: pointer;
+  text-align: left;
+
+  /* Base state styles */
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-tertiary);
+  border-radius: var(--radius-md);
+  
+  /* High-craft transition */
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Hover state implementing the tertiary button style with inset shadow */
+.userSettingsButton:hover {
+  background-color: var(--control-bg-tertiary-hover);
+  color: var(--control-fg-tertiary-hover);
+  border-color: var(--control-border-tertiary-hover);
+  box-shadow: inset 0 -1px 0 0 var(--control-border-tertiary-hover);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--surface-fg-primary);
+}
+
+.userRole {
+  font-size: 0.9rem;
+  color: var(--surface-fg-secondary);
+}
+
+.userSettingsButton .material-symbols-rounded {
+  font-size: 24px;
+  color: var(--surface-fg-secondary);
 }
