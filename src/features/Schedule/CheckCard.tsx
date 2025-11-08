@@ -1,12 +1,11 @@
 // src/features/Schedule/CheckCard.tsx
-import { useMemo } from 'react';
-import { useSetAtom } from 'jotai';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useMemo } from 'react';
+import { useSetAtom, useAtomValue } from 'jotai';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SafetyCheck } from '../../types';
-import { workflowStateAtom } from '../../data/atoms';
+import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
 import { Tooltip } from '../../components/Tooltip';
-// REFACTOR: Import the new StatusBadge component
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckCard.module.css';
 
@@ -16,17 +15,27 @@ interface CheckCardProps {
 
 export const CheckCard = ({ check }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
+  const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
+  const [isRecentlyCompleted, setIsRecentlyCompleted] = useState(false);
+
+  useEffect(() => {
+    if (recentlyCompletedCheckId === check.id) {
+      setIsRecentlyCompleted(true);
+      const timer = setTimeout(() => {
+        setIsRecentlyCompleted(false);
+      }, 2000); // Display success state for 2 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [recentlyCompletedCheckId, check.id]);
+
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
-
-  // The new high-performance countdown hook replaces the old formatting logic.
   const relativeTime = useCountdown(dueDate, check.status);
-
   const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
 
   const handleCardClick = () => {
     if (isActionable) {
-      setWorkflowState({ 
-        view: 'scanning', 
+      setWorkflowState({
+        view: 'scanning',
         isManualSelectionOpen: false,
         targetCheckId: check.id,
       });
@@ -35,8 +44,6 @@ export const CheckCard = ({ check }: CheckCardProps) => {
 
   const { residents, specialClassification, status } = check;
   const roomName = residents[0]?.location || 'N/A';
-
-  // FIX: Logic to determine if the indicator bar should be shown.
   const showIndicator = status !== 'complete' && status !== 'supplemental' && status !== 'missed';
 
   return (
@@ -50,21 +57,42 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
     >
       {showIndicator && <div className={styles.statusIndicator} data-status={status} />}
-      
+
       <div className={styles.mainContent}>
         <div className={styles.topRow}>
           <div className={styles.locationInfo}>
             {specialClassification && (
               <Tooltip content={`${specialClassification.type}: ${specialClassification.details}`}>
-                <span className={`material-symbols-rounded ${styles.filledIcon}`}>
-                  warning
-                </span>
+                <span className={`material-symbols-rounded ${styles.filledIcon}`}>warning</span>
               </Tooltip>
             )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          {/* REFACTOR: Use the new StatusBadge component */}
-          <StatusBadge status={status} />
+          <AnimatePresence mode="wait">
+            {isRecentlyCompleted ? (
+              <motion.div
+                key="completed-badge"
+                className={styles.completedBadge}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <span className="material-symbols-rounded">check_circle</span>
+                <span>Completed</span>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="status-badge"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <StatusBadge status={status} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>

@@ -1,0 +1,56 @@
+/* src/features/Shell/StatusOverviewBar.module.css */
+/* NEW FILE */
+
+.overviewBar {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background-color: var(--surface-bg-secondary);
+  border-top: 1px solid var(--surface-border-secondary);
+}
+
+.statusPill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
+  min-width: 70px;
+  transition: background-color 0.2s;
+}
+
+.count {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.statusPill[data-status='late'] { color: var(--surface-fg-warning-primary); }
+.statusPill[data-status='dueSoon'] { color: var(--surface-fg-info-primary); }
+.statusPill[data-status='due'] { color: var(--surface-fg-secondary); }
+.statusPill[data-status='completed'] { color: var(--surface-fg-success-primary); }
+
+.statusPill.flash {
+  animation: flash-bg 0.8s ease-out;
+}
+
+@keyframes flash-bg {
+  0% { background-color: transparent; }
+  30% { background-color: var(--flash-color); }
+  100% { background-color: transparent; }
+}
+
+.statusPill[data-status='late'].flash { --flash-color: var(--surface-bg-warning-secondary); }
+.statusPill[data-status='dueSoon'].flash { --flash-color: var(--surface-bg-info-secondary); }
+.statusPill[data-status='due'].flash { --flash-color: var(--surface-bg-secondary_hover); }
+.statusPill[data-status='completed'].flash { --flash-color: var(--surface-bg-success-secondary); }

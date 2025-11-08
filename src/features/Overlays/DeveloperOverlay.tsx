@@ -2,15 +2,14 @@
 import { useAtom } from 'jotai';
 import { connectionStatusAtom, ConnectionStatus } from '../../data/atoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
-// REORG: Updated import path for CSS module to match filename
 import styles from './DeveloperOverlay.module.css';
 
-const connectionOptions: { value: ConnectionStatus; label: string; icon: string }[] = [
+const connectionOptions: readonly { value: ConnectionStatus; label: string; icon: string }[] = [
   { value: 'online', label: 'Online', icon: 'cloud' },
   { value: 'offline', label: 'Offline', icon: 'cloud_off' },
-];
+  { value: 'syncing', label: 'Syncing', icon: 'sync' },
+] as const;
 
-// REORG: Renamed component to match filename
 export const DeveloperOverlay = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
 
@@ -22,8 +21,6 @@ export const DeveloperOverlay = () => {
         <IconToggleGroup
           options={connectionOptions}
           value={connectionStatus}
-          // FIX: The `val` parameter is already correctly typed by inference.
-          // The function can be passed directly for maximum simplicity.
           onValueChange={setConnectionStatus}
           id="connection-status-toggle"
         />

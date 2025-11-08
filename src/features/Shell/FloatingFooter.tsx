@@ -2,6 +2,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { workflowStateAtom, appConfigAtom } from '../../data/atoms';
+import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
 import styles from './FloatingFooter.module.css';
 
@@ -14,10 +15,8 @@ export const FloatingFooter = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const appConfig = useAtomValue(appConfigAtom);
   const footerRef = useRef<HTMLElement>(null);
+  const { trigger: triggerHaptic } = useHaptics();
 
-  // This effect measures the footer's height after it renders and sets a
-  // CSS variable on the root element. This allows other components, like the
-  // Toast container, to position themselves relative to the footer.
   useLayoutEffect(() => {
     const updateHeight = () => {
       if (footerRef.current) {
@@ -25,12 +24,8 @@ export const FloatingFooter = () => {
         document.documentElement.style.setProperty('--footer-height', `${height}px`);
       }
     };
-
-    updateHeight(); // Initial measurement
-
-    // Also update on resize in case content wraps
+    updateHeight();
     window.addEventListener('resize', updateHeight);
-
     return () => {
       document.documentElement.style.removeProperty('--footer-height');
       window.removeEventListener('resize', updateHeight);
@@ -38,12 +33,10 @@ export const FloatingFooter = () => {
   }, []);
 
   const handleScanClick = () => {
-    // This generic entry point does NOT set a targetCheckId,
-    // allowing for random simulation.
+    triggerHaptic('heavy');
     setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
   };
 
-  // Conditionally render the footer based on the scan mode
   if (appConfig.scanMode === 'nfc') {
     return null;
   }

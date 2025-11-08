@@ -5,12 +5,27 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  /* Positioning context for sliding sub-views */
-  position: relative;
-  overflow: hidden;
+  padding: var(--spacing-4);
+  gap: var(--spacing-6);
 }
 
-/* --- Master List Styles --- */
+.settingsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.sectionTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  margin: 0;
+}
+
 .settingsGroup {
   display: flex;
   flex-direction: column;
@@ -18,7 +33,6 @@
   border-radius: var(--spacing-3);
   border: 1px solid var(--surface-border-secondary);
   overflow: hidden; /* Ensures border radius clips children */
-  margin-bottom: var(--spacing-6);
 }
 
 /* Individual row in the settings list */
@@ -60,6 +74,7 @@
 
 .itemLabel {
   font-weight: 500;
+  cursor: pointer; /* For associating with controls */
 }
 
 .itemValue {
@@ -70,34 +85,11 @@
   font-size: 0.9rem;
 }
 
+.itemValue.readOnlyValue {
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
 .itemValue .material-symbols-rounded {
   font-size: 20px;
-}
-
-/* --- Detail View Styles --- */
-/* We create an absolute wrapper for entering/exiting views to overlay correctly */
-.detailViewWrapper {
-  position: absolute;
-  inset: 0;
-  background-color: var(--surface-bg-secondary); /* Keep same bg as parent */
-  padding: var(--spacing-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-6); /* Add gap between header and content */
-  z-index: 10;
-}
-
-.detailHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  padding-bottom: var(--spacing-4);
-  border-bottom: 1px solid var(--surface-border-secondary);
-  flex-shrink: 0;
-}
-
-.detailHeader h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0;
 }

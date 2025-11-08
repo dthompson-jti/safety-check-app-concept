@@ -2,9 +2,10 @@
 import { useState, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { WorkflowState, workflowStateAtom, connectionStatusAtom } from '../../data/atoms';
+import { WorkflowState, workflowStateAtom, connectionStatusAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
+import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import styles from './CheckFormView.module.css';
@@ -22,7 +23,9 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
+  const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
   const connectionStatus = useAtomValue(connectionStatusAtom);
+  const { trigger: triggerHaptic } = useHaptics();
 
   const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState('');
@@ -59,6 +62,8 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const handleSave = () => {
     if (!allResidentsHaveStatus) return;
 
+    triggerHaptic('success');
+
     if (connectionStatus === 'offline') {
       addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
       setWorkflowState({ view: 'none' });
@@ -75,7 +80,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
           completionTime: new Date().toISOString(),
         },
       });
-      addToast({ message: `Check for ${checkData.roomName} saved.`, icon: 'task_alt' });
+      setRecentlyCompletedCheckId(checkData.checkId);
     } else if (checkData.type === 'supplemental') {
       dispatch({
         type: 'CHECK_SUPPLEMENTAL_ADD',
@@ -106,7 +111,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       initial={{ x: '100%' }}
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
-      // FIX: Apply the specified high-craft transition curve
       transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
       <header className={styles.header}>

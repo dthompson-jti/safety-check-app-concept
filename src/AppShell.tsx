@@ -8,18 +8,19 @@ import {
   isHistoryModalOpenAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
+  connectionStatusAtom,
 } from './data/atoms';
 import { MainLayout } from './layouts/MainLayout';
-// REORG: Updated import paths for workflow components
+import { FloatingHeader } from './features/Shell/FloatingHeader';
+import { FloatingFooter } from './features/Shell/FloatingFooter';
+import { OfflineBanner } from './features/Shell/OfflineBanner';
 import { ScanView } from './features/Workflow/ScanView';
 import { CheckFormView } from './features/Workflow/CheckFormView';
-// REORG: Updated import paths and component names for overlay components
 import { WriteNfcTagModal } from './features/Overlays/WriteNfcTagModal';
 import { SelectRoomModal } from './features/Overlays/SelectRoomModal';
 import { FullScreenModal } from './components/FullScreenModal';
 import { HistoryOverlay } from './features/Overlays/HistoryOverlay';
 import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
-// REORG: Correctly import the renamed component
 import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
 
 /**
@@ -29,6 +30,7 @@ import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
  */
 export const AppShell = () => {
   const workflowState = useAtomValue(workflowStateAtom);
+  const connectionStatus = useAtomValue(connectionStatusAtom);
   const setCurrentTime = useSetAtom(currentTimeAtom);
 
   const [isHistoryOpen, setIsHistoryOpen] = useAtom(isHistoryModalOpenAtom);
@@ -55,9 +57,17 @@ export const AppShell = () => {
     }
   }, [workflowState]);
 
+  const isChromeVisible = workflowState.view !== 'scanning' && workflowState.view !== 'form';
+
   return (
-    <>
+    // This div is now the master layout container
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100svh' }}>
+      {connectionStatus !== 'online' && <OfflineBanner />}
+      {isChromeVisible && <FloatingHeader />}
+
       <MainLayout />
+
+      {isChromeVisible && <FloatingFooter />}
 
       <AnimatePresence>
         {workflowState.view === 'scanning' && <ScanView />}
@@ -67,7 +77,6 @@ export const AppShell = () => {
       <WriteNfcTagModal />
       <SelectRoomModal />
 
-      {/* Render the new full-screen modals at the top level */}
       <FullScreenModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} title="History">
         <HistoryOverlay />
       </FullScreenModal>
@@ -77,6 +86,6 @@ export const AppShell = () => {
       <FullScreenModal isOpen={isDevToolsOpen} onClose={() => setIsDevToolsOpen(false)} title="Developer Tools">
         <DeveloperOverlay />
       </FullScreenModal>
-    </>
+    </div>
   );
 };

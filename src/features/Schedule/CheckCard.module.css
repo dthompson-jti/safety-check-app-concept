@@ -1,7 +1,6 @@
 /* src/features/SafetyCheckSchedule/CheckCard.module.css */
 
 /* --- Keyframe Animations for State Change Flash --- */
-/* FIX: Updated animation to be a larger, fading pulse */
 @keyframes card-flash-due-soon {
   0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(206, 100%, 40%, 0.7); }
   60% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(206, 100%, 40%, 0); }
@@ -14,7 +13,6 @@
   100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
 }
 
-
 .checkCard {
   display: flex;
   position: relative; /* Establishes the positioning context for the status indicator. */
@@ -24,13 +22,11 @@
   transition: background-color 0.2s, box-shadow 0.2s;
   overflow: hidden;
   padding: 8px 16px 8px 20px;
-  /* FIX: Added default border */
   border: 1px solid var(--surface-border-secondary);
 }
 
 /* --- Trigger Animations on State Change --- */
 .checkCard[data-status='due-soon'] {
-  /* FIX: Use longer animation duration */
   animation: card-flash-due-soon 1s ease-out;
 }
 .checkCard[data-status='late'] {
@@ -42,7 +38,6 @@
   cursor: pointer;
 }
 
-/* FIX: Updated hover state with inset shadow */
 .checkCard:not([aria-disabled='true']):hover {
   background-color: var(--surface-bg-primary_hover);
   border-color: var(--control-border-tertiary-hover);
@@ -59,7 +54,6 @@
   transition: background-color 0.2s, width 0.2s;
 }
 
-/* FIX: The indicator is thicker for more urgent states. */
 .statusIndicator[data-status='pending'] {
   width: 2px;
 }
@@ -87,10 +81,18 @@
   min-width: 0;
 }
 
-.topRow, .bottomRow {
+.topRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-2);
+}
+
+/* REFINED: Use align-items: flex-end to vertically anchor time display */
+.bottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   gap: var(--spacing-2);
 }
 
@@ -102,7 +104,7 @@
 }
 
 .filledIcon {
-  color: var(--surface-fg-warning-primary); /* Changed to warning color for better visibility */
+  color: var(--surface-fg-warning-primary);
   font-size: 16px;
   font-variation-settings: 
     'FILL' 1,
@@ -133,7 +135,8 @@
 
 .timeDisplay {
   font-size: 14px;
-  color: var(--surface-fg-secondary);
+  /* REFINED: Change default color to tertiary */
+  color: var(--surface-fg-tertiary);
   font-weight: 500;
   /* Ensures the countdown timer does not cause layout shifting. */
   font-variant-numeric: tabular-nums;
@@ -149,4 +152,12 @@
 }
 .checkCard[data-status='due-soon'] .timeDisplay {
   color: var(--surface-fg-info-primary);
+}
+
+.completedBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--surface-fg-success-primary);
+  font-weight: 600;
 }

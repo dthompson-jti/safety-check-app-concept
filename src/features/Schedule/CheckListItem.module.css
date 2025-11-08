@@ -1,0 +1,85 @@
+/* src/features/Schedule/CheckListItem.module.css */
+/* NEW FILE */
+
+.checkListItem {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--surface-bg-primary);
+  transition: background-color 0.2s;
+  padding: 10px 16px 10px 20px;
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.checkListItem:not([aria-disabled='true']) {
+  cursor: pointer;
+}
+
+.checkListItem:not([aria-disabled='true']):hover {
+  background-color: var(--surface-bg-primary_hover);
+}
+
+.statusIndicator {
+  position: absolute;
+  left: 7px;
+  top: 5px;
+  bottom: 5px;
+  border-radius: 4px;
+  background-color: var(--surface-border-primary);
+  transition: background-color 0.2s, width 0.2s;
+}
+
+.statusIndicator[data-status='pending'] { width: 2px; }
+.statusIndicator[data-status='due-soon'] { width: 3px; }
+.statusIndicator[data-status='late'] { width: 4px; }
+.statusIndicator[data-status='late'] { background-color: var(--surface-fg-warning-primary); }
+.statusIndicator[data-status='due-soon'] { background-color: var(--surface-fg-info-primary); }
+
+.content {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+.locationInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+  flex: 1;
+}
+
+.locationText {
+  color: var(--surface-fg-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filledIcon {
+  color: var(--surface-fg-warning-primary);
+  font-size: 18px;
+  font-variation-settings: 'FILL' 1;
+}
+
+.timeDisplay {
+  font-size: 14px;
+  color: var(--surface-fg-tertiary);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  width: 100px;
+  text-align: right;
+}
+
+.checkListItem[data-status='late'] .timeDisplay,
+.checkListItem[data-status='due-soon'] .timeDisplay {
+  font-weight: 600;
+}
+
+.checkListItem[data-status='late'] .timeDisplay { color: var(--surface-fg-warning-primary); }
+.checkListItem[data-status='due-soon'] .timeDisplay { color: var(--surface-fg-info-primary); }

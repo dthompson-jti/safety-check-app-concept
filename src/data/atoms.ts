@@ -8,7 +8,6 @@ import { Resident, SafetyCheck } from '../types';
 
 // This is the single source of truth for the application's primary view state.
 // It controls which panel is visible in the main carousel.
-// 'history' and 'settings' are removed as they are now modals.
 export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute';
 export const appViewAtom = atom<AppView>('dashboardTime');
 
@@ -34,6 +33,12 @@ export const sessionAtom = atom<Session>({
 // A global atom that is updated every second to drive all time-sensitive UI
 // elements, such as countdown timers on check cards.
 export const currentTimeAtom = atom(new Date());
+
+// [NEW] Atom to control the visibility of the Status Overview Bar in the header.
+export const isStatusOverviewOpenAtom = atom(false);
+
+// [NEW] Atom to track the most recently completed check for in-place feedback.
+export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
 
 // =================================================================
 //                       History View State
@@ -88,7 +93,7 @@ export const isWriteNfcModalOpenAtom = atom(false);
 // Atom to control the visibility of the new "Select Room" modal for supplemental checks
 export const isSelectRoomModalOpenAtom = atom(false);
 
-// [NEW] Atoms to control the visibility of the new full-screen modals
+// Atoms to control the visibility of the new full-screen modals
 export const isHistoryModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
@@ -98,12 +103,18 @@ export const isDevToolsModalOpenAtom = atom(false);
 //                App Configuration & Dev Tools State
 // =================================================================
 
-// [NEW] Atom for simulated connection status
+// Atom for simulated connection status
 export type ConnectionStatus = 'online' | 'offline' | 'syncing';
 export const connectionStatusAtom = atom<ConnectionStatus>('online');
 
-// [NEW] Atom for global, configurable application settings
+// Atom for global, configurable application settings
 interface AppConfig {
   scanMode: 'qr' | 'nfc';
+  hapticsEnabled: boolean;
+  scheduleViewMode: 'card' | 'list';
 }
-export const appConfigAtom = atom<AppConfig>({ scanMode: 'qr' });
+export const appConfigAtom = atom<AppConfig>({
+  scanMode: 'qr',
+  hapticsEnabled: true,
+  scheduleViewMode: 'card',
+});

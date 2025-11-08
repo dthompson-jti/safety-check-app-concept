@@ -1,20 +1,11 @@
 /* src/layouts/MainLayout.module.css */
 
-.appViewContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100svh;
-  width: 100vw;
-  overflow: hidden;
-  position: relative;
-  background-color: var(--surface-bg-secondary);
-}
-
 .contentWrapper {
-  flex: 1;
+  flex-grow: 1; /* This makes it fill the space left by header/footer */
   position: relative;
   overflow: hidden;
   min-height: 0;
+  background-color: var(--surface-bg-secondary);
 }
 
 .filmStrip {
@@ -43,7 +34,4 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* DEFINITIVE FIX: Add symmetric horizontal padding */
-  padding-left: var(--spacing-4);
-  padding-right: var(--spacing-4);
 }
