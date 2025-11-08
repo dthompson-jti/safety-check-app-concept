@@ -37,8 +37,8 @@ export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
 
 // This atom now tracks checks that have been completed and are in the process of their exit animation.
 // It prevents them from being rendered in the list during their exit.
-// DEFINITIVE FIX: Explicitly type the atom to resolve the 'unknown' type inference.
-export const completingChecksAtom = atom<Set<string>>(new Set());
+// DEFINITIVE FIX: Initialize the Set with the correct type argument to resolve the 'unknown' error.
+export const completingChecksAtom = atom(new Set<string>());
 
 // =================================================================
 //                       History View State
