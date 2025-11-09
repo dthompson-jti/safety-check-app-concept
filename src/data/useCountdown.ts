@@ -1,23 +1,38 @@
-// src/data/useCountdown.ts
 import { useState, useEffect, useRef } from 'react';
 import { SafetyCheckStatus } from '../types';
 
 const formatTime = (due: Date, now: Date): string => {
   const diffSeconds = (due.getTime() - now.getTime()) / 1000;
+  const diffMinutes = Math.abs(diffSeconds) / 60;
 
   if (diffSeconds < 0) {
-    const absMinutes = Math.floor(Math.abs(diffSeconds) / 60);
+    if (diffMinutes >= 60) {
+      const hours = diffMinutes / 60;
+      // Format to one decimal place, but remove .0 if it's a whole number.
+      const formattedHours = parseFloat(hours.toFixed(1)).toString();
+      return `Overdue ${formattedHours}h`;
+    }
+    const absMinutes = Math.floor(diffMinutes);
     if (absMinutes < 1) return 'Overdue';
     return `Overdue ${absMinutes}m`;
   }
-  if (diffSeconds < 60) {
-    return `${diffSeconds.toFixed(1)}s`;
+
+  if (diffMinutes >= 60) {
+    const hours = diffMinutes / 60;
+    const formattedHours = parseFloat(hours.toFixed(1)).toString();
+    return `${formattedHours}h`;
   }
-  if (diffSeconds < 300) {
+
+  if (diffSeconds < 60) {
+    return `${Math.floor(diffSeconds)}s`;
+  }
+  
+  if (diffSeconds < 300) { // Up to 5 minutes, show seconds
     const mins = Math.floor(diffSeconds / 60);
     const secs = Math.floor(diffSeconds % 60);
     return `${mins}m ${String(secs).padStart(2, '0')}s`;
   }
+
   const mins = Math.ceil(diffSeconds / 60);
   return `${mins}m`;
 };

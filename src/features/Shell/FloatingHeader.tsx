@@ -1,5 +1,4 @@
-// src/features/Shell/FloatingHeader.tsx
-import { useState } from 'react';
+import { useState, useLayoutEffect, useRef } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as RadixPopover from '@radix-ui/react-popover';
@@ -22,6 +21,7 @@ export const FloatingHeader = () => {
   const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
   const isOverviewOpen = useAtomValue(isStatusOverviewOpenAtom);
+  const headerRef = useRef<HTMLElement>(null);
 
   // Use a controlled state for the popover to ensure reliability.
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
@@ -54,8 +54,34 @@ export const FloatingHeader = () => {
     setView(view === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
+  // This effect measures the header's height and sets a CSS variable.
+  // This is a robust way to allow other components to react to the header's size
+  // without direct state management, preventing layout shifts.
+  useLayoutEffect(() => {
+    const headerElement = headerRef.current;
+    if (!headerElement) return;
+
+    const observer = new ResizeObserver(entries => {
+      // requestAnimationFrame to avoid "ResizeObserver loop limit exceeded" error
+      window.requestAnimationFrame(() => {
+        if (!Array.isArray(entries) || !entries.length) {
+          return;
+        }
+        const height = entries[0].target.getBoundingClientRect().height;
+        document.documentElement.style.setProperty('--header-height', `${height}px`);
+      });
+    });
+
+    observer.observe(headerElement);
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--header-height');
+    };
+  }, []);
+
   return (
-    <motion.header layout="position" transition={{ duration: 0.3 }} className={styles.header}>
+    <motion.header ref={headerRef} layout="position" transition={{ duration: 0.3 }} className={styles.header}>
       <div className={styles.headerContent}>
         <Tooltip content="Open navigation">
           <Button variant="tertiary" size="m" iconOnly onClick={handleMenuClick} aria-label="Open navigation menu">
@@ -63,14 +89,21 @@ export const FloatingHeader = () => {
           </Button>
         </Tooltip>
 
-        <div className={styles.centerContent}>{isDashboard ? <PillToggle /> : <ConnectionStatusIndicator />}</div>
+        <div className={styles.centerContent}>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={isDashboard ? 'pill-toggle' : 'status-indicator'}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+            >
+              {isDashboard ? <PillToggle /> : <ConnectionStatusIndicator />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         <div className={styles.rightActions}>
-          {/*
-            This is the robust, officially supported pattern for nesting a Tooltip and a Popover
-            to ensure their trigger events do not conflict. The Radix `Root` components are nested,
-            then their `Trigger` components are nested, which guarantees correct event propagation.
-          */}
           <RadixPopover.Root open={isActionMenuOpen} onOpenChange={setIsActionMenuOpen}>
             <Tooltip content="More actions">
               <RadixPopover.Trigger asChild>
@@ -88,7 +121,8 @@ export const FloatingHeader = () => {
         </div>
       </div>
       <AnimatePresence>
-        {isOverviewOpen && isDashboard && (
+        {/* DEFINITIVE FIX: The condition is now only dependent on isOverviewOpen */}
+        {isOverviewOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

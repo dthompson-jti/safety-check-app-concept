@@ -18,7 +18,7 @@
   --surface-bg-primary-solid: var(--primitives-grey-950);
   --surface-bg-secondary-solid: var(--primitives-grey-600);
   /* The translucent, blurred background for the main app header and footer. */
-  --surface-bg-header-translucent: rgba(249, 249, 249, 0.9);
+  --surface-bg-header-translucent: rgba(249, 249, 249, 0.5);
   --surface-bg-brand-primary: var(--primitives-theme-50);
   --surface-bg-brand-solid: var(--primitives-theme-600);
   --surface-bg-brand-solid_hover: var(--primitives-theme-700);

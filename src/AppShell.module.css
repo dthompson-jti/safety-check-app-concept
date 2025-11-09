@@ -30,6 +30,10 @@
   background-color: var(--surface-bg-secondary);
   will-change: transform;
   overflow: hidden; /* This is critical for border-radius to apply correctly */
+  /* DEFINITIVE FIX: Add padding-top that reacts to the header's height. */
+  /* 60px is a fallback for the initial render before the JS calculates the real height. */
+  padding-top: var(--header-height, 60px);
+  transition: padding-top 0.3s ease; /* Smoothly transition padding changes */
 }
 
 .backdrop {

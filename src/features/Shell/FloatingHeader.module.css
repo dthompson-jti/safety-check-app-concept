@@ -1,7 +1,8 @@
 /* src/features/Header/FloatingHeader.module.css */
 
 .header {
-  position: relative; /* Changed from fixed to allow layout flow */
+  /* DEFINITIVE FIX: Change positioning to absolute */
+  position: absolute; 
   top: 0;
   left: 0;
   right: 0;
@@ -36,7 +37,7 @@
   pointer-events: none;
 }
 /* Re-enable pointer events for the toggle itself so it remains interactive. */
-.centerContent > :first-child {
+.centerContent > * {
   pointer-events: auto;
 }
 
