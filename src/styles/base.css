@@ -6,9 +6,9 @@
 }
 
 /*
-  DEFINITIVE FIX for Android Height & Scrollbar Bug:
   This reset ensures the entire chain from <html> to our React #root
   forms a perfect, non-scrolling, 100% height foundation for the app.
+  This is the definitive fix for mobile viewport height and scrollbar issues.
 */
 html,
 body,

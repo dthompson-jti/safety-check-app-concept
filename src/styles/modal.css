@@ -72,7 +72,7 @@
   overflow-y: auto;
   min-height: 0;
   overflow-x: hidden;
-  /* DEFINITIVE FIX: Add consistent padding to the main content area of all modals. */
+  /* Enforce consistent padding for the main content area of all modals. */
   padding: var(--spacing-4);
 }
 

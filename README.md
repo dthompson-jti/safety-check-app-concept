@@ -21,6 +21,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **State Management:** Jotai
 -   **Animation:** Framer Motion
 -   **UI Primitives:** Radix UI
+-   **Bottom Sheet Modals:** Vaul
 
 ## 3. Prototype Features
 
@@ -31,7 +32,9 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Dynamic Check Schedule:** A performant list of checks with live timers and two sorting modes (Time and Route). The list is rendered using a standard component map to ensure high-fidelity animations, prioritizing craft over premature optimization.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes. This includes a "pre-scan alert" to notify caregivers of critical resident information *before* a scan is completed.
 -   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature and a visually distinct UI for residents with special classifications.
--   **Comprehensive History View:** A complete, filterable, and chronologically-grouped view of all past check activity, rendered in a full-screen modal.
+-   **Sophisticated Modal System:** The app employs a multi-tiered modal strategy to optimize user experience.
+    -   **Full-Screen Modals:** Used for immersive, high-content views like the History and Settings overlays.
+    -   **Bottom Sheet Modals:** A mobile-first pattern used for contextual actions like initiating a Supplemental Check or writing an NFC tag, preserving context and improving ergonomics.
 -   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete, high-feedback UI simulation for provisioning room NFC tags.
 -   **Simulated Connection Status:** A developer toggle in the settings allows for simulating 'Online' and 'Offline' states to test the UI's responsiveness.
 

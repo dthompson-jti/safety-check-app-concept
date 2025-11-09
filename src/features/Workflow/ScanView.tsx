@@ -153,11 +153,11 @@ export const ScanView = () => {
             <div className={styles.devControls}>
               <Button variant="on-solid" size="s" onClick={handleSimulateSuccess}>
                 <span className="material-symbols-rounded">check_circle</span>
-                Simulate Success
+                Simulate success
               </Button>
               <Button variant="on-solid" size="s" onClick={handleSimulateFail}>
                 <span className="material-symbols-rounded">error</span>
-                Simulate Fail
+                Simulate fail
               </Button>
             </div>
           </div>

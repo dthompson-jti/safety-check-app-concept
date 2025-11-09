@@ -42,7 +42,7 @@ export const AppShell = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
 
-  // DEFINITIVE FIX: State and ref for dynamically measuring the side menu width.
+  // The side menu's width is measured dynamically to create a precise push animation.
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
 
@@ -78,7 +78,7 @@ export const AppShell = () => {
   return (
     <div className={styles.appContainer}>
       <motion.div
-        ref={sideMenuRef} // Attach the ref here
+        ref={sideMenuRef}
         className={styles.sideMenuContainer}
         initial={false}
         animate={{ x: isMenuOpen ? 0 : -sideMenuWidth }}
@@ -91,7 +91,7 @@ export const AppShell = () => {
         className={styles.mainViewWrapper}
         initial={false}
         animate={{
-          x: isMenuOpen ? sideMenuWidth : 0, // Animate using the measured width
+          x: isMenuOpen ? sideMenuWidth : 0,
         }}
         transition={viewTransition}
       >

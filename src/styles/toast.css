@@ -55,9 +55,11 @@
   color: var(--surface-fg-on-solid-faint);
 }
 
-/* DEFINITIVE FIX: Align swipe gesture CSS with swipeDirection="right" config */
+/* 
+  This CSS aligns with the swipeDirection="right" configuration in App.tsx.
+  It uses the correct Radix-provided CSS variable for horizontal movement.
+*/
 .toast-root[data-swipe='move'] {
-  /* Use the CORRECT variable for horizontal movement */
   transform: translateX(var(--radix-toast-swipe-move-x));
 }
 .toast-root[data-swipe='cancel'] {
@@ -65,7 +67,6 @@
   transition: transform 200ms ease-out;
 }
 .toast-root[data-swipe='end'] {
-  /* Use the CORRECT variable for the final swipe-away animation */
   animation: swipeOutHorizontal 100ms ease-out forwards;
 }
 
@@ -80,46 +81,33 @@
   }
 }
 
-
-/* 
-  DEFINITIVE FIX: Use a hard reset and precisely replicate the `xs` `on-solid`
-  icon-only button styles from `buttons.css`. This is the most robust way
-  to guarantee the correct appearance and behavior.
+/*
+  This rule uses a hard reset to guarantee the close button's appearance,
+  preventing inheritance from global button styles and ensuring consistency.
 */
 .toast-close-button {
-  /* 1. Hard Reset */
   all: unset;
   box-sizing: border-box;
-
-  /* 2. Layout & Dimensions (from .btn[data-size="xs"][data-icon-only="true"]) */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem; /* 24px */
-  height: 1.5rem; /* 24px */
-  border-radius: var(--radius-md); /* 6px */
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-md);
   flex-shrink: 0;
   cursor: pointer;
-  
-  /* 3. Appearance (from .btn[data-variant="on-solid"]) */
   background: none;
   color: var(--control-fg-on-solid);
-  border: 1px solid transparent; /* Reserve space */
-  
-  /* 4. Transitions */
+  border: 1px solid transparent;
   transition: background-color 0.2s, border-color 0.2s;
-  
-  /* 5. Positional Tweaks */
   margin-left: auto;
 }
 
 .toast-close-button:hover {
-  /* from .btn[data-variant="on-solid"]:hover */
   background-color: var(--control-bg-on-solid-hover);
 }
 
 .toast-close-button .material-symbols-rounded {
-  /* Style the icon inside the button */
   font-size: 18px;
   color: var(--surface-fg-secondary_on_brand);
 }

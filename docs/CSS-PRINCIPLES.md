@@ -63,6 +63,14 @@ It is built on two key patterns:
 
 By composing these two classes, we achieve a perfectly consistent and robust menu system across the entire application.
 
+#### The Bottom Sheet Modal Contract for Mobile Actions
+
+For mobile-first contextual actions (e.g., initiating a supplemental check, writing an NFC tag), we use a "Bottom Sheet" modal pattern instead of a traditional centered modal.
+
+-   **Problem:** Traditional centered modals on mobile can be ergonomically poor and obscure the underlying context of the application.
+-   **Solution (The Contract):** Use a bottom sheet component that slides up from the bottom of the viewport. This keeps controls within easy reach of a user's thumb and preserves the visibility of the main application header, maintaining context.
+-   **Implementation:** The project uses the `vaul` library, which is built on Radix UI for accessibility and Framer Motion for high-craft animations. A shared `<BottomSheet>` component standardizes its application. Use this pattern for simple forms or action prompts; use `FullScreenModal` for immersive views like History or Settings.
+
 #### The Icon Badging Pattern for Visual Status
 
 To add secondary information or communicate status visually, we use a consistent pattern of icons and semantic colors.

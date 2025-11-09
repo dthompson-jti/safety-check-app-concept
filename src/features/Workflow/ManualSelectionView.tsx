@@ -82,7 +82,7 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
                   <span className={styles.checkItemText}>
                     {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
                   </span>
-                  {/* ENHANCEMENT: Show icon for classified checks in the list */}
+                  {/* Show icon for classified checks in the list */}
                   {check.specialClassification && (
                     <span className={`material-symbols-rounded ${styles.srIcon}`}>shield_person</span>
                   )}

@@ -7,8 +7,7 @@ import styles from './StatusOverviewBar.module.css';
 type StatusType = 'late' | 'dueSoon' | 'due' | 'completed';
 
 const usePrevious = <T,>(value: T): T | undefined => {
-  // DEFINITIVE FIX: Initialize the ref with a value (undefined is appropriate here)
-  // to satisfy the hook's signature, which expects an initial value.
+  // This ref stores the previous value of a prop or state.
   const ref = useRef<T | undefined>(undefined);
   useEffect(() => {
     ref.current = value;
