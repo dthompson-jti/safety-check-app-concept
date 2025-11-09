@@ -63,7 +63,6 @@
   background-color: var(--surface-bg-secondary);
 }
 
-/* ADDED: Reset heading margins within the modal header for consistent height */
 .modal-header h3 {
   margin: 0;
 }
@@ -73,6 +72,8 @@
   overflow-y: auto;
   min-height: 0;
   overflow-x: hidden;
+  /* DEFINITIVE FIX: Add consistent padding to the main content area of all modals. */
+  padding: var(--spacing-4);
 }
 
 .modal-footer {

@@ -57,11 +57,11 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
       onClose={handleClose}
       width="90%"
       height="75%"
-      title="Select Check Manually"
+      title="Select check manually"
       description="Search for and select a resident's check from the list to proceed with recording the check."
     >
       <Modal.Header>
-        <h3>Select Check Manually</h3>
+        <h3>Select check manually</h3>
       </Modal.Header>
       <Modal.Content>
         <div className={styles.contentWrapper}>

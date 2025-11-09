@@ -49,12 +49,12 @@ export const SelectRoomModal = () => {
       onClose={resetAndClose}
       width="90%"
       height="auto"
-      title="Select Room for Supplemental Check"
+      title="Select room for supplemental check"
       description="Choose a resident's location from the list to record an unscheduled check."
     >
       <Modal.Header>
         <div className={styles.headerContent}>
-          <h2>Supplemental Check</h2>
+          <h2>Supplemental check</h2>
           <Button variant="quaternary" size="s" iconOnly onClick={resetAndClose} aria-label="Close">
             <span className="material-symbols-rounded">close</span>
           </Button>
@@ -66,7 +66,7 @@ export const SelectRoomModal = () => {
             Select the room where you are performing an unscheduled safety check.
           </p>
           <div className={styles.formGroup}>
-            <label htmlFor="room-select">Select a Room</label>
+            <label htmlFor="room-select">Select a room</label>
             <Select
               value={selectedRoomId}
               onValueChange={setSelectedRoomId}

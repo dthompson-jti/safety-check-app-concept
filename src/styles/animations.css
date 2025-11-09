@@ -1,5 +1,4 @@
 /* src/styles/animations.css */
-/* NEW FILE: Centralized, global animations */
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }

@@ -55,6 +55,32 @@
   color: var(--surface-fg-on-solid-faint);
 }
 
+/* DEFINITIVE FIX: Align swipe gesture CSS with swipeDirection="right" config */
+.toast-root[data-swipe='move'] {
+  /* Use the CORRECT variable for horizontal movement */
+  transform: translateX(var(--radix-toast-swipe-move-x));
+}
+.toast-root[data-swipe='cancel'] {
+  transform: translateX(0);
+  transition: transform 200ms ease-out;
+}
+.toast-root[data-swipe='end'] {
+  /* Use the CORRECT variable for the final swipe-away animation */
+  animation: swipeOutHorizontal 100ms ease-out forwards;
+}
+
+@keyframes swipeOutHorizontal {
+  from {
+    transform: translateX(var(--radix-toast-swipe-end-x));
+    opacity: 1;
+  }
+  to {
+    transform: translateX(calc(100% + 16px));
+    opacity: 0;
+  }
+}
+
+
 /* 
   DEFINITIVE FIX: Use a hard reset and precisely replicate the `xs` `on-solid`
   icon-only button styles from `buttons.css`. This is the most robust way

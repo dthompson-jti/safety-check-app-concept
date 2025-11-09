@@ -100,7 +100,7 @@ export const ScanView = () => {
         transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >
         <header className={styles.header}>
-          <h3>Scan Room QR Code</h3>
+          <h3>Scan room QR code</h3>
           <Button variant="on-solid" size="m" iconOnly onClick={handleClose} aria-label="Close scanner">
             <span className="material-symbols-rounded">close</span>
           </Button>
@@ -146,10 +146,10 @@ export const ScanView = () => {
         <footer className={styles.footer}>
           <p className={styles.subtlePrompt}>Can't scan?</p>
           <Button variant="on-solid" size="m" onClick={handleOpenManualSelection}>
-            Select Manually
+            Select manually
           </Button>
           <div className={styles.devControlsContainer}>
-            <p className={styles.devControlsHeader}>--- DEV CONTROLS ---</p>
+            <p className={styles.devControlsHeader}>Dev controls</p>
             <div className={styles.devControls}>
               <Button variant="on-solid" size="s" onClick={handleSimulateSuccess}>
                 <span className="material-symbols-rounded">check_circle</span>

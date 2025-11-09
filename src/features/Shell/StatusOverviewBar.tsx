@@ -42,7 +42,7 @@ export const StatusOverviewBar = () => {
   return (
     <div className={styles.overviewBar}>
       <StatusPill count={counts.late} label="Late" status="late" />
-      <StatusPill count={counts.dueSoon} label="Due Soon" status="dueSoon" />
+      <StatusPill count={counts.dueSoon} label="Due soon" status="dueSoon" />
       <StatusPill count={counts.due} label="Due" status="due" />
       <StatusPill count={counts.completed} label="Completed" status="completed" />
     </div>

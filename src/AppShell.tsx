@@ -129,7 +129,7 @@ export const AppShell = () => {
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
         <SettingsOverlay />
       </FullScreenModal>
-      <FullScreenModal isOpen={isDevToolsOpen} onClose={() => setIsDevToolsOpen(false)} title="Developer Tools">
+      <FullScreenModal isOpen={isDevToolsOpen} onClose={() => setIsDevToolsOpen(false)} title="Developer tools">
         <DeveloperOverlay />
       </FullScreenModal>
     </div>

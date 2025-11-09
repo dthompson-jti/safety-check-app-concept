@@ -77,12 +77,12 @@ export const WriteNfcTagModal = () => {
       onClose={modalState === 'writing' ? () => {} : resetAndClose}
       width="90%"
       height="auto"
-      title="Provision NFC Tag"
+      title="Provision NFC tag"
       description="Select a room from the dropdown to prepare its corresponding NFC tag for writing."
     >
       <Modal.Header>
         <div className={styles.headerContent}>
-          <h2>Provision NFC Tag</h2>
+          <h2>Provision NFC tag</h2>
           {modalState !== 'writing' && (
             <Button variant="quaternary" size="s" iconOnly onClick={resetAndClose} aria-label="Close">
               <span className="material-symbols-rounded">close</span>
@@ -93,7 +93,7 @@ export const WriteNfcTagModal = () => {
       <Modal.Content>
         <div className={styles.body}>
           <div className={styles.formGroup}>
-            <label htmlFor="room-select">Select a Room</label>
+            <label htmlFor="room-select">Select a room</label>
             <Select
               value={selectedRoomId}
               onValueChange={setSelectedRoomId}
@@ -117,7 +117,7 @@ export const WriteNfcTagModal = () => {
                 Cancel
               </Button>
               <Button variant="primary" size="m" onClick={handleWriteTag} disabled={!selectedRoomId}>
-                Write Tag
+                Write tag
               </Button>
             </>
           ) : modalState === 'success' || modalState === 'error' ? (

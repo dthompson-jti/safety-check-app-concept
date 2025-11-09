@@ -56,8 +56,8 @@ export const AppSideMenu = () => {
       {/* The main content area contains all the navigation items. */}
       {/* It is a simple flex container; the parent <aside> handles scrolling. */}
       <main className={styles.content}>
-        <NavButton icon="add_comment" label="Supplemental Check" onClick={() => setIsSelectRoomModalOpen(true)} />
-        <NavButton icon="nfc" label="Write NFC Tag" onClick={() => setIsWriteNfcModalOpen(true)} />
+        <NavButton icon="add_comment" label="Supplemental check" onClick={() => setIsSelectRoomModalOpen(true)} />
+        <NavButton icon="nfc" label="Write NFC tag" onClick={() => setIsWriteNfcModalOpen(true)} />
         <NavButton icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
         <NavButton icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
         
@@ -78,7 +78,7 @@ export const AppSideMenu = () => {
         <button className={styles.userSettingsButton} onClick={() => setIsSettingsOpen(true)}>
           <div className={styles.userInfo}>
             <span className={styles.userName}>Jane Doe</span>
-            <span className={styles.userRole}>Officier #12344</span>
+            <span className={styles.userRole}>Officer #12344</span>
           </div>
           <span className="material-symbols-rounded">settings</span>
         </button>

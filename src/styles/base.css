@@ -5,6 +5,20 @@
   box-sizing: border-box;
 }
 
+/*
+  DEFINITIVE FIX for Android Height & Scrollbar Bug:
+  This reset ensures the entire chain from <html> to our React #root
+  forms a perfect, non-scrolling, 100% height foundation for the app.
+*/
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent body-level scrolling */
+}
+
 body {
   margin: 0;
   font-family: var(--font-family-sans);

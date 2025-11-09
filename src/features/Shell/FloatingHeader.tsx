@@ -33,7 +33,7 @@ export const FloatingHeader = () => {
     {
       id: 'supplemental-check',
       icon: 'add_comment',
-      label: 'Add Supplemental Check',
+      label: 'Add supplemental check',
       onClick: () => {
         setIsSelectRoomModalOpen(true);
         setIsActionMenuOpen(false);
@@ -42,7 +42,7 @@ export const FloatingHeader = () => {
     {
       id: 'write-nfc-tag',
       icon: 'nfc',
-      label: 'Write NFC Tag',
+      label: 'Write NFC tag',
       onClick: () => {
         setIsWriteNfcModalOpen(true);
         setIsActionMenuOpen(false);
@@ -57,7 +57,7 @@ export const FloatingHeader = () => {
   return (
     <motion.header layout="position" transition={{ duration: 0.3 }} className={styles.header}>
       <div className={styles.headerContent}>
-        <Tooltip content="Open Navigation">
+        <Tooltip content="Open navigation">
           <Button variant="tertiary" size="m" iconOnly onClick={handleMenuClick} aria-label="Open navigation menu">
             <span className="material-symbols-rounded">menu</span>
           </Button>
@@ -72,7 +72,7 @@ export const FloatingHeader = () => {
             then their `Trigger` components are nested, which guarantees correct event propagation.
           */}
           <RadixPopover.Root open={isActionMenuOpen} onOpenChange={setIsActionMenuOpen}>
-            <Tooltip content="More Actions">
+            <Tooltip content="More actions">
               <RadixPopover.Trigger asChild>
                 <Button variant="tertiary" size="m" iconOnly aria-label="More actions">
                   <span className="material-symbols-rounded">add</span>

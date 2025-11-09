@@ -143,7 +143,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         <Button variant="quaternary" size="m" iconOnly onClick={handleBack} aria-label="Back to scanner">
           <span className="material-symbols-rounded">arrow_back</span>
         </Button>
-        <h3>Record Check</h3>
+        <h3>Record check</h3>
       </header>
 
       <main className={styles.formContent}>
@@ -153,7 +153,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
         {checkData.residents.length > 1 && (
           <div className={styles.formGroup}>
-            <label>SET ALL TO</label>
+            <label>Set all to</label>
             <IconToggleGroup
               id="set-all-status-group"
               options={statusOptions}
@@ -204,7 +204,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="notes-input">NOTES (OPTIONAL)</label>
+          <label htmlFor="notes-input">Notes (optional)</label>
           <textarea
             id="notes-input"
             value={notes}

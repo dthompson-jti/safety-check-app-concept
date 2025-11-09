@@ -41,7 +41,7 @@ export const SettingsOverlay = () => {
 
   return (
     <div className={styles.settingsContainer}>
-      <SettingsSection title="User Info">
+      <SettingsSection title="User info">
         <div className={styles.settingsItem}>
           <span className={styles.itemLabel}>Logged in as</span>
           <div className={`${styles.itemValue} ${styles.readOnlyValue}`}>
@@ -50,10 +50,10 @@ export const SettingsOverlay = () => {
         </div>
       </SettingsSection>
 
-      <SettingsSection title="View Settings">
+      <SettingsSection title="View settings">
         <div className={styles.settingsItem}>
           <label htmlFor="view-mode-toggle" className={styles.itemLabel}>
-            Schedule View
+            Schedule view
           </label>
           <IconToggleGroup
             id="view-mode-toggle"
@@ -64,7 +64,7 @@ export const SettingsOverlay = () => {
         </div>
         <div className={styles.settingsItem}>
           <label htmlFor="haptics-toggle" className={styles.itemLabel}>
-            Haptic Feedback
+            Haptic feedback
           </label>
           <Switch
             id="haptics-toggle"
@@ -74,7 +74,7 @@ export const SettingsOverlay = () => {
         </div>
         <div className={styles.settingsItem}>
           <label htmlFor="overview-toggle" className={styles.itemLabel}>
-            Show Status Overview
+            Show status overview
           </label>
           <Switch
             id="overview-toggle"
@@ -84,16 +84,16 @@ export const SettingsOverlay = () => {
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Admin Tools">
+      <SettingsSection title="Admin tools">
         <button className={styles.settingsItem} onClick={() => setIsWriteNfcModalOpen(true)}>
-          <span className={styles.itemLabel}>Write NFC Tag</span>
+          <span className={styles.itemLabel}>Write NFC tag</span>
           <div className={styles.itemValue}>
             <span className="material-symbols-rounded">chevron_right</span>
           </div>
         </button>
         <div className={styles.settingsItem}>
           <label htmlFor="scan-mode-toggle" className={styles.itemLabel}>
-            Scan Mode
+            Scan mode
           </label>
           <IconToggleGroup
             id="scan-mode-toggle"
@@ -106,7 +106,7 @@ export const SettingsOverlay = () => {
 
       <SettingsSection title="Session">
         <button className={`${styles.settingsItem} ${styles.destructive}`} onClick={handleLogout}>
-          Log Out
+          Log out
         </button>
       </SettingsSection>
     </div>
