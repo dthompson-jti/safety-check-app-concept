@@ -23,12 +23,9 @@ export const FloatingHeader = () => {
   const isOverviewOpen = useAtomValue(isStatusOverviewOpenAtom);
   const headerRef = useRef<HTMLElement>(null);
 
-  // Use a controlled state for the popover to ensure reliability.
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
-
   const isDashboard = view === 'dashboardTime' || view === 'dashboardRoute';
 
-  // onClick handlers now close the menu after performing their action.
   const actionMenuItems: (ActionMenuItem | 'separator')[] = [
     {
       id: 'supplemental-check',
@@ -54,15 +51,16 @@ export const FloatingHeader = () => {
     setView(view === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
-  // This effect measures the header's height and sets a CSS variable.
-  // This is a robust way to allow other components to react to the header's size
-  // without direct state management, preventing layout shifts.
+  // ARCHITECTURE: This effect measures the header's true height (including the
+  // status bar, if visible) and sets a CSS variable on the root element. This
+  // allows the main content area to add the correct amount of top padding,
+  // preventing content from being obscured by the header, and allowing the
+  // layout to adapt automatically if the header's height changes.
   useLayoutEffect(() => {
     const headerElement = headerRef.current;
     if (!headerElement) return;
 
     const observer = new ResizeObserver(entries => {
-      // requestAnimationFrame to avoid "ResizeObserver loop limit exceeded" error
       window.requestAnimationFrame(() => {
         if (!Array.isArray(entries) || !entries.length) {
           return;
@@ -121,7 +119,6 @@ export const FloatingHeader = () => {
         </div>
       </div>
       <AnimatePresence>
-        {/* DEFINITIVE FIX: The condition is now only dependent on isOverviewOpen */}
         {isOverviewOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}

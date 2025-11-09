@@ -1,7 +1,7 @@
 /* src/features/Header/FloatingHeader.module.css */
 
 .header {
-  /* DEFINITIVE FIX: Change positioning to absolute */
+  /* ARCHITECTURE: The header is positioned absolutely so that the main content can scroll underneath it. */
   position: absolute; 
   top: 0;
   left: 0;

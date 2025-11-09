@@ -42,7 +42,6 @@ export const AppShell = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
 
-  // The side menu's width is measured dynamically to create a precise push animation.
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
 
@@ -54,11 +53,10 @@ export const AppShell = () => {
   }, [setCurrentTime]);
 
   useEffect(() => {
-    // Measure the side menu's width after it has rendered.
     if (sideMenuRef.current) {
       setSideMenuWidth(sideMenuRef.current.offsetWidth);
     }
-  }, []); // Runs once on mount.
+  }, []);
 
   useEffect(() => {
     if (workflowState.view === 'form' && workflowState.residents && workflowState.residents.length > 0) {
@@ -77,6 +75,7 @@ export const AppShell = () => {
 
   return (
     <div className={styles.appContainer}>
+      {/* ARCHITECTURE: The side menu is a direct child of the root container. */}
       <motion.div
         ref={sideMenuRef}
         className={styles.sideMenuContainer}
@@ -87,6 +86,9 @@ export const AppShell = () => {
         <AppSideMenu />
       </motion.div>
 
+      {/* ARCHITECTURE: The mainViewWrapper contains the primary content area (MainLayout)
+          and the backdrop. It slides left and right. The Header and Footer are now
+          outside of this element, allowing content to scroll underneath them. */}
       <motion.div
         className={styles.mainViewWrapper}
         initial={false}
@@ -95,12 +97,7 @@ export const AppShell = () => {
         }}
         transition={viewTransition}
       >
-        {connectionStatus !== 'online' && <OfflineBanner />}
-        {isChromeVisible && <FloatingHeader />}
-
         <MainLayout />
-
-        {isChromeVisible && <FloatingFooter />}
 
         <AnimatePresence>
           {isMenuOpen && (
@@ -115,14 +112,23 @@ export const AppShell = () => {
         </AnimatePresence>
       </motion.div>
 
+      {/* ARCHITECTURE: The Header, Footer, and Banner are siblings to the main view,
+          ensuring they sit on a higher layer and are not affected by its background. */}
+      {connectionStatus !== 'online' && <OfflineBanner />}
+      {isChromeVisible && <FloatingHeader />}
+      {isChromeVisible && <FloatingFooter />}
+
+      {/* Workflow modals appear on top of everything else */}
       <AnimatePresence>
         {workflowState.view === 'scanning' && <ScanView />}
         {workflowState.view === 'form' && <CheckFormView checkData={workflowState} />}
       </AnimatePresence>
-
+      
+      {/* Contextual bottom sheet modals */}
       <WriteNfcTagModal />
       <SelectRoomModal />
-
+      
+      {/* Full-screen overlay modals */}
       <FullScreenModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} title="History">
         <HistoryOverlay />
       </FullScreenModal>

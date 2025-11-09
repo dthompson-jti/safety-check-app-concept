@@ -1,11 +1,21 @@
 /* src/layouts/MainLayout.module.css */
 
 .contentWrapper {
-  flex-grow: 1; /* This makes it fill the space left by header/footer */
+  flex-grow: 1; 
   position: relative;
   overflow: hidden;
   min-height: 0;
+  /* ARCHITECTURE: The solid background color is applied here, to the scrollable content itself. */
   background-color: var(--surface-bg-secondary);
+  /* ARCHITECTURE: This is now the primary scroll container for the app's main content. */
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* ARCHITECTURE: Padding is applied here to prevent content from being hidden
+     by the absolutely-positioned header and footer. The CSS variables are
+     set by those components respectively. */
+  padding-top: var(--header-height, 60px);
+  padding-bottom: var(--footer-height, 96px);
 }
 
 .filmStrip {
@@ -28,13 +38,11 @@
   position: relative;
 }
 
-/* This is the primary scrollable area for ALL views */
 .mainContent {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* DEFINITIVE FIX: Hide the scrollbar visually while keeping content scrollable. */
+  /* Scrolling is handled by the parent `.contentWrapper` */
+  /* Hide the scrollbar visually while keeping content scrollable. */
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
