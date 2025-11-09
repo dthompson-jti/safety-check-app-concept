@@ -25,6 +25,7 @@
 
 /* Layer 3: Themes for Radix Primitives */
 @import url('./modal.css') layer(themes);
+@import url('./bottom-sheet.css') layer(themes);
 @import url('./popover.css') layer(themes);
 @import url('./accordion.css') layer(themes);
 @import url('./tooltip.css') layer(themes);

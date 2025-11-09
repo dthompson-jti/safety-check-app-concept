@@ -1,11 +1,11 @@
 // src/features/Admin/WriteNfcTagModal.tsx
 import { useState } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
-// FIX: Corrected the typo in the imported atom name.
+import { Drawer } from 'vaul';
 import { isWriteNfcModalOpenAtom } from '../../data/atoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { mockResidents } from '../../data/appDataAtoms';
-import { Modal } from '../../components/Modal';
+import { BottomSheet } from '../../components/BottomSheet';
 import { Select, SelectItem } from '../../components/Select';
 import { Button } from '../../components/Button';
 import styles from './WriteNfcTagModal.module.css';
@@ -20,7 +20,6 @@ export const WriteNfcTagModal = () => {
 
   const resetAndClose = () => {
     setIsOpen(false);
-    // Use a timeout to allow the exit animation to complete before state reset
     setTimeout(() => {
       setModalState('initial');
       setSelectedRoomId('');
@@ -72,65 +71,59 @@ export const WriteNfcTagModal = () => {
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={modalState === 'writing' ? () => {} : resetAndClose}
-      width="90%"
-      height="auto"
-      title="Provision NFC tag"
-      description="Select a room from the dropdown to prepare its corresponding NFC tag for writing."
-    >
-      <Modal.Header>
-        <div className={styles.headerContent}>
+    <BottomSheet isOpen={isOpen} onClose={modalState === 'writing' ? () => {} : resetAndClose}>
+      <div className={styles.headerContent}>
+        <Drawer.Title asChild>
           <h2>Provision NFC tag</h2>
-          {modalState !== 'writing' && (
-            <Button variant="quaternary" size="s" iconOnly onClick={resetAndClose} aria-label="Close">
-              <span className="material-symbols-rounded">close</span>
-            </Button>
-          )}
+        </Drawer.Title>
+        {modalState !== 'writing' && (
+          <Button variant="quaternary" size="s" iconOnly onClick={resetAndClose} aria-label="Close">
+            <span className="material-symbols-rounded">close</span>
+          </Button>
+        )}
+      </div>
+      <div className={styles.body}>
+        <Drawer.Description asChild>
+          <p className={styles.helperText}>
+            Select a room to prepare its corresponding NFC tag.
+          </p>
+        </Drawer.Description>
+        <div className={styles.formGroup}>
+          <label htmlFor="room-select">Select a room</label>
+          <Select
+            value={selectedRoomId}
+            onValueChange={setSelectedRoomId}
+            placeholder="Choose a resident location..."
+          >
+            {mockResidents.map((resident) => (
+              <SelectItem key={resident.id} value={resident.id}>
+                {resident.location} - {resident.name}
+              </SelectItem>
+            ))}
+          </Select>
         </div>
-      </Modal.Header>
-      <Modal.Content>
-        <div className={styles.body}>
-          <div className={styles.formGroup}>
-            <label htmlFor="room-select">Select a room</label>
-            <Select
-              value={selectedRoomId}
-              onValueChange={setSelectedRoomId}
-              placeholder="Choose a resident location..."
-            >
-              {mockResidents.map((resident) => (
-                <SelectItem key={resident.id} value={resident.id}>
-                  {resident.location} - {resident.name}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-          {modalState !== 'initial' && renderAnimationArea()}
-        </div>
-      </Modal.Content>
-      <Modal.Footer>
-        <div className={styles.footerContent}>
-          {modalState === 'initial' ? (
-            <>
-              <Button variant="secondary" size="m" onClick={resetAndClose}>
-                Cancel
-              </Button>
-              <Button variant="primary" size="m" onClick={handleWriteTag} disabled={!selectedRoomId}>
-                Write tag
-              </Button>
-            </>
-          ) : modalState === 'success' || modalState === 'error' ? (
-            <Button variant="primary" size="m" onClick={resetAndClose}>
-              Done
+        {modalState !== 'initial' && renderAnimationArea()}
+      </div>
+      <div className={styles.footerContent}>
+        {modalState === 'initial' ? (
+          <>
+            <Button variant="secondary" size="m" onClick={resetAndClose}>
+              Cancel
             </Button>
-          ) : (
-            <Button variant="secondary" size="m" disabled>
-              Writing...
+            <Button variant="primary" size="m" onClick={handleWriteTag} disabled={!selectedRoomId}>
+              Write tag
             </Button>
-          )}
-        </div>
-      </Modal.Footer>
-    </Modal>
+          </>
+        ) : modalState === 'success' || modalState === 'error' ? (
+          <Button variant="primary" size="m" onClick={resetAndClose}>
+            Done
+          </Button>
+        ) : (
+          <Button variant="secondary" size="m" disabled>
+            Writing...
+          </Button>
+        )}
+      </div>
+    </BottomSheet>
   );
 };

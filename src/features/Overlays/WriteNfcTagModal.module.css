@@ -1,13 +1,11 @@
 /* src/features/Admin/WriteNfcTagModal.module.css */
 
-/* FIX: The modal-header and modal-footer classes now handle padding. */
-/* The container is no longer needed. The body handles the core content layout. */
-
 .headerContent {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  margin-bottom: var(--spacing-4);
 }
 
 .headerContent h2 {
@@ -21,8 +19,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
   min-height: 200px; /* Give the animation area some space */
+}
+
+.helperText {
+  margin: 0;
+  color: var(--surface-fg-secondary);
+  line-height: 1.5;
 }
 
 .formGroup {
@@ -45,7 +50,7 @@
   justify-content: center;
   gap: var(--spacing-4);
   padding: var(--spacing-8) var(--spacing-4);
-  background-color: var(--surface-bg-primary);
+  background-color: var(--surface-bg-secondary);
   border: 1px solid var(--surface-border-secondary);
   border-radius: var(--spacing-2);
   text-align: center;
