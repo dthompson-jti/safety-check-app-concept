@@ -38,3 +38,14 @@
   z-index: 99; /* Sits on top of content, below menu */
   cursor: pointer;
 }
+
+/* NEW: A dedicated container for the top application chrome (banner, header). */
+.chromeContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}

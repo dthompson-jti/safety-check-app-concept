@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as RadixPopover from '@radix-ui/react-popover';
@@ -21,7 +21,6 @@ export const FloatingHeader = () => {
   const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
   const isOverviewOpen = useAtomValue(isStatusOverviewOpenAtom);
-  const headerRef = useRef<HTMLElement>(null);
 
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const isDashboard = view === 'dashboardTime' || view === 'dashboardRoute';
@@ -51,35 +50,13 @@ export const FloatingHeader = () => {
     setView(view === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
-  // ARCHITECTURE: This effect measures the header's true height (including the
-  // status bar, if visible) and sets a CSS variable on the root element. This
-  // allows the main content area to add the correct amount of top padding,
-  // preventing content from being obscured by the header, and allowing the
-  // layout to adapt automatically if the header's height changes.
-  useLayoutEffect(() => {
-    const headerElement = headerRef.current;
-    if (!headerElement) return;
-
-    const observer = new ResizeObserver(entries => {
-      window.requestAnimationFrame(() => {
-        if (!Array.isArray(entries) || !entries.length) {
-          return;
-        }
-        const height = entries[0].target.getBoundingClientRect().height;
-        document.documentElement.style.setProperty('--header-height', `${height}px`);
-      });
-    });
-
-    observer.observe(headerElement);
-
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.removeProperty('--header-height');
-    };
-  }, []);
+  // ARCHITECTURE: The effect for measuring height has been moved to the parent AppShell
+  // component, which is responsible for the overall layout. This makes the FloatingHeader
+  // a simpler, more focused component.
 
   return (
-    <motion.header ref={headerRef} layout="position" transition={{ duration: 0.3 }} className={styles.header}>
+    // The `layout` prop is removed as this element is no longer responsible for its own position.
+    <header className={styles.header}>
       <div className={styles.headerContent}>
         <Tooltip content="Open navigation">
           <Button variant="tertiary" size="m" iconOnly onClick={handleMenuClick} aria-label="Open navigation menu">
@@ -130,6 +107,6 @@ export const FloatingHeader = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 };

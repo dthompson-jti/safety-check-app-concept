@@ -1,5 +1,5 @@
 // src/AppShell.tsx
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -44,6 +44,7 @@ export const AppShell = () => {
 
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
+  const appChromeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -56,6 +57,31 @@ export const AppShell = () => {
     if (sideMenuRef.current) {
       setSideMenuWidth(sideMenuRef.current.offsetWidth);
     }
+  }, []);
+
+  // ARCHITECTURE: This effect now lives in AppShell, the component that owns the macro-layout.
+  // It measures the true height of the entire app chrome (banner + header) and sets the CSS
+  // variable that the main content area uses for its top padding.
+  useLayoutEffect(() => {
+    const chromeElement = appChromeRef.current;
+    if (!chromeElement) return;
+
+    const observer = new ResizeObserver(entries => {
+      window.requestAnimationFrame(() => {
+        if (!Array.isArray(entries) || !entries.length) {
+          return;
+        }
+        const height = entries[0].target.getBoundingClientRect().height;
+        document.documentElement.style.setProperty('--header-height', `${height}px`);
+      });
+    });
+
+    observer.observe(chromeElement);
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--header-height');
+    };
   }, []);
 
   useEffect(() => {
@@ -75,7 +101,6 @@ export const AppShell = () => {
 
   return (
     <div className={styles.appContainer}>
-      {/* ARCHITECTURE: The side menu is a direct child of the root container. */}
       <motion.div
         ref={sideMenuRef}
         className={styles.sideMenuContainer}
@@ -86,12 +111,6 @@ export const AppShell = () => {
         <AppSideMenu />
       </motion.div>
 
-      {/* 
-        ARCHITECTURE REFACTOR: The mainViewWrapper now contains the ENTIRE main view,
-        including the Header, Footer, and Banner. This is critical for the "push"
-        animation, as this single element is transformed, moving all its children
-        (the entire app shell) together.
-      */}
       <motion.div
         className={styles.mainViewWrapper}
         initial={false}
@@ -100,10 +119,8 @@ export const AppShell = () => {
         }}
         transition={viewTransition}
       >
-        {/* The main scrollable content area */}
         <MainLayout />
 
-        {/* The backdrop for the side menu, now correctly covers the entire view */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -115,24 +132,29 @@ export const AppShell = () => {
             />
           )}
         </AnimatePresence>
+        
+        {/* 
+          ARCHITECTURE REFACTOR: The Banner and Header are now grouped in a single
+          "chrome" container. This container is absolutely positioned, and its children
+          (the banner and header) stack naturally using flexbox. This solves the
+          z-index and layout issues cleanly.
+        */}
+        <div ref={appChromeRef} className={styles.chromeContainer}>
+          {connectionStatus !== 'online' && <OfflineBanner />}
+          {isChromeVisible && <FloatingHeader />}
+        </div>
 
-        {/* The persistent UI chrome is now INSIDE the animated wrapper */}
-        {connectionStatus !== 'online' && <OfflineBanner />}
-        {isChromeVisible && <FloatingHeader />}
         {isChromeVisible && <FloatingFooter />}
       </motion.div>
 
-      {/* Workflow modals appear on top of everything else */}
       <AnimatePresence>
         {workflowState.view === 'scanning' && <ScanView />}
         {workflowState.view === 'form' && <CheckFormView checkData={workflowState} />}
       </AnimatePresence>
       
-      {/* Contextual bottom sheet modals */}
       <WriteNfcTagModal />
       <SelectRoomModal />
       
-      {/* Full-screen overlay modals */}
       <FullScreenModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} title="History">
         <HistoryOverlay />
       </FullScreenModal>

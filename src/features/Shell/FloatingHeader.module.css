@@ -1,13 +1,8 @@
 /* src/features/Header/FloatingHeader.module.css */
 
 .header {
-  /* ARCHITECTURE: The header is positioned absolutely so that the main content can scroll underneath it. */
-  position: absolute; 
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  
+  /* ARCHITECTURE: The header is now a static block element. Its positioning is controlled by its parent flex container in AppShell. */
+  width: 100%;
   background-color: var(--surface-bg-header-translucent);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px); /* For Safari compatibility */
