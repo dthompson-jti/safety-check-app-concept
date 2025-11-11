@@ -47,7 +47,6 @@
   font-size: 1rem;
   color: var(--surface-fg-primary);
   text-align: left;
-  cursor: pointer;
   transition: background-color 0.2s;
   /* Separator lines between items */
   border-bottom: 1px solid var(--surface-border-secondary);
@@ -58,17 +57,19 @@
   border-bottom: none;
 }
 
-.settingsItem:hover {
-  background-color: var(--surface-bg-primary_hover);
+@media (hover: hover) {
+  .settingsItem:hover {
+    background-color: var(--surface-bg-primary_hover);
+  }
+  .settingsItem.destructive:hover {
+    background-color: var(--surface-bg-alert-subtle);
+  }
 }
 
 .settingsItem.destructive {
   color: var(--surface-fg-alert-primary);
   justify-content: center;
   font-weight: 600;
-}
-.settingsItem.destructive:hover {
-  background-color: var(--surface-bg-alert-subtle);
 }
 
 .itemLabel {

@@ -7,7 +7,6 @@
   padding: var(--spacing-2) var(--spacing-4);
   /* DEFINITIVE FIX: The bar itself should be transparent. Its parent, the FloatingHeader, provides the single, unified translucent background. */
   background-color: transparent;
-  border-top: 1px solid var(--surface-border-secondary);
 }
 
 .statusPill {

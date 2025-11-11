@@ -86,9 +86,12 @@ export const AppShell = () => {
         <AppSideMenu />
       </motion.div>
 
-      {/* ARCHITECTURE: The mainViewWrapper contains the primary content area (MainLayout)
-          and the backdrop. It slides left and right. The Header and Footer are now
-          outside of this element, allowing content to scroll underneath them. */}
+      {/* 
+        ARCHITECTURE REFACTOR: The mainViewWrapper now contains the ENTIRE main view,
+        including the Header, Footer, and Banner. This is critical for the "push"
+        animation, as this single element is transformed, moving all its children
+        (the entire app shell) together.
+      */}
       <motion.div
         className={styles.mainViewWrapper}
         initial={false}
@@ -97,8 +100,10 @@ export const AppShell = () => {
         }}
         transition={viewTransition}
       >
+        {/* The main scrollable content area */}
         <MainLayout />
 
+        {/* The backdrop for the side menu, now correctly covers the entire view */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -110,13 +115,12 @@ export const AppShell = () => {
             />
           )}
         </AnimatePresence>
-      </motion.div>
 
-      {/* ARCHITECTURE: The Header, Footer, and Banner are siblings to the main view,
-          ensuring they sit on a higher layer and are not affected by its background. */}
-      {connectionStatus !== 'online' && <OfflineBanner />}
-      {isChromeVisible && <FloatingHeader />}
-      {isChromeVisible && <FloatingFooter />}
+        {/* The persistent UI chrome is now INSIDE the animated wrapper */}
+        {connectionStatus !== 'online' && <OfflineBanner />}
+        {isChromeVisible && <FloatingHeader />}
+        {isChromeVisible && <FloatingFooter />}
+      </motion.div>
 
       {/* Workflow modals appear on top of everything else */}
       <AnimatePresence>

@@ -78,25 +78,32 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
 
     if (checkData.type === 'scheduled') {
-      // STAGE 1: Simultaneously trigger the pulse animation on the card
-      // AND add the check to the 'completing' set, which starts its exit animation.
+      // STAGE 1 (IMMEDIATE): Update all relevant state atoms.
+      // - Trigger the pulse animation on the card.
+      // - Add the check to the 'completing' set, which starts its exit animation.
+      // - Dispatch the data update to immediately update the Status Overview bar.
       setRecentlyCompletedCheckId(checkData.checkId);
       setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
+      dispatch({
+        type: 'CHECK_COMPLETE',
+        payload: {
+          checkId: checkData.checkId,
+          statuses,
+          notes,
+          completionTime: new Date().toISOString(),
+        },
+      });
 
-      // STAGE 2: After the exit animation has completed, update the master data source.
-      // DURATION MUST MATCH EXIT ANIMATION (typically ~500ms).
-      const animationDuration = 500;
+      // STAGE 2 (DELAYED): After animations complete, remove the check from the
+      // temporary 'completing' set so it can reappear in the "Completed" list.
+      const ANIMATION_CLEANUP_DURATION = 1500; // Must be > pulse animation (1.2s)
       setTimeout(() => {
-        dispatch({
-          type: 'CHECK_COMPLETE',
-          payload: {
-            checkId: checkData.checkId,
-            statuses,
-            notes,
-            completionTime: new Date().toISOString(),
-          },
+        setCompletingChecks((prev) => {
+          const next = new Set(prev);
+          next.delete(checkData.checkId);
+          return next;
         });
-      }, animationDuration);
+      }, ANIMATION_CLEANUP_DURATION);
 
     } else if (checkData.type === 'supplemental') {
       dispatch({
@@ -104,7 +111,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         payload: {
           roomId: checkData.roomId,
           statuses,
-          notes,
+notes,
         },
       });
       addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });

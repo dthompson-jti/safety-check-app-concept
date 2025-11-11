@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
-import { minuteTickerAtom, historyFilterAtom, completingChecksAtom } from './atoms';
+import { currentTimeAtom, historyFilterAtom, completingChecksAtom } from './atoms';
 
 // =================================================================
 //                 Mock Data Store
@@ -43,24 +43,23 @@ const initialChecks: SafetyCheck[] = (() => {
     const now = new Date();
     const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
+    // REFINED: Data is now more evenly spaced for better demonstration.
     return [
       { id: 'chk1', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'High-risk Sith Lord. Approach with caution.', residentId: 'res22' } },
-      // MODIFIED: This check is now ~10 seconds from the 1-minute "fast time" threshold.
-      { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1 + 10/60), walkingOrderIndex: 3 },
-      // MODIFIED: This check is now ~10 seconds from the 2-minute "due-soon" threshold.
-      { id: 'chk6', residents: [mockResidents[5], mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(2 + 10/60), walkingOrderIndex: 2, specialClassification: { type: 'MA', details: 'Medication Alert: Swallow potion by 8 PM.', residentId: 'res7' } },
-      { id: 'chk3', residents: [mockResidents[13], mockResidents[14], mockResidents[15]], status: 'pending', dueDate: inNMinutes(29.5), walkingOrderIndex: 4 },
-      { id: 'chk4', residents: [mockResidents[3], mockResidents[0]], status: 'pending', dueDate: inNMinutes(89.5), walkingOrderIndex: 5 },
+      { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1), walkingOrderIndex: 3 },
+      { id: 'chk6', residents: [mockResidents[5], mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(2.5), walkingOrderIndex: 2, specialClassification: { type: 'MA', details: 'Medication Alert: Swallow potion by 8 PM.', residentId: 'res7' } },
+      { id: 'chk3', residents: [mockResidents[13], mockResidents[14], mockResidents[15]], status: 'pending', dueDate: inNMinutes(5), walkingOrderIndex: 4 },
+      { id: 'chk4', residents: [mockResidents[3], mockResidents[0]], status: 'pending', dueDate: inNMinutes(7), walkingOrderIndex: 5 },
       { id: 'chk7', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 6 },
       { id: 'chk5', residents: [mockResidents[4]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 11, lastChecked: inNMinutes(-125), completionStatus: 'Awake', notes: 'Discussing galactic politics.', specialClassification: { type: 'SR', details: 'Medical Alert', residentId: 'res5' } },
-      { id: 'chk8', residents: [mockResidents[12]], status: 'pending', dueDate: inNMinutes(45), walkingOrderIndex: 7 },
-      { id: 'chk9', residents: [mockResidents[18], mockResidents[22]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 8, specialClassification: { type: 'FA', details: 'Fall Risk Assessment Required', residentId: 'res19' } },
-      { id: 'chk10', residents: [mockResidents[16]], status: 'pending', dueDate: inNMinutes(120), walkingOrderIndex: 9 },
-      { id: 'chk11', residents: [mockResidents[9], mockResidents[10]], status: 'pending', dueDate: inNMinutes(150), walkingOrderIndex: 10 },
+      { id: 'chk8', residents: [mockResidents[12]], status: 'pending', dueDate: inNMinutes(9), walkingOrderIndex: 7 },
+      { id: 'chk9', residents: [mockResidents[18], mockResidents[22]], status: 'pending', dueDate: inNMinutes(11), walkingOrderIndex: 8, specialClassification: { type: 'FA', details: 'Fall Risk Assessment Required', residentId: 'res19' } },
+      { id: 'chk10', residents: [mockResidents[16]], status: 'pending', dueDate: inNMinutes(13), walkingOrderIndex: 9 },
+      { id: 'chk11', residents: [mockResidents[9], mockResidents[10]], status: 'pending', dueDate: inNMinutes(15), walkingOrderIndex: 10 },
       { id: 'chk12', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(-240), walkingOrderIndex: 12 }, 
-      { id: 'chk13', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(200), walkingOrderIndex: 13 },
+      { id: 'chk13', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(17), walkingOrderIndex: 13 },
       { id: 'chk14', residents: [mockResidents[17]], status: 'complete', dueDate: inNMinutes(-300), lastChecked: inNMinutes(-301), completionStatus: 'Sleeping', walkingOrderIndex: 14 },
-      { id: 'chk15', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(240), walkingOrderIndex: 15 },
+      { id: 'chk15', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(19), walkingOrderIndex: 15 },
     ];
 })();
 
@@ -150,11 +149,13 @@ export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
 // =================================================================
 
 // This derived atom calculates the real-time status of each check.
-// It depends on the low-frequency `minuteTickerAtom` to prevent performance issues.
+// DEFINITIVE FIX: It now depends on the high-frequency `currentTimeAtom` to ensure
+// status updates are responsive and align with the UI's countdown timers.
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const { checks } = get(appDataAtom);
-  const timeNow = get(minuteTickerAtom);
-  const twoMinutesFromNow = timeNow + 2 * 60 * 1000;
+  const timeNow = get(currentTimeAtom).getTime();
+  // DEFINITIVE FIX: The "Due Soon" threshold is now 3 minutes.
+  const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
   const completing = get(completingChecksAtom);
 
   return checks
@@ -168,12 +169,13 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
       let newStatus: SafetyCheckStatus = 'pending';
       if (dueTime < timeNow) {
         newStatus = 'late';
-      } else if (dueTime < twoMinutesFromNow) {
+      } else if (dueTime < threeMinutesFromNow) {
         newStatus = 'due-soon';
       } else {
         newStatus = 'pending';
       }
 
+      // Return the original object if the status hasn't changed to avoid unnecessary re-renders.
       if (check.status === newStatus) {
         return check;
       }

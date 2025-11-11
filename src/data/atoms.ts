@@ -48,7 +48,7 @@ export const minuteTickerAtom = atom((get) => {
   ).getTime();
 });
 
-export const isStatusOverviewOpenAtom = atom(false);
+export const isStatusOverviewOpenAtom = atom(true);
 
 // This atom now ONLY triggers the one-time pulse animation.
 export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
