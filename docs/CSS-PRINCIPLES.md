@@ -81,3 +81,4 @@ To add secondary information or communicate status visually, we use a consistent
     -   A `CheckCard` for a resident with a Special Classification uses a `warning` icon to draw immediate attention in the schedule list.
     -   The **pre-scan alert banner** in `ScanView` uses this same pattern to provide a persistent, high-visibility warning to the caregiver while they are aiming the camera.
     -   The resident-specific wrapper in `CheckFormView` uses this pattern to highlight a resident with a special classification within the form.
+#### Active vs Hover state placeholder
