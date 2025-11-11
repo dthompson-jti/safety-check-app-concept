@@ -9,6 +9,7 @@
   transition: background-color 0.2s, border-color 0.2s;
   cursor: pointer;
   flex-shrink: 0;
+  
   box-sizing: border-box;
   
   /* Off, Rest state for the container */
@@ -41,13 +42,18 @@
   border-radius: 50%;
   transition: transform 0.2s ease-in-out;
   will-change: transform;
+  
   background-color: var(--surface-bg-secondary-solid);
   box-shadow: var(--surface-shadow-sm);
-  transform: translateX(2px); /* Off position */
+
+  /* REVERTED: Correct 'off' position */
+  transform: translateX(-4px);
 }
 
 .switchThumb[data-state='checked'] {
-  transform: translateX(18px); /* On position */
+  /* REVERTED: Correct 'on' position */
+  transform: translateX(12px);
+  
   background-color: var(--primitives-base-white);
 }
 
