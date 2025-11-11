@@ -30,7 +30,7 @@ export const mockResidents: Resident[] = [
   { id: 'res18', name: 'Severus Snape', location: 'Potions Classroom' },
   { id: 'res19', name: 'Luke Skywalker', location: 'Tatooine Homestead' },
   { id: 'res20', name: 'Leia Organa', location: 'Tantive IV' },
-  { id: 'res21', name: 'Han Solo', location: 'Millennium Falcon' },
+  { id: 'res21', 'name': 'Han Solo', location: 'Millennium Falcon' },
   { id: 'res22', name: 'Darth Vader', location: 'Executor Bridge' },
   { id: 'res23', name: 'Obi-Wan Kenobi', location: 'Tatooine Homestead' },
   { id: 'res24', name: 'Sheev Palpatine', location: 'Death Star Throne Room' },
@@ -45,8 +45,10 @@ const initialChecks: SafetyCheck[] = (() => {
 
     return [
       { id: 'chk1', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(-3.5), walkingOrderIndex: 1, specialClassification: { type: 'SW', details: 'High-risk Sith Lord. Approach with caution.', residentId: 'res22' } },
-      { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1.5), walkingOrderIndex: 3 },
-      { id: 'chk6', residents: [mockResidents[5], mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(8), walkingOrderIndex: 2, specialClassification: { type: 'MA', details: 'Medication Alert: Swallow potion by 8 PM.', residentId: 'res7' } },
+      // MODIFIED: This check is now ~10 seconds from the 1-minute "fast time" threshold.
+      { id: 'chk2', residents: [mockResidents[1]], status: 'pending', dueDate: inNMinutes(1 + 10/60), walkingOrderIndex: 3 },
+      // MODIFIED: This check is now ~10 seconds from the 2-minute "due-soon" threshold.
+      { id: 'chk6', residents: [mockResidents[5], mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(2 + 10/60), walkingOrderIndex: 2, specialClassification: { type: 'MA', details: 'Medication Alert: Swallow potion by 8 PM.', residentId: 'res7' } },
       { id: 'chk3', residents: [mockResidents[13], mockResidents[14], mockResidents[15]], status: 'pending', dueDate: inNMinutes(29.5), walkingOrderIndex: 4 },
       { id: 'chk4', residents: [mockResidents[3], mockResidents[0]], status: 'pending', dueDate: inNMinutes(89.5), walkingOrderIndex: 5 },
       { id: 'chk7', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(-180), walkingOrderIndex: 6 },

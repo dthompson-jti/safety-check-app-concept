@@ -23,7 +23,7 @@ type CheckFormViewProps = {
 const statusOptions = [
   { value: 'Awake', label: 'Awake', icon: 'self_improvement' },
   { value: 'Sleeping', label: 'Sleeping', icon: 'sleep' },
-];
+] as const;
 
 export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
@@ -78,18 +78,14 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
 
     if (checkData.type === 'scheduled') {
-      // Stage 1: Trigger the in-place "pulse" animation on the card/list item.
-      // The animation is 1.2s long.
+      // STAGE 1: Simultaneously trigger the pulse animation on the card
+      // AND add the check to the 'completing' set, which starts its exit animation.
       setRecentlyCompletedCheckId(checkData.checkId);
+      setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
 
-      // Stage 2: After the pulse, add the check to the 'completing' set.
-      // This removes it from the Virtuoso list, triggering its 0.5s exit animation.
-      setTimeout(() => {
-        setCompletingChecks((prev: Set<string>) => new Set(prev).add(checkData.checkId));
-      }, 1200);
-
-      // Stage 3: After the exit animation (1.2s + 0.5s), update the master data source
-      // and remove the check from the 'completing' set. The list reflows.
+      // STAGE 2: After the exit animation has completed, update the master data source.
+      // DURATION MUST MATCH EXIT ANIMATION (typically ~500ms).
+      const animationDuration = 500;
       setTimeout(() => {
         dispatch({
           type: 'CHECK_COMPLETE',
@@ -100,12 +96,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
             completionTime: new Date().toISOString(),
           },
         });
-        setCompletingChecks((prev: Set<string>) => {
-          const next = new Set(prev);
-          next.delete(checkData.checkId);
-          return next;
-        });
-      }, 1700);
+      }, animationDuration);
 
     } else if (checkData.type === 'supplemental') {
       dispatch({

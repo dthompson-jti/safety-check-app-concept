@@ -1,4 +1,4 @@
-/* src/features/Footer/FloatingFooter.module.css */
+/* src/features/Shell/FloatingFooter.module.css */
 
 .footer {
   position: fixed;
@@ -6,15 +6,11 @@
   left: 0;
   right: 0;
   z-index: 50;
-
-  /* DEFINITIVE FIX: Use symmetric horizontal padding */
   padding: 20px 24px;
-  pointer-events: none; /* Allows clicks to pass through to content below */
-
+  pointer-events: none;
   background-color: var(--surface-bg-header-translucent);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px); /* For Safari compatibility */
-
+  -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--surface-border-secondary);
 }
 
@@ -25,21 +21,21 @@
   font-size: 1rem;
   font-weight: 600;
   gap: var(--spacing-2);
-  pointer-events: auto; /* Re-enables pointer events for the button itself */
-  
-  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s; /* Added box-shadow transition */
-
-  /* Applying base styles from buttons.css with explicit overrides */
+  pointer-events: auto;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
   background: var(--control-bg-theme);
   border: 1px solid var(--surface-fg-theme-secondary);
   box-shadow: var(--surface-shadow-scan-button);
 }
 
-.scanButton:hover:not(:disabled) {
-  background-color: var(--control-bg-theme-hover);
-  border-color: var(--control-border-primary-hover);
-  box-shadow: 0 10px 20px -4px hsla(218, 25%, 15%, 0.25), 0 28px 72px -16px hsla(218, 78%, 52%, 0.55);
+@media (hover: hover) {
+  .scanButton:hover:not(:disabled) {
+    background-color: var(--control-bg-theme-hover);
+    border-color: var(--control-border-primary-hover);
+    box-shadow: 0 10px 20px -4px hsla(218, 25%, 15%, 0.25), 0 28px 72px -16px hsla(218, 78%, 52%, 0.55);
+  }
 }
+
 .scanButton:active:not(:disabled) {
   background-color: var(--control-bg-theme-pressed);
   border-color: var(--control-border-primary-pressed);

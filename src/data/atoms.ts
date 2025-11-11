@@ -53,9 +53,10 @@ export const isStatusOverviewOpenAtom = atom(false);
 // This atom now ONLY triggers the one-time pulse animation.
 export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
 
-// This atom now tracks checks that have been completed and are in the process of their exit animation.
+// This atom tracks checks that have been completed and are in the process of their exit animation.
 // It prevents them from being rendered in the list during their exit.
-// DEFINITIVE FIX: Initialize the Set with the correct type argument to resolve the 'unknown' error.
+// NOTE: This Set should be reset to `new Set()` as part of the user logout/session-end workflow
+// to prevent stale IDs from persisting between sessions.
 export const completingChecksAtom = atom(new Set<string>());
 
 // =================================================================

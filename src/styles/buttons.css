@@ -44,7 +44,6 @@
 .btn[data-size="xs"][data-icon-only="true"] { width: 1.5rem; padding: 0.5rem; border-radius: var(--radius-md); }
 .btn[data-size="xs"] .material-symbols-rounded {
   font-size: 16px;
-  /* UPDATED: Match opsz to font-size */
   font-variation-settings:
     'FILL' 0,
     'wght' 400,
@@ -63,10 +62,12 @@
   border-color: var(--control-border-primary);
   box-shadow: inset 0 -2px 0 0 var(--control-border-primary);
 }
-.btn[data-variant="primary"]:hover:not(:disabled) {
-  background-color: var(--control-bg-theme-hover);
-  border-color: var(--control-border-primary-hover);
-  box-shadow: inset 0 -2px 0 0 var(--control-border-primary-hover);
+@media (hover: hover) {
+  .btn[data-variant="primary"]:hover:not(:disabled) {
+    background-color: var(--control-bg-theme-hover);
+    border-color: var(--control-border-primary-hover);
+    box-shadow: inset 0 -2px 0 0 var(--control-border-primary-hover);
+  }
 }
 .btn[data-variant="primary"]:active:not(:disabled) {
   background-color: var(--control-bg-theme-pressed);
@@ -80,10 +81,12 @@
   color: var(--surface-fg-primary);
   border-color: var(--control-border-secondary);
 }
-.btn[data-variant="secondary"]:hover:not(:disabled) {
-  background-color: var(--control-bg-secondary-hover);
-  border-color: var(--control-border-secondary-hover);
-  box-shadow: inset 0 -2px 0 0 var(--control-border-secondary-hover);
+@media (hover: hover) {
+  .btn[data-variant="secondary"]:hover:not(:disabled) {
+    background-color: var(--control-bg-secondary-hover);
+    border-color: var(--control-border-secondary-hover);
+    box-shadow: inset 0 -2px 0 0 var(--control-border-secondary-hover);
+  }
 }
 .btn[data-variant="secondary"]:active:not(:disabled), .btn[data-variant="secondary"].active {
   background-color: var(--control-bg-secondary-pressed);
@@ -95,14 +98,15 @@
 .btn[data-variant="tertiary"] {
   background: none;
   color: var(--surface-fg-secondary);
-  /* Reserve space for border to prevent layout shift on hover */
   border-width: 1px 1px 2px 1px;
   border-color: transparent;
 }
-.btn[data-variant="tertiary"]:hover:not(:disabled) {
-  background-color: var(--control-bg-tertiary-hover);
-  color: var(--control-fg-tertiary-hover);
-  border-color: var(--control-border-tertiary-hover);
+@media (hover: hover) {
+  .btn[data-variant="tertiary"]:hover:not(:disabled) {
+    background-color: var(--control-bg-tertiary-hover);
+    color: var(--control-fg-tertiary-hover);
+    border-color: var(--control-border-tertiary-hover);
+  }
 }
 .btn[data-variant="tertiary"]:active:not(:disabled) {
   background-color: var(--control-bg-tertiary-pressed);
@@ -115,10 +119,12 @@
   background: none;
   color: var(--control-fg-quaternary);
 }
-.btn[data-variant="quaternary"]:hover:not(:disabled) {
-  background-color: var(--control-bg-quaternary-hover);
-  color: var(--control-fg-quaternary-hover);
-  border-color: var(--control-border-quaternary-hover);
+@media (hover: hover) {
+  .btn[data-variant="quaternary"]:hover:not(:disabled) {
+    background-color: var(--control-bg-quaternary-hover);
+    color: var(--control-fg-quaternary-hover);
+    border-color: var(--control-border-quaternary-hover);
+  }
 }
 .btn[data-variant="quaternary"]:active:not(:disabled) {
   background-color: var(--control-bg-quaternary-pressed);
@@ -130,19 +136,20 @@
 .btn[data-variant="on-solid"] {
   background: none;
   color: var(--control-fg-on-solid);
-  /* Reserve space for border to prevent layout shift on hover */
   border-width: 1px 1px 2px 1px;
   border-color: transparent;
   box-shadow: none;
 }
-.btn[data-variant="on-solid"]:hover:not(:disabled) {
-  background-color: var(--control-bg-on-solid-hover);
-  border-color: var(--control-border-tertiary-hover); /* Re-using tertiary border seems appropriate here */
-  box-shadow: none;
+@media (hover: hover) {
+  .btn[data-variant="on-solid"]:hover:not(:disabled) {
+    background-color: var(--control-bg-on-solid-hover);
+    border-color: var(--control-border-tertiary-hover);
+    box-shadow: none;
+  }
 }
 .btn[data-variant="on-solid"]:active:not(:disabled) {
   background-color: var(--control-bg-on-solid-pressed);
-  border-color: var(--control-border-tertiary-pressed); /* Re-using tertiary border seems appropriate here */
+  border-color: var(--control-border-tertiary-pressed);
   box-shadow: none;
 }
 
@@ -153,10 +160,12 @@
   border-color: var(--primitives-red-700);
   box-shadow: inset 0 -2px 0 0 var(--primitives-red-700);
 }
-.btn[data-variant="destructive"]:hover:not(:disabled) {
-  background-color: var(--primitives-red-700);
-  border-color: var(--primitives-red-800);
-  box-shadow: inset 0 -2px 0 0 var(--primitives-red-800);
+@media (hover: hover) {
+  .btn[data-variant="destructive"]:hover:not(:disabled) {
+    background-color: var(--primitives-red-700);
+    border-color: var(--primitives-red-800);
+    box-shadow: inset 0 -2px 0 0 var(--primitives-red-800);
+  }
 }
 .btn[data-variant="destructive"]:active:not(:disabled) {
   background-color: var(--primitives-red-800);

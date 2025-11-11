@@ -1,13 +1,6 @@
 /* src/styles/forms.css */
 
-/*
-  NOTE: The @layer wrapper is REMOVED from this file.
-  The layering is now handled by the @import rule in index.css,
-  which is a cleaner, more maintainable approach.
-*/
-
 /* --- Base Text Inputs, Textareas --- */
-/* FIX: Use :is() to target multiple input types for consistent styling. */
 :is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]),
 textarea {
   font-family: var(--font-family-sans);
@@ -23,10 +16,12 @@ textarea {
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
-:is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]):not(:disabled):hover,
-textarea:not(:disabled):hover {
-    background-color: var(--surface-bg-primary);
-    border-color: var(--control-border-tertiary-hover);
+@media (hover: hover) {
+  :is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]):not(:disabled):hover,
+  textarea:not(:disabled):hover {
+      background-color: var(--surface-bg-primary);
+      border-color: var(--control-border-tertiary-hover);
+  }
 }
 
 :is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="url"], input[type="tel"]):focus,
@@ -53,25 +48,19 @@ textarea {
 
 /* --- Custom Checkbox Component --- */
 input[type="checkbox"] {
-    /* Reset and Sizing */
     appearance: none;
     margin: 0;
     width: 20px;
     height: 20px;
     border-radius: 6px;
     cursor: pointer;
-    
-    /* Layout for custom SVG checkmark */
     display: grid;
     place-content: center;
-    
-    /* Base (Unchecked) State */
     border: 1px solid var(--control-border-secondary);
     background: var(--surface-bg-primary);
     transition: all 0.1s ease-in-out;
 }
 
-/* The custom checkmark SVG, hidden by default */
 input[type="checkbox"]::before {
     content: "";
     width: 12px;
@@ -83,24 +72,21 @@ input[type="checkbox"]::before {
     background-position: center;
 }
 
-/* Unchecked Hover State */
-input[type="checkbox"]:not(:checked):hover {
-    border: 1.5px solid var(--control-border-secondary-hover);
-    background: var(--control-bg-secondary-hover);
+@media (hover: hover) {
+  input[type="checkbox"]:not(:checked):hover {
+      border: 1.5px solid var(--control-border-secondary-hover);
+      background: var(--control-bg-secondary-hover);
+  }
+  input[type="checkbox"]:checked:hover {
+      background: var(--control-bg-theme-pressed);
+  }
 }
 
-/* Checked State */
 input[type="checkbox"]:checked {
     border: 1.5px solid transparent;
     background: var(--control-bg-theme);
 }
 
-/* Checked Hover State */
-input[type="checkbox"]:checked:hover {
-    background: var(--control-bg-theme-pressed);
-}
-
-/* Show the checkmark when the checkbox is checked */
 input[type="checkbox"]:checked::before {
     transform: scale(1);
 }

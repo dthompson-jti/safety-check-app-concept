@@ -2,7 +2,6 @@
 /* Single source of truth for all tab component styles, adapted for Radix. */
 
 .animated-tabs-root {
-  /* CRITICAL FIX: Ensure the component root fills the vertical space of its parent */
   height: 100%;
 }
 
@@ -58,7 +57,12 @@
   padding: var(--spacing-3) 0;
 }
 
-.tab-button:hover:not([data-state='active']),
+@media (hover: hover) {
+  .tab-button:hover:not([data-state='active']) {
+    color: var(--surface-fg-theme-strong);
+  }
+}
+
 .tab-button:focus-visible:not([data-state='active']) {
   color: var(--surface-fg-theme-strong);
 }
@@ -82,7 +86,6 @@
   right: 0;
 }
 
-/* For panel tabs, align with the bottom of the tab container */
 .panel-tabs .tab-underline {
   bottom: -1px;
 }
