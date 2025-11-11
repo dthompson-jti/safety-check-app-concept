@@ -25,7 +25,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 ## 3. Prototype Features
 
--   **Simulated Login/Logout:** A complete start-of-shift session workflow.
+-   **Simulated Login/Logout:** A complete start-of-shift session workflow, featuring secure, client-side validation for empty fields and a generic, enumeration-resistant error for failed credentials. Includes user assistance affordances and a developer shortcut.
 -   **High-Craft Navigation Model:** The application uses a dual-pattern navigation system.
     -   **Push Layout (Side Menu):** The main navigation menu uses a "push" animation. When opened, it slides into view from the left, smoothly pushing the entire main application view to the right. This creates a sophisticated spatial relationship and preserves context.
     -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted and Route-Sorted Schedules) exist on a horizontal "film strip." Switching between them uses a sliding panel animation. This is all contained within a persistent application shell (header and footer) that provides global actions and view controls.
@@ -56,6 +56,9 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 -   **Data-Attribute Styling:** Components use `data-*` attributes for styling variants.
 -   **Layered Cascade:** The global style cascade is managed in `src/styles/index.css` using CSS `@import ... layer()`. This file is the single source of truth for cascade order.
 -   **Robust Primitives:** Core UI patterns are built using **Radix UI** for stability and craft.
+-   **Mobile-First Interaction States:** The application differentiates between touch and mouse-based interactions.
+    -   `:active` provides immediate, critical feedback for all users on tap or click.
+    -   `:hover` is treated as a progressive enhancement for mouse-based devices to provide discoverability. All `:hover` styles are defined within a `@media (hover: hover)` block to prevent "sticky hover" issues on touch devices.
 
 ## 6. State Management
 

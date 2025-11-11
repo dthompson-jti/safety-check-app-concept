@@ -97,3 +97,16 @@ input[type="checkbox"]:checked::before {
   margin-left: var(--spacing-1);
   font-weight: 600;
 }
+
+/* 
+  ARCHITECTURE: Data-attribute styling for invalid form fields.
+  The `TextInput` component adds `data-invalid="true"` when its `isInvalid`
+  prop is set, allowing for a clean, declarative way to style error states.
+*/
+:is(input[type="text"], input[type="password"])[data-invalid='true'] {
+    border-color: var(--surface-border-alert);
+}
+:is(input[type="text"], input[type="password"])[data-invalid='true']:focus {
+    border-color: var(--surface-border-alert);
+    box-shadow: 0 0 0 2px var(--control-focus-ring-error);
+}

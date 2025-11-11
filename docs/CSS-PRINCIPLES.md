@@ -44,6 +44,26 @@ React components, UI libraries (Radix), and animation libraries (Framer Motion) 
 
 ### Key Architectural Patterns
 
+#### Interaction State Philosophy (`:hover` vs. `:active`)
+
+To deliver a truly high-craft, mobile-first experience, we adhere to a strict philosophy for handling interaction states. This approach eliminates common frustrations on touch devices while providing a rich experience for mouse users.
+
+##### The Problem: "Sticky Hover"
+
+On a touch device, the browser tries to emulate a hover event on the first tap. This means an element can get "stuck" in its hover state until the user taps somewhere else, which is a jarring and unprofessional user experience.
+
+##### The Solution: A Clear Separation of Concerns
+
+1.  **`:active` is for Universal Feedback.**
+    -   **Role:** Confirmation. This is the primary, immediate feedback that tells the user "your tap/click was registered."
+    -   **Implementation:** `:active` styles (and their equivalents for libraries, like `[data-state="active"]`) are applied universally. They are the most critical state for providing a responsive feel on touch devices.
+
+2.  **`:hover` is a Progressive Enhancement for Pointers.**
+    -   **Role:** Discoverability. On a desktop, hover signals that an element is interactive *before* the user clicks.
+    -   **Implementation:** All `:hover` styles **must** be wrapped in a `@media (hover: hover)` block. This CSS rule targets only devices that have a primary pointing device capable of hovering (like a mouse). Touch devices will ignore these styles completely, solving the "sticky hover" problem at its root.
+
+By following this contract, we ensure every user gets the best possible experience for their device. Touch users get immediate, reliable feedback on tap, and mouse users get the rich discoverability they expect.
+
 #### The "Safe Zone" Padding Contract for Focus Rings
 
 To ensure visual consistency and prevent UI bugs, we have standardized on a **`2px` outer focus ring** for all interactive components.
@@ -81,4 +101,3 @@ To add secondary information or communicate status visually, we use a consistent
     -   A `CheckCard` for a resident with a Special Classification uses a `warning` icon to draw immediate attention in the schedule list.
     -   The **pre-scan alert banner** in `ScanView` uses this same pattern to provide a persistent, high-visibility warning to the caregiver while they are aiming the camera.
     -   The resident-specific wrapper in `CheckFormView` uses this pattern to highlight a resident with a special classification within the form.
-#### Active vs Hover state placeholder
