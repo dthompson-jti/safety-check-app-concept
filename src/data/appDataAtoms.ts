@@ -3,7 +3,9 @@ import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
-import { currentTimeAtom, historyFilterAtom, completingChecksAtom } from './atoms';
+// The 'completingChecksAtom' is managed in atoms.ts and used in the view layer.
+// It is not needed here, so the unused import has been removed to fix the linting warning.
+import { currentTimeAtom, historyFilterAtom } from './atoms';
 
 // =================================================================
 //                 Mock Data Store
@@ -65,61 +67,44 @@ export const mockResidents: Resident[] = [
   { id: 'res_ot2', name: 'Leto Atreides', location: 'Arrakis Palace' },
 ];
 
-// Generate mock checks dynamically. This ensures that the relative times
-// are always calculated against the CURRENT time when the app loads, not a
-// stale time from when the module was first imported.
 const initialChecks: SafetyCheck[] = (() => {
     const now = new Date();
     const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
-
     return [
-      // == Terminator Theme (Late / Due Soon) ==
-      { id: 'chk1', residents: [mockResidents[19], mockResidents[20], mockResidents[21]], status: 'pending', dueDate: inNMinutes(-5), walkingOrderIndex: 1, specialClassification: { type: 'MA', details: 'Leadership check-in required.', residentId: 'res19' }}, // John, Sean, Christian
-      { id: 'chk2', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(-2), walkingOrderIndex: 2 }, // T-800 Skynet
-      { id: 'chk3', residents: [mockResidents[17], mockResidents[18]], status: 'pending', dueDate: inNMinutes(1), walkingOrderIndex: 3 }, // Sarah & Kyle
-      { id: 'chk4', residents: [mockResidents[24]], status: 'pending', dueDate: inNMinutes(3), walkingOrderIndex: 4 }, // Miles Dyson
-      { id: 'chk5', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(5), walkingOrderIndex: 5 }, // T-800 Hunter
-      
-      // == Star Wars Theme ==
-      { id: 'chk6', residents: [mockResidents[0], mockResidents[1]], status: 'pending', dueDate: inNMinutes(10), walkingOrderIndex: 6 }, // Luke & Obi-Wan
-      { id: 'chk7', residents: [mockResidents[3], mockResidents[4]], status: 'pending', dueDate: inNMinutes(12), walkingOrderIndex: 7 }, // Garrett & Brett
-      { id: 'chk8', residents: [mockResidents[2]], status: 'pending', dueDate: inNMinutes(14), walkingOrderIndex: 8 }, // Han Solo
-      { id: 'chk9', residents: [mockResidents[5]], status: 'pending', dueDate: inNMinutes(16), walkingOrderIndex: 9 }, // Leia
-      { id: 'chk10', residents: [mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(18), walkingOrderIndex: 10, specialClassification: { type: 'SW', details: 'High-risk Sith Lords. Approach with caution.', residentId: 'res_sw3' } }, // Palpatine & Vader
-
-      // == Harry Potter Theme ==
-      { id: 'chk11', residents: [mockResidents[8], mockResidents[9], mockResidents[10]], status: 'pending', dueDate: inNMinutes(25), walkingOrderIndex: 11 }, // Harry, Hermione, Ron
-      { id: 'chk12', residents: [mockResidents[12], mockResidents[13]], status: 'pending', dueDate: inNMinutes(27), walkingOrderIndex: 12 }, // John & Jalpa
-      { id: 'chk13', residents: [mockResidents[14]], status: 'pending', dueDate: inNMinutes(29), walkingOrderIndex: 13 }, // Snape
-      { id: 'chk14', residents: [mockResidents[15]], status: 'pending', dueDate: inNMinutes(31), walkingOrderIndex: 14 }, // McGonagall
-      { id: 'chk15', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(33), walkingOrderIndex: 15, specialClassification: { type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'res9' }}, // Dumbledore
-
-      // == The Expanse Theme ==
-      { id: 'chk16', residents: [mockResidents[16], mockResidents[17]], status: 'pending', dueDate: inNMinutes(40), walkingOrderIndex: 16 }, // James & Alex
-      { id: 'chk17', residents: [mockResidents[18]], status: 'pending', dueDate: inNMinutes(42), walkingOrderIndex: 17 }, // Naomi
-      { id: 'chk18', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(44), walkingOrderIndex: 18 }, // Amos
-      { id: 'chk19', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(46), walkingOrderIndex: 19 }, // Dave Thompson
-      { id: 'chk20', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(48), walkingOrderIndex: 20 }, // Avasarala
-      { id: 'chk21', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(50), walkingOrderIndex: 21 }, // Fred Johnson
-      { id: 'chk22', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(52), walkingOrderIndex: 22 }, // Joe Miller
-      
-      // == Alien Series Theme ==
-      { id: 'chk23', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(60), walkingOrderIndex: 23, specialClassification: { type: 'SW', details: 'Xenomorph detected in vicinity. High alert.', residentId: 'res22' }}, // Ellen Ripley
-      { id: 'chk24', residents: [mockResidents[36], mockResidents[37]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 24 }, // Hicks & Hudson
-      { id: 'chk25', residents: [mockResidents[38]], status: 'pending', dueDate: inNMinutes(64), walkingOrderIndex: 25 }, // Newt
-      { id: 'chk26', residents: [mockResidents[33]], status: 'pending', dueDate: inNMinutes(66), walkingOrderIndex: 26 }, // Jeff Siemens
-      { id: 'chk27', residents: [mockResidents[32]], status: 'pending', dueDate: inNMinutes(68), walkingOrderIndex: 27 }, // Jimmy Tang
-      { id: 'chk28', residents: [mockResidents[35]], status: 'pending', dueDate: inNMinutes(70), walkingOrderIndex: 28 }, // Ash
-      { id: 'chk29', residents: [mockResidents[34]], status: 'pending', dueDate: inNMinutes(72), walkingOrderIndex: 29 }, // David 8
-      
-      // == Completed Checks (For History) ==
-      { id: 'chk30', residents: [mockResidents[39]], status: 'complete', dueDate: inNMinutes(-60), walkingOrderIndex: 30, lastChecked: inNMinutes(-62), completionStatus: 'Assessing threats', notes: 'Pencil located.' }, // John Wick
-      { id: 'chk31', residents: [mockResidents[40]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 31, lastChecked: inNMinutes(-121), completionStatus: 'Sleeping', notes: 'The spice must flow.' }, // Leto Atreides
+      { id: 'chk1', residents: [mockResidents[19], mockResidents[20], mockResidents[21]], status: 'pending', dueDate: inNMinutes(-5), walkingOrderIndex: 1, specialClassification: { type: 'MA', details: 'Leadership check-in required.', residentId: 'res19' }},
+      { id: 'chk2', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(-2), walkingOrderIndex: 2 },
+      { id: 'chk3', residents: [mockResidents[17], mockResidents[18]], status: 'pending', dueDate: inNMinutes(1), walkingOrderIndex: 3 },
+      { id: 'chk4', residents: [mockResidents[24]], status: 'pending', dueDate: inNMinutes(3), walkingOrderIndex: 4 },
+      { id: 'chk5', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(5), walkingOrderIndex: 5 },
+      { id: 'chk6', residents: [mockResidents[0], mockResidents[1]], status: 'pending', dueDate: inNMinutes(10), walkingOrderIndex: 6 },
+      { id: 'chk7', residents: [mockResidents[3], mockResidents[4]], status: 'pending', dueDate: inNMinutes(12), walkingOrderIndex: 7 },
+      { id: 'chk8', residents: [mockResidents[2]], status: 'pending', dueDate: inNMinutes(14), walkingOrderIndex: 8 },
+      { id: 'chk9', residents: [mockResidents[5]], status: 'pending', dueDate: inNMinutes(16), walkingOrderIndex: 9 },
+      { id: 'chk10', residents: [mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(18), walkingOrderIndex: 10, specialClassification: { type: 'SW', details: 'High-risk Sith Lords. Approach with caution.', residentId: 'res_sw3' } },
+      { id: 'chk11', residents: [mockResidents[8], mockResidents[9], mockResidents[10]], status: 'pending', dueDate: inNMinutes(25), walkingOrderIndex: 11 },
+      { id: 'chk12', residents: [mockResidents[12], mockResidents[13]], status: 'pending', dueDate: inNMinutes(27), walkingOrderIndex: 12 },
+      { id: 'chk13', residents: [mockResidents[14]], status: 'pending', dueDate: inNMinutes(29), walkingOrderIndex: 13 },
+      { id: 'chk14', residents: [mockResidents[15]], status: 'pending', dueDate: inNMinutes(31), walkingOrderIndex: 14 },
+      { id: 'chk15', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(33), walkingOrderIndex: 15, specialClassification: { type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'res9' }},
+      { id: 'chk16', residents: [mockResidents[16], mockResidents[17]], status: 'pending', dueDate: inNMinutes(40), walkingOrderIndex: 16 },
+      { id: 'chk17', residents: [mockResidents[18]], status: 'pending', dueDate: inNMinutes(42), walkingOrderIndex: 17 },
+      { id: 'chk18', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(44), walkingOrderIndex: 18 },
+      { id: 'chk19', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(46), walkingOrderIndex: 19 },
+      { id: 'chk20', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(48), walkingOrderIndex: 20 },
+      { id: 'chk21', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(50), walkingOrderIndex: 21 },
+      { id: 'chk22', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(52), walkingOrderIndex: 22 },
+      { id: 'chk23', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(60), walkingOrderIndex: 23, specialClassification: { type: 'SW', details: 'Xenomorph detected in vicinity. High alert.', residentId: 'res22' }},
+      { id: 'chk24', residents: [mockResidents[36], mockResidents[37]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 24 },
+      { id: 'chk25', residents: [mockResidents[38]], status: 'pending', dueDate: inNMinutes(64), walkingOrderIndex: 25 },
+      { id: 'chk26', residents: [mockResidents[33]], status: 'pending', dueDate: inNMinutes(66), walkingOrderIndex: 26 },
+      { id: 'chk27', residents: [mockResidents[32]], status: 'pending', dueDate: inNMinutes(68), walkingOrderIndex: 27 },
+      { id: 'chk28', residents: [mockResidents[35]], status: 'pending', dueDate: inNMinutes(70), walkingOrderIndex: 28 },
+      { id: 'chk29', residents: [mockResidents[34]], status: 'pending', dueDate: inNMinutes(72), walkingOrderIndex: 29 },
+      { id: 'chk30', residents: [mockResidents[39]], status: 'complete', dueDate: inNMinutes(-60), walkingOrderIndex: 30, lastChecked: inNMinutes(-62), completionStatus: 'Assessing threats', notes: 'Pencil located.' },
+      { id: 'chk31', residents: [mockResidents[40]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 31, lastChecked: inNMinutes(-121), completionStatus: 'Sleeping', notes: 'The spice must flow.' },
     ];
 })();
 
-// This is the "source of truth" atom for the raw check data.
-// It is made writable to allow the reducer-style appDataAtom to update it.
 const baseChecksAtom = atom(initialChecks, (_get, set, update: SafetyCheck[]) => {
     set(baseChecksAtom, update);
 });
@@ -147,11 +132,12 @@ type SupplementalCheckPayload = {
 };
 
 export type AppAction =
+  // Sets a check to the transient 'completing' state for animation purposes.
   | { type: 'CHECK_SET_COMPLETING'; payload: { checkId: string } }
+  // Finalizes a check, marking it as 'complete' in the data model.
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload };
 
-// This atom provides a reducer-like interface for mutating the app's core data.
 const appDataAtom = atom<AppData, [AppAction], void>(
   (get) => ({ checks: get(baseChecksAtom) }),
   (get, set, action) => {
@@ -200,7 +186,6 @@ const appDataAtom = atom<AppData, [AppAction], void>(
   }
 );
 
-// This is the public-facing atom used by components to dispatch actions.
 export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
     set(appDataAtom, action);
 });
@@ -210,16 +195,17 @@ export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
 //                Derived, Read-Only Atoms for UI
 // =================================================================
 
-// This derived atom calculates the real-time status of each check.
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const { checks } = get(appDataAtom);
   const timeNow = get(currentTimeAtom).getTime();
   const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
 
-  // DEFINITIVE FIX: The filter is removed. This atom now ALWAYS returns the full list of checks,
-  // just with their statuses updated in real-time. This prevents the data source from changing
-  // length during an animation, which is the root cause of the layout jump.
+  // This atom returns the full list of checks with their statuses updated in real-time.
+  // It is architected to NEVER change the length or order of the array based on status alone,
+  // which is critical for preventing layout jumps during animations. Sorting is handled
+  // by downstream atoms like `timeSortedChecksAtom`.
   return checks.map(check => {
+      // Completed, supplemental, and transient completing states are immutable here.
       if (check.status === 'complete' || check.status === 'supplemental' || check.status === 'completing') {
         return check;
       }
@@ -234,6 +220,7 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
         newStatus = 'pending';
       }
 
+      // Return the original object if the status hasn't changed to avoid needless re-renders.
       if (check.status === newStatus) {
         return check;
       }
@@ -246,15 +233,15 @@ const statusOrder: Record<SafetyCheckStatus, number> = {
   late: 0,
   'due-soon': 1,
   pending: 2,
-  // CRITICAL FIX: A 'completing' item is sorted as if it were still 'pending'.
-  // This keeps it in its original position in the list during the animation.
+  // CRITICAL ARCHITECTURE: A 'completing' item is sorted as if it were still 'pending'.
+  // This is the key to preventing the item from changing its position in the list
+  // during the completion animation, which would cause a jarring layout jump.
   completing: 2, 
   missed: 3,
   complete: 4,
   supplemental: 5,
 };
 
-// This derived atom sorts checks for the "Time View".
 export const timeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const sorted = [...checks];
@@ -266,7 +253,6 @@ export const timeSortedChecksAtom = atom((get) => {
   return sorted;
 });
 
-// This derived atom sorts checks for the "Route View".
 export const routeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
   const actionable = checks.filter(c => c.status !== 'complete' && c.status !== 'supplemental');
@@ -282,29 +268,15 @@ export const routeSortedChecksAtom = atom((get) => {
   return [...actionable, ...nonActionable];
 });
 
-// This derived atom provides summary counts for the Status Overview bar.
 export const statusCountsAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
-  const counts = {
-    late: 0,
-    dueSoon: 0,
-    due: 0,
-    completed: 0,
-  };
+  const counts = { late: 0, dueSoon: 0, due: 0, completed: 0 };
   for (const check of checks) {
     switch (check.status) {
-      case 'late':
-        counts.late++;
-        break;
-      case 'due-soon':
-        counts.dueSoon++;
-        break;
-      case 'pending':
-        counts.due++;
-        break;
-      case 'complete':
-        counts.completed++;
-        break;
+      case 'late': counts.late++; break;
+      case 'due-soon': counts.dueSoon++; break;
+      case 'pending': counts.due++; break;
+      case 'complete': counts.completed++; break;
     }
   }
   return counts;
@@ -316,11 +288,10 @@ export const statusCountsAtom = atom((get) => {
 
 const baseHistoricalChecksAtom = atom((get) => {
   const { checks } = get(appDataAtom);
-  // Do not show 'completing' items in the history view.
+  // Do not show transient or actionable items in the history view.
   return checks.filter(c => c.status !== 'pending' && c.status !== 'due-soon' && c.status !== 'completing');
 });
 
-// NEW ATOM: Provides counts for the filter badges in the History view.
 export const historyCountsAtom = atom((get) => {
   const historicalChecks = get(baseHistoricalChecksAtom);
   return {
@@ -338,17 +309,9 @@ const formatDateGroup = (date: Date): string => {
   yesterday.setDate(yesterday.getDate() - 1);
   const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-  if (targetDate.getTime() === today.getTime()) {
-      return 'Today';
-  }
-  if (targetDate.getTime() === yesterday.getTime()) {
-      return 'Yesterday';
-  }
-  return date.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-  });
+  if (targetDate.getTime() === today.getTime()) return 'Today';
+  if (targetDate.getTime() === yesterday.getTime()) return 'Yesterday';
+  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 };
 
 export const groupedHistoryAtom = atom((get) => {
@@ -356,7 +319,6 @@ export const groupedHistoryAtom = atom((get) => {
   const filter = get(historyFilterAtom);
 
   let filteredChecks = historicalChecksBase;
-
   if (filter === 'lateOrMissed') {
     filteredChecks = historicalChecksBase.filter(c => c.status === 'late' || c.status === 'missed');
   } else if (filter === 'supplemental') {

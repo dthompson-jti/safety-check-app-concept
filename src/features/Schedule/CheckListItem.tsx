@@ -41,10 +41,13 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
 
   return (
     <motion.div
+      // The `layout` prop enables smooth animation when the list reflows.
       layout
+      // Defines the component's appearance when it enters or is present in the list.
       animate={{ x: 0, height: 'auto', opacity: 1, borderBottomWidth: '1px' }}
       transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       initial={{ opacity: 0 }}
+      // Defines the exit animation, triggered by AnimatePresence when this component is removed.
       exit={{ x: '100%', height: 0, opacity: 0, borderBottomWidth: 0, overflow: 'hidden' }}
       className={listItemClassName}
       data-status={check.status}

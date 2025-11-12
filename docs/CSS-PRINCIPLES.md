@@ -35,6 +35,7 @@ When debugging a UI issue, follow this simple diagnostic process to find the roo
 2.  **Inspect:** Analyze its "Computed" styles. Don't just look at the CSS you wrote; look at what the browser *actually rendered*. A `width: 0px` or unexpected `margin` is the key clue.
 3.  **Hypothesize:** Form a hypothesis based on CSS fundamentals. "My hypothesis is the element has no width because it's absolutely positioned without horizontal constraints."
 4.  **Test:** Use the browser's style editor to test your hypothesis in real-time (e.g., add `left: 0; right: 0;`). If it works, you've found the solution.
+5.  **Consider the State:** When an element unexpectedly jumps or has the wrong style, inspect its `data-*` attributes. The root cause may not be in the CSS rules themselves, but in the state management logic that is applying the wrong attribute at the wrong time.
 
 #### 3. Trust, but Verify the Final DOM
 

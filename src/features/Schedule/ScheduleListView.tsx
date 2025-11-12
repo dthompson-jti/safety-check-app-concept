@@ -16,7 +16,7 @@ type HeaderItem = { type: 'header'; id: string; title: string };
 type CheckRenderItem = { type: 'check'; id: string; check: SafetyCheck };
 type RenderItem = HeaderItem | CheckRenderItem;
 
-// Helper to group checks for Time View
+// Helper to group checks for Time View.
 const groupChecksByTime = (checks: SafetyCheck[]) => {
   const groups: Record<string, SafetyCheck[]> = {
     Late: [],
@@ -28,27 +28,27 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
   const threeMinutesFromNow = now + 3 * 60 * 1000;
 
   checks.forEach(check => {
-    // For grouping, determine the check's *temporal* status, ignoring its completion state.
+    // CRITICAL ARCHITECTURE: To prevent items from jumping groups during the completion
+    // animation, we first determine the item's *temporal* category based on its due date.
+    // This is independent of its `status` (e.g., 'completing').
     const dueTime = new Date(check.dueDate).getTime();
-    let temporalStatus: 'late' | 'due-soon' | 'pending';
+    let temporalCategory: 'Late' | 'Due Soon' | 'Upcoming';
 
     if (dueTime < now) {
-      temporalStatus = 'late';
+      temporalCategory = 'Late';
     } else if (dueTime < threeMinutesFromNow) {
-      temporalStatus = 'due-soon';
+      temporalCategory = 'Due Soon';
     } else {
-      temporalStatus = 'pending';
+      temporalCategory = 'Upcoming';
     }
 
-    // Now, use the actual status to decide the final group.
+    // Now, we use the item's actual `status` to place it in the correct final group.
+    // An item with status 'completing' will be placed in its original temporal group,
+    // ensuring it doesn't move before its exit animation.
     if (check.status === 'complete' || check.status === 'supplemental') {
       groups.Completed.push(check);
-    } else if (temporalStatus === 'late') {
-      groups.Late.push(check);
-    } else if (temporalStatus === 'due-soon') {
-      groups['Due Soon'].push(check);
-    } else { // temporalStatus is 'pending'
-      groups.Upcoming.push(check);
+    } else {
+      groups[temporalCategory].push(check);
     }
   });
 
@@ -82,7 +82,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   const groups = viewType === 'time' ? groupChecksByTime(checks) : groupChecksByRoute(checks);
 
   groups.forEach(group => {
-    // Hide the "Completed" group from the main list view.
+    // Completed items are handled in a separate history view and not shown here.
     if (group.title === 'Completed') return;
 
     itemsToRender.push({ type: 'header', id: group.title, title: group.title });
@@ -98,9 +98,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
         {itemsToRender.map(item => {
           if (item.type === 'header') {
             const group = groups.find(g => g.title === item.title);
-            if (!group || group.checks.length === 0) {
-              return null;
-            }
+            if (!group || group.checks.length === 0) return null;
             return (
               <motion.div
                 key={item.id}
@@ -117,8 +115,9 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
           } else { // item.type is 'check'
             const { check } = item;
             
-            // If the check is in the process of exiting, don't render it.
-            // AnimatePresence will handle animating it out based on its `exit` prop.
+            // IDIOMATIC ANIMATION: If the check is in the process of exiting, we filter it
+            // from the render tree. AnimatePresence detects this removal and correctly
+            // triggers the `exit` animation defined on the CheckCard/CheckListItem component.
             if (completingChecks.has(check.id)) {
               return null;
             }

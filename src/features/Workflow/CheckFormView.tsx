@@ -78,21 +78,27 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
 
     if (checkData.type === 'scheduled') {
+      // This function orchestrates a multi-stage animation to provide clear, non-disruptive
+      // feedback to the user, adhering to the UX specification.
       const PULSE_ANIMATION_DURATION = 1200;
       const EXIT_ANIMATION_DURATION = 400;
 
-      // STAGE 1 (IMMEDIATE): Set status to 'completing' for styling and trigger the pulse.
+      // STAGE 1 (IMMEDIATE): Set status to 'completing' and trigger the pulse.
+      // The 'completing' status changes the item's style to look "done" but does NOT
+      // change its position in the list, providing a stable element for the pulse animation.
       dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId: checkData.checkId } });
       setRecentlyCompletedCheckId(checkData.checkId);
 
       // STAGE 2 (DELAYED - VISUAL EXIT): After the pulse, trigger the slide/collapse animation.
-      // This does NOT filter the item from the data array.
+      // This adds the check's ID to a temporary set, which causes the list view component
+      // to filter it from the render tree, triggering its `exit` animation via AnimatePresence.
       setTimeout(() => {
         setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
       }, PULSE_ANIMATION_DURATION);
 
       // STAGE 3 (DELAYED - FINAL DATA & CLEANUP): After ALL visual animations are complete,
-      // update the data model and clean up the transient animation state atoms.
+      // update the data model to the final 'complete' state and clean up all transient
+      // animation state atoms. This allows the list to reflow smoothly into its final state.
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
         dispatch({
