@@ -39,8 +39,8 @@
   overflow: hidden;
   padding: 8px 16px 8px 20px;
   border: 1px solid var(--surface-border-secondary);
-  /* DEFINITIVE FIX: Move spacing here from the old wrapper to make component self-contained. */
-  margin: 0 var(--spacing-4) var(--spacing-3);
+  /* CRITICAL FIX: Remove horizontal margin. Spacing is now handled by the parent scroll container's padding. */
+  margin: 0 0 var(--spacing-3);
 }
 
 .checkCard.is-completing {

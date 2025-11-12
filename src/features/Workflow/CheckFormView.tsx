@@ -69,28 +69,32 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const handleSave = () => {
     if (!allResidentsHaveStatus) return;
 
-    // STAGE 1 (IMMEDIATE): Trigger haptics, send the signal for the pulse animation to start,
-    // and close the form view. The card remains in the list during this initial phase.
+    // STAGE 1 (IMMEDIATE): Trigger haptics, start the pulse animation, and close the form.
     triggerHaptic('success');
     if (checkData.type === 'scheduled') {
       setRecentlyCompletedCheckId(checkData.checkId);
     }
     setWorkflowState({ view: 'none' });
 
-    // Handle offline queuing immediately.
     if (connectionStatus === 'offline') {
       addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
-      // In a real app, the dispatch would go to an offline queue here.
       return;
     }
 
     if (checkData.type === 'scheduled') {
-      // STAGE 2 (DELAYED): After a sufficient delay for the pulse to be visible,
-      // update the data model and trigger the exit animation.
+      const PULSE_ANIMATION_DURATION = 1200;
+      const EXIT_ANIMATION_DURATION = 300;
+
+      // STAGE 2 (DELAYED - VISUAL EXIT): After the pulse animation is COMPLETE,
+      // trigger the visual exit animation. The data has NOT been updated yet.
       setTimeout(() => {
-        // This causes the card to be filtered from the list, triggering AnimatePresence's exit animation.
         setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
-        // This updates the data model, which will update the Status Overview bar.
+      }, PULSE_ANIMATION_DURATION);
+
+      // STAGE 3 (DELAYED - DATA & CLEANUP): After ALL visual animations are complete,
+      // update the core data model and clean up all temporary state.
+      const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
+      setTimeout(() => {
         dispatch({
           type: 'CHECK_COMPLETE',
           payload: {
@@ -100,22 +104,19 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
             completionTime: new Date().toISOString(),
           },
         });
-      }, 250); // A 250ms delay is enough for the pulse to start before the exit begins.
-
-      // STAGE 3 (FINAL CLEANUP): After ALL animations are complete, remove the check
-      // from the temporary 'completing' set so it can reappear in the "Completed" list.
-      const ANIMATION_CLEANUP_DURATION = 1500; // Must be > pulse animation (1.2s) + exit (0.3s)
-      setTimeout(() => {
+        
         setCompletingChecks((prev) => {
           const next = new Set(prev);
           next.delete(checkData.checkId);
           return next;
         });
+        
+        // CRITICAL FIX: The orchestrator is now responsible for cleaning up the
+        // pulse state, ensuring it persists through the exit animation.
         setRecentlyCompletedCheckId(null);
-      }, ANIMATION_CLEANUP_DURATION);
+      }, TOTAL_ANIMATION_DURATION);
 
     } else if (checkData.type === 'supplemental') {
-      // Supplemental checks don't have an item in the list to animate, so we can dispatch immediately.
       dispatch({
         type: 'CHECK_SUPPLEMENTAL_ADD',
         payload: {

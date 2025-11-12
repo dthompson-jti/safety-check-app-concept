@@ -1,23 +1,24 @@
 /* src/features/Schedule/CheckListItem.module.css */
 
 /* --- Keyframe Animation for Completion Pulse --- */
-/* DEFINITIVE FIX: The success animation is now a background color pulse only. */
-/* It no longer changes the final state, allowing it to run concurrently */
-/* with the exit animation without visual conflict. */
+/* DEFINITIVE FIX: The success animation is now a non-conflicting box-shadow glow. */
+/* This allows it to run concurrently with Framer Motion's exit animation. */
 @keyframes listItem-pulse-success {
   0% {
-    background-color: var(--surface-bg-primary);
+    box-shadow: none;
   }
   30% {
-    background-color: var(--surface-bg-success);
+    box-shadow: 0 0 0 4px var(--surface-bg-success-secondary);
   }
   100% {
-    background-color: var(--surface-bg-primary);
+    box-shadow: none;
   }
 }
 
 .isCompleting {
   animation: listItem-pulse-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Ensure the glow appears above the next item in the list */
+  z-index: 1;
 }
 
 .checkListItem {

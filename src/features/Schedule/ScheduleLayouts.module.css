@@ -9,11 +9,17 @@
   /* The --header-height variable is set via JS in the FloatingHeader component. */
   padding-top: var(--header-height);
   box-sizing: border-box; /* Ensures padding is included in the height calculation */
+  /* CRITICAL FIX: Add horizontal padding to create a "safe zone" for animations */
+  /* like box-shadow glows that extend beyond the component's boundaries. */
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
 }
 
 /* A simple wrapper for the header to participate in the layout animation */
 .headerWrapper {
-  padding: 0 var(--spacing-4);
+  /* CRITICAL FIX: Remove horizontal padding. It is now handled by the parent .scrollContainer */
+  /* to ensure consistent alignment for all content within the scroll area. */
+  padding: 0;
 }
 
 .priorityGroupHeader {

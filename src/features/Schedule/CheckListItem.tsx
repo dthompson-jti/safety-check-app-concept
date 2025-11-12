@@ -1,5 +1,5 @@
 // src/features/Schedule/CheckListItem.tsx
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { SafetyCheck } from '../../types';
@@ -25,7 +25,6 @@ const usePrevious = <T,>(value: T): T | undefined => {
 export const CheckListItem = ({ check }: CheckListItemProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const [isPulsing, setIsPulsing] = useState(false);
   const { trigger: triggerHaptic } = useHaptics();
   const prevStatus = usePrevious(check.status);
 
@@ -37,16 +36,10 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
     }
   }, [check.status, prevStatus, triggerHaptic]);
 
-  useEffect(() => {
-    let timerId: number | undefined;
-    if (recentlyCompletedCheckId === check.id) {
-      setIsPulsing(true);
-      timerId = window.setTimeout(() => setIsPulsing(false), 1200);
-    } else {
-      setIsPulsing(false);
-    }
-    return () => clearTimeout(timerId);
-  }, [recentlyCompletedCheckId, check.id]);
+  // CRITICAL FIX: The component no longer manages its own "pulsing" state.
+  // It derives it directly from the global atom. This eliminates the race condition
+  // where the component would remove its own pulse class prematurely.
+  const isPulsing = recentlyCompletedCheckId === check.id;
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
@@ -79,8 +72,6 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.99, backgroundColor: 'var(--surface-bg-primary_hover)' } : {}}
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-      // DEFINITIVE FIX: The exit animation delay is removed. Orchestration is now handled
-      // entirely by the setTimeout in the CheckFormView's handleSave function.
       exit={{ x: '110%', opacity: 0, transition: { duration: 0.3 } }}
     >
       {showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
