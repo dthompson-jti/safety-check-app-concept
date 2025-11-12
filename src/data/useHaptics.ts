@@ -5,6 +5,7 @@ import { appConfigAtom } from './atoms';
 
 type HapticType = 'success' | 'warning' | 'error' | 'light' | 'medium' | 'heavy' | 'selection';
 
+// Defines the vibration patterns (in milliseconds) for each semantic haptic type.
 const patterns: Record<HapticType, number | number[]> = {
   // Semantic patterns
   success: [50],
@@ -19,6 +20,7 @@ const patterns: Record<HapticType, number | number[]> = {
 };
 
 // The minimum time in milliseconds that must pass between haptic triggers.
+// This prevents "haptic storms" where multiple events try to vibrate at once.
 const HAPTIC_THROTTLE_MS = 500;
 
 /**
