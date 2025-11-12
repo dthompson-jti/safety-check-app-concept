@@ -56,7 +56,6 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
 
   return (
     <BottomSheet isOpen={isOpen} onClose={handleClose}>
-      {/* BUG FIX: Wrap all content in a single flex container to manage layout */}
       <div className={styles.contentWrapper}>
         <div className={styles.headerContent}>
           <Drawer.Title asChild>
@@ -76,14 +75,20 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
           <Virtuoso
             data={filteredChecks}
             itemContent={(_index, check) => (
-              <button className={styles.checkItem} onClick={() => handleSelectCheck(check)}>
+              // UPDATE: Use the global 'menu-item' class for consistent styling and interaction
+              <button className="menu-item" onClick={() => handleSelectCheck(check)}>
+                {/* UPDATE: Use the standard 'checkmark-container' for icon alignment */}
+                <div className="checkmark-container">
+                  {check.specialClassification ? (
+                    <span className={`material-symbols-rounded ${styles.warningIcon}`}>warning</span>
+                  ) : (
+                    // The placeholder is now just an empty div styled by the container
+                    <></>
+                  )}
+                </div>
                 <span className={styles.checkItemText}>
                   {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
                 </span>
-                {/* UPDATE: Use consistent icon and styling for classified checks */}
-                {check.specialClassification && (
-                  <span className={`material-symbols-rounded ${styles.warningIcon}`}>warning</span>
-                )}
               </button>
             )}
           />

@@ -1,17 +1,15 @@
 /* src/features/ManualSelection/ManualSelectionView.module.css */
 
-/* BUG FIX: This wrapper provides the flex context needed for the list to grow */
 .contentWrapper {
   display: flex;
   flex-direction: column;
-  /* Set a height that works well for a bottom sheet */
   height: 65vh;
   max-height: 700px;
 }
 
 .headerContent {
   padding: 0 var(--spacing-4) var(--spacing-4);
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0;
 }
 
 .headerContent h2 {
@@ -23,35 +21,21 @@
 
 .searchContainer {
   padding: 0 var(--spacing-4) var(--spacing-4);
-  flex-shrink: 0; /* Prevent search from shrinking */
+  flex-shrink: 0;
 }
 
 .listContainer {
   flex-grow: 1;
-  min-height: 0; /* CRITICAL for flex-grow to work in a flex column */
+  min-height: 0;
   border-top: 1px solid var(--surface-border-secondary);
 }
 
-.checkItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: var(--spacing-3) var(--spacing-4);
-  text-align: left;
-  background: none;
-  border: none;
-  border-bottom: 1px solid var(--surface-border-secondary);
-  font-size: 1rem;
-  color: var(--surface-fg-primary);
-  cursor: pointer;
-  transition: background-color 0.2s;
-  gap: var(--spacing-4);
-}
-
-.checkItem:hover {
-  background-color: var(--surface-bg-primary_hover);
-}
+/* 
+  REMOVED: The .checkItem styles are no longer needed.
+  The component now uses the global `.menu-item` class from `menu.css`.
+  This global class handles padding, hover/active states, flex layout,
+  and correctly scopes hover effects to mouse-based devices.
+*/
 
 .checkItemText {
   white-space: nowrap;
@@ -59,10 +43,14 @@
   text-overflow: ellipsis;
 }
 
-/* UPDATE: Standardize on warning icon and color */
 .warningIcon {
-  /* UPDATE: Changed color to secondary foreground token */
   color: var(--surface-fg-secondary);
   font-variation-settings: 'FILL' 1;
-  flex-shrink: 0;
+  font-size: 20px;
 }
+
+/* 
+  REMOVED: The .iconPlaceholder is no longer needed.
+  The `.checkmark-container` from the global style provides the
+  necessary fixed-width container to ensure text alignment.
+*/
