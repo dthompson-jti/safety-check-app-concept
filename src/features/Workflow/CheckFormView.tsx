@@ -79,21 +79,20 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
     if (checkData.type === 'scheduled') {
       const PULSE_ANIMATION_DURATION = 1200;
-      const EXIT_ANIMATION_DURATION = 300;
+      const EXIT_ANIMATION_DURATION = 400;
 
-      // STAGE 1 (IMMEDIATE): Set status to 'completing'. This keeps the item in place
-      // but makes it appear grey. Then, trigger the pulse animation.
+      // STAGE 1 (IMMEDIATE): Set status to 'completing' for styling and trigger the pulse.
       dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId: checkData.checkId } });
       setRecentlyCompletedCheckId(checkData.checkId);
 
-      // STAGE 2 (DELAYED - VISUAL EXIT): After the pulse animation is COMPLETE,
-      // trigger the visual exit animation.
+      // STAGE 2 (DELAYED - VISUAL EXIT): After the pulse, trigger the slide/collapse animation.
+      // This does NOT filter the item from the data array.
       setTimeout(() => {
         setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
       }, PULSE_ANIMATION_DURATION);
 
       // STAGE 3 (DELAYED - FINAL DATA & CLEANUP): After ALL visual animations are complete,
-      // set the final 'complete' status and clean up temporary state.
+      // update the data model and clean up the transient animation state atoms.
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
         dispatch({

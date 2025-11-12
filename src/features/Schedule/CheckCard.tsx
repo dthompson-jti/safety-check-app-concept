@@ -1,5 +1,5 @@
 // src/features/Schedule/CheckCard.tsx
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { SafetyCheck } from '../../types';
@@ -8,7 +8,6 @@ import {
   recentlyCompletedCheckIdAtom,
 } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
-import { useHaptics } from '../../data/useHaptics';
 import { Tooltip } from '../../components/Tooltip';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckCard.module.css';
@@ -17,43 +16,15 @@ interface CheckCardProps {
   check: SafetyCheck;
 }
 
-const usePrevious = <T,>(value: T): T | undefined => {
-  const ref = useRef<T | undefined>(undefined);
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-};
-
 export const CheckCard = ({ check }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const [isPulsing, setIsPulsing] = useState(false);
-  const { trigger: triggerHaptic } = useHaptics();
-  const prevStatus = usePrevious(check.status);
-  
-  useEffect(() => {
-    if (prevStatus && prevStatus !== check.status) {
-      if (check.status === 'due-soon' || check.status === 'late') {
-        triggerHaptic('warning');
-      }
-    }
-  }, [check.status, prevStatus, triggerHaptic]);
 
-  useEffect(() => {
-    let timerId: number | undefined;
-    if (recentlyCompletedCheckId === check.id) {
-      setIsPulsing(true);
-      timerId = window.setTimeout(() => setIsPulsing(false), 1200);
-    } else {
-      setIsPulsing(false);
-    }
-    return () => clearTimeout(timerId);
-  }, [recentlyCompletedCheckId, check.id]);
+  const isPulsing = recentlyCompletedCheckId === check.id;
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
-  const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
+  const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
 
   const handleCardClick = () => {
     if (isActionable) {
@@ -68,23 +39,21 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const { residents, specialClassification } = check;
   const roomName = residents[0]?.location || 'N/A';
   
-  const showIndicator = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
+  const showIndicator = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
   const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (
     <motion.div
       layout
+      animate={{ x: 0, height: 'auto', opacity: 1, marginBottom: 'var(--spacing-3)' }}
+      transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      exit={{ x: '100%', height: 0, opacity: 0, marginBottom: 0, overflow: 'hidden' }}
       className={cardClassName}
       data-status={check.status} 
       onClick={handleCardClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-      // DEFINITIVE FIX: The exit animation delay is removed. Orchestration is now handled
-      // entirely by the setTimeout in the CheckFormView's handleSave function.
-      exit={{ x: '110%', opacity: 0, transition: { duration: 0.3 } }}
     >
       {showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
 

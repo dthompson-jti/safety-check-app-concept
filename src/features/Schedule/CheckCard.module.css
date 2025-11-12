@@ -35,7 +35,6 @@
   overflow: hidden;
   padding: 8px 16px 8px 20px;
   border: 1px solid var(--surface-border-secondary);
-  margin: 0 0 var(--spacing-3);
 
   --status-animation-name: none;
   animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -48,9 +47,10 @@
   border-radius: inherit;
   opacity: 0;
   pointer-events: none;
+  z-index: 1;
 }
 
-.checkCard.is-completing::before {
+.checkCard.isCompleting::before {
   animation: pulse-overlay-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

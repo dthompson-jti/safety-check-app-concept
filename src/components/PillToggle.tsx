@@ -51,7 +51,7 @@ export const PillToggle = () => {
                   exit={{ opacity: 0, scale: 0.5 }}
                   transition={{ type: 'tween', ease: 'easeOut', duration: 0.15 }}
                 >
-                  arrow_drop_down
+                  arrow_downward_alt
                 </motion.span>
               )}
             </AnimatePresence>

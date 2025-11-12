@@ -1,11 +1,10 @@
 // src/features/Schedule/CheckListItem.tsx
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { SafetyCheck } from '../../types';
 import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
-import { useHaptics } from '../../data/useHaptics';
 import { Tooltip } from '../../components/Tooltip';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckListItem.module.css';
@@ -14,33 +13,14 @@ interface CheckListItemProps {
   check: SafetyCheck;
 }
 
-const usePrevious = <T,>(value: T): T | undefined => {
-  const ref = useRef<T | undefined>(undefined);
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-};
-
 export const CheckListItem = ({ check }: CheckListItemProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const { trigger: triggerHaptic } = useHaptics();
-  const prevStatus = usePrevious(check.status);
-
-  useEffect(() => {
-    if (prevStatus && prevStatus !== check.status) {
-      if (check.status === 'due-soon' || check.status === 'late') {
-        triggerHaptic('warning');
-      }
-    }
-  }, [check.status, prevStatus, triggerHaptic]);
 
   const isPulsing = recentlyCompletedCheckId === check.id;
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
-  // CRITICAL FIX: An item is only actionable if it's not in a final or transient-final state.
   const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
 
   const handleItemClick = () => {
@@ -56,22 +36,21 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
   const { residents, specialClassification } = check;
   const roomName = residents[0]?.location || 'N/A';
   
-  // Do not show the side indicator for an item that is completing.
   const showIndicator = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
   const listItemClassName = `${styles.checkListItem} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (
     <motion.div
       layout
+      animate={{ x: 0, height: 'auto', opacity: 1, borderBottomWidth: '1px' }}
+      transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      exit={{ x: '100%', height: 0, opacity: 0, borderBottomWidth: 0, overflow: 'hidden' }}
       className={listItemClassName}
       data-status={check.status}
       onClick={handleItemClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.99, backgroundColor: 'var(--surface-bg-primary_hover)' } : {}}
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-      exit={{ x: '110%', opacity: 0, transition: { duration: 0.3 } }}
     >
       {showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
       <div className={styles.mainContent}>
