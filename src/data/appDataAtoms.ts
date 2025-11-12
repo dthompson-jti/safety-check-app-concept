@@ -25,11 +25,15 @@ export const mockResidents: Resident[] = [
   { id: 'res7', name: 'Hermione Granger', location: 'Gryffindor Tower' },
   { id: 'res8', name: 'Ron Weasley', location: 'Gryffindor Tower' },
   { id: 'res9', name: 'Albus Dumbledore', location: "Headmaster's Office" },
-  { id: 'res10', name: 'John Maier', location: 'Hufflepuff Common Room' },
   { id: 'res11', name: 'Jalpa Mazmudar', location: 'Platform 9 and 3/4' },
   { id: 'res_hp1', name: 'Severus Snape', location: 'Potions Classroom' },
   { id: 'res_hp2', name: 'Minerva McGonagall', location: 'The Great Hall' },
   
+  // The Witcher
+  { id: 'res_w1', name: 'Geralt of Rivia', location: 'Kaer Morhen' },
+  { id: 'res_w2', name: 'Yennefer of Vengerberg', location: 'Kaer Morhen' },
+  { id: 'res10', name: 'John Maier', location: 'The White Orchard Tavern' },
+
   // The Expanse
   { id: 'res12', name: 'James Holden', location: 'Rocinante Cockpit' },
   { id: 'res13', name: 'Alex Kamal', location: 'Rocinante Cockpit' },
@@ -74,11 +78,11 @@ const initialChecks: SafetyCheck[] = (() => {
 
     return [
       // == Terminator Theme (Late / Due Soon) ==
-      { id: 'chk1', residents: [mockResidents[25], mockResidents[26], mockResidents[27]], status: 'pending', dueDate: inNMinutes(-5), walkingOrderIndex: 1, specialClassification: { type: 'MA', details: 'Leadership check-in required.', residentId: 'res19' }}, // John, Sean, Christian
-      { id: 'chk2', residents: [mockResidents[28]], status: 'pending', dueDate: inNMinutes(-2), walkingOrderIndex: 2 }, // T-800 Skynet
-      { id: 'chk3', residents: [mockResidents[23], mockResidents[24]], status: 'pending', dueDate: inNMinutes(1), walkingOrderIndex: 3 }, // Sarah & Kyle
-      { id: 'chk4', residents: [mockResidents[30]], status: 'pending', dueDate: inNMinutes(3), walkingOrderIndex: 4 }, // Miles Dyson
-      { id: 'chk5', residents: [mockResidents[29]], status: 'pending', dueDate: inNMinutes(5), walkingOrderIndex: 5 }, // T-800 Hunter
+      { id: 'chk1', residents: [mockResidents[27], mockResidents[28], mockResidents[29]], status: 'pending', dueDate: inNMinutes(-5), walkingOrderIndex: 1, specialClassification: { type: 'MA', details: 'Leadership check-in required.', residentId: 'res19' }}, // John, Sean, Christian
+      { id: 'chk2', residents: [mockResidents[30]], status: 'pending', dueDate: inNMinutes(-2), walkingOrderIndex: 2 }, // T-800 Skynet
+      { id: 'chk3', residents: [mockResidents[25], mockResidents[26]], status: 'pending', dueDate: inNMinutes(1), walkingOrderIndex: 3 }, // Sarah & Kyle
+      { id: 'chk4', residents: [mockResidents[32]], status: 'pending', dueDate: inNMinutes(3), walkingOrderIndex: 4 }, // Miles Dyson
+      { id: 'chk5', residents: [mockResidents[31]], status: 'pending', dueDate: inNMinutes(5), walkingOrderIndex: 5 }, // T-800 Hunter
       
       // == Star Wars Theme ==
       { id: 'chk6', residents: [mockResidents[0], mockResidents[1]], status: 'pending', dueDate: inNMinutes(10), walkingOrderIndex: 6 }, // Luke & Obi-Wan
@@ -89,33 +93,36 @@ const initialChecks: SafetyCheck[] = (() => {
 
       // == Harry Potter Theme ==
       { id: 'chk11', residents: [mockResidents[8], mockResidents[9], mockResidents[10]], status: 'pending', dueDate: inNMinutes(25), walkingOrderIndex: 11 }, // Harry, Hermione, Ron
-      { id: 'chk12', residents: [mockResidents[12]], status: 'pending', dueDate: inNMinutes(27), walkingOrderIndex: 12 }, // John Maier
-      { id: 'chk13', residents: [mockResidents[13]], status: 'pending', dueDate: inNMinutes(29), walkingOrderIndex: 13 }, // Jalpa Mazmudar
-      { id: 'chk14', residents: [mockResidents[14]], status: 'pending', dueDate: inNMinutes(31), walkingOrderIndex: 14 }, // Snape
-      { id: 'chk15', residents: [mockResidents[15]], status: 'pending', dueDate: inNMinutes(33), walkingOrderIndex: 15 }, // McGonagall
-      { id: 'chk16', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(35), walkingOrderIndex: 16, specialClassification: { type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'res9' }}, // Dumbledore
+      { id: 'chk12', residents: [mockResidents[12]], status: 'pending', dueDate: inNMinutes(27), walkingOrderIndex: 12 }, // Jalpa Mazmudar
+      { id: 'chk13', residents: [mockResidents[13]], status: 'pending', dueDate: inNMinutes(29), walkingOrderIndex: 13 }, // Snape
+      { id: 'chk14', residents: [mockResidents[14]], status: 'pending', dueDate: inNMinutes(31), walkingOrderIndex: 14 }, // McGonagall
+      { id: 'chk15', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(33), walkingOrderIndex: 15, specialClassification: { type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'res9' }}, // Dumbledore
+
+      // == The Witcher Theme ==
+      { id: 'chk16', residents: [mockResidents[15], mockResidents[16]], status: 'pending', dueDate: inNMinutes(38), walkingOrderIndex: 16 }, // Geralt & Yennefer
+      { id: 'chk17', residents: [mockResidents[17]], status: 'pending', dueDate: inNMinutes(40), walkingOrderIndex: 17 }, // John Maier
 
       // == The Expanse Theme ==
-      { id: 'chk17', residents: [mockResidents[16], mockResidents[17]], status: 'pending', dueDate: inNMinutes(40), walkingOrderIndex: 17 }, // James & Alex
-      { id: 'chk18', residents: [mockResidents[18]], status: 'pending', dueDate: inNMinutes(42), walkingOrderIndex: 18 }, // Naomi
-      { id: 'chk19', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(44), walkingOrderIndex: 19 }, // Amos
-      { id: 'chk20', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(46), walkingOrderIndex: 20 }, // Dave Thompson
-      { id: 'chk21', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(48), walkingOrderIndex: 21 }, // Avasarala
-      { id: 'chk22', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(50), walkingOrderIndex: 22 }, // Fred Johnson
-      { id: 'chk23', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(52), walkingOrderIndex: 23 }, // Joe Miller
+      { id: 'chk18', residents: [mockResidents[18], mockResidents[19]], status: 'pending', dueDate: inNMinutes(45), walkingOrderIndex: 18 }, // James & Alex
+      { id: 'chk19', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(47), walkingOrderIndex: 19 }, // Naomi
+      { id: 'chk20', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(49), walkingOrderIndex: 20 }, // Amos
+      { id: 'chk21', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(51), walkingOrderIndex: 21 }, // Dave Thompson
+      { id: 'chk22', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(53), walkingOrderIndex: 22 }, // Avasarala
+      { id: 'chk23', residents: [mockResidents[24]], status: 'pending', dueDate: inNMinutes(55), walkingOrderIndex: 23 }, // Fred Johnson
+      { id: 'chk24', residents: [mockResidents[25]], status: 'pending', dueDate: inNMinutes(57), walkingOrderIndex: 24 }, // Joe Miller
       
       // == Alien Series Theme ==
-      { id: 'chk24', residents: [mockResidents[31]], status: 'pending', dueDate: inNMinutes(60), walkingOrderIndex: 24, specialClassification: { type: 'SW', details: 'Xenomorph detected in vicinity. High alert.', residentId: 'res22' }}, // Ellen Ripley
-      { id: 'chk25', residents: [mockResidents[36], mockResidents[37]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 25 }, // Hicks & Hudson
-      { id: 'chk26', residents: [mockResidents[38]], status: 'pending', dueDate: inNMinutes(64), walkingOrderIndex: 26 }, // Newt
-      { id: 'chk27', residents: [mockResidents[33]], status: 'pending', dueDate: inNMinutes(66), walkingOrderIndex: 27 }, // Jeff Siemens
-      { id: 'chk28', residents: [mockResidents[32]], status: 'pending', dueDate: inNMinutes(68), walkingOrderIndex: 28 }, // Jimmy Tang
-      { id: 'chk29', residents: [mockResidents[35]], status: 'pending', dueDate: inNMinutes(70), walkingOrderIndex: 29 }, // Ash
-      { id: 'chk30', residents: [mockResidents[34]], status: 'pending', dueDate: inNMinutes(72), walkingOrderIndex: 30 }, // David 8
+      { id: 'chk25', residents: [mockResidents[33]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 25, specialClassification: { type: 'SW', details: 'Xenomorph detected in vicinity. High alert.', residentId: 'res22' }}, // Ellen Ripley
+      { id: 'chk26', residents: [mockResidents[38], mockResidents[39]], status: 'pending', dueDate: inNMinutes(64), walkingOrderIndex: 26 }, // Hicks & Hudson
+      { id: 'chk27', residents: [mockResidents[40]], status: 'pending', dueDate: inNMinutes(66), walkingOrderIndex: 27 }, // Newt
+      { id: 'chk28', residents: [mockResidents[35]], status: 'pending', dueDate: inNMinutes(68), walkingOrderIndex: 28 }, // Jeff Siemens
+      { id: 'chk29', residents: [mockResidents[34]], status: 'pending', dueDate: inNMinutes(70), walkingOrderIndex: 29 }, // Jimmy Tang
+      { id: 'chk30', residents: [mockResidents[37]], status: 'pending', dueDate: inNMinutes(72), walkingOrderIndex: 30 }, // Ash
+      { id: 'chk31', residents: [mockResidents[36]], status: 'pending', dueDate: inNMinutes(74), walkingOrderIndex: 31 }, // David 8
       
       // == Completed Checks (For History) ==
-      { id: 'chk31', residents: [mockResidents[39]], status: 'complete', dueDate: inNMinutes(-60), walkingOrderIndex: 31, lastChecked: inNMinutes(-62), completionStatus: 'Assessing threats', notes: 'Pencil located.' }, // John Wick
-      { id: 'chk32', residents: [mockResidents[40]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 32, lastChecked: inNMinutes(-121), completionStatus: 'Sleeping', notes: 'The spice must flow.' }, // Leto Atreides
+      { id: 'chk32', residents: [mockResidents[41]], status: 'complete', dueDate: inNMinutes(-60), walkingOrderIndex: 32, lastChecked: inNMinutes(-62), completionStatus: 'Assessing threats', notes: 'Pencil located.' }, // John Wick
+      { id: 'chk33', residents: [mockResidents[42]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 33, lastChecked: inNMinutes(-121), completionStatus: 'Sleeping', notes: 'The spice must flow.' }, // Leto Atreides
     ];
 })();
 
