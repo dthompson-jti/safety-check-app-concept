@@ -36,14 +36,12 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
     }
   }, [check.status, prevStatus, triggerHaptic]);
 
-  // CRITICAL FIX: The component no longer manages its own "pulsing" state.
-  // It derives it directly from the global atom. This eliminates the race condition
-  // where the component would remove its own pulse class prematurely.
   const isPulsing = recentlyCompletedCheckId === check.id;
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
-  const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
+  // CRITICAL FIX: An item is only actionable if it's not in a final or transient-final state.
+  const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
 
   const handleItemClick = () => {
     if (isActionable) {
@@ -58,7 +56,8 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
   const { residents, specialClassification } = check;
   const roomName = residents[0]?.location || 'N/A';
   
-  const showIndicator = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
+  // Do not show the side indicator for an item that is completing.
+  const showIndicator = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
   const listItemClassName = `${styles.checkListItem} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (

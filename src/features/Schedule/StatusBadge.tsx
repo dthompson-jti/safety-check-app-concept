@@ -1,5 +1,4 @@
 // src/features/Schedule/StatusBadge.tsx
-// NEW FILE
 import React from 'react';
 import { SafetyCheckStatus } from '../../types';
 import styles from './StatusBadge.module.css';
@@ -13,6 +12,8 @@ const statusTextMap: Record<SafetyCheckStatus, string> = {
   'due-soon': 'Due Soon',
   pending: 'Due',
   complete: 'Completed',
+  // CRITICAL FIX: The transient 'completing' state should display as 'Completed'.
+  completing: 'Completed',
   missed: 'Missed',
   supplemental: 'Supplemental',
 };

@@ -92,6 +92,7 @@ type SupplementalCheckPayload = {
 };
 
 export type AppAction =
+  | { type: 'CHECK_SET_COMPLETING'; payload: { checkId: string } }
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload };
 
@@ -102,6 +103,13 @@ const appDataAtom = atom<AppData, [AppAction], void>(
     const currentChecks = get(baseChecksAtom);
     const nextState = produce({ checks: currentChecks }, (draft: Draft<AppData>) => {
       switch (action.type) {
+        case 'CHECK_SET_COMPLETING': {
+          const check = draft.checks.find(c => c.id === action.payload.checkId);
+          if (check) {
+            check.status = 'completing';
+          }
+          break;
+        }
         case 'CHECK_COMPLETE': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
@@ -149,19 +157,18 @@ export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
 // =================================================================
 
 // This derived atom calculates the real-time status of each check.
-// DEFINITIVE FIX: It now depends on the high-frequency `currentTimeAtom` to ensure
-// status updates are responsive and align with the UI's countdown timers.
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const { checks } = get(appDataAtom);
   const timeNow = get(currentTimeAtom).getTime();
-  // DEFINITIVE FIX: The "Due Soon" threshold is now 3 minutes.
   const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
   const completing = get(completingChecksAtom);
 
   return checks
     .filter(check => !completing.has(check.id))
     .map(check => {
-      if (check.status === 'complete' || check.status === 'supplemental') {
+      // CRITICAL FIX: Do not change the status of an item that is in the 'completing' state.
+      // Let it remain 'completing' until the final data update.
+      if (check.status === 'complete' || check.status === 'supplemental' || check.status === 'completing') {
         return check;
       }
       const dueTime = new Date(check.dueDate).getTime();
@@ -175,7 +182,6 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
         newStatus = 'pending';
       }
 
-      // Return the original object if the status hasn't changed to avoid unnecessary re-renders.
       if (check.status === newStatus) {
         return check;
       }
@@ -188,6 +194,9 @@ const statusOrder: Record<SafetyCheckStatus, number> = {
   late: 0,
   'due-soon': 1,
   pending: 2,
+  // CRITICAL FIX: A 'completing' item is sorted as if it were still 'pending'.
+  // This keeps it in its original position in the list during the animation.
+  completing: 2, 
   missed: 3,
   complete: 4,
   supplemental: 5,
@@ -208,6 +217,7 @@ export const timeSortedChecksAtom = atom((get) => {
 // This derived atom sorts checks for the "Route View".
 export const routeSortedChecksAtom = atom((get) => {
   const checks = get(safetyChecksAtom);
+  // CRITICAL FIX: Treat 'completing' items as actionable to keep them in the top group.
   const actionable = checks.filter(c => c.status !== 'complete' && c.status !== 'supplemental');
   const nonActionable = checks.filter(c => c.status === 'complete' || c.status === 'supplemental');
 
@@ -255,7 +265,8 @@ export const statusCountsAtom = atom((get) => {
 
 const baseHistoricalChecksAtom = atom((get) => {
   const { checks } = get(appDataAtom);
-  return checks.filter(c => c.status !== 'pending' && c.status !== 'due-soon');
+  // Do not show 'completing' items in the history view.
+  return checks.filter(c => c.status !== 'pending' && c.status !== 'due-soon' && c.status !== 'completing');
 });
 
 // NEW ATOM: Provides counts for the filter badges in the History view.

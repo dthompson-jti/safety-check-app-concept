@@ -1,6 +1,6 @@
 /* src/features/Schedule/CheckListItem.module.css */
 
-/* CRITICAL FIX: The pulse is now a dedicated keyframe for the pseudo-element overlay. */
+/* Keyframe for the completion pulse overlay */
 @keyframes pulse-overlay-success {
   0% {
     box-shadow: 0 0 0 0px var(--surface-bg-success-secondary);
@@ -14,26 +14,23 @@
 
 .checkListItem {
   display: flex;
-  position: relative; /* Must be relative for the pseudo-element to be positioned correctly. */
+  position: relative;
   background-color: var(--surface-bg-primary);
   transition: background-color 0.2s;
   padding: 8px 16px 8px 20px;
   border-bottom: 1px solid var(--surface-border-secondary);
 }
 
-/* CRITICAL FIX: Create the pseudo-element that will house the pulse animation. */
 .checkListItem::before {
   content: '';
   position: absolute;
   inset: 0;
-  /* Match the list item's shape, but without the bottom border for a cleaner look. */
   border-radius: 0; 
   opacity: 0;
-  pointer-events: none; /* Ensure it doesn't interfere with clicks. */
-  z-index: 1; /* Ensure it appears above the content. */
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* CRITICAL FIX: The .is-completing class now ONLY triggers the animation on the pseudo-element. */
 .isCompleting::before {
   animation: pulse-overlay-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -42,12 +39,14 @@
   cursor: pointer;
 }
 
-.checkListItem:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):hover {
+.checkListItem:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):hover {
   background-color: var(--surface-bg-primary_hover);
 }
 
+/* CRITICAL FIX: The transient 'completing' state should look identical to the final 'complete' state. */
 .checkListItem[data-status='complete'],
-.checkListItem[data-status='supplemental'] {
+.checkListItem[data-status='supplemental'],
+.checkListItem[data-status='completing'] {
   background-color: var(--surface-bg-secondary);
 }
 

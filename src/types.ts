@@ -1,11 +1,27 @@
 // src/types.ts
+// (Assuming this is the location of the type definitions)
+
+export type SafetyCheckStatus =
+  | 'pending'
+  | 'due-soon'
+  | 'late'
+  | 'missed'
+  | 'complete'
+  | 'supplemental'
+  | 'completing'; // <-- ADDED: A transient status for animation orchestration.
+
+// ... rest of the types
 export interface Resident {
   id: string;
   name: string;
   location: string;
 }
 
-export type SafetyCheckStatus = 'late' | 'due-soon' | 'pending' | 'complete' | 'missed' | 'supplemental';
+export interface SpecialClassification {
+  type: string;
+  details: string;
+  residentId: string;
+}
 
 export interface SafetyCheck {
   id: string;
@@ -16,10 +32,5 @@ export interface SafetyCheck {
   lastChecked?: string;
   completionStatus?: string;
   notes?: string;
-  specialClassification?: {
-    type: string;
-    details: string;
-    // DEFINITIVE FIX: Add residentId to pinpoint which resident the classification applies to.
-    residentId: string; 
-  };
+  specialClassification?: SpecialClassification;
 }

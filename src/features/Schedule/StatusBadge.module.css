@@ -1,5 +1,4 @@
 /* src/features/Schedule/StatusBadge.module.css */
-/* NEW FILE */
 
 .badge {
   display: inline-flex;
@@ -31,8 +30,10 @@
 }
 
 /* Variant: Completed / Supplemental */
+/* CRITICAL FIX: Ensure the transient 'completing' state is styled like the final 'complete' state. */
 .badge[data-status='complete'],
-.badge[data-status='supplemental'] {
+.badge[data-status='supplemental'],
+.badge[data-status='completing'] {
   background: var(--surface-bg-success);
   color: var(--surface-fg-success-primary);
   border-color: var(--primitives-green-200);

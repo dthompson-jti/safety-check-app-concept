@@ -37,8 +37,6 @@
   border: 1px solid var(--surface-border-secondary);
   margin: 0 0 var(--spacing-3);
 
-  /* CRITICAL FIX: Define the animation property ONCE, reading from a variable. */
-  /* By default, there is no animation. */
   --status-animation-name: none;
   animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -56,8 +54,6 @@
   animation: pulse-overlay-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* CRITICAL FIX: Status variants now ONLY set the variable. They do not define */
-/* the 'animation' property itself, which resolves the conflict. */
 .checkCard[data-status='due-soon'] {
   --status-animation-name: card-flash-glow-due-soon;
 }
@@ -69,14 +65,16 @@
   cursor: pointer;
 }
 
-.checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):hover {
+.checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):hover {
   background-color: var(--surface-bg-primary_hover);
   border-color: var(--control-border-tertiary-hover);
   box-shadow: var(--surface-shadow-md), inset 0 -1px 0 0 var(--control-border-tertiary-hover);
 }
 
+/* CRITICAL FIX: The transient 'completing' state should look identical to the final 'complete' state. */
 .checkCard[data-status='complete'],
-.checkCard[data-status='supplemental'] {
+.checkCard[data-status='supplemental'],
+.checkCard[data-status='completing'] {
   background-color: var(--surface-bg-secondary);
   border-color: var(--surface-border-tertiary);
   box-shadow: none;

@@ -69,9 +69,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const handleSave = () => {
     if (!allResidentsHaveStatus) return;
 
-    // STAGE 1 (IMMEDIATE): Close form, trigger haptics, and INSTANTLY update data.
-    // This causes the card to immediately re-render in its gray "Completed" state.
-    // Simultaneously, trigger the pulse animation.
     triggerHaptic('success');
     setWorkflowState({ view: 'none' });
 
@@ -84,19 +81,10 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       const PULSE_ANIMATION_DURATION = 1200;
       const EXIT_ANIMATION_DURATION = 300;
 
-      // Dispatch the data update immediately.
-      dispatch({
-        type: 'CHECK_COMPLETE',
-        payload: {
-          checkId: checkData.checkId,
-          statuses,
-          notes,
-          completionTime: new Date().toISOString(),
-        },
-      });
-      // Start the pulse animation on the now-"Completed" card.
+      // STAGE 1 (IMMEDIATE): Set status to 'completing'. This keeps the item in place
+      // but makes it appear grey. Then, trigger the pulse animation.
+      dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId: checkData.checkId } });
       setRecentlyCompletedCheckId(checkData.checkId);
-
 
       // STAGE 2 (DELAYED - VISUAL EXIT): After the pulse animation is COMPLETE,
       // trigger the visual exit animation.
@@ -104,11 +92,20 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
       }, PULSE_ANIMATION_DURATION);
 
-
-      // STAGE 3 (DELAYED - CLEANUP): After ALL visual animations are complete,
-      // clean up all temporary state.
+      // STAGE 3 (DELAYED - FINAL DATA & CLEANUP): After ALL visual animations are complete,
+      // set the final 'complete' status and clean up temporary state.
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
+        dispatch({
+          type: 'CHECK_COMPLETE',
+          payload: {
+            checkId: checkData.checkId,
+            statuses,
+            notes,
+            completionTime: new Date().toISOString(),
+          },
+        });
+        
         setCompletingChecks((prev) => {
           const next = new Set(prev);
           next.delete(checkData.checkId);
