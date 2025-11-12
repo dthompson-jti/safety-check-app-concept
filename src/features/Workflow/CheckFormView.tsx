@@ -69,55 +69,63 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const handleSave = () => {
     if (!allResidentsHaveStatus) return;
 
+    // STAGE 1 (IMMEDIATE): Trigger haptics, send the signal for the pulse animation to start,
+    // and close the form view. The card remains in the list during this initial phase.
     triggerHaptic('success');
+    if (checkData.type === 'scheduled') {
+      setRecentlyCompletedCheckId(checkData.checkId);
+    }
+    setWorkflowState({ view: 'none' });
 
+    // Handle offline queuing immediately.
     if (connectionStatus === 'offline') {
       addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
-      setWorkflowState({ view: 'none' });
+      // In a real app, the dispatch would go to an offline queue here.
       return;
     }
 
     if (checkData.type === 'scheduled') {
-      // STAGE 1 (IMMEDIATE): Update all relevant state atoms.
-      // - Trigger the pulse animation on the card.
-      // - Add the check to the 'completing' set, which starts its exit animation.
-      // - Dispatch the data update to immediately update the Status Overview bar.
-      setRecentlyCompletedCheckId(checkData.checkId);
-      setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
-      dispatch({
-        type: 'CHECK_COMPLETE',
-        payload: {
-          checkId: checkData.checkId,
-          statuses,
-          notes,
-          completionTime: new Date().toISOString(),
-        },
-      });
+      // STAGE 2 (DELAYED): After a sufficient delay for the pulse to be visible,
+      // update the data model and trigger the exit animation.
+      setTimeout(() => {
+        // This causes the card to be filtered from the list, triggering AnimatePresence's exit animation.
+        setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
+        // This updates the data model, which will update the Status Overview bar.
+        dispatch({
+          type: 'CHECK_COMPLETE',
+          payload: {
+            checkId: checkData.checkId,
+            statuses,
+            notes,
+            completionTime: new Date().toISOString(),
+          },
+        });
+      }, 250); // A 250ms delay is enough for the pulse to start before the exit begins.
 
-      // STAGE 2 (DELAYED): After animations complete, remove the check from the
-      // temporary 'completing' set so it can reappear in the "Completed" list.
-      const ANIMATION_CLEANUP_DURATION = 1500; // Must be > pulse animation (1.2s)
+      // STAGE 3 (FINAL CLEANUP): After ALL animations are complete, remove the check
+      // from the temporary 'completing' set so it can reappear in the "Completed" list.
+      const ANIMATION_CLEANUP_DURATION = 1500; // Must be > pulse animation (1.2s) + exit (0.3s)
       setTimeout(() => {
         setCompletingChecks((prev) => {
           const next = new Set(prev);
           next.delete(checkData.checkId);
           return next;
         });
+        setRecentlyCompletedCheckId(null);
       }, ANIMATION_CLEANUP_DURATION);
 
     } else if (checkData.type === 'supplemental') {
+      // Supplemental checks don't have an item in the list to animate, so we can dispatch immediately.
       dispatch({
         type: 'CHECK_SUPPLEMENTAL_ADD',
         payload: {
           roomId: checkData.roomId,
           statuses,
-notes,
+          notes,
         },
       });
       addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
     }
-
-    setWorkflowState({ view: 'none' });
   };
 
   const headerTitle = useMemo(() => {

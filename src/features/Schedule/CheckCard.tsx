@@ -51,10 +51,6 @@ export const CheckCard = ({ check }: CheckCardProps) => {
     return () => clearTimeout(timerId);
   }, [recentlyCompletedCheckId, check.id]);
 
-  // DEFINITIVE FIX: Derive visual status directly on each render. This ensures the component
-  // always reflects the latest prop data, while still allowing the pulse animation to override it.
-  const visualStatus = isPulsing ? 'complete' : check.status;
-
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
   const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
@@ -72,7 +68,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
   const { residents, specialClassification } = check;
   const roomName = residents[0]?.location || 'N/A';
   
-  const showIndicator = visualStatus !== 'complete' && visualStatus !== 'supplemental' && visualStatus !== 'missed';
+  const showIndicator = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed';
   const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (
@@ -81,14 +77,16 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cardClassName}
-      data-status={visualStatus} 
+      data-status={check.status} 
       onClick={handleCardClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-      exit={{ x: '110%', opacity: 0, transition: { duration: 0.3, delay: 0.2 } }}
+      // DEFINITIVE FIX: The exit animation delay is removed. Orchestration is now handled
+      // entirely by the setTimeout in the CheckFormView's handleSave function.
+      exit={{ x: '110%', opacity: 0, transition: { duration: 0.3 } }}
     >
-      {showIndicator && <div className={styles.statusIndicator} data-status={visualStatus} />}
+      {showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
 
       <div className={styles.mainContent}>
         <div className={styles.topRow}>
@@ -100,7 +98,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
             )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          <StatusBadge status={visualStatus} />
+          <StatusBadge status={check.status} />
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>
@@ -108,7 +106,7 @@ export const CheckCard = ({ check }: CheckCardProps) => {
               <li key={resident.id}>{resident.name}</li>
             ))}
           </ul>
-          <div className={styles.timeDisplay}>{visualStatus === 'complete' || visualStatus === 'supplemental' ? '' : relativeTime}</div>
+          <div className={styles.timeDisplay}>{isActionable ? relativeTime : ''}</div>
         </div>
       </div>
     </motion.div>

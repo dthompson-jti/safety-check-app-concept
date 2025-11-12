@@ -10,33 +10,37 @@ interface ToastMessageProps {
   icon: string;
 }
 
-// This component renders a single toast message.
+// DEFINITIVE FIX: This component is now a self-contained, animated toast instance.
+// It correctly wraps Radix's Root component with Framer Motion for animations.
 export const ToastMessage = ({ id, message, icon }: ToastMessageProps) => {
   const removeToast = useSetAtom(removeToastAtom);
 
   return (
-    // Wrap with motion.div for layout animations
-    <motion.li
-      layout
-      initial={{ opacity: 0, y: 50, scale: 0.3 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+    <ToastPrimitive.Root
+      asChild
+      forceMount // Let AnimatePresence control mounting
+      duration={5000}
+      onOpenChange={(open) => {
+        if (!open) {
+          // This handles both timed and swipe dismissals
+          removeToast(id);
+        }
+      }}
     >
-      <ToastPrimitive.Root 
-        className="toast-root" 
-        duration={5000}
-        onOpenChange={(open) => {
-          if (!open) {
-            removeToast(id);
-          }
-        }}
+      <motion.li
+        layout
+        className="toast-root"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ x: '110%', opacity: 0, transition: { duration: 0.25 } }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
-          <span className="material-symbols-rounded">{icon}</span>
-          <ToastPrimitive.Description>{message}</ToastPrimitive.Description>
-          <ToastPrimitive.Close className="toast-close-button" aria-label="Close">
-              <span className="material-symbols-rounded">close</span>
-          </ToastPrimitive.Close>
-      </ToastPrimitive.Root>
-    </motion.li>
+        <span className="material-symbols-rounded">{icon}</span>
+        <ToastPrimitive.Description>{message}</ToastPrimitive.Description>
+        <ToastPrimitive.Close className="toast-close-button" aria-label="Close">
+          <span className="material-symbols-rounded">close</span>
+        </ToastPrimitive.Close>
+      </motion.li>
+    </ToastPrimitive.Root>
   );
 };

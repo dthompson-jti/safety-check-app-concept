@@ -56,8 +56,9 @@
 }
 
 /* 
-  This CSS aligns with the swipeDirection="right" configuration in App.tsx.
-  It uses the correct Radix-provided CSS variable for horizontal movement.
+  DEFINITIVE FIX: All keyframe animations and data-state animation triggers
+  have been REMOVED. Framer Motion is now the sole driver of enter/exit animations.
+  Only the interactive swipe transform styles remain, which are controlled by Radix.
 */
 .toast-root[data-swipe='move'] {
   transform: translateX(var(--radix-toast-swipe-move-x));
@@ -65,20 +66,6 @@
 .toast-root[data-swipe='cancel'] {
   transform: translateX(0);
   transition: transform 200ms ease-out;
-}
-.toast-root[data-swipe='end'] {
-  animation: swipeOutHorizontal 100ms ease-out forwards;
-}
-
-@keyframes swipeOutHorizontal {
-  from {
-    transform: translateX(var(--radix-toast-swipe-end-x));
-    opacity: 1;
-  }
-  to {
-    transform: translateX(calc(100% + 16px));
-    opacity: 0;
-  }
 }
 
 /*

@@ -1,5 +1,9 @@
 /* src/features/Schedule/CheckListItem.module.css */
 
+/* --- Keyframe Animation for Completion Pulse --- */
+/* DEFINITIVE FIX: The success animation is now a background color pulse only. */
+/* It no longer changes the final state, allowing it to run concurrently */
+/* with the exit animation without visual conflict. */
 @keyframes listItem-pulse-success {
   0% {
     background-color: var(--surface-bg-primary);
@@ -8,7 +12,7 @@
     background-color: var(--surface-bg-success);
   }
   100% {
-    background-color: var(--surface-bg-secondary);
+    background-color: var(--surface-bg-primary);
   }
 }
 
@@ -29,6 +33,7 @@
   cursor: pointer;
 }
 
+/* DEFINITIVE FIX: Disable hover state for completed/supplemental list items */
 .checkListItem:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):hover {
   background-color: var(--surface-bg-primary_hover);
 }
@@ -83,8 +88,8 @@
   min-width: 0;
 }
 
-/* Defines the color for the special classification icon. */
 .filledIcon {
+  /* UPDATE: Changed color to secondary foreground token */
   color: var(--surface-fg-secondary);
   font-size: 16px;
   font-variation-settings: 

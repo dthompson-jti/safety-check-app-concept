@@ -1,33 +1,31 @@
 /* src/features/SafetyCheckSchedule/CheckCard.module.css */
 
+/* UPDATE: New keyframe combines flash and glow */
 @keyframes card-flash-glow-due-soon {
   0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(206, 100%, 40%, 0.3); }
   60% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(206, 100%, 40%, 0); }
   100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(206, 100%, 40%, 0); }
 }
 
+/* UPDATE: New keyframe combines flash and glow */
 @keyframes card-flash-glow-late {
   0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(30, 100%, 40%, 0.3); }
   60% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
   100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
 }
 
-/* High-craft animation for when a check is successfully completed. */
+/* DEFINITIVE FIX: The success animation is now a glow effect only. */
+/* It no longer changes the background or border, allowing it to run */
+/* concurrently with the exit animation without visual conflict. */
 @keyframes card-pulse-success {
   0% {
-    background-color: var(--surface-bg-primary);
-    border-color: var(--surface-border-secondary);
     box-shadow: var(--surface-shadow-xs);
   }
   30% {
-    background-color: var(--surface-bg-success);
-    border-color: var(--surface-border-success);
     box-shadow: var(--surface-shadow-xs), 0 0 0 4px var(--surface-bg-success-secondary);
   }
   100% {
-    background-color: var(--surface-bg-secondary);
-    border-color: var(--surface-border-tertiary);
-    box-shadow: none;
+    box-shadow: var(--surface-shadow-xs);
   }
 }
 
@@ -41,6 +39,7 @@
   overflow: hidden;
   padding: 8px 16px 8px 20px;
   border: 1px solid var(--surface-border-secondary);
+  /* DEFINITIVE FIX: Move spacing here from the old wrapper to make component self-contained. */
   margin: 0 var(--spacing-4) var(--spacing-3);
 }
 
@@ -49,9 +48,11 @@
 }
 
 .checkCard[data-status='due-soon'] {
+  /* UPDATE: Use new combined animation */
   animation: card-flash-glow-due-soon 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .checkCard[data-status='late'] {
+  /* UPDATE: Use new combined animation */
   animation: card-flash-glow-late 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -59,6 +60,7 @@
   cursor: pointer;
 }
 
+/* DEFINITIVE FIX: Disable hover state for completed/supplemental cards */
 .checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):hover {
   background-color: var(--surface-bg-primary_hover);
   border-color: var(--control-border-tertiary-hover);
@@ -129,8 +131,8 @@
   min-width: 0;
 }
 
-/* Defines the color for the special classification icon. */
 .filledIcon {
+  /* UPDATE: Changed color to secondary foreground token */
   color: var(--surface-fg-secondary);
   font-size: 16px;
   font-variation-settings: 
