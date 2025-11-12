@@ -137,7 +137,8 @@
 }
 
 .filledIcon {
-  color: var(--surface-fg-warning-primary);
+  /* UPDATE: Changed color to secondary foreground token */
+  color: var(--surface-fg-secondary);
   font-size: 16px;
   font-variation-settings: 
     'FILL' 1,
