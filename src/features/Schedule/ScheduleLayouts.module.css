@@ -1,24 +1,41 @@
 /* src/features/Schedule/ScheduleLayouts.module.css */
 
-/* This is the new top-level container that replaces Virtuoso. It's now a simple scrollable div. */
+/* This is the top-level container for the schedule list. */
 .scrollContainer {
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
-  /* DEFINITIVE FIX: Add dynamic top padding to prevent content from being obscured by the floating header. */
-  /* The --header-height variable is set via JS in the FloatingHeader component. */
+  /* Ensures padding is included in the height calculation */
+  box-sizing: border-box; 
+  /* Dynamic top padding is set via JS to prevent content from being obscured by the floating header. */
   padding-top: var(--header-height);
-  box-sizing: border-box; /* Ensures padding is included in the height calculation */
-  /* CRITICAL FIX: Add horizontal padding to create a "safe zone" for animations */
-  /* like box-shadow glows that extend beyond the component's boundaries. */
+}
+
+/* 
+  ARCHITECTURAL NOTE: Horizontal padding is applied conditionally.
+  This is critical for supporting the two distinct visual layouts.
+*/
+
+/* The 'card' view requires horizontal padding. This creates a "safe zone"
+   for shadows and animations (like the completion pulse) that extend 
+   beyond the component's boundaries, preventing them from being clipped. */
+.scrollContainer[data-view-mode='card'] {
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
 }
 
+/* The 'list' view is designed to be full-width (edge-to-edge). 
+   It has no horizontal padding, allowing list items to span the entire screen width. */
+.scrollContainer[data-view-mode='list'] {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+
 /* A simple wrapper for the header to participate in the layout animation */
 .headerWrapper {
-  /* CRITICAL FIX: Remove horizontal padding. It is now handled by the parent .scrollContainer */
-  /* to ensure consistent alignment for all content within the scroll area. */
+  /* Horizontal padding is now handled by the parent .scrollContainer for the card view,
+     ensuring consistent alignment for all content within the scroll area. */
   padding: 0;
 }
 
@@ -31,9 +48,12 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   position: sticky;
-  /* DEFINITIVE FIX: Stick to the top of the scroll container, respecting the new padding. */
+  /* Stick to the top of the scroll container, respecting its padding. */
   top: 0;
   padding-top: 16px;
+  /* Horizontal padding is added here to align with list/card content below. */
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
   background-color: var(--surface-bg-secondary);
   z-index: 5;
 }

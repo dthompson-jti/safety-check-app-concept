@@ -28,9 +28,8 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
   const threeMinutesFromNow = now + 3 * 60 * 1000;
 
   checks.forEach(check => {
-    // CRITICAL ARCHITECTURE: To prevent items from jumping groups during the completion
-    // animation, we first determine the item's *temporal* category based on its due date.
-    // This is independent of its `status` (e.g., 'completing').
+    // To prevent items from jumping groups during animation, we first determine the
+    // item's *temporal* category based on its due date, independent of its `status`.
     const dueTime = new Date(check.dueDate).getTime();
     let temporalCategory: 'Late' | 'Due Soon' | 'Upcoming';
 
@@ -42,8 +41,7 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
       temporalCategory = 'Upcoming';
     }
 
-    // Now, we use the item's actual `status` to place it in the correct final group.
-    // An item with status 'completing' will be placed in its original temporal group,
+    // A check with status 'completing' will be placed in its original temporal group,
     // ensuring it doesn't move before its exit animation.
     if (check.status === 'complete' || check.status === 'supplemental') {
       groups.Completed.push(check);
@@ -59,7 +57,6 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
 
 // Helper to group checks for Route View
 const groupChecksByRoute = (checks: SafetyCheck[]) => {
-    // A 'completing' check is still considered "actionable" for grouping purposes.
     const actionable = checks.filter(c => c.status !== 'complete' && c.status !== 'supplemental');
     const completed = checks.filter(c => c.status === 'complete' || c.status === 'supplemental');
     const groups: { title: string, checks: SafetyCheck[] }[] = [];
@@ -82,7 +79,6 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   const groups = viewType === 'time' ? groupChecksByTime(checks) : groupChecksByRoute(checks);
 
   groups.forEach(group => {
-    // Completed items are handled in a separate history view and not shown here.
     if (group.title === 'Completed') return;
 
     itemsToRender.push({ type: 'header', id: group.title, title: group.title });
@@ -92,7 +88,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   });
   
   return (
-    <div className={styles.scrollContainer}>
+    <div className={styles.scrollContainer} data-view-mode={scheduleViewMode}>
       <div style={{ height: '16px' }} />
       <AnimatePresence mode="popLayout">
         {itemsToRender.map(item => {
@@ -114,14 +110,9 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
             );
           } else { // item.type is 'check'
             const { check } = item;
-            
-            // IDIOMATIC ANIMATION: If the check is in the process of exiting, we filter it
-            // from the render tree. AnimatePresence detects this removal and correctly
-            // triggers the `exit` animation defined on the CheckCard/CheckListItem component.
             if (completingChecks.has(check.id)) {
               return null;
             }
-
             return scheduleViewMode === 'card' 
               ? <CheckCard key={item.id} check={check} />
               : <CheckListItem key={item.id} check={check} />;
