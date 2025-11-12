@@ -67,7 +67,7 @@
   cursor: pointer;
   /* REVERTED: Revert to a subtle, "Settings menu" style */
   background: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
+  border: none;
   border-radius: var(--radius-md);
   transition: background-color 0.2s;
 }
@@ -75,6 +75,7 @@
 @media (hover: hover) {
   .navButton:hover:not(:disabled) {
     background-color: var(--surface-bg-primary_hover);
+  
   }
 }
 
