@@ -69,11 +69,10 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const handleSave = () => {
     if (!allResidentsHaveStatus) return;
 
-    // STAGE 1 (IMMEDIATE): Trigger haptics, start the pulse animation, and close the form.
+    // STAGE 1 (IMMEDIATE): Close form, trigger haptics, and INSTANTLY update data.
+    // This causes the card to immediately re-render in its gray "Completed" state.
+    // Simultaneously, trigger the pulse animation.
     triggerHaptic('success');
-    if (checkData.type === 'scheduled') {
-      setRecentlyCompletedCheckId(checkData.checkId);
-    }
     setWorkflowState({ view: 'none' });
 
     if (connectionStatus === 'offline') {
@@ -85,34 +84,37 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       const PULSE_ANIMATION_DURATION = 1200;
       const EXIT_ANIMATION_DURATION = 300;
 
+      // Dispatch the data update immediately.
+      dispatch({
+        type: 'CHECK_COMPLETE',
+        payload: {
+          checkId: checkData.checkId,
+          statuses,
+          notes,
+          completionTime: new Date().toISOString(),
+        },
+      });
+      // Start the pulse animation on the now-"Completed" card.
+      setRecentlyCompletedCheckId(checkData.checkId);
+
+
       // STAGE 2 (DELAYED - VISUAL EXIT): After the pulse animation is COMPLETE,
-      // trigger the visual exit animation. The data has NOT been updated yet.
+      // trigger the visual exit animation.
       setTimeout(() => {
         setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
       }, PULSE_ANIMATION_DURATION);
 
-      // STAGE 3 (DELAYED - DATA & CLEANUP): After ALL visual animations are complete,
-      // update the core data model and clean up all temporary state.
+
+      // STAGE 3 (DELAYED - CLEANUP): After ALL visual animations are complete,
+      // clean up all temporary state.
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
-        dispatch({
-          type: 'CHECK_COMPLETE',
-          payload: {
-            checkId: checkData.checkId,
-            statuses,
-            notes,
-            completionTime: new Date().toISOString(),
-          },
-        });
-        
         setCompletingChecks((prev) => {
           const next = new Set(prev);
           next.delete(checkData.checkId);
           return next;
         });
         
-        // CRITICAL FIX: The orchestrator is now responsible for cleaning up the
-        // pulse state, ensuring it persists through the exit animation.
         setRecentlyCompletedCheckId(null);
       }, TOTAL_ANIMATION_DURATION);
 

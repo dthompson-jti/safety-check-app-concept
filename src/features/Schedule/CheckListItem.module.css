@@ -1,40 +1,47 @@
 /* src/features/Schedule/CheckListItem.module.css */
 
-/* --- Keyframe Animation for Completion Pulse --- */
-/* DEFINITIVE FIX: The success animation is now a non-conflicting box-shadow glow. */
-/* This allows it to run concurrently with Framer Motion's exit animation. */
-@keyframes listItem-pulse-success {
+/* CRITICAL FIX: The pulse is now a dedicated keyframe for the pseudo-element overlay. */
+@keyframes pulse-overlay-success {
   0% {
-    box-shadow: none;
-  }
-  30% {
-    box-shadow: 0 0 0 4px var(--surface-bg-success-secondary);
+    box-shadow: 0 0 0 0px var(--surface-bg-success-secondary);
+    opacity: 0.6;
   }
   100% {
-    box-shadow: none;
+    box-shadow: 0 0 0 12px var(--surface-bg-success-secondary);
+    opacity: 0;
   }
-}
-
-.isCompleting {
-  animation: listItem-pulse-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  /* Ensure the glow appears above the next item in the list */
-  z-index: 1;
 }
 
 .checkListItem {
   display: flex;
-  position: relative;
+  position: relative; /* Must be relative for the pseudo-element to be positioned correctly. */
   background-color: var(--surface-bg-primary);
   transition: background-color 0.2s;
   padding: 8px 16px 8px 20px;
   border-bottom: 1px solid var(--surface-border-secondary);
 }
 
+/* CRITICAL FIX: Create the pseudo-element that will house the pulse animation. */
+.checkListItem::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Match the list item's shape, but without the bottom border for a cleaner look. */
+  border-radius: 0; 
+  opacity: 0;
+  pointer-events: none; /* Ensure it doesn't interfere with clicks. */
+  z-index: 1; /* Ensure it appears above the content. */
+}
+
+/* CRITICAL FIX: The .is-completing class now ONLY triggers the animation on the pseudo-element. */
+.isCompleting::before {
+  animation: pulse-overlay-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .checkListItem:not([aria-disabled='true']) {
   cursor: pointer;
 }
 
-/* DEFINITIVE FIX: Disable hover state for completed/supplemental list items */
 .checkListItem:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):hover {
   background-color: var(--surface-bg-primary_hover);
 }
@@ -90,7 +97,6 @@
 }
 
 .filledIcon {
-  /* UPDATE: Changed color to secondary foreground token */
   color: var(--surface-fg-secondary);
   font-size: 16px;
   font-variation-settings: 
