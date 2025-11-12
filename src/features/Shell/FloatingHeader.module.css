@@ -36,6 +36,11 @@
   pointer-events: auto;
 }
 
+/* NEW: Wrapper to create optical margin around the pill toggle */
+.pillToggleWrapper {
+  padding: 4px 0;
+}
+
 .rightActions {
   display: flex;
   align-items: center;

@@ -1,10 +1,11 @@
 // src/features/Schedule/CheckListItem.tsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { SafetyCheck } from '../../types';
 import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
+import { useHaptics } from '../../data/useHaptics';
 import { Tooltip } from '../../components/Tooltip';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckListItem.module.css';
@@ -13,10 +14,28 @@ interface CheckListItemProps {
   check: SafetyCheck;
 }
 
+const usePrevious = <T,>(value: T): T | undefined => {
+  const ref = useRef<T | undefined>(undefined);
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
+
 export const CheckListItem = ({ check }: CheckListItemProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const [isPulsing, setIsPulsing] = useState(false);
+  const { trigger: triggerHaptic } = useHaptics();
+  const prevStatus = usePrevious(check.status);
+
+  useEffect(() => {
+    if (prevStatus && prevStatus !== check.status) {
+      if (check.status === 'due-soon' || check.status === 'late') {
+        triggerHaptic('warning');
+      }
+    }
+  }, [check.status, prevStatus, triggerHaptic]);
 
   useEffect(() => {
     let timerId: number | undefined;

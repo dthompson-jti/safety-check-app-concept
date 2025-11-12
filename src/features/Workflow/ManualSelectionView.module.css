@@ -1,21 +1,35 @@
 /* src/features/ManualSelection/ManualSelectionView.module.css */
 
+/* BUG FIX: This wrapper provides the flex context needed for the list to grow */
 .contentWrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  /* Set a height that works well for a bottom sheet */
+  height: 65vh;
+  max-height: 700px;
+}
+
+.headerContent {
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.headerContent h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
 }
 
 .searchContainer {
-  padding: var(--spacing-4);
-  border-bottom: 1px solid var(--surface-border-secondary);
-  flex-shrink: 0;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  flex-shrink: 0; /* Prevent search from shrinking */
 }
 
 .listContainer {
   flex-grow: 1;
-  min-height: 0;
+  min-height: 0; /* CRITICAL for flex-grow to work in a flex column */
+  border-top: 1px solid var(--surface-border-secondary);
 }
 
 .checkItem {
@@ -45,8 +59,9 @@
   text-overflow: ellipsis;
 }
 
-.srIcon {
-  color: var(--surface-fg-info-primary);
+/* UPDATE: Standardize on warning icon and color */
+.warningIcon {
+  color: var(--surface-fg-warning-primary);
   font-variation-settings: 'FILL' 1;
   flex-shrink: 0;
 }

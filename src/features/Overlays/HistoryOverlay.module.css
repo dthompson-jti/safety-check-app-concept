@@ -15,6 +15,9 @@
   background-color: var(--surface-bg-primary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
+  /* UPDATE: Ensure header has same min-height as main app header for visual consistency */
+  min-height: 60px;
+  box-sizing: border-box;
 }
 
 .list {

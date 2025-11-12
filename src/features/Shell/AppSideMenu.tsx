@@ -12,8 +12,8 @@ import styles from './AppSideMenu.module.css';
 /**
  * A reusable, styled button component specific to the AppSideMenu layout.
  */
-const NavButton = ({ icon, label, onClick, disabled = false }: { icon: string; label: string; onClick: () => void; disabled?: boolean }) => (
-  <button className={styles.navButton} onClick={onClick} disabled={disabled}>
+const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; label: string; onClick: () => void; disabled?: boolean }) => (
+  <button className={styles.menuItem} onClick={onClick} disabled={disabled}>
     <span className="material-symbols-rounded">{icon}</span>
     {label}
   </button>
@@ -56,15 +56,15 @@ export const AppSideMenu = () => {
       {/* The main content area contains all the navigation items. */}
       {/* It is a simple flex container; the parent <aside> handles scrolling. */}
       <main className={styles.content}>
-        <NavButton icon="add_comment" label="Supplemental check" onClick={() => setIsSelectRoomModalOpen(true)} />
-        <NavButton icon="nfc" label="Write NFC tag" onClick={() => setIsWriteNfcModalOpen(true)} />
-        <NavButton icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
-        <NavButton icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
+        <MenuItem icon="add_comment" label="Supplemental check" onClick={() => setIsSelectRoomModalOpen(true)} />
+        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setIsWriteNfcModalOpen(true)} />
+        <MenuItem icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
+        <MenuItem icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
         
         <div className={styles.separator} />
 
         {units.map(unit => (
-          <NavButton 
+          <MenuItem 
             key={unit.id}
             icon="apps" 
             label={unit.name} 
@@ -75,7 +75,7 @@ export const AppSideMenu = () => {
       </main>
 
       <footer className={styles.footer}>
-        <button className={styles.userSettingsButton} onClick={() => setIsSettingsOpen(true)}>
+        <button className={styles.userProfileCard} onClick={() => setIsSettingsOpen(true)}>
           <div className={styles.userInfo}>
             <span className={styles.userName}>Jane Doe</span>
             <span className={styles.userRole}>Officer #12344</span>

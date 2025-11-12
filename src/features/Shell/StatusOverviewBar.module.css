@@ -17,13 +17,47 @@
   padding: var(--spacing-1) var(--spacing-2);
   border-radius: var(--radius-md);
   min-width: 70px;
-  transition: background-color 0.2s;
+  position: relative; /* For positioning pseudo-elements */
+  overflow: hidden; /* To clip the pulse animation */
+  height: 42px; /* Fixed height for animation stability */
 }
+
+/* NEW: Pseudo-element for the pulse animation */
+.statusPill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--flash-color-bg);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+.statusPill.flash::before {
+  animation: pulse-outward 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* NEW: Refined pulse animation */
+@keyframes pulse-outward {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
 
 .count {
   font-size: 1.25rem;
   font-weight: 600;
   line-height: 1;
+  /* Add relative positioning for the scale transform origin */
+  position: relative;
+  z-index: 1;
 }
 
 .label {
@@ -31,6 +65,7 @@
   font-weight: 500;
   letter-spacing: 0.05em;
   opacity: 0.8;
+  z-index: 1; /* Ensure label is above the pulse */
 }
 
 .statusPill[data-status='late'] { color: var(--surface-fg-warning-primary); }
@@ -38,17 +73,17 @@
 .statusPill[data-status='due'] { color: var(--surface-fg-secondary); }
 .statusPill[data-status='completed'] { color: var(--surface-fg-success-primary); }
 
-.statusPill.flash {
-  animation: flash-bg 0.8s ease-out;
-}
 
-@keyframes flash-bg {
-  0% { background-color: transparent; }
-  30% { background-color: var(--flash-color); }
-  100% { background-color: transparent; }
+/* Define variables for each status type's animation colors */
+.statusPill[data-status='late'].flash { 
+  --flash-color-bg: var(--surface-bg-warning-secondary);
 }
-
-.statusPill[data-status='late'].flash { --flash-color: var(--surface-bg-warning-secondary); }
-.statusPill[data-status='dueSoon'].flash { --flash-color: var(--surface-bg-info-secondary); }
-.statusPill[data-status='due'].flash { --flash-color: var(--surface-bg-secondary_hover); }
-.statusPill[data-status='completed'].flash { --flash-color: var(--surface-bg-success-secondary); }
+.statusPill[data-status='dueSoon'].flash {
+  --flash-color-bg: var(--surface-bg-info-secondary);
+}
+.statusPill[data-status='due'].flash {
+  --flash-color-bg: var(--surface-bg-secondary_hover);
+}
+.statusPill[data-status='completed'].flash {
+  --flash-color-bg: var(--surface-bg-success-secondary);
+}

@@ -1,6 +1,7 @@
 // src/features/Shell/StatusOverviewBar.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useAtomValue } from 'jotai';
+import { motion, AnimatePresence } from 'framer-motion';
 import { statusCountsAtom } from '../../data/appDataAtoms';
 import styles from './StatusOverviewBar.module.css';
 
@@ -15,21 +16,50 @@ const usePrevious = <T,>(value: T): T | undefined => {
   return ref.current;
 };
 
+// BUG FIX: Add `as const` to ensure TypeScript infers the most specific
+// type for this object, which is required by Framer Motion's prop types.
+const transition = { type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] } as const;
+
 const StatusPill: React.FC<{ count: number; label: string; status: StatusType }> = ({ count, label, status }) => {
   const [isFlashing, setIsFlashing] = useState(false);
   const prevCount = usePrevious(count);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     if (prevCount !== undefined && count !== prevCount) {
       setIsFlashing(true);
-      const timer = setTimeout(() => setIsFlashing(false), 800);
-      return () => clearTimeout(timer);
+      setIsAnimating(true);
+      const flashTimer = setTimeout(() => setIsFlashing(false), 1200);
+      const animTimer = setTimeout(() => setIsAnimating(false), 350);
+      return () => {
+        clearTimeout(flashTimer);
+        clearTimeout(animTimer);
+      };
     }
   }, [count, prevCount]);
 
   return (
     <div className={`${styles.statusPill} ${isFlashing ? styles.flash : ''}`} data-status={status}>
-      <span className={styles.count}>{count}</span>
+      <AnimatePresence initial={false}>
+        <motion.span
+          key={count}
+          className={styles.count}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '-100%', opacity: 0, position: 'absolute' }}
+          transition={transition}
+        >
+          {count}
+        </motion.span>
+      </AnimatePresence>
+      <motion.div
+        className={styles.count}
+        animate={{ scale: isAnimating ? 1.2 : 1 }}
+        transition={transition}
+        style={{ position: 'absolute', opacity: 0 }} /* This is a ghost element for the scale animation */
+      >
+        {count}
+      </motion.div>
       <span className={styles.label}>{label}</span>
     </div>
   );

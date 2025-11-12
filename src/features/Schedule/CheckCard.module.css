@@ -1,14 +1,15 @@
 /* src/features/SafetyCheckSchedule/CheckCard.module.css */
 
-/* --- Keyframe Animations for State Change Flash --- */
-@keyframes card-flash-due-soon {
-  0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(206, 100%, 40%, 0.7); }
+/* UPDATE: New keyframe combines flash and glow */
+@keyframes card-flash-glow-due-soon {
+  0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(206, 100%, 40%, 0.3); }
   60% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(206, 100%, 40%, 0); }
   100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(206, 100%, 40%, 0); }
 }
 
-@keyframes card-flash-late {
-  0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(30, 100%, 40%, 0.7); }
+/* UPDATE: New keyframe combines flash and glow */
+@keyframes card-flash-glow-late {
+  0% { box-shadow: var(--surface-shadow-xs), 0 0 0 0px hsla(30, 100%, 40%, 0.3); }
   60% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
   100% { box-shadow: var(--surface-shadow-xs), 0 0 0 8px hsla(30, 100%, 40%, 0); }
 }
@@ -52,10 +53,12 @@
 }
 
 .checkCard[data-status='due-soon'] {
-  animation: card-flash-due-soon 1s ease-out;
+  /* UPDATE: Use new combined animation */
+  animation: card-flash-glow-due-soon 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .checkCard[data-status='late'] {
-  animation: card-flash-late 1s ease-out;
+  /* UPDATE: Use new combined animation */
+  animation: card-flash-glow-late 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .checkCard:not([aria-disabled='true']) {

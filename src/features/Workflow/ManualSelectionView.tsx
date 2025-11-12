@@ -2,9 +2,10 @@
 import { useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
+import { Drawer } from 'vaul';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
 import { workflowStateAtom } from '../../data/atoms';
-import { Modal } from '../../components/Modal';
+import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
 import { SafetyCheck } from '../../types';
 import styles from './ManualSelectionView.module.css';
@@ -37,6 +38,8 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   const handleClose = () => {
     if (workflow.view === 'scanning') {
       setWorkflow({ ...workflow, isManualSelectionOpen: false });
+      // Delay reset to allow animation to finish
+      setTimeout(() => setSearchQuery(''), 300);
     }
   };
 
@@ -52,46 +55,40 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      width="90%"
-      height="75%"
-      title="Select check manually"
-      description="Search for and select a resident's check from the list to proceed with recording the check."
-    >
-      <Modal.Header>
-        <h3>Select check manually</h3>
-      </Modal.Header>
-      <Modal.Content>
-        <div className={styles.contentWrapper}>
-          <div className={styles.searchContainer}>
-            <SearchInput
-              variant="standalone"
-              placeholder="Search by room or name..."
-              value={searchQuery}
-              onChange={setSearchQuery}
-              autoFocus
-            />
-          </div>
-          <div className={styles.listContainer}>
-            <Virtuoso
-              data={filteredChecks}
-              itemContent={(_index, check) => (
-                <button className={styles.checkItem} onClick={() => handleSelectCheck(check)}>
-                  <span className={styles.checkItemText}>
-                    {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
-                  </span>
-                  {/* Show icon for classified checks in the list */}
-                  {check.specialClassification && (
-                    <span className={`material-symbols-rounded ${styles.srIcon}`}>shield_person</span>
-                  )}
-                </button>
-              )}
-            />
-          </div>
+    <BottomSheet isOpen={isOpen} onClose={handleClose}>
+      {/* BUG FIX: Wrap all content in a single flex container to manage layout */}
+      <div className={styles.contentWrapper}>
+        <div className={styles.headerContent}>
+          <Drawer.Title asChild>
+            <h2>Select check manually</h2>
+          </Drawer.Title>
         </div>
-      </Modal.Content>
-    </Modal>
+        <div className={styles.searchContainer}>
+          <SearchInput
+            variant="standalone"
+            placeholder="Search by room or name..."
+            value={searchQuery}
+            onChange={setSearchQuery}
+            autoFocus
+          />
+        </div>
+        <div className={styles.listContainer}>
+          <Virtuoso
+            data={filteredChecks}
+            itemContent={(_index, check) => (
+              <button className={styles.checkItem} onClick={() => handleSelectCheck(check)}>
+                <span className={styles.checkItemText}>
+                  {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
+                </span>
+                {/* UPDATE: Use consistent icon and styling for classified checks */}
+                {check.specialClassification && (
+                  <span className={`material-symbols-rounded ${styles.warningIcon}`}>warning</span>
+                )}
+              </button>
+            )}
+          />
+        </div>
+      </div>
+    </BottomSheet>
   );
 };

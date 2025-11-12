@@ -30,21 +30,7 @@ export const PillToggle = () => {
               />
             )}
             
-            <AnimatePresence>
-              {isActive && (
-                <motion.span
-                  className={`material-symbols-rounded ${styles.dropdownIcon}`}
-                  // FIX: Use a fade+scale animation. This is a highly performant transform
-                  // that feels like an appearance effect and prevents layout jank.
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.5 }}
-                  transition={{ type: 'tween', ease: 'easeOut', duration: 0.15 }}
-                >
-                  {option.icon}
-                </motion.span>
-              )}
-            </AnimatePresence>
+            {/* REMOVED: Leading icon is no longer rendered */}
             
             <motion.span 
               layout="position" 
@@ -58,13 +44,14 @@ export const PillToggle = () => {
               {isActive && (
                 <motion.span
                   className={`material-symbols-rounded ${styles.dropdownIcon}`}
-                  // FIX: Apply the same fade+scale animation here for consistency.
+                  // FIX: Use a fade+scale animation. This is a highly performant transform
+                  // that feels like an appearance effect and prevents layout jank.
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.5 }}
                   transition={{ type: 'tween', ease: 'easeOut', duration: 0.15 }}
                 >
-                  arrow_downward_alt
+                  arrow_drop_down
                 </motion.span>
               )}
             </AnimatePresence>

@@ -73,7 +73,13 @@ export const FloatingHeader = () => {
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.15 }}
             >
-              {isDashboard ? <PillToggle /> : <ConnectionStatusIndicator />}
+              {isDashboard ? (
+                <div className={styles.pillToggleWrapper}>
+                  <PillToggle />
+                </div>
+              ) : (
+                <ConnectionStatusIndicator />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
