@@ -1,6 +1,6 @@
-// src/components/FilterIndicatorChip.tsx
+// src/features/Schedule/FilterIndicatorChip.tsx
 import { motion } from 'framer-motion';
-import { Button } from './Button';
+import { Button } from '../../components/Button';
 import styles from './FilterIndicatorChip.module.css';
 
 interface FilterIndicatorChipProps {
@@ -22,7 +22,6 @@ export const FilterIndicatorChip = ({ filterLabel, onClear }: FilterIndicatorChi
         <span className={styles.chipText}>
           Showing: <strong>{filterLabel}</strong>
         </span>
-        {/* REFINED: Replaced text button with a cleaner, icon-only button. */}
         <Button
           variant="quaternary"
           size="xs"

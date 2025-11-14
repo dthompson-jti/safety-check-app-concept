@@ -36,7 +36,7 @@
 @import url('./menu.css') layer(components);
 @import url('./tabs.css') layer(components);
 @import url('./toggles.css') layer(components);
-@import url('./navigator.css') layer(components);
+/* REMOVED: The unused navigator.css is no longer imported. */
 @import url('./appearance.css') layer(components);
 
 /* Layer 5: Utility Classes */

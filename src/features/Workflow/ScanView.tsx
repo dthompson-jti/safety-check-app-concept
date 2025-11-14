@@ -3,13 +3,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scanner } from '@yudiel/react-qr-scanner';
-import { workflowStateAtom } from '../../data/atoms';
+import { workflowStateAtom, isManualCheckModalOpenAtom } from '../../data/atoms';
 import { safetyChecksAtom, mockResidents } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
-// Corrected import path after file move
-import { ManualSelectionView } from '../Overlays/ManualSelectionView';
 import styles from './ScanView.module.css';
 
 interface PreScanAlertInfo {
@@ -24,6 +22,7 @@ export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
   const addToast = useSetAtom(addToastAtom);
+  const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
@@ -96,9 +95,8 @@ export const ScanView = () => {
   const handleClose = () => setWorkflow({ view: 'none' });
 
   const handleOpenManualSelection = () => {
-    if (workflow.view === 'scanning') {
-      setWorkflow({ ...workflow, isManualSelectionOpen: true });
-    }
+    // FIX: Refactor to use the global atom, centralizing modal control.
+    setIsManualCheckModalOpen(true);
   };
 
   const handleSimulateSuccess = () => {
@@ -153,8 +151,6 @@ export const ScanView = () => {
         return null;
     }
   };
-
-  const isManualSelectionOpen = workflow.view === 'scanning' && workflow.isManualSelectionOpen;
 
   return (
     <>
@@ -217,7 +213,6 @@ export const ScanView = () => {
           </div>
         </footer>
       </motion.div>
-      <ManualSelectionView isOpen={isManualSelectionOpen} />
     </>
   );
 };

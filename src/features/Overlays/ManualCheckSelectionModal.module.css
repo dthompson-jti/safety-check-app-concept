@@ -1,4 +1,4 @@
-/* src/features/Overlays/SelectRoomModal.module.css */
+/* src/features/Overlays/ManualCheckSelectionModal.module.css */
 
 .container {
   display: flex;
@@ -24,10 +24,7 @@
 }
 
 .searchWrapper {
-  padding: var(--spacing-2) var(--spacing-3);
-  background-color: var(--surface-bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--surface-border-secondary);
+  /* This wrapper is no longer needed as the search input is integrated. */
 }
 
 .listContainer {

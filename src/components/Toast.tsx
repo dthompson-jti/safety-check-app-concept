@@ -12,6 +12,7 @@ interface ToastMessageProps {
 
 // DEFINITIVE FIX: This component is now a self-contained, animated toast instance.
 // It correctly wraps Radix's Root component with Framer Motion for animations.
+// The animation is now a 'tween' to align with the project's new animation principle.
 export const ToastMessage = ({ id, message, icon }: ToastMessageProps) => {
   const removeToast = useSetAtom(removeToastAtom);
 
@@ -33,7 +34,7 @@ export const ToastMessage = ({ id, message, icon }: ToastMessageProps) => {
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ x: '110%', opacity: 0, transition: { duration: 0.25 } }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       >
         <span className="material-symbols-rounded">{icon}</span>
         <ToastPrimitive.Description>{message}</ToastPrimitive.Description>

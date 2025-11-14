@@ -33,7 +33,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
   const footerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLElement>(null);
-  // RENAMED for clarity: This state controls the shadow affordance.
   const [showScrollShadow, setShowScrollShadow] = useState(false);
 
   const [statuses, setStatuses] = useState<Record<string, StatusValue | ''>>(() =>

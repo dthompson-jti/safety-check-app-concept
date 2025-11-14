@@ -6,7 +6,7 @@ import {
   appViewAtom,
   isManualCheckModalOpenAtom,
 } from '../../data/atoms';
-import { PillToggle } from '../../components/PillToggle';
+import { PillToggle } from './PillToggle';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';

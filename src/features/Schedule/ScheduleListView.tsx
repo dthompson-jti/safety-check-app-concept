@@ -16,18 +16,17 @@ import { CheckCard } from './CheckCard';
 import { CheckListItem } from './CheckListItem';
 import { CheckSkeleton } from '../../components/CheckSkeleton';
 import { NoSearchResults } from '../../components/EmptyStateMessage';
-import { FilterIndicatorChip } from '../../components/FilterIndicatorChip';
+import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
 import styles from './ScheduleLayouts.module.css';
 
-// DEFINITIVE FIX #2: The spring is now heavily damped.
-// By significantly increasing the damping, we eliminate all residual bounce,
-// resulting in a transition that is fast, direct, and settles immediately.
-// This provides the "rock-solid" feel.
+// DEFINITIVE FIX: The animation is now a 'tween' to align with the project's
+// new animation principle. This provides the "rock-solid" feel by removing all
+// spring-based physics and bounce.
 const listTransition: Transition = {
-  type: 'spring',
-  damping: 40,
-  stiffness: 300,
+  type: 'tween',
+  duration: 0.4,
+  ease: [0.16, 1, 0.3, 1],
 };
 
 interface ScheduleListViewProps {

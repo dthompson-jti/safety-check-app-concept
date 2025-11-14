@@ -49,11 +49,14 @@ export const FacilitySelectionModal = () => {
   };
 
   const handleContinue = () => {
+    // FIX: Trigger the loading state for the schedule view.
+    // This provides immediate feedback to the user that data is being refreshed.
+    if (selectedGroup !== localGroup || selectedUnit !== localUnit) {
+      setIsScheduleLoading(true);
+    }
+    
     setSelectedGroup(localGroup);
     setSelectedUnit(localUnit);
-    
-    // FIX: Trigger the loading state for the schedule view.
-    setIsScheduleLoading(true);
 
     if (!isContextRequired) {
       setAppView('dashboardTime');
@@ -77,7 +80,7 @@ export const FacilitySelectionModal = () => {
     <FullScreenModal isOpen={isOpen} onClose={handleClose} title="Select Unit">
       <div className={styles.content}>
         <p className={styles.instructions}>
-          Select your facility group and unit.
+          Select your facility group and unit to establish your operational context.
         </p>
         <div className={styles.formGroup}>
           <label htmlFor="facility-group">Facility Group</label>

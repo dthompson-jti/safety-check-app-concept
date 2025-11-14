@@ -18,7 +18,7 @@ import { OfflineBanner } from './features/Shell/OfflineBanner';
 import { ScanView } from './features/Workflow/ScanView';
 import { CheckFormView } from './features/Workflow/CheckFormView';
 import { WriteNfcTagModal } from './features/Overlays/WriteNfcTagModal';
-import { SelectRoomModal } from './features/Overlays/SelectRoomModal';
+import { ManualCheckSelectionModal } from './features/Overlays/ManualCheckSelectionModal';
 import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
 import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
@@ -146,7 +146,7 @@ export const AppShell = () => {
       
       <FacilitySelectionModal />
       <WriteNfcTagModal />
-      <SelectRoomModal />
+      <ManualCheckSelectionModal />
       
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
         <SettingsOverlay />

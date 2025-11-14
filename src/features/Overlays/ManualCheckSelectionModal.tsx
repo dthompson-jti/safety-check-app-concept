@@ -1,25 +1,33 @@
-// src/features/Overlays/SelectRoomModal.tsx
+// src/features/Overlays/ManualCheckSelectionModal.tsx
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { isManualCheckModalOpenAtom, workflowStateAtom } from '../../data/atoms';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
 import { SafetyCheck } from '../../types';
 import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
-// FIX: Import the specialized NoSearchResults component.
 import { NoSearchResults } from '../../components/EmptyStateMessage';
-import styles from './SelectRoomModal.module.css';
+import styles from './ManualCheckSelectionModal.module.css';
 
-export const SelectRoomModal = () => {
+export const ManualCheckSelectionModal = () => {
   const [isOpen, setIsOpen] = useAtom(isManualCheckModalOpenAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
   const [query, setQuery] = useState('');
 
+  // Reset search query when modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+      // Delay reset to allow animation to finish
+      setTimeout(() => setQuery(''), 300);
+    }
+  }, [isOpen]);
+
   const uniqueActionableChecks = useMemo((): SafetyCheck[] => {
     const roomsMap = new Map<string, SafetyCheck>();
     allChecks.forEach(check => {
-      if (check.status !== 'complete' && check.status !== 'missed' && !roomsMap.has(check.residents[0].location)) {
+      const isActionable = check.status !== 'complete' && check.status !== 'missed' && check.status !== 'supplemental' && check.status !== 'queued';
+      if (isActionable && !roomsMap.has(check.residents[0].location)) {
         roomsMap.set(check.residents[0].location, check);
       }
     });
@@ -49,28 +57,20 @@ export const SelectRoomModal = () => {
       specialClassification: check.specialClassification,
     });
     setIsOpen(false);
-    setQuery('');
   };
 
-  const handleClose = () => {
-    setIsOpen(false);
-    setQuery('');
-  }
-
   return (
-    <BottomSheet isOpen={isOpen} onClose={handleClose}>
+    <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <div className={styles.container}>
         <h3 className={styles.title}>Manual Check</h3>
         <p className={styles.subtitle}>Select a room or search by resident name.</p>
-        <div className={styles.searchWrapper}>
-          <SearchInput
-            value={query}
-            onChange={setQuery}
-            placeholder="Search rooms or residents..."
-            variant="integrated"
-            autoFocus
-          />
-        </div>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Search rooms or residents..."
+          variant="standalone"
+          autoFocus
+        />
         <div className={styles.listContainer}>
           {filteredChecks.length > 0 ? (
             filteredChecks.map((check) => (
@@ -87,7 +87,6 @@ export const SelectRoomModal = () => {
               </button>
             ))
           ) : (
-            // FIX: Use the correct component for displaying the no search results message.
             <NoSearchResults query={query} />
           )}
         </div>

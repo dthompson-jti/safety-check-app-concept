@@ -1,8 +1,8 @@
-// src/components/PillToggle.tsx
+// src/features/Shell/PillToggle.tsx
 import { useAtom } from 'jotai';
-// FIX: Removed unused 'AnimatePresence' import.
 import { motion } from 'framer-motion';
-import { AppView, appViewAtom } from '../data/atoms';
+// FIX: Corrected the relative import path to reflect the new file location.
+import { AppView, appViewAtom } from '../../data/atoms';
 import styles from './PillToggle.module.css';
 
 const options: { id: AppView; label: string }[] = [
