@@ -25,20 +25,23 @@ export const sessionAtom = atom<Session>({
 });
 
 // =================================================================
+//                  Context Selection State
+// =================================================================
+
+export const isContextSelectionRequiredAtom = atom(true);
+export const isContextSelectionModalOpenAtom = atom(false);
+export const selectedFacilityGroupAtom = atom<string | null>(null);
+export const selectedFacilityUnitAtom = atom<string | null>(null);
+
+
+// =================================================================
 //                   Schedule View State
 // =================================================================
 
-// This atom is for high-frequency updates, e.g., if a global clock UI were needed.
-// Components requiring smooth sub-second timers (like useCountdown) should use
-// their own internal `requestAnimationFrame` loop for performance.
 export const currentTimeAtom = atom(new Date());
 
-// DEFINITIVE FIX: Create a "ticker" atom that only updates once per minute.
-// Derived atoms for business logic (like check status) should depend on this
-// to prevent excessive re-calculations and re-renders.
 export const minuteTickerAtom = atom((get) => {
   const now = get(currentTimeAtom);
-  // Return a value that only changes when the minute changes.
   return new Date(
     now.getFullYear(),
     now.getMonth(),
@@ -49,14 +52,7 @@ export const minuteTickerAtom = atom((get) => {
 });
 
 export const isStatusOverviewOpenAtom = atom(true);
-
-// This atom now ONLY triggers the one-time pulse animation.
 export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
-
-// This atom tracks checks that have been completed and are in the process of their exit animation.
-// It prevents them from being rendered in the list during their exit.
-// NOTE: This Set should be reset to `new Set()` as part of the user logout/session-end workflow
-// to prevent stale IDs from persisting between sessions.
 export const completingChecksAtom = atom(new Set<string>());
 
 // =================================================================
@@ -101,9 +97,8 @@ export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 //                  Global UI & Layout State
 // =================================================================
 
+export const isManualCheckModalOpenAtom = atom(false);
 export const isWriteNfcModalOpenAtom = atom(false);
-export const isSelectRoomModalOpenAtom = atom(false);
-export const isHistoryModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
 
@@ -124,4 +119,22 @@ export const appConfigAtom = atom<AppConfig>({
   scanMode: 'qr',
   hapticsEnabled: true,
   scheduleViewMode: 'card',
+});
+
+// =================================================================
+//                       Global Actions (NEW)
+// =================================================================
+
+/**
+ * A write-only atom that centralizes the logout process.
+ * It resets all session-specific state to ensure a clean slate for the next login.
+ */
+export const logoutAtom = atom(null, (_get, set) => {
+  set(sessionAtom, { isAuthenticated: false, userName: null });
+  set(isContextSelectionRequiredAtom, true);
+  set(selectedFacilityGroupAtom, null);
+  set(selectedFacilityUnitAtom, null);
+  set(appViewAtom, 'dashboardTime'); // Explicitly reset the main view
+  set(workflowStateAtom, { view: 'none' }); // Reset any active workflow
+  set(completingChecksAtom, new Set()); // Clear any transient animation states
 });

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import * as RadixPopover from '@radix-ui/react-popover';
 import {
   appViewAtom,
-  isSelectRoomModalOpenAtom,
+  isManualCheckModalOpenAtom, // FIX: Renamed from isSelectRoomModalOpenAtom
   isWriteNfcModalOpenAtom,
   isStatusOverviewOpenAtom,
 } from '../../data/atoms';
@@ -18,7 +18,8 @@ import styles from './FloatingHeader.module.css';
 
 export const FloatingHeader = () => {
   const [view, setView] = useAtom(appViewAtom);
-  const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
+  // FIX: Use the renamed atom 'isManualCheckModalOpenAtom'
+  const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
   const isOverviewOpen = useAtomValue(isStatusOverviewOpenAtom);
 
@@ -29,9 +30,10 @@ export const FloatingHeader = () => {
     {
       id: 'supplemental-check',
       icon: 'add_comment',
-      label: 'Add supplemental check',
+      label: 'Add manual check', // FIX: Terminology updated
       onClick: () => {
-        setIsSelectRoomModalOpen(true);
+        // FIX: Use the correct atom setter
+        setIsManualCheckModalOpen(true);
         setIsActionMenuOpen(false);
       },
     },
@@ -50,12 +52,7 @@ export const FloatingHeader = () => {
     setView(view === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
-  // ARCHITECTURE: The effect for measuring height has been moved to the parent AppShell
-  // component, which is responsible for the overall layout. This makes the FloatingHeader
-  // a simpler, more focused component.
-
   return (
-    // The `layout` prop is removed as this element is no longer responsible for its own position.
     <header className={styles.header}>
       <div className={styles.headerContent}>
         <Tooltip content="Open navigation">

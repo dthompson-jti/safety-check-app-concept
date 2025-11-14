@@ -8,6 +8,7 @@ interface SelectProps {
   value: string;
   onValueChange: (value: string) => void;
   placeholder?: string;
+  disabled?: boolean; // FIX: Add disabled prop
 }
 
 interface SelectItemProps {
@@ -38,15 +39,17 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
   }
 );
 
-export const Select = ({ children, value, onValueChange, placeholder }: SelectProps) => {
+export const Select = ({ children, value, onValueChange, placeholder, disabled = false }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <RadixSelect.Root value={value} onValueChange={onValueChange} open={isOpen} onOpenChange={setIsOpen}>
+    // FIX: Pass disabled prop to the Radix Root to prevent opening.
+    <RadixSelect.Root value={value} onValueChange={onValueChange} open={isOpen} onOpenChange={setIsOpen} disabled={disabled}>
       <RadixSelect.Trigger 
         className={styles.selectTrigger} 
         aria-label={placeholder}
         data-focused={isOpen} // Add data attribute for focus styling
+        disabled={disabled} // FIX: Pass disabled prop to the Trigger for styling and semantics.
       >
         <RadixSelect.Value placeholder={placeholder} />
         <RadixSelect.Icon className={styles.selectIcon}>

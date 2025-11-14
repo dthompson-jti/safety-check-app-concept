@@ -1,11 +1,13 @@
 // src/features/Shell/AppSideMenu.tsx
-import { useSetAtom } from 'jotai';
+import { useSetAtom, useAtomValue } from 'jotai';
 import {
-  isHistoryModalOpenAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
-  isSelectRoomModalOpenAtom,
+  isManualCheckModalOpenAtom,
   isWriteNfcModalOpenAtom,
+  isContextSelectionModalOpenAtom,
+  selectedFacilityGroupAtom,
+  selectedFacilityUnitAtom,
 } from '../../data/atoms';
 import styles from './AppSideMenu.module.css';
 
@@ -19,19 +21,26 @@ const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; la
   </button>
 );
 
-// Mock data for the list of units. In a real application, this would
-// likely come from a global state store or an API call.
-const units = [
-  { id: 'unit1', name: 'Unit 1' },
-  { id: 'unit2', name: 'Unit 2' },
-  { id: 'unit3', name: 'Unit 3' },
-  { id: 'unit4', name: 'Unit 4' },
-  { id: 'death-star', name: 'Star Wars: Death Star' },
-  { id: 'rocinante', name: 'The Expanse: Rocinante' },
-  { id: 'hogwarts', name: 'Harry Potter: Hogwarts' },
-  { id: 'lv-426', name: 'Aliens: LV-426' },
-  { id: 'cyberdyne', name: 'Terminator: Cyberdyne' },
-];
+const ContextSwitcherCard = () => {
+  const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
+  const facilityGroup = useAtomValue(selectedFacilityGroupAtom);
+  const facilityUnit = useAtomValue(selectedFacilityUnitAtom);
+
+  const groupDisplayName = facilityGroup === 'death-star' ? 'Death Star' : facilityGroup || '—';
+
+  return (
+    <button className={styles.contextCard} onClick={() => setIsContextModalOpen(true)}>
+      <div className={styles.contextInfo}>
+        {/* FIX: Casing changed from uppercase to title case */}
+        <span className={styles.contextLabel}>Group</span>
+        <span className={styles.contextValue}>{groupDisplayName}</span>
+        <span className={styles.contextLabel}>Unit</span>
+        <span className={styles.contextValue}>{facilityUnit || '—'}</span>
+      </div>
+      <span className="material-symbols-rounded">swap_horiz</span>
+    </button>
+  );
+};
 
 /**
  * AppSideMenu provides the main navigation and action hub for the application.
@@ -39,10 +48,9 @@ const units = [
  * ensuring key information and actions are always accessible.
  */
 export const AppSideMenu = () => {
-  const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
   const setIsDevToolsOpen = useSetAtom(isDevToolsModalOpenAtom);
-  const setIsSelectRoomModalOpen = useSetAtom(isSelectRoomModalOpenAtom);
+  const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
 
   return (
@@ -53,25 +61,14 @@ export const AppSideMenu = () => {
         <div className={styles.headerSeparator} />
       </header>
 
-      {/* The main content area contains all the navigation items. */}
-      {/* It is a simple flex container; the parent <aside> handles scrolling. */}
       <main className={styles.content}>
-        <MenuItem icon="add_comment" label="Supplemental check" onClick={() => setIsSelectRoomModalOpen(true)} />
-        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setIsWriteNfcModalOpen(true)} />
-        <MenuItem icon="history" label="History" onClick={() => setIsHistoryOpen(true)} />
-        <MenuItem icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
-        
+        {/* FIX: Context switcher is now the first item below the header. */}
+        <ContextSwitcherCard />
         <div className={styles.separator} />
 
-        {units.map(unit => (
-          <MenuItem 
-            key={unit.id}
-            icon="apps" 
-            label={unit.name} 
-            onClick={() => {}} 
-            disabled 
-          />
-        ))}
+        <MenuItem icon="add_comment" label="Manual check" onClick={() => setIsManualCheckModalOpen(true)} />
+        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setIsWriteNfcModalOpen(true)} />
+        <MenuItem icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
       </main>
 
       <footer className={styles.footer}>

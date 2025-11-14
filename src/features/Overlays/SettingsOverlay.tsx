@@ -19,10 +19,8 @@ const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = 
   </div>
 );
 
-const scanModeOptions = [
-  { value: 'qr', label: 'QR Code', icon: 'qr_code_2' },
-  { value: 'nfc', label: 'NFC', icon: 'nfc' },
-] as const;
+// [MODIFIED] This is moved to DeveloperOverlay
+// const scanModeOptions = [ ... ];
 
 const viewModeOptions = [
   { value: 'card', label: 'Cards', icon: 'dashboard' },
@@ -85,23 +83,14 @@ export const SettingsOverlay = () => {
       </SettingsSection>
 
       <SettingsSection title="Admin tools">
+        {/* [MODIFIED] Terminology updated */}
         <button className={styles.settingsItem} onClick={() => setIsWriteNfcModalOpen(true)}>
           <span className={styles.itemLabel}>Write NFC tag</span>
           <div className={styles.itemValue}>
             <span className="material-symbols-rounded">chevron_right</span>
           </div>
         </button>
-        <div className={styles.settingsItem}>
-          <label htmlFor="scan-mode-toggle" className={styles.itemLabel}>
-            Scan mode
-          </label>
-          <IconToggleGroup
-            id="scan-mode-toggle"
-            options={scanModeOptions}
-            value={appConfig.scanMode}
-            onValueChange={(mode) => setAppConfig((c) => ({ ...c, scanMode: mode }))}
-          />
-        </div>
+        {/* [MODIFIED] Scan mode toggle has been removed from this view */}
       </SettingsSection>
 
       <SettingsSection title="Session">

@@ -21,7 +21,7 @@
 }
 
 @media (hover: hover) {
-  .selectTrigger:hover {
+  .selectTrigger:hover:not([disabled]) {
     border-color: var(--control-border-tertiary-hover);
   }
 }
@@ -33,6 +33,18 @@
   border-color: var(--surface-border-theme);
   box-shadow: 0 0 0 2px var(--control-focus-ring-standard);
 }
+
+/* FIX: Add styles for the disabled state */
+.selectTrigger[disabled] {
+  background-color: var(--control-bg-disabled_subtle);
+  color: var(--control-fg-disabled);
+  border-color: var(--control-border-disabled);
+  cursor: not-allowed;
+}
+.selectTrigger[disabled] .selectIcon {
+  color: var(--control-fg-disabled);
+}
+
 
 .selectIcon {
   color: var(--surface-fg-tertiary);

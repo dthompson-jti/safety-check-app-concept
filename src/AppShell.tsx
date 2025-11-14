@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   workflowStateAtom,
   currentTimeAtom,
-  isHistoryModalOpenAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
   connectionStatusAtom,
@@ -21,9 +20,9 @@ import { CheckFormView } from './features/Workflow/CheckFormView';
 import { WriteNfcTagModal } from './features/Overlays/WriteNfcTagModal';
 import { SelectRoomModal } from './features/Overlays/SelectRoomModal';
 import { FullScreenModal } from './components/FullScreenModal';
-import { HistoryOverlay } from './features/Overlays/HistoryOverlay';
 import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
 import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
+import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
 import styles from './AppShell.module.css';
 
 const viewTransition = {
@@ -38,7 +37,6 @@ export const AppShell = () => {
   const connectionStatus = useAtomValue(connectionStatusAtom);
   const setCurrentTime = useSetAtom(currentTimeAtom);
 
-  const [isHistoryOpen, setIsHistoryOpen] = useAtom(isHistoryModalOpenAtom);
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
 
@@ -59,9 +57,6 @@ export const AppShell = () => {
     }
   }, []);
 
-  // ARCHITECTURE: This effect now lives in AppShell, the component that owns the macro-layout.
-  // It measures the true height of the entire app chrome (banner + header) and sets the CSS
-  // variable that the main content area uses for its top padding.
   useLayoutEffect(() => {
     const chromeElement = appChromeRef.current;
     if (!chromeElement) return;
@@ -99,6 +94,9 @@ export const AppShell = () => {
     setAppView('dashboardTime');
   };
 
+  // BUG FIX: The AppShell now ALWAYS renders its main structure.
+  // The FacilitySelectionModal is rendered as a proper overlay, which
+  // prevents the state bug that caused the menu to be "stuck open".
   return (
     <div className={styles.appContainer}>
       <motion.div
@@ -133,12 +131,6 @@ export const AppShell = () => {
           )}
         </AnimatePresence>
         
-        {/* 
-          ARCHITECTURE REFACTOR: The Banner and Header are now grouped in a single
-          "chrome" container. This container is absolutely positioned, and its children
-          (the banner and header) stack naturally using flexbox. This solves the
-          z-index and layout issues cleanly.
-        */}
         <div ref={appChromeRef} className={styles.chromeContainer}>
           {connectionStatus !== 'online' && <OfflineBanner />}
           {isChromeVisible && <FloatingHeader />}
@@ -152,12 +144,10 @@ export const AppShell = () => {
         {workflowState.view === 'form' && <CheckFormView checkData={workflowState} />}
       </AnimatePresence>
       
+      <FacilitySelectionModal />
       <WriteNfcTagModal />
       <SelectRoomModal />
       
-      <FullScreenModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} title="History">
-        <HistoryOverlay />
-      </FullScreenModal>
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
         <SettingsOverlay />
       </FullScreenModal>

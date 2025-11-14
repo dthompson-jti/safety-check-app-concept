@@ -3,7 +3,6 @@
 .sideMenu {
   height: 100%;
   width: 100%;
-  /* UPDATE: Changed to secondary as per new base background spec */
   background-color: var(--surface-bg-secondary);
   display: flex;
   flex-direction: column;
@@ -19,7 +18,6 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  /* UPDATE: Match parent background to create seamless sticky effect */
   background-color: var(--surface-bg-secondary);
 }
 
@@ -43,7 +41,6 @@
 }
 
 .content {
-  /* UPDATE: Increased horizontal padding to add more breathing room */
   padding: var(--spacing-2) var(--spacing-4);
   display: flex;
   flex-direction: column;
@@ -53,24 +50,22 @@
 .separator {
   height: 1px;
   background-color: var(--surface-border-secondary);
-  margin: var(--spacing-2) 0; /* Separator is now full-width */
+  margin: var(--spacing-2) 0;
 }
 
-/* NEW: Unified menu item style */
 .menuItem {
   display: flex;
   align-items: center;
-  gap: var(--spacing-4); /* Increased gap for better icon separation */
+  gap: var(--spacing-4);
   width: 100%;
   padding: var(--spacing-3) var(--spacing-3);
   text-align: left;
   font-size: 1rem;
   font-weight: 500;
   font-family: var(--font-family-sans);
-  /* UPDATE: Use secondary text color for the label */
   color: var(--surface-fg-secondary);
   cursor: pointer;
-  background: transparent; /* Default state has no background */
+  background: transparent;
   border: none;
   border-radius: var(--radius-md);
   transition: background-color 0.2s, color 0.2s;
@@ -96,7 +91,6 @@
 
 .menuItem .material-symbols-rounded {
   font-size: 24px;
-  /* UPDATE: Use tertiary icon color */
   color: var(--surface-fg-tertiary);
   transition: color 0.2s;
 }
@@ -107,20 +101,73 @@
   }
 }
 
+.contextCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-secondary);
+  box-shadow: var(--surface-shadow-xs);
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+@media (hover: hover) {
+  .contextCard:hover {
+    background-color: var(--surface-bg-primary_hover);
+    border-color: var(--control-border-tertiary-hover);
+  }
+}
+
+.contextCard:active {
+  background-color: var(--surface-bg-primary_pressed);
+  border-color: var(--control-border-tertiary-hover);
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.contextInfo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+
+.contextLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--surface-fg-tertiary);
+  /* FIX: Removed text-transform to default to title case from the JSX */
+  letter-spacing: 0.05em;
+}
+
+.contextValue {
+  font-size: 1rem;
+  font-weight: 600;
+  /* VERIFIED: This correctly uses the primary foreground color token. */
+  color: var(--surface-fg-primary);
+}
+
+.contextCard .material-symbols-rounded {
+  font-size: 24px;
+  color: var(--surface-fg-secondary);
+}
+
 .footer {
   flex-shrink: 0;
-  /* UPDATE: Increased horizontal padding to match content area */
   padding: var(--spacing-4);
   padding-top: var(--spacing-2);
-  margin-top: auto; /* Pushes footer to the bottom */
+  margin-top: auto;
   position: sticky;
   bottom: 0;
   z-index: 1;
-  /* UPDATE: Gradient now fades to the new secondary background color */
   background-image: linear-gradient(to top, var(--surface-bg-secondary) 85%, transparent);
 }
 
-/* NEW: User profile card styling */
 .userProfileCard {
   display: flex;
   align-items: center;
@@ -130,11 +177,10 @@
   padding: var(--spacing-3);
   cursor: pointer;
   text-align: left;
-  border-radius: var(--radius-lg); /* Larger radius for card feel */
-  /* UPDATE: Use primary background to float above the secondary menu bg */
+  border-radius: var(--radius-lg);
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
-  box-shadow: var(--surface-shadow-xs); /* Use standard card shadow */
+  box-shadow: var(--surface-shadow-xs);
   transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
