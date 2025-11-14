@@ -1,7 +1,7 @@
 // src/features/Schedule/CheckListItem.tsx
 import { useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
-import { motion } from 'framer-motion';
+import { motion, Transition } from 'framer-motion';
 import { SafetyCheck, Resident } from '../../types';
 import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
@@ -10,6 +10,7 @@ import styles from './CheckListItem.module.css';
 
 interface CheckListItemProps {
   check: SafetyCheck;
+  transition: Transition; // Accept the shared transition object
 }
 
 const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
@@ -30,7 +31,7 @@ const ResidentListItem = ({ resident, check }: { resident: Resident; check: Safe
   );
 };
 
-export const CheckListItem = ({ check }: CheckListItemProps) => {
+export const CheckListItem = ({ check, transition }: CheckListItemProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
 
@@ -62,11 +63,11 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
   return (
     <motion.div
       layout
+      // Apply the shared transition for enter and layout animations.
+      // Use a slightly faster duration for the individual item exit animation.
+      transition={transition}
       animate={{ x: 0, height: 'auto', opacity: 1, borderBottomWidth: '1px' }}
-      transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       initial={{ opacity: 0 }}
-      // DEFINITIVE FIX: The exit animation is now non-directional (no 'x' property).
-      // This provides a smooth collapse animation suitable for both completion and filtering.
       exit={{ height: 0, opacity: 0, borderBottomWidth: 0, overflow: 'hidden' }}
       className={listItemClassName}
       data-status={check.status}

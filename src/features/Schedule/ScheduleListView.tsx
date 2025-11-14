@@ -1,7 +1,7 @@
 // src/features/Schedule/ScheduleListView.tsx
 import { useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, Transition } from 'framer-motion';
 import { timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
 import {
   appConfigAtom,
@@ -19,6 +19,16 @@ import { NoSearchResults } from '../../components/EmptyStateMessage';
 import { FilterIndicatorChip } from '../../components/FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
 import styles from './ScheduleLayouts.module.css';
+
+// DEFINITIVE FIX #2: The spring is now heavily damped.
+// By significantly increasing the damping, we eliminate all residual bounce,
+// resulting in a transition that is fast, direct, and settles immediately.
+// This provides the "rock-solid" feel.
+const listTransition: Transition = {
+  type: 'spring',
+  damping: 40,
+  stiffness: 300,
+};
 
 interface ScheduleListViewProps {
   viewType: 'time' | 'route';
@@ -117,6 +127,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
               key={group.title}
               className={styles.headerWrapper}
               layout
+              transition={listTransition} 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -126,8 +137,8 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
             ...group.checks.map(check => {
               if (completingChecks.has(check.id)) return null;
               return scheduleViewMode === 'card' 
-                ? <CheckCard key={check.id} check={check} />
-                : <CheckListItem key={check.id} check={check} />;
+                ? <CheckCard key={check.id} check={check} transition={listTransition} />
+                : <CheckListItem key={check.id} check={check} transition={listTransition} />;
             })
           ])}
         </AnimatePresence>
@@ -142,10 +153,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
       data-view-mode={scheduleViewMode}
       data-refreshing={isRefreshing}
     >
-      {/* DEFINITIVE FIX: Add a static spacer div to push content below the floating header. */}
       <div style={{ height: 'var(--header-height)' }} />
-      {/* DEFINITIVE FIX: Add a key and set mode="wait" to ensure AnimatePresence
-          correctly handles filter changes, preventing the chip from disappearing. */}
       <AnimatePresence mode="wait">
         {isFilterActive && <FilterIndicatorChip key={filter} filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />}
       </AnimatePresence>
