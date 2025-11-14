@@ -10,16 +10,11 @@ import {
   appViewAtom,
   isScheduleLoadingAtom,
 } from '../../data/atoms';
+import { facilityData } from '../../data/mock/facilityData';
 import { FullScreenModal } from '../../components/FullScreenModal';
 import { Button } from '../../components/Button';
 import { Select, SelectItem } from '../../components/Select';
 import styles from './FacilitySelectionModal.module.css';
-
-const facilityData = {
-  'death-star': { name: 'Star Wars: Death Star', units: ['AA-23', 'Detention Block', 'Trash Compactor'] },
-  'rocinante': { name: 'The Expanse: Rocinante', units: ['Cockpit', 'Galley', 'Engineering'] },
-  'hogwarts': { name: 'Harry Potter: Hogwarts', units: ['Gryffindor Tower', 'Slytherin Dungeon', 'The Great Hall'] },
-};
 
 export const FacilitySelectionModal = () => {
   const [isContextRequired, setIsContextRequired] = useAtom(isContextSelectionRequiredAtom);
@@ -49,8 +44,6 @@ export const FacilitySelectionModal = () => {
   };
 
   const handleContinue = () => {
-    // If the context has changed, trigger the loading state for the schedule
-    // view to provide immediate user feedback that data is being refreshed.
     if (selectedGroup !== localGroup || selectedUnit !== localUnit) {
       setIsScheduleLoading(true);
     }
@@ -68,7 +61,7 @@ export const FacilitySelectionModal = () => {
     setIsModalOpen(false);
   };
 
-  const availableUnits = localGroup ? facilityData[localGroup as keyof typeof facilityData]?.units || [] : [];
+  const availableUnits = facilityData.find(g => g.id === localGroup)?.units || [];
   const canContinue = localGroup && localUnit;
 
   const handleGroupChange = (value: string) => {
@@ -85,8 +78,8 @@ export const FacilitySelectionModal = () => {
         <div className={styles.formGroup}>
           <label htmlFor="facility-group">Facility Group</label>
           <Select value={localGroup} onValueChange={handleGroupChange} placeholder="Select a group...">
-            {Object.entries(facilityData).map(([id, data]) => (
-              <SelectItem key={id} value={id}>{data.name}</SelectItem>
+            {facilityData.map((group) => (
+              <SelectItem key={group.id} value={group.id}>{group.name}</SelectItem>
             ))}
           </Select>
         </div>
@@ -94,7 +87,7 @@ export const FacilitySelectionModal = () => {
           <label htmlFor="facility-unit">Facility Unit</label>
           <Select value={localUnit} onValueChange={setLocalUnit} placeholder={localGroup ? "Select a unit..." : "Select a group first"} disabled={!localGroup}>
             {availableUnits.map(unit => (
-              <SelectItem key={unit} value={unit}>{unit}</SelectItem>
+              <SelectItem key={unit.id} value={unit.id}>{unit.name}</SelectItem>
             ))}
           </Select>
         </div>

@@ -2,111 +2,22 @@
 import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
-import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
+import { SafetyCheck, SafetyCheckStatus } from '../types';
 import {
   currentTimeAtom,
   historyFilterAtom,
   scheduleSearchQueryAtom,
-  scheduleFilterAtom, // Import the new schedule filter
+  scheduleFilterAtom,
+  selectedFacilityGroupAtom,
+  selectedFacilityUnitAtom,
 } from './atoms';
+import { initialChecks } from './mock/checkData';
+import { mockResidents } from './mock/residentData';
+import { getFacilityContextForLocation } from './mock/facilityUtils';
 
 // =================================================================
 //                 Mock Data Store
 // =================================================================
-
-export const mockResidents: Resident[] = [
-  // Star Wars
-  { id: 'res1', name: 'Luke Skywalker', location: 'Tatooine Homestead' },
-  { id: 'res2', name: 'Obi-Wan Kenobi', location: 'Tatooine Homestead' },
-  { id: 'res3', name: 'Han Solo', location: 'Millennium Falcon' },
-  { id: 'res4', name: 'Garrett Chan', location: 'Mos Eisley Cantina' },
-  { id: 'res5', name: 'Brett Corbin', location: 'Mos Eisley Cantina' },
-  { id: 'res_sw1', name: 'Princess Leia Organa', location: 'Hoth Echo Base' },
-  { id: 'res_sw2', name: 'Emperor Palpatine', location: "The Emperor's Throne Room" },
-  { id: 'res_sw3', name: 'Darth Vader', location: "The Emperor's Throne Room" },
-
-  // Harry Potter
-  { id: 'res6', name: 'Harry Potter', location: 'Gryffindor Tower' },
-  { id: 'res7', name: 'Hermione Granger', location: 'Gryffindor Tower' },
-  { id: 'res8', name: 'Ron Weasley', location: 'Gryffindor Tower' },
-  { id: 'res9', name: 'Albus Dumbledore', location: "Headmaster's Office" },
-  { id: 'res10', name: 'John Maier', location: 'Hufflepuff Common Room' },
-  { id: 'res11', name: 'Jalpa Mazmudar', location: 'Hufflepuff Common Room' },
-  { id: 'res_hp1', name: 'Severus Snape', location: 'Potions Classroom' },
-  { id: 'res_hp2', name: 'Minerva McGonagall', location: 'The Great Hall' },
-  
-  // The Expanse
-  { id: 'res12', name: 'James Holden', location: 'Rocinante Cockpit' },
-  { id: 'res13', name: 'Alex Kamal', location: 'Rocinante Cockpit' },
-  { id: 'res14', name: 'Naomi Nagata', location: 'Rocinante Engineering' },
-  { id: 'res15', name: 'Dave Thompson', location: 'Rocinante Mess Hall' },
-  { id: 'res16', name: 'Amos Burton', location: 'Rocinante Galley' },
-  { id: 'res_ex0', name: 'Chrisjen Avasarala', location: 'UN-One' },
-  { id: 'res_ex1', name: 'Fred Johnson', location: 'Tycho Station Command' },
-  { id: 'res_ex2', name: 'Joe Miller', location: 'Ceres Station Docks' },
-
-  // Terminator
-  { id: 'res17', name: 'Sarah Connor', location: 'Cyberdyne Annex' },
-  { id: 'res18', name: 'Kyle Reese', location: 'Cyberdyne Annex' },
-  { id: 'res19', name: 'John Connor', location: 'Future Resistance Bunker' },
-  { id: 'res20', name: 'Sean Jordan', location: 'Future Resistance Bunker' },
-  { id: 'res21', name: 'Christian Morin', location: 'Future Resistance Bunker' },
-  { id: 'res_t1', name: 'T-800 (Model 101)', location: 'Skynet Command Center' },
-  { id: 'res_t3', name: 'The T-800 (Hunter)', location: 'Tech-Noir Nightclub' },
-  { id: 'res_t4', name: 'Miles Dyson', location: 'Cyberdyne Systems Lab' },
-
-  // Alien Series
-  { id: 'res22', name: 'Ellen Ripley', location: 'LV-426 (Medlab)' },
-  { id: 'res23', name: 'Jimmy Tang', location: 'Nostromo Galley' },
-  { id: 'res24', name: 'Jeff Siemens', location: 'Nostromo Cockpit' },
-  { id: 'res25', name: 'David 8', location: 'USCSS Prometheus Bridge' },
-  { id: 'res_al1', name: 'Ash', location: 'Nostromo Medbay' },
-  { id: 'res_al2', name: 'Corporal Hicks', location: 'LV-426 (Operations Center)' },
-  { id: 'res_al3', name: 'Private Hudson', location: 'LV-426 (Operations Center)' },
-  { id: 'res_al4', name: 'Newt', location: 'LV-426 (Ventilation Shafts)' },
-
-  // Other Themes
-  { id: 'res_ot1', name: 'John Wick', location: 'Continental NYC' },
-  { id: 'res_ot2', name: 'Leto Atreides', location: 'Arrakis Palace' },
-];
-
-const initialChecks: SafetyCheck[] = (() => {
-    const now = new Date();
-    const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
-    return [
-      { id: 'chk1', residents: [mockResidents[19], mockResidents[20], mockResidents[21]], status: 'pending', dueDate: inNMinutes(-5), walkingOrderIndex: 1, specialClassification: { type: 'MA', details: 'Leadership check-in required.', residentId: 'res19' }},
-      { id: 'chk2', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(-2), walkingOrderIndex: 2 },
-      { id: 'chk3', residents: [mockResidents[17], mockResidents[18]], status: 'pending', dueDate: inNMinutes(1), walkingOrderIndex: 3 },
-      { id: 'chk4', residents: [mockResidents[24]], status: 'pending', dueDate: inNMinutes(3), walkingOrderIndex: 4 },
-      { id: 'chk5', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(5), walkingOrderIndex: 5 },
-      { id: 'chk6', residents: [mockResidents[0], mockResidents[1]], status: 'pending', dueDate: inNMinutes(10), walkingOrderIndex: 6 },
-      { id: 'chk7', residents: [mockResidents[3], mockResidents[4]], status: 'pending', dueDate: inNMinutes(12), walkingOrderIndex: 7 },
-      { id: 'chk8', residents: [mockResidents[2]], status: 'pending', dueDate: inNMinutes(14), walkingOrderIndex: 8 },
-      { id: 'chk9', residents: [mockResidents[5]], status: 'pending', dueDate: inNMinutes(16), walkingOrderIndex: 9 },
-      { id: 'chk10', residents: [mockResidents[6], mockResidents[7]], status: 'pending', dueDate: inNMinutes(18), walkingOrderIndex: 10, specialClassification: { type: 'SW', details: 'High-risk Sith Lords. Approach with caution.', residentId: 'res_sw3' } },
-      { id: 'chk11', residents: [mockResidents[8], mockResidents[9], mockResidents[10]], status: 'pending', dueDate: inNMinutes(25), walkingOrderIndex: 11 },
-      { id: 'chk12', residents: [mockResidents[12], mockResidents[13]], status: 'pending', dueDate: inNMinutes(27), walkingOrderIndex: 12 },
-      { id: 'chk13', residents: [mockResidents[14]], status: 'pending', dueDate: inNMinutes(29), walkingOrderIndex: 13 },
-      { id: 'chk14', residents: [mockResidents[15]], status: 'pending', dueDate: inNMinutes(31), walkingOrderIndex: 14 },
-      { id: 'chk15', residents: [mockResidents[11]], status: 'pending', dueDate: inNMinutes(33), walkingOrderIndex: 15, specialClassification: { type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'res9' }},
-      { id: 'chk16', residents: [mockResidents[16], mockResidents[17]], status: 'pending', dueDate: inNMinutes(40), walkingOrderIndex: 16 },
-      { id: 'chk17', residents: [mockResidents[18]], status: 'pending', dueDate: inNMinutes(42), walkingOrderIndex: 17 },
-      { id: 'chk18', residents: [mockResidents[20]], status: 'pending', dueDate: inNMinutes(44), walkingOrderIndex: 18 },
-      { id: 'chk19', residents: [mockResidents[19]], status: 'pending', dueDate: inNMinutes(46), walkingOrderIndex: 19 },
-      { id: 'chk20', residents: [mockResidents[21]], status: 'pending', dueDate: inNMinutes(48), walkingOrderIndex: 20 },
-      { id: 'chk21', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(50), walkingOrderIndex: 21 },
-      { id: 'chk22', residents: [mockResidents[23]], status: 'pending', dueDate: inNMinutes(52), walkingOrderIndex: 22 },
-      { id: 'chk23', residents: [mockResidents[22]], status: 'pending', dueDate: inNMinutes(60), walkingOrderIndex: 23, specialClassification: { type: 'SW', details: 'Xenomorph detected in vicinity. High alert.', residentId: 'res22' }},
-      { id: 'chk24', residents: [mockResidents[36], mockResidents[37]], status: 'pending', dueDate: inNMinutes(62), walkingOrderIndex: 24 },
-      { id: 'chk25', residents: [mockResidents[38]], status: 'pending', dueDate: inNMinutes(64), walkingOrderIndex: 25 },
-      { id: 'chk26', residents: [mockResidents[33]], status: 'pending', dueDate: inNMinutes(66), walkingOrderIndex: 26 },
-      { id: 'chk27', residents: [mockResidents[32]], status: 'pending', dueDate: inNMinutes(68), walkingOrderIndex: 27 },
-      { id: 'chk28', residents: [mockResidents[35]], status: 'pending', dueDate: inNMinutes(70), walkingOrderIndex: 28 },
-      { id: 'chk29', residents: [mockResidents[34]], status: 'pending', dueDate: inNMinutes(72), walkingOrderIndex: 29 },
-      { id: 'chk30', residents: [mockResidents[39]], status: 'complete', dueDate: inNMinutes(-60), walkingOrderIndex: 30, lastChecked: inNMinutes(-62), completionStatus: 'Assessing threats', notes: 'Pencil located.' },
-      { id: 'chk31', residents: [mockResidents[40]], status: 'complete', dueDate: inNMinutes(-120), walkingOrderIndex: 31, lastChecked: inNMinutes(-121), completionStatus: 'Sleeping', notes: 'The spice must flow.' },
-    ];
-})();
 
 const baseChecksAtom = atom(initialChecks, (_get, set, update: SafetyCheck[]) => {
     set(baseChecksAtom, update);
@@ -244,8 +155,26 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
     });
 });
 
+const contextFilteredChecksAtom = atom((get) => {
+    const allChecks = get(safetyChecksAtom);
+    const selectedGroupId = get(selectedFacilityGroupAtom);
+    const selectedUnitId = get(selectedFacilityUnitAtom);
+
+    if (!selectedGroupId || !selectedUnitId) {
+        return [];
+    }
+
+    return allChecks.filter(check => {
+        if (!check.residents[0]) return false;
+        const location = check.residents[0].location;
+        const context = getFacilityContextForLocation(location);
+        
+        return context?.groupId === selectedGroupId && context?.unitId === selectedUnitId;
+    });
+});
+
 const searchFilteredChecksAtom = atom((get) => {
-  const allChecks = get(safetyChecksAtom);
+  const allChecks = get(contextFilteredChecksAtom);
   const query = get(scheduleSearchQueryAtom).toLowerCase().trim();
 
   if (!query) {
@@ -271,7 +200,6 @@ const scheduleFilteredChecksAtom = atom((get) => {
     return checks;
   }
   
-  // The 'due-soon' filter is a special case for the UI, but its data is still 'due-soon'
   const filterKey = filter === 'due-soon' ? 'due-soon' : filter;
   return checks.filter(check => check.status === filterKey);
 });
@@ -314,7 +242,6 @@ export const routeSortedChecksAtom = atom((get) => {
 });
 
 export const statusCountsAtom = atom((get) => {
-  // Counts should be based on all checks, not the filtered list
   const checks = get(searchFilteredChecksAtom);
   const counts = { late: 0, dueSoon: 0, pending: 0, completed: 0, queued: 0 };
   for (const check of checks) {

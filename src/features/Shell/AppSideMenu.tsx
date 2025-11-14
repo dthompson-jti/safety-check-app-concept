@@ -9,6 +9,7 @@ import {
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
 } from '../../data/atoms';
+import { facilityData } from '../../data/mock/facilityData';
 import styles from './AppSideMenu.module.css';
 
 const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; label: string; onClick: () => void; disabled?: boolean }) => (
@@ -24,11 +25,14 @@ const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; la
  */
 const ContextSwitcherCard = () => {
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
-  const facilityGroup = useAtomValue(selectedFacilityGroupAtom);
-  const facilityUnit = useAtomValue(selectedFacilityUnitAtom);
+  const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
+  const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
 
-  // In a real app, this would be a lookup against a data store.
-  const groupDisplayName = facilityGroup === 'death-star' ? 'Death Star' : facilityGroup || '—';
+  const group = facilityData.find(g => g.id === facilityGroupId);
+  const unit = group?.units.find(u => u.id === facilityUnitId);
+
+  const groupDisplayName = group?.name || '—';
+  const unitDisplayName = unit?.name || '—';
 
   return (
     <button className={styles.contextCard} onClick={() => setIsContextModalOpen(true)}>
@@ -36,7 +40,7 @@ const ContextSwitcherCard = () => {
         <span className={styles.contextLabel}>Group</span>
         <span className={styles.contextValue}>{groupDisplayName}</span>
         <span className={styles.contextLabel}>Unit</span>
-        <span className={styles.contextValue}>{facilityUnit || '—'}</span>
+        <span className={styles.contextValue}>{unitDisplayName}</span>
       </div>
       <span className="material-symbols-rounded">swap_horiz</span>
     </button>

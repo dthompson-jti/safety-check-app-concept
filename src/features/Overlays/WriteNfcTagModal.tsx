@@ -1,14 +1,15 @@
 // src/features/Overlays/WriteNfcTagModal.tsx
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { Drawer } from 'vaul';
 import { isWriteNfcModalOpenAtom } from '../../data/atoms';
 import { addToastAtom } from '../../data/toastAtoms';
-import { mockResidents } from '../../data/appDataAtoms';
+import { mockResidents } from '../../data/mock/residentData';
 import { BottomSheet } from '../../components/BottomSheet';
 import { Select, SelectItem } from '../../components/Select';
 import { Button } from '../../components/Button';
 import styles from './WriteNfcTagModal.module.css';
+import { Resident } from '../../types';
 
 type ModalState = 'initial' | 'writing' | 'success' | 'error';
 
@@ -17,6 +18,22 @@ export const WriteNfcTagModal = () => {
   const addToast = useSetAtom(addToastAtom);
   const [modalState, setModalState] = useState<ModalState>('initial');
   const [selectedRoomId, setSelectedRoomId] = useState<string>('');
+
+  const uniqueLocations = useMemo((): Resident[] => {
+    // FIX: Provide an explicit generic type to the initial value of the reduce function.
+    // This ensures TypeScript correctly infers the accumulator's type and prevents
+    // the result from degrading to `any`.
+    const locationsMap = mockResidents.reduce((acc, resident) => {
+      if (!acc.has(resident.location)) {
+        acc.set(resident.location, resident);
+      }
+      return acc;
+    }, new Map<string, Resident>());
+    
+    return Array.from(locationsMap.values()).sort((a, b) => 
+      a.location.localeCompare(b.location)
+    );
+  }, []);
 
   const resetAndClose = () => {
     setIsOpen(false);
@@ -95,9 +112,10 @@ export const WriteNfcTagModal = () => {
             onValueChange={setSelectedRoomId}
             placeholder="Choose a resident location..."
           >
-            {mockResidents.map((resident) => (
+            {/* This mapping is now fully type-safe */}
+            {uniqueLocations.map((resident) => (
               <SelectItem key={resident.id} value={resident.id}>
-                {resident.location} - {resident.name}
+                {resident.location}
               </SelectItem>
             ))}
           </Select>
