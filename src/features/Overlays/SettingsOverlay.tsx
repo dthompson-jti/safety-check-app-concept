@@ -1,10 +1,6 @@
 // src/features/Overlays/SettingsOverlay.tsx
 import { useAtom } from 'jotai';
-import {
-  appConfigAtom,
-  connectionStatusAtom,
-  isScheduleSearchActiveAtom,
-} from '../../data/atoms';
+import { appConfigAtom } from '../../data/atoms';
 import { Switch } from '../../components/Switch';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import styles from './SettingsOverlay.module.css';
@@ -14,55 +10,42 @@ const viewModeOptions = [
   { value: 'list', label: 'List View', icon: 'view_list' },
 ] as const;
 
-const connectionOptions = [
-  { value: 'online', label: 'Online', icon: 'wifi' },
-  { value: 'offline', label: 'Offline', icon: 'wifi_off' },
-] as const;
-
 export const SettingsOverlay = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
-  const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
-  const [isSearchActive, setIsSearchActive] = useAtom(isScheduleSearchActiveAtom);
 
   const handleHapticsChange = (checked: boolean) => {
     setAppConfig(currentConfig => ({ ...currentConfig, hapticsEnabled: checked }));
   };
 
   return (
-    <div className={styles.overlayContainer}>
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Preferences</h3>
-        <div className={styles.settingRow}>
-          <label>Schedule View</label>
-          <IconToggleGroup
-            options={viewModeOptions}
-            value={appConfig.scheduleViewMode}
-            onValueChange={(value) => setAppConfig(c => ({...c, scheduleViewMode: value}))}
-          />
-        </div>
-        {/* DEFINITIVE FIX: The Haptics toggle is now implemented to correctly update the appConfig object property. */}
-        <div className={styles.settingRow}>
-          <label>Haptic Feedback</label>
-          <Switch checked={appConfig.hapticsEnabled} onCheckedChange={handleHapticsChange} />
-        </div>
-      </div>
-
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Developer Tools</h3>
-        <div className={styles.settingRow}>
-          <label>Connection Status</label>
-          <IconToggleGroup
-            options={connectionOptions}
-            value={connectionStatus}
-            onValueChange={setConnectionStatus}
-          />
-        </div>
-        {/* DEFINITIVE FIX: The dev toggle now uses its specific, correctly-typed atom, which resolves the 'unknown' to 'boolean' error. */}
-        <div className={styles.settingRow}>
-          <label>Force Search Bar Visible</label>
-          <Switch checked={isSearchActive} onCheckedChange={setIsSearchActive} />
+    <div className={styles.settingsContainer}>
+      <div className={styles.settingsSection}>
+        <h3 className={styles.sectionTitle}>PREFERENCES</h3>
+        <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem}>
+            <label id="schedule-view-label" className={styles.itemLabel}>
+              Schedule View
+            </label>
+            <IconToggleGroup
+              aria-labelledby="schedule-view-label"
+              options={viewModeOptions}
+              value={appConfig.scheduleViewMode}
+              onValueChange={(value) => setAppConfig(c => ({...c, scheduleViewMode: value}))}
+            />
+          </div>
+          <div className={styles.settingsItem}>
+            <label htmlFor="haptics-switch" className={styles.itemLabel}>
+              Haptic Feedback
+            </label>
+            <Switch
+              id="haptics-switch"
+              checked={appConfig.hapticsEnabled}
+              onCheckedChange={handleHapticsChange}
+            />
+          </div>
         </div>
       </div>
+      {/* Other sections like Account, etc. would go here */}
     </div>
   );
 };

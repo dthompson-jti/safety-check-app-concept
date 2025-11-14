@@ -1,7 +1,8 @@
 // src/features/Overlays/DeveloperOverlay.tsx
 import { useAtom } from 'jotai';
-import { connectionStatusAtom, ConnectionStatus, appConfigAtom } from '../../data/atoms'; // [MODIFIED] Import appConfigAtom
+import { connectionStatusAtom, ConnectionStatus, appConfigAtom } from '../../data/atoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
+import { Switch } from '../../components/Switch';
 import styles from './DeveloperOverlay.module.css';
 
 const connectionOptions: readonly { value: ConnectionStatus; label: string; icon: string }[] = [
@@ -10,7 +11,6 @@ const connectionOptions: readonly { value: ConnectionStatus; label: string; icon
   { value: 'syncing', label: 'Syncing', icon: 'sync' },
 ] as const;
 
-// [NEW] Scan mode options moved here from SettingsOverlay
 const scanModeOptions = [
   { value: 'qr', label: 'QR Code', icon: 'qr_code_2' },
   { value: 'nfc', label: 'NFC', icon: 'nfc' },
@@ -18,7 +18,11 @@ const scanModeOptions = [
 
 export const DeveloperOverlay = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
-  const [appConfig, setAppConfig] = useAtom(appConfigAtom); // [NEW] Read app config state
+  const [appConfig, setAppConfig] = useAtom(appConfigAtom);
+
+  const handleSlowLoadChange = (checked: boolean) => {
+    setAppConfig(current => ({ ...current, isSlowLoadEnabled: checked }));
+  };
 
   return (
     <div className={styles.container}>
@@ -33,7 +37,6 @@ export const DeveloperOverlay = () => {
         />
       </div>
 
-      {/* [NEW] Scan mode toggle moved here */}
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Device Settings</h3>
         <p className={styles.sectionHelper}>Control the primary input method for initiating checks.</p>
@@ -43,6 +46,19 @@ export const DeveloperOverlay = () => {
             value={appConfig.scanMode}
             onValueChange={(mode) => setAppConfig((c) => ({ ...c, scanMode: mode }))}
           />
+      </div>
+      
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>Performance</h3>
+        <p className={styles.sectionHelper}>Test the UI's resilience to network latency.</p>
+        <div className={styles.row}>
+          <label htmlFor="slow-load-switch">Simulate Slow Loading</label>
+          <Switch
+            id="slow-load-switch"
+            checked={appConfig.isSlowLoadEnabled}
+            onCheckedChange={handleSlowLoadChange}
+          />
+        </div>
       </div>
     </div>
   );

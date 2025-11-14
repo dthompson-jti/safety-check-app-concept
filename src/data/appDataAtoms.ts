@@ -136,7 +136,9 @@ type SupplementalCheckPayload = {
 export type AppAction =
   | { type: 'CHECK_SET_COMPLETING'; payload: { checkId: string } }
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
-  | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload };
+  | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload }
+  | { type: 'CHECK_SET_QUEUED'; payload: CheckCompletePayload } // For offline saves
+  | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } }; // For sync process
 
 const appDataAtom = atom<AppData, [AppAction], void>(
   (get) => ({ checks: get(baseChecksAtom) }),
@@ -159,6 +161,26 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
           }
+          break;
+        }
+        case 'CHECK_SET_QUEUED': {
+          const check = draft.checks.find(c => c.id === action.payload.checkId);
+          if (check) {
+            check.status = 'queued';
+            check.lastChecked = action.payload.completionTime;
+            check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
+            check.notes = action.payload.notes;
+          }
+          break;
+        }
+        case 'SYNC_QUEUED_CHECKS': {
+          draft.checks.forEach(check => {
+            if (check.status === 'queued') {
+              check.status = 'complete';
+              // Optionally update timestamp on sync, for now we keep the original
+              // check.lastChecked = action.payload.syncTime;
+            }
+          });
           break;
         }
         case 'CHECK_SUPPLEMENTAL_ADD': {
@@ -266,8 +288,8 @@ export const timeSortedChecksAtom = atom((get) => {
 
 export const routeSortedChecksAtom = atom((get) => {
   const checks = get(filteredChecksAtom);
-  const actionable = checks.filter(c => !['complete', 'supplemental'].includes(c.status));
-  const nonActionable = checks.filter(c => ['complete', 'supplemental'].includes(c.status));
+  const actionable = checks.filter(c => !['complete', 'supplemental', 'queued'].includes(c.status));
+  const nonActionable = checks.filter(c => ['complete', 'supplemental', 'queued'].includes(c.status));
 
   actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
   nonActionable.sort((a, b) => {
@@ -281,12 +303,12 @@ export const routeSortedChecksAtom = atom((get) => {
 
 export const statusCountsAtom = atom((get) => {
   const checks = get(filteredChecksAtom);
-  const counts = { late: 0, dueSoon: 0, due: 0, completed: 0, queued: 0 };
+  const counts = { late: 0, dueSoon: 0, pending: 0, completed: 0, queued: 0 };
   for (const check of checks) {
     switch (check.status) {
       case 'late': counts.late++; break;
       case 'due-soon': counts.dueSoon++; break;
-      case 'pending': counts.due++; break;
+      case 'pending': counts.pending++; break;
       case 'complete': counts.completed++; break;
       case 'queued': counts.queued++; break;
     }
@@ -321,7 +343,6 @@ const formatDateGroup = (date: Date): string => {
 
   if (targetDate.getTime() === today.getTime()) return 'Today';
   if (targetDate.getTime() === yesterday.getTime()) return 'Yesterday';
-  // FIX: Corrected typo from 'toLocaleDateDateString' to 'toLocaleDateString'
   return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 };
 

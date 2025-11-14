@@ -13,7 +13,7 @@ import { SafetyCheck } from '../../types';
 import { CheckCard } from './CheckCard';
 import { CheckListItem } from './CheckListItem';
 import { CheckSkeleton } from '../../components/CheckSkeleton';
-import { EmptyStateMessage } from '../../components/EmptyStateMessage';
+import { NoSearchResults } from '../../components/EmptyStateMessage';
 import styles from './ScheduleLayouts.module.css';
 
 interface ScheduleListViewProps {
@@ -29,7 +29,7 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
   const threeMinutesFromNow = now + 3 * 60 * 1000;
 
   checks.forEach(check => {
-    if (check.status === 'complete' || check.status === 'supplemental' || check.status === 'missed') {
+    if (['complete', 'supplemental', 'missed', 'queued'].includes(check.status)) {
       return;
     }
     const dueTime = new Date(check.dueDate).getTime();
@@ -49,7 +49,7 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
 
 // Helper to group checks for Route View
 const groupChecksByRoute = (checks: SafetyCheck[]) => {
-    const actionable = checks.filter(c => c.status !== 'complete' && c.status !== 'supplemental' && c.status !== 'missed');
+    const actionable = checks.filter(c => !['complete', 'supplemental', 'missed', 'queued'].includes(c.status));
     const groups: { title: string, checks: SafetyCheck[] }[] = [];
     if (actionable.length > 0) {
         groups.push({ title: 'Upcoming', checks: actionable });
@@ -60,15 +60,15 @@ const groupChecksByRoute = (checks: SafetyCheck[]) => {
 // Main Component
 export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
-  const { scheduleViewMode } = useAtomValue(appConfigAtom);
+  const { scheduleViewMode, isSlowLoadEnabled } = useAtomValue(appConfigAtom);
   const completingChecks = useAtomValue(completingChecksAtom);
   const [isLoading, setIsLoading] = useAtom(isScheduleLoadingAtom);
   const searchQuery = useAtomValue(scheduleSearchQueryAtom);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1500);
+    const timer = setTimeout(() => setIsLoading(false), isSlowLoadEnabled ? 3000 : 500);
     return () => clearTimeout(timer);
-  }, [setIsLoading]);
+  }, [setIsLoading, isSlowLoadEnabled]);
 
   const renderContent = () => {
     if (isLoading) {
@@ -83,7 +83,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
     }
 
     if (checks.length === 0 && searchQuery) {
-      return <EmptyStateMessage query={searchQuery} />;
+      return <NoSearchResults query={searchQuery} />;
     }
     
     const groups = viewType === 'time' ? groupChecksByTime(checks) : groupChecksByRoute(checks);

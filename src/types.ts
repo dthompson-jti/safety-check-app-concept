@@ -5,10 +5,10 @@ export type SafetyCheckStatus =
   | 'due-soon'
   | 'late'
   | 'complete'
-  | 'completing' // Transient state for animations
+  | 'completing' // Transient state for animation
   | 'missed'
-  | 'queued' // NEW: For offline checks
-  | 'supplemental';
+  | 'supplemental'
+  | 'queued'; // NEW: For offline mode
 
 export interface Resident {
   id: string;
@@ -29,7 +29,7 @@ export interface SafetyCheck {
   dueDate: string;
   walkingOrderIndex: number;
   lastChecked?: string;
-  completionStatus?: string;
   notes?: string;
+  completionStatus?: string;
   specialClassification?: SpecialClassification;
 }

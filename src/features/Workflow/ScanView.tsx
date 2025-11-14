@@ -1,3 +1,4 @@
+// src/features/Workflow/ScanView.tsx
 import { useState, useEffect, useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,7 +8,8 @@ import { safetyChecksAtom, mockResidents } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
-import { ManualSelectionView } from './ManualSelectionView';
+// Corrected import path after file move
+import { ManualSelectionView } from '../Overlays/ManualSelectionView';
 import styles from './ScanView.module.css';
 
 interface PreScanAlertInfo {

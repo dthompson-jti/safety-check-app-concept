@@ -2,16 +2,33 @@
 import { useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { SafetyCheck } from '../../types';
+import { SafetyCheck, Resident } from '../../types';
 import { workflowStateAtom, recentlyCompletedCheckIdAtom } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
-import { Tooltip } from '../../components/Tooltip';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckListItem.module.css';
 
 interface CheckListItemProps {
   check: SafetyCheck;
 }
+
+const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
+  const isClassified = check.specialClassification?.residentId === resident.id;
+
+  return (
+    <li className={styles.residentListItem}>
+      {isClassified && (
+        <span
+          className={`material-symbols-rounded ${styles.warningIcon}`}
+          aria-label="Special Classification"
+        >
+          warning
+        </span>
+      )}
+      {resident.name}
+    </li>
+  );
+};
 
 export const CheckListItem = ({ check }: CheckListItemProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
@@ -21,11 +38,10 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
-  const isActionable = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
+  const isActionable = !['complete', 'supplemental', 'missed', 'completing', 'queued'].includes(check.status);
 
   const handleItemClick = () => {
     if (isActionable) {
-      // PRD CHANGE: Tapping an item now goes directly to the form, bypassing the scan view.
       setWorkflowState({
         view: 'form',
         type: 'scheduled',
@@ -37,10 +53,10 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
     }
   };
 
-  const { residents, specialClassification } = check;
+  const { residents } = check;
   const roomName = residents[0]?.location || 'N/A';
   
-  const showIndicator = check.status !== 'complete' && check.status !== 'supplemental' && check.status !== 'missed' && check.status !== 'completing';
+  const showIndicator = !['complete', 'supplemental', 'missed', 'completing', 'queued'].includes(check.status);
   const listItemClassName = `${styles.checkListItem} ${isPulsing ? styles.isCompleting : ''}`;
 
   return (
@@ -60,11 +76,6 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
       <div className={styles.mainContent}>
         <div className={styles.topRow}>
           <div className={styles.locationInfo}>
-            {specialClassification && (
-              <Tooltip content={`${specialClassification.type}: ${specialClassification.details}`}>
-                <span className={`material-symbols-rounded ${styles.filledIcon}`}>warning</span>
-              </Tooltip>
-            )}
             <span className={styles.locationText}>{roomName}</span>
           </div>
           <StatusBadge status={check.status} />
@@ -72,7 +83,7 @@ export const CheckListItem = ({ check }: CheckListItemProps) => {
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>
             {residents.map((resident) => (
-              <li key={resident.id}>{resident.name}</li>
+              <ResidentListItem key={resident.id} resident={resident} check={check} />
             ))}
           </ul>
           <div className={styles.timeDisplay}>{isActionable ? relativeTime : ''}</div>

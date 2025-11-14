@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+// src/features/Workflow/CheckFormView.tsx
+import { useState, useMemo, useRef, useLayoutEffect } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import {
@@ -30,6 +31,8 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const connectionStatus = useAtomValue(connectionStatusAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
+  const footerRef = useRef<HTMLElement>(null);
+
   const [statuses, setStatuses] = useState<Record<string, StatusValue | ''>>(() =>
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
@@ -38,13 +41,19 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
-  const handleBack = () => {
-    // If coming from a direct tap, go back to the schedule, otherwise go to scanner
-    if (checkData.type === 'scheduled') {
-      setWorkflowState({ view: 'none' });
-    } else {
-      setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
+  useLayoutEffect(() => {
+    const footer = footerRef.current;
+    if (footer) {
+      const height = footer.offsetHeight;
+      document.documentElement.style.setProperty('--form-footer-height', `${height}px`);
     }
+    return () => {
+      document.documentElement.style.removeProperty('--form-footer-height');
+    };
+  }, []);
+
+  const handleBack = () => {
+    setWorkflowState({ view: 'none' });
   };
 
   const handleCancel = () => {
@@ -69,17 +78,24 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     triggerHaptic('success');
     setWorkflowState({ view: 'none' });
     
-    // Consolidate per-resident notes into a single string for the data layer.
     const consolidatedNotes = Object.values(notes)
       .filter(note => note.trim() !== '')
       .join('\n---\n');
 
-    if (connectionStatus === 'offline') {
-      addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
-      return;
-    }
-
     if (checkData.type === 'scheduled') {
+      const payload = {
+        checkId: checkData.checkId,
+        statuses: statuses as Record<string, string>,
+        notes: consolidatedNotes,
+        completionTime: new Date().toISOString(),
+      };
+
+      if (connectionStatus === 'offline') {
+        dispatch({ type: 'CHECK_SET_QUEUED', payload });
+        addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
+        return;
+      }
+      
       const PULSE_ANIMATION_DURATION = 1200;
       const EXIT_ANIMATION_DURATION = 400;
 
@@ -92,15 +108,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
-        dispatch({
-          type: 'CHECK_COMPLETE',
-          payload: {
-            checkId: checkData.checkId,
-            statuses: statuses as Record<string, string>, // Coerce for dispatch
-            notes: consolidatedNotes,
-            completionTime: new Date().toISOString(),
-          },
-        });
+        dispatch({ type: 'CHECK_COMPLETE', payload });
         
         setCompletingChecks((prev) => {
           const next = new Set(prev);
@@ -116,7 +124,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         type: 'CHECK_SUPPLEMENTAL_ADD',
         payload: {
           roomId: checkData.roomId,
-          statuses: statuses as Record<string, string>, // Coerce for dispatch
+          statuses: statuses as Record<string, string>,
           notes: consolidatedNotes,
         },
       });
@@ -140,7 +148,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       </header>
 
       <main className={styles.formContent}>
-        {/* REFINED: Room name is now an unwrapped header for a cleaner look. */}
         <h2 className={styles.roomHeader}>{checkData.roomName}</h2>
 
         <div className={styles.residentListContainer}>
@@ -165,7 +172,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         </div>
       </main>
 
-      <footer className={styles.footer}>
+      <footer className={styles.footer} ref={footerRef}>
         <Button variant="secondary" size="m" onClick={handleCancel}>
           Cancel
         </Button>

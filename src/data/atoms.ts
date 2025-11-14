@@ -106,6 +106,7 @@ export const isManualCheckModalOpenAtom = atom(false);
 export const isWriteNfcModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
+export const isHistoryModalOpenAtom = atom(false); // New atom for History modal
 
 
 // =================================================================
@@ -119,11 +120,13 @@ interface AppConfig {
   scanMode: 'qr' | 'nfc';
   hapticsEnabled: boolean;
   scheduleViewMode: 'card' | 'list';
+  isSlowLoadEnabled: boolean; // New setting for slow load simulation
 }
 export const appConfigAtom = atom<AppConfig>({
   scanMode: 'qr',
   hapticsEnabled: true,
   scheduleViewMode: 'card',
+  isSlowLoadEnabled: false,
 });
 
 // =================================================================

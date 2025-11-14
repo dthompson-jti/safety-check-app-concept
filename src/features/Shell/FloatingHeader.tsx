@@ -1,9 +1,9 @@
 // src/features/Shell/FloatingHeader.tsx
-import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   appViewAtom,
-  isManualCheckModalOpenAtom,
+  isHistoryModalOpenAtom,
 } from '../../data/atoms';
 import { PillToggle } from '../../components/PillToggle';
 import { Tooltip } from '../../components/Tooltip';
@@ -14,7 +14,7 @@ import styles from './FloatingHeader.module.css';
 
 export const FloatingHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
-  const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
+  const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
 
   const isDashboard = appView === 'dashboardTime' || appView === 'dashboardRoute';
 
@@ -48,15 +48,14 @@ export const FloatingHeader = () => {
         </div>
 
         <div className={styles.rightActions}>
-          <Tooltip content="Add manual check">
-            <Button variant="tertiary" size="m" iconOnly onClick={() => setIsManualCheckModalOpen(true)}>
-              <span className="material-symbols-rounded">add</span>
+          <Tooltip content="View check history">
+            <Button variant="tertiary" size="m" iconOnly onClick={() => setIsHistoryOpen(true)}>
+              <span className="material-symbols-rounded">history</span>
             </Button>
           </Tooltip>
         </div>
       </div>
       
-      {/* DEFINITIVE FIX: Search functionality is removed. StatusOverviewBar is now always visible. */}
       <div className={styles.statusBar}>
         <StatusOverviewBar key="status-bar" />
       </div>

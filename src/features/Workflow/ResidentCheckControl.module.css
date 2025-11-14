@@ -49,7 +49,7 @@
 }
 
 .classificationDetails {
-  /* REMOVED: No more border-top or padding-top. */
+  /* This ruleset is no longer empty */
 }
 
 .classificationDetails p {
@@ -61,4 +61,28 @@
 }
 .classificationDetails p strong {
   color: var(--surface-fg-warning-primary);
+}
+
+.notesInput {
+  font-family: var(--font-family-sans);
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: 6px;
+  font-size: 0.9em;
+  background-color: var(--surface-bg-secondary);
+  color: var(--surface-fg-primary);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.notesInput::placeholder {
+  color: var(--control-fg-placeholder);
+}
+
+.notesInput:focus {
+  border-color: var(--surface-border-theme);
+  box-shadow: 0 0 0 2px var(--control-focus-ring-standard);
 }

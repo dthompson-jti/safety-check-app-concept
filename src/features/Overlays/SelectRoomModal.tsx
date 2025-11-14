@@ -6,7 +6,8 @@ import { safetyChecksAtom } from '../../data/appDataAtoms';
 import { SafetyCheck } from '../../types';
 import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
-import { EmptyStateMessage } from '../../components/EmptyStateMessage';
+// FIX: Import the specialized NoSearchResults component.
+import { NoSearchResults } from '../../components/EmptyStateMessage';
 import styles from './SelectRoomModal.module.css';
 
 export const SelectRoomModal = () => {
@@ -15,12 +16,9 @@ export const SelectRoomModal = () => {
   const allChecks = useAtomValue(safetyChecksAtom);
   const [query, setQuery] = useState('');
 
-  // PRD CHANGE: The list of items is simplified to show unique room locations.
-  // This logic now groups all actionable checks by their location.
   const uniqueActionableChecks = useMemo((): SafetyCheck[] => {
     const roomsMap = new Map<string, SafetyCheck>();
     allChecks.forEach(check => {
-      // Only include actionable checks and only the first one found for a given location
       if (check.status !== 'complete' && check.status !== 'missed' && !roomsMap.has(check.residents[0].location)) {
         roomsMap.set(check.residents[0].location, check);
       }
@@ -51,7 +49,7 @@ export const SelectRoomModal = () => {
       specialClassification: check.specialClassification,
     });
     setIsOpen(false);
-    setQuery(''); // Reset query on close
+    setQuery('');
   };
 
   const handleClose = () => {
@@ -89,7 +87,8 @@ export const SelectRoomModal = () => {
               </button>
             ))
           ) : (
-            <EmptyStateMessage query={query} />
+            // FIX: Use the correct component for displaying the no search results message.
+            <NoSearchResults query={query} />
           )}
         </div>
       </div>

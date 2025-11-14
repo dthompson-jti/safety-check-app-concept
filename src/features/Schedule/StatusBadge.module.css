@@ -5,6 +5,7 @@
   padding: 2px var(--spacing-2);
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-1);
   border-radius: var(--radius-sm);
   font-family: var(--font-family-sans);
   font-size: 12px;
@@ -13,6 +14,11 @@
   line-height: 18px;
   border: 1px solid;
   white-space: nowrap;
+}
+
+.badgeIcon {
+  font-size: 14px !important; /* Override base icon size */
+  font-variation-settings: 'opsz' 14;
 }
 
 /* Variant: Late */
