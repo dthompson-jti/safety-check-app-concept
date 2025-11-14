@@ -6,12 +6,12 @@ import {
   isWriteNfcModalOpenAtom,
   appConfigAtom,
   isStatusOverviewOpenAtom,
+  logoutAtom,
 } from '../../data/atoms';
 import { Switch } from '../../components/Switch';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import styles from './SettingsOverlay.module.css';
 
-// Local component for structuring the settings page
 const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div className={styles.settingsSection}>
     <h3 className={styles.sectionTitle}>{title}</h3>
@@ -19,23 +19,17 @@ const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = 
   </div>
 );
 
-// [MODIFIED] This is moved to DeveloperOverlay
-// const scanModeOptions = [ ... ];
-
 const viewModeOptions = [
   { value: 'card', label: 'Cards', icon: 'dashboard' },
   { value: 'list', label: 'List', icon: 'list' },
 ] as const;
 
 export const SettingsOverlay = () => {
-  const [session, setSession] = useAtom(sessionAtom);
+  const [session] = useAtom(sessionAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [isOverviewOpen, setIsOverviewOpen] = useAtom(isStatusOverviewOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
-
-  const handleLogout = () => {
-    setSession({ isAuthenticated: false, userName: null });
-  };
+  const logout = useSetAtom(logoutAtom);
 
   return (
     <div className={styles.settingsContainer}>
@@ -83,18 +77,16 @@ export const SettingsOverlay = () => {
       </SettingsSection>
 
       <SettingsSection title="Admin tools">
-        {/* [MODIFIED] Terminology updated */}
         <button className={styles.settingsItem} onClick={() => setIsWriteNfcModalOpen(true)}>
           <span className={styles.itemLabel}>Write NFC tag</span>
           <div className={styles.itemValue}>
             <span className="material-symbols-rounded">chevron_right</span>
           </div>
         </button>
-        {/* [MODIFIED] Scan mode toggle has been removed from this view */}
       </SettingsSection>
 
       <SettingsSection title="Session">
-        <button className={`${styles.settingsItem} ${styles.destructive}`} onClick={handleLogout}>
+        <button className={`${styles.settingsItem} ${styles.destructive}`} onClick={logout}>
           Log out
         </button>
       </SettingsSection>

@@ -28,8 +28,13 @@ export const sessionAtom = atom<Session>({
 //                  Context Selection State
 // =================================================================
 
+// When true, forces the user to the selection modal immediately after login.
 export const isContextSelectionRequiredAtom = atom(true);
+
+// When true, opens the selection modal for a user-initiated context switch.
 export const isContextSelectionModalOpenAtom = atom(false);
+
+// Stores the user's selected facility/unit for the session.
 export const selectedFacilityGroupAtom = atom<string | null>(null);
 export const selectedFacilityUnitAtom = atom<string | null>(null);
 
@@ -122,7 +127,7 @@ export const appConfigAtom = atom<AppConfig>({
 });
 
 // =================================================================
-//                       Global Actions (NEW)
+//                       Global Actions
 // =================================================================
 
 /**

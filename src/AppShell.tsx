@@ -94,9 +94,9 @@ export const AppShell = () => {
     setAppView('dashboardTime');
   };
 
-  // BUG FIX: The AppShell now ALWAYS renders its main structure.
-  // The FacilitySelectionModal is rendered as a proper overlay, which
-  // prevents the state bug that caused the menu to be "stuck open".
+  // ARCHITECTURE: The AppShell always renders its main structure. The
+  // FacilitySelectionModal is rendered as a proper overlay, which
+  // prevents state bugs that can occur from unmounting the entire app.
   return (
     <div className={styles.appContainer}>
       <motion.div

@@ -1,5 +1,3 @@
---- START OF FILE README.md ---
-
 # Safety Check App: PWA Prototype
 
 This project is a high-craft prototype for a mobile-first Progressive Web App (PWA) designed for the eSupervision Safety Check workflow. It is built upon a robust foundation of modern web technologies and a professional-grade styling architecture to facilitate rapid design and interaction testing.
@@ -27,16 +25,16 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 ## 3. Prototype Features
 
--   **Simulated Login/Logout:** A complete start-of-shift session workflow, featuring secure, client-side validation for empty fields and a generic, enumeration-resistant error for failed credentials. Includes user assistance affordances and a developer shortcut.
+-   **Simulated Login/Logout:** A complete start-of-shift session workflow. This includes secure, client-side validation, a generic, enumeration-resistant error for failed credentials, and a developer shortcut. After login, the user is presented with a **mandatory, full-screen Facility and Unit selection modal** to establish their operational context before proceeding.
 -   **High-Craft Navigation Model:** The application uses a dual-pattern navigation system.
-    -   **Push Layout (Side Menu):** The main navigation menu uses a "push" animation. When opened, it slides into view from the left, smoothly pushing the entire main application view to the right. Its contents are built from a consistent, token-driven `MenuItem` component, and it features a distinct, card-styled user profile area in the footer.
+    -   **Push Layout (Side Menu):** The main navigation menu uses a "push" animation. It features a prominent, card-styled **Context Switcher** at the top, which displays the user's current Facility/Unit and allows them to change it. Its contents are built from a consistent, token-driven `MenuItem` component, and it features a distinct, card-styled user profile area in the footer.
     -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted and Route-Sorted Schedules) exist on a horizontal "film strip." Switching between them uses a sliding panel animation. This is all contained within a persistent application shell (header and footer) that provides global actions and view controls.
 -   **Dynamic Check Schedule:** A performant list of checks with live timers and two sorting modes (Time and Route). The list features a high-craft, multi-stage completion animation that provides clear user feedback while guaranteeing the stability of all other on-screen elements, preventing jarring layout shifts.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes. This includes a "pre-scan alert" to notify caregivers of critical resident information *before* a scan is completed.
 -   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature and a visually distinct UI for residents with special classifications.
 -   **Sophisticated Modal System:** The app employs a multi-tiered modal strategy to optimize user experience.
-    -   **Full-Screen Modals:** Used for immersive, high-content views like the History and Settings overlays.
-    -   **Bottom Sheet Modals:** A mobile-first pattern used for contextual actions like initiating a Supplemental Check, writing an NFC tag, or performing a Manual Check Selection, preserving context and improving ergonomics.
+    -   **Full-Screen Modals:** Used for immersive, high-content views like the History and Settings overlays, as well as for critical, blocking workflows like the initial **Facility/Unit Selection** modal.
+    -   **Bottom Sheet Modals:** A mobile-first pattern used for contextual actions like initiating a Manual Check, writing an NFC tag, or performing a Manual Check Selection, preserving context and improving ergonomics.
 -   **Semantic Haptic Feedback:** A centralized system provides tactile feedback for key actions and state changes (e.g., success on save, warnings for late items), enhancing user awareness on mobile devices.
 -   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete, high-feedback UI simulation for provisioning room NFC tags.
 -   **Simulated Connection Status:** A developer toggle in the settings allows for simulating 'Online' and 'Offline' states to test the UI's responsiveness.
