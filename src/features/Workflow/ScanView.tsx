@@ -37,12 +37,14 @@ export const ScanView = () => {
 
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       const targetCheck = allChecks.find(c => c.id === workflow.targetCheckId);
-      if (targetCheck?.specialClassification) {
-        const resident = mockResidents.find(r => r.id === targetCheck.specialClassification!.residentId);
+      // DEFINITIVE FIX: Use the first item from the `specialClassifications` array for the alert.
+      const firstClassification = targetCheck?.specialClassifications?.[0];
+      if (firstClassification) {
+        const resident = mockResidents.find(r => r.id === firstClassification.residentId);
         if (resident) {
           setPreScanAlert({
             residentName: resident.name,
-            classificationType: targetCheck.specialClassification.type,
+            classificationType: firstClassification.type,
           });
         }
       }
@@ -79,7 +81,8 @@ export const ScanView = () => {
             checkId: check.id,
             roomName: check.residents[0].location,
             residents: check.residents,
-            specialClassification: check.specialClassification,
+            // DEFINITIVE FIX: Pass the correct `specialClassifications` array property.
+            specialClassifications: check.specialClassifications,
           });
         }, 800);
       } else {
@@ -96,8 +99,6 @@ export const ScanView = () => {
   const handleClose = () => setWorkflow({ view: 'none' });
 
   const handleOpenManualSelection = () => {
-    // ARCHITECTURE: This action sets a global atom to open the consolidated
-    // manual selection modal, centralizing control of this UI element.
     setIsManualCheckModalOpen(true);
   };
 

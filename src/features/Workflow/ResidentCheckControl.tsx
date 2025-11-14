@@ -1,8 +1,8 @@
 // src/features/Workflow/ResidentCheckControl.tsx
 import { useRef } from 'react';
-import { Resident, SafetyCheck } from '../../types';
+// DEFINITIVE FIX: Import SpecialClassification type for decoupled props.
+import { Resident, SpecialClassification } from '../../types';
 import { SegmentedControl } from '../../components/SegmentedControl';
-// RE-ROUTED: Import path is updated to the new location.
 import { useAutosizeTextArea } from '../../data/useAutosizeTextArea';
 import styles from './ResidentCheckControl.module.css';
 
@@ -20,7 +20,11 @@ interface ResidentCheckControlProps {
   notes: string;
   onStatusChange: (residentId: string, status: StatusValue) => void;
   onNotesChange: (residentId: string, notes: string) => void;
-  classification?: SafetyCheck['specialClassification'];
+  /**
+   * DEFINITIVE FIX: The `classification` prop is now explicitly typed as `SpecialClassification`.
+   * This decouples the component from the `SafetyCheck` type and makes it more reusable.
+   */
+  classification?: SpecialClassification;
 }
 
 export const ResidentCheckControl = ({

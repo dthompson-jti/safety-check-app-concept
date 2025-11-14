@@ -6,7 +6,7 @@ export const mockResidents: Resident[] = [
   //           Facility Group: Juvenile Detention Center
   // =================================================================
   
-  // --- Unit: A-Wing (High-Detail: 18 residents) ---
+  // --- Unit: A-Wing ---
   { id: 'jdc_a1_1', name: 'Marcus Holloway', location: 'A1-101' },
   { id: 'jdc_a1_2', name: 'Kayla Rodriguez', location: 'A1-102' },
   { id: 'jdc_a1_3', name: 'David Chen', location: 'A1-102' },
@@ -26,12 +26,12 @@ export const mockResidents: Resident[] = [
   { id: 'jdc_a6_4', name: 'Emily White', location: 'A6-604' },
   { id: 'jdc_a6_5', name: 'Ryan Scott', location: 'A6-604' },
 
-  // --- Unit: B-Wing (Low-Detail: 3 residents) ---
+  // --- Unit: B-Wing ---
   { id: 'jdc_b1_1', name: 'Olivia Jones', location: 'B1-101' },
   { id: 'jdc_b1_2', name: 'Noah Brown', location: 'B1-102' },
   { id: 'jdc_b2_1', name: 'Ava Johnson', location: 'B2-201' },
   
-  // --- Unit: C-Wing (Low-Detail: 2 residents) ---
+  // --- Unit: C-Wing ---
   { id: 'jdc_c1_1', name: 'Mason Davis', location: 'C1-101' },
   { id: 'jdc_c1_2', name: 'Isabella Wilson', location: 'C1-102' },
 

@@ -1,22 +1,19 @@
 // src/features/Overlays/ManualSelectionView.tsx
 import { useState, useMemo } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
 import { Drawer } from 'vaul';
 import { safetyChecksAtom } from '../../data/appDataAtoms';
-import { workflowStateAtom } from '../../data/atoms';
+import { workflowStateAtom, isManualCheckModalOpenAtom } from '../../data/atoms';
 import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
 import { NoSearchResults } from '../../components/EmptyStateMessage';
 import { SafetyCheck } from '../../types';
 import styles from './ManualSelectionView.module.css';
 
-interface ManualSelectionViewProps {
-  isOpen: boolean;
-}
-
-export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
-  const [workflow, setWorkflow] = useAtom(workflowStateAtom);
+export const ManualSelectionView = () => {
+  const [isOpen, setIsOpen] = useAtom(isManualCheckModalOpenAtom);
+  const setWorkflow = useSetAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -37,11 +34,9 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
   }, [incompleteChecks, searchQuery]);
 
   const handleClose = () => {
-    if (workflow.view === 'scanning') {
-      setWorkflow({ ...workflow, isManualSelectionOpen: false });
-      // Delay reset to allow animation to finish
-      setTimeout(() => setSearchQuery(''), 300);
-    }
+    setIsOpen(false);
+    // Delay reset to allow animation to finish
+    setTimeout(() => setSearchQuery(''), 300);
   };
 
   const handleSelectCheck = (check: SafetyCheck) => {
@@ -51,8 +46,10 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
       checkId: check.id,
       roomName: check.residents[0].location,
       residents: check.residents,
-      specialClassification: check.specialClassification,
+      // DEFINITIVE FIX: Pass the correct `specialClassifications` array property.
+      specialClassifications: check.specialClassifications,
     });
+    handleClose(); // Close the modal after selection
   };
 
   return (
@@ -81,7 +78,8 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
               itemContent={(_index, check) => (
                 <button className="menu-item" onClick={() => handleSelectCheck(check)}>
                   <div className="checkmark-container">
-                    {check.specialClassification ? (
+                    {/* DEFINITIVE FIX: Check if the array exists and has items. */}
+                    {check.specialClassifications && check.specialClassifications.length > 0 ? (
                       <span className={`material-symbols-rounded ${styles.warningIcon}`}>warning</span>
                     ) : (
                       <></>

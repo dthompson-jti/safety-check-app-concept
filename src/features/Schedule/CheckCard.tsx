@@ -17,7 +17,11 @@ interface CheckCardProps {
 }
 
 const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
-  const isClassified = check.specialClassification?.residentId === resident.id;
+  // DEFINITIVE FIX: Check if this resident's ID exists in the `specialClassifications` array.
+  // This correctly handles multiple classifications within a single check.
+  const isClassified = check.specialClassifications?.some(
+    (sc) => sc.residentId === resident.id
+  );
 
   return (
     <li className={styles.residentListItem}>
@@ -52,7 +56,8 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
         checkId: check.id,
         roomName: check.residents[0].location,
         residents: check.residents,
-        specialClassification: check.specialClassification,
+        // DEFINITIVE FIX: Pass the entire `specialClassifications` array.
+        specialClassifications: check.specialClassifications,
       });
     }
   };

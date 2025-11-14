@@ -73,7 +73,7 @@ export const FacilitySelectionModal = () => {
     <FullScreenModal isOpen={isOpen} onClose={handleClose} title="Select Unit">
       <div className={styles.content}>
         <p className={styles.instructions}>
-          Select your facility group and unit to establish your operational context.
+          Select your facility group and unit.
         </p>
         <div className={styles.formGroup}>
           <label htmlFor="facility-group">Facility Group</label>

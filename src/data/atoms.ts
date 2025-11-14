@@ -1,6 +1,6 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
-import { Resident, SafetyCheck } from '../types';
+import { Resident, SafetyCheck, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
 
 // =================================================================
 //                         App State
@@ -57,7 +57,6 @@ export const completingChecksAtom = atom(new Set<string>());
 export const isScheduleSearchActiveAtom = atom(false);
 export const scheduleSearchQueryAtom = atom('');
 export const isScheduleLoadingAtom = atom(true);
-export type ScheduleFilter = 'all' | 'late' | 'due-soon' | 'queued';
 export const scheduleFilterAtom = atom<ScheduleFilter>('all');
 export const isScheduleRefreshingAtom = atom(false);
 
@@ -66,7 +65,6 @@ export const isScheduleRefreshingAtom = atom(false);
 //                       History View State
 // =================================================================
 
-export type HistoryFilter = 'all' | 'lateOrMissed' | 'supplemental';
 export const historyFilterAtom = atom<HistoryFilter>('all');
 
 
@@ -87,7 +85,11 @@ export type WorkflowState =
       checkId: string;
       roomName: string;
       residents: Resident[];
-      specialClassification?: SafetyCheck['specialClassification'];
+      /**
+       * DEFINITIVE FIX: Renamed from `specialClassification` to `specialClassifications`
+       * to match the updated `SafetyCheck` type in `types.ts`.
+       */
+      specialClassifications?: SpecialClassification[];
     }
   | {
       view: 'form';
@@ -108,7 +110,6 @@ export const isManualCheckModalOpenAtom = atom(false);
 export const isWriteNfcModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
-// REMOVED: isHistoryModalOpenAtom is no longer used.
 
 
 // =================================================================

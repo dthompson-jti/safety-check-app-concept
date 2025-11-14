@@ -18,7 +18,7 @@ import { OfflineBanner } from './features/Shell/OfflineBanner';
 import { ScanView } from './features/Workflow/ScanView';
 import { CheckFormView } from './features/Workflow/CheckFormView';
 import { WriteNfcTagModal } from './features/Overlays/WriteNfcTagModal';
-import { ManualCheckSelectionModal } from './features/Overlays/ManualCheckSelectionModal';
+import { ManualSelectionView } from './features/Overlays/ManualSelectionView';
 import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
 import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
@@ -80,7 +80,7 @@ export const AppShell = () => {
   }, []);
 
   useEffect(() => {
-    if (workflowState.view === 'form' && workflowState.residents && workflowState.residents.length > 0) {
+    if (workflowState.view === 'form' && 'residents' in workflowState && workflowState.residents.length > 0) {
       document.title = `Safety Check - ${workflowState.residents[0].location}`;
     } else {
       document.title = 'Safety Check App';
@@ -94,9 +94,6 @@ export const AppShell = () => {
     setAppView('dashboardTime');
   };
 
-  // ARCHITECTURE: The AppShell always renders its main structure. The
-  // FacilitySelectionModal is rendered as a proper overlay, which
-  // prevents state bugs that can occur from unmounting the entire app.
   return (
     <div className={styles.appContainer}>
       <motion.div
@@ -146,7 +143,7 @@ export const AppShell = () => {
       
       <FacilitySelectionModal />
       <WriteNfcTagModal />
-      <ManualCheckSelectionModal />
+      <ManualSelectionView />
       
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
         <SettingsOverlay />

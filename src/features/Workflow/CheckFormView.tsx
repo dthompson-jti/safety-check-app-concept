@@ -43,10 +43,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
-  // ARCHITECTURE: Implements the "Component Variable Contract" for the footer.
-  // This measures the footer's actual height and sets a CSS variable, allowing
-  // the scrollable content area to add the perfect amount of padding to prevent
-  // its content from being obscured.
   useLayoutEffect(() => {
     const footer = footerRef.current;
     if (footer) {
@@ -58,17 +54,12 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     };
   }, []);
 
-  // ARCHITECTURE: A robust implementation of a scroll affordance (footer shadow).
-  // It uses a ResizeObserver to detect when content becomes scrollable (e.g.,
-  // on initial render or when a keyboard appears) and an onScroll listener to
-  // update the shadow's visibility as the user scrolls.
   useLayoutEffect(() => {
     const contentElement = contentRef.current;
     if (!contentElement) return;
 
     const checkShadowState = () => {
       const { scrollTop, scrollHeight, clientHeight } = contentElement;
-      // The shadow is visible if the content is scrollable AND not at the bottom.
       const isAtBottom = scrollHeight - scrollTop <= clientHeight + 1;
       const isScrollable = scrollHeight > clientHeight;
       
@@ -79,7 +70,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     observer.observe(contentElement);
     contentElement.addEventListener('scroll', checkShadowState, { passive: true });
 
-    checkShadowState(); // Initial check on mount
+    checkShadowState();
 
     return () => {
       observer.disconnect();
@@ -187,9 +178,11 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
         <div className={styles.residentListContainer}>
           {checkData.residents.map((resident) => {
+            // DEFINITIVE FIX: Use the `find` method on the `specialClassifications` array
+            // to locate the correct classification object for this specific resident.
             const classification =
-              checkData.type === 'scheduled' && checkData.specialClassification?.residentId === resident.id
-                ? checkData.specialClassification
+              checkData.type === 'scheduled'
+                ? checkData.specialClassifications?.find(sc => sc.residentId === resident.id)
                 : undefined;
             
             return (
