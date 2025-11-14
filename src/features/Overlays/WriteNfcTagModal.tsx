@@ -6,40 +6,47 @@ import { isWriteNfcModalOpenAtom } from '../../data/atoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { mockResidents } from '../../data/mock/residentData';
 import { BottomSheet } from '../../components/BottomSheet';
-import { Select, SelectItem } from '../../components/Select';
 import { Button } from '../../components/Button';
+import { SearchInput } from '../../components/SearchInput';
+import { ListItem } from '../../components/ListItem';
+import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import styles from './WriteNfcTagModal.module.css';
-import { Resident } from '../../types';
 
 type ModalState = 'initial' | 'writing' | 'success' | 'error';
+type LocationInfo = { id: string; name: string };
 
 export const WriteNfcTagModal = () => {
   const [isOpen, setIsOpen] = useAtom(isWriteNfcModalOpenAtom);
   const addToast = useSetAtom(addToastAtom);
+
   const [modalState, setModalState] = useState<ModalState>('initial');
   const [selectedRoomId, setSelectedRoomId] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const uniqueLocations = useMemo((): Resident[] => {
-    // FIX: Provide an explicit generic type to the initial value of the reduce function.
-    // This ensures TypeScript correctly infers the accumulator's type and prevents
-    // the result from degrading to `any`.
+  const uniqueLocations = useMemo((): LocationInfo[] => {
     const locationsMap = mockResidents.reduce((acc, resident) => {
       if (!acc.has(resident.location)) {
-        acc.set(resident.location, resident);
+        acc.set(resident.location, { id: resident.id, name: resident.location });
       }
       return acc;
-    }, new Map<string, Resident>());
-    
-    return Array.from(locationsMap.values()).sort((a, b) => 
-      a.location.localeCompare(b.location)
-    );
+    }, new Map<string, LocationInfo>());
+
+    return Array.from(locationsMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, []);
+
+  const filteredLocations = useMemo(() => {
+    if (!searchQuery) return uniqueLocations;
+    return uniqueLocations.filter(loc =>
+      loc.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [uniqueLocations, searchQuery]);
 
   const resetAndClose = () => {
     setIsOpen(false);
     setTimeout(() => {
       setModalState('initial');
       setSelectedRoomId('');
+      setSearchQuery('');
     }, 300);
   };
 
@@ -87,60 +94,65 @@ export const WriteNfcTagModal = () => {
     }
   };
 
+  const renderInitialContent = () => (
+    <>
+      <div className={styles.searchContainer}>
+        <SearchInput
+          variant="standalone"
+          placeholder="Search for a room..."
+          value={searchQuery}
+          onChange={setSearchQuery}
+          autoFocus
+        />
+      </div>
+      <div className={styles.listContainer}>
+        {filteredLocations.length > 0 ? (
+          filteredLocations.map(location => (
+            <ListItem
+              key={location.id}
+              title={location.name}
+              onClick={() => setSelectedRoomId(location.id)}
+              isActive={selectedRoomId === location.id}
+            />
+          ))
+        ) : (
+          <EmptyStateMessage title={`No rooms found for "${searchQuery}"`} />
+        )}
+      </div>
+    </>
+  );
+
   return (
     <BottomSheet isOpen={isOpen} onClose={modalState === 'writing' ? () => {} : resetAndClose}>
-      <div className={styles.headerContent}>
-        <Drawer.Title asChild>
-          <h2>Provision NFC tag</h2>
-        </Drawer.Title>
-        {modalState !== 'writing' && (
-          <Button variant="quaternary" size="s" iconOnly onClick={resetAndClose} aria-label="Close">
-            <span className="material-symbols-rounded">close</span>
-          </Button>
-        )}
-      </div>
-      <div className={styles.body}>
-        <Drawer.Description asChild>
-          <p className={styles.helperText}>
-            Select a room to prepare its corresponding NFC tag.
-          </p>
-        </Drawer.Description>
-        <div className={styles.formGroup}>
-          <label htmlFor="room-select">Select a room</label>
-          <Select
-            value={selectedRoomId}
-            onValueChange={setSelectedRoomId}
-            placeholder="Choose a resident location..."
-          >
-            {/* This mapping is now fully type-safe */}
-            {uniqueLocations.map((resident) => (
-              <SelectItem key={resident.id} value={resident.id}>
-                {resident.location}
-              </SelectItem>
-            ))}
-          </Select>
+      <div className={styles.contentWrapper}>
+        <div className={styles.headerContent}>
+          <Drawer.Title asChild>
+            <h2>Provision NFC tag</h2>
+          </Drawer.Title>
         </div>
-        {modalState !== 'initial' && renderAnimationArea()}
-      </div>
-      <div className={styles.footerContent}>
-        {modalState === 'initial' ? (
-          <>
-            <Button variant="secondary" size="m" onClick={resetAndClose}>
-              Cancel
+
+        {modalState === 'initial' ? renderInitialContent() : renderAnimationArea()}
+
+        <div className={styles.footerContent}>
+          {modalState === 'initial' ? (
+            <>
+              <Button variant="secondary" size="m" onClick={resetAndClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" size="m" onClick={handleWriteTag} disabled={!selectedRoomId}>
+                Write tag
+              </Button>
+            </>
+          ) : modalState === 'success' || modalState === 'error' ? (
+            <Button variant="primary" size="m" onClick={resetAndClose}>
+              Done
             </Button>
-            <Button variant="primary" size="m" onClick={handleWriteTag} disabled={!selectedRoomId}>
-              Write tag
+          ) : (
+            <Button variant="secondary" size="m" disabled>
+              Writing...
             </Button>
-          </>
-        ) : modalState === 'success' || modalState === 'error' ? (
-          <Button variant="primary" size="m" onClick={resetAndClose}>
-            Done
-          </Button>
-        ) : (
-          <Button variant="secondary" size="m" disabled>
-            Writing...
-          </Button>
-        )}
+          )}
+        </div>
       </div>
     </BottomSheet>
   );

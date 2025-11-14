@@ -21,7 +21,6 @@
   letter-spacing: 0.05em;
   padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--surface-border-secondary);
-  text-transform: uppercase;
 }
 
 .sectionHelper {

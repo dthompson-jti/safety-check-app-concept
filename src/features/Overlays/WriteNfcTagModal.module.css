@@ -1,11 +1,15 @@
 /* src/features/Overlays/WriteNfcTagModal.module.css */
 
-.headerContent {
+.contentWrapper {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: var(--spacing-4);
+  flex-direction: column;
+  height: 65vh;
+  max-height: 700px;
+}
+
+.headerContent {
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  flex-shrink: 0;
 }
 
 .headerContent h2 {
@@ -15,31 +19,18 @@
   color: var(--surface-fg-primary);
 }
 
-.body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-6);
-  min-height: 200px; /* Give the animation area some space */
+.searchContainer {
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  flex-shrink: 0;
 }
 
-.helperText {
-  margin: 0;
-  color: var(--surface-fg-secondary);
-  line-height: 1.5;
-}
-
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-}
-
-.formGroup label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--surface-fg-secondary);
+.listContainer {
+  flex-grow: 1;
+  min-height: 0;
+  border-top: 1px solid var(--surface-border-secondary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  overflow-y: auto;
+  margin: 0 calc(-1 * var(--spacing-4)); /* Bleed to edges */
 }
 
 .animationContainer {
@@ -50,10 +41,8 @@
   justify-content: center;
   gap: var(--spacing-4);
   padding: var(--spacing-8) var(--spacing-4);
-  background-color: var(--surface-bg-secondary);
-  border: 1px solid var(--surface-border-secondary);
-  border-radius: var(--spacing-2);
   text-align: center;
+  min-height: 250px; /* Ensure it has height */
 }
 
 .animationContainer p {
@@ -90,6 +79,9 @@
   width: 100%;
   display: flex;
   gap: var(--spacing-2);
+  margin-top: auto; /* Push to bottom */
+  padding-top: var(--spacing-4);
+  flex-shrink: 0;
 }
 
 .footerContent > button {

@@ -10,6 +10,8 @@ import {
   scheduleFilterAtom,
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
+  manualSearchQueryAtom,
+  isGlobalSearchActiveAtom,
 } from './atoms';
 import { initialChecks } from './mock/checkData';
 import { mockResidents } from './mock/residentData';
@@ -164,7 +166,9 @@ const contextFilteredChecksAtom = atom((get) => {
         return [];
     }
 
-    return allChecks.filter(check => {
+    const incompleteChecks = allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental');
+
+    return incompleteChecks.filter(check => {
         if (!check.residents[0]) return false;
         const location = check.residents[0].location;
         const context = getFacilityContextForLocation(location);
@@ -255,6 +259,54 @@ export const statusCountsAtom = atom((get) => {
   }
   return counts;
 });
+
+// =================================================================
+//           Derived Atoms for Manual Selection View
+// =================================================================
+const filterChecksByQuery = (checks: SafetyCheck[], query: string) => {
+  if (!query) return checks;
+  const lowerCaseQuery = query.toLowerCase();
+  return checks.filter(c =>
+    c.residents.some(
+      r =>
+        r.name.toLowerCase().includes(lowerCaseQuery) ||
+        r.location.toLowerCase().includes(lowerCaseQuery)
+    )
+  );
+};
+
+export const contextualManualSearchResultsAtom = atom((get) => {
+  const query = get(manualSearchQueryAtom);
+  const contextualChecks = get(contextFilteredChecksAtom);
+  return filterChecksByQuery(contextualChecks, query);
+});
+
+export const globalManualSearchResultsAtom = atom((get) => {
+  const query = get(manualSearchQueryAtom);
+  const allChecks = get(safetyChecksAtom);
+  const incompleteChecks = allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental');
+  const results = filterChecksByQuery(incompleteChecks, query);
+  return { results, count: results.length };
+});
+
+export const manualSelectionResultsAtom = atom((get) => {
+  const query = get(manualSearchQueryAtom);
+  if (!query) {
+    return get(contextFilteredChecksAtom);
+  }
+
+  const contextualResults = get(contextualManualSearchResultsAtom);
+  if (contextualResults.length > 0) {
+    return contextualResults;
+  }
+
+  if (get(isGlobalSearchActiveAtom)) {
+    return get(globalManualSearchResultsAtom).results;
+  }
+  
+  return []; // Return empty if contextual search fails and global isn't active
+});
+
 
 // =================================================================
 //                Derived Atoms for History View

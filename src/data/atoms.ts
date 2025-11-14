@@ -1,6 +1,7 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
-import { Resident, SafetyCheck, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
+// DEFINITIVE FIX: Removed unused 'SafetyCheck' import to resolve ESLint warning.
+import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
 
 // =================================================================
 //                         App State
@@ -85,10 +86,6 @@ export type WorkflowState =
       checkId: string;
       roomName: string;
       residents: Resident[];
-      /**
-       * DEFINITIVE FIX: Renamed from `specialClassification` to `specialClassifications`
-       * to match the updated `SafetyCheck` type in `types.ts`.
-       */
       specialClassifications?: SpecialClassification[];
     }
   | {
@@ -110,6 +107,10 @@ export const isManualCheckModalOpenAtom = atom(false);
 export const isWriteNfcModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
+
+// State for the Manual Selection "Progressive Discovery" search feature
+export const manualSearchQueryAtom = atom('');
+export const isGlobalSearchActiveAtom = atom(false);
 
 
 // =================================================================

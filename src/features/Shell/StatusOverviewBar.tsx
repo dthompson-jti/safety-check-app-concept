@@ -3,15 +3,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { statusCountsAtom } from '../../data/appDataAtoms';
+// DEFINITIVE FIX: Import the `ScheduleFilter` type from its source of truth, `types.ts`.
+import type { ScheduleFilter } from '../../types';
 import {
   connectionStatusAtom,
   scheduleFilterAtom,
-  ScheduleFilter,
   isScheduleRefreshingAtom,
 } from '../../data/atoms';
 import styles from './StatusOverviewBar.module.css';
 
-// FIX: Align StatusType with ScheduleFilter values, excluding 'all'
+// This type correctly excludes 'all' from the possible statuses for a pill.
 type StatusType = Exclude<ScheduleFilter, 'all'>;
 
 const usePrevious = <T,>(value: T): T | undefined => {
@@ -43,6 +44,7 @@ const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, filter, on
   }, [count, prevCount]);
 
   const handleClick = () => {
+    // This logic is type-safe because `status` is a valid ScheduleFilter, and so is 'all'.
     onFilterChange(filter === status ? 'all' : status);
   };
 
@@ -83,7 +85,6 @@ export const StatusOverviewBar = () => {
     >
       <div className={styles.contentContainer}>
         <StatusPill count={counts.late} icon="notifications" status="late" filter={filter} onFilterChange={handleFilterChange} />
-        {/* FIX: Corrected "dueSoon" to "due-soon" to match the ScheduleFilter type */}
         <StatusPill count={counts.dueSoon} icon="schedule" status="due-soon" filter={filter} onFilterChange={handleFilterChange} />
         {isOffline && <StatusPill count={counts.queued} icon="cloud_off" status="queued" filter={filter} onFilterChange={handleFilterChange} />}
       </div>

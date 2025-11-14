@@ -1,43 +1,49 @@
 // src/features/Overlays/ManualSelectionView.tsx
-import { useState, useMemo } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
 import { Drawer } from 'vaul';
-import { safetyChecksAtom } from '../../data/appDataAtoms';
-import { workflowStateAtom, isManualCheckModalOpenAtom } from '../../data/atoms';
+import {
+  manualSelectionResultsAtom,
+  contextualManualSearchResultsAtom,
+  globalManualSearchResultsAtom,
+} from '../../data/appDataAtoms';
+import {
+  workflowStateAtom,
+  isManualCheckModalOpenAtom,
+  manualSearchQueryAtom,
+  isGlobalSearchActiveAtom,
+} from '../../data/atoms';
 import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
-import { NoSearchResults } from '../../components/EmptyStateMessage';
+import { EmptyStateMessage } from '../../components/EmptyStateMessage';
+import { Button } from '../../components/Button';
+import { ListItem } from '../../components/ListItem';
 import { SafetyCheck } from '../../types';
 import styles from './ManualSelectionView.module.css';
 
 export const ManualSelectionView = () => {
   const [isOpen, setIsOpen] = useAtom(isManualCheckModalOpenAtom);
+  const [searchQuery, setSearchQuery] = useAtom(manualSearchQueryAtom);
+  const [isGlobalSearchActive, setIsGlobalSearchActive] = useAtom(isGlobalSearchActiveAtom);
+
   const setWorkflow = useSetAtom(workflowStateAtom);
-  const allChecks = useAtomValue(safetyChecksAtom);
-  const [searchQuery, setSearchQuery] = useState('');
 
-  const incompleteChecks = useMemo(() => {
-    return allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental');
-  }, [allChecks]);
+  const filteredChecks = useAtomValue(manualSelectionResultsAtom);
+  const contextualResults = useAtomValue(contextualManualSearchResultsAtom);
+  const { count: globalResultsCount } = useAtomValue(globalManualSearchResultsAtom);
 
-  const filteredChecks = useMemo(() => {
-    if (!searchQuery) return incompleteChecks;
-    const lowerCaseQuery = searchQuery.toLowerCase();
-    return incompleteChecks.filter(c =>
-      c.residents.some(
-        r =>
-          r.name.toLowerCase().includes(lowerCaseQuery) ||
-          r.location.toLowerCase().includes(lowerCaseQuery)
-      )
-    );
-  }, [incompleteChecks, searchQuery]);
-
-  const handleClose = () => {
-    setIsOpen(false);
-    // Delay reset to allow animation to finish
-    setTimeout(() => setSearchQuery(''), 300);
-  };
+  // Effect to reset search state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Delay reset to allow animation to finish
+      const timer = setTimeout(() => {
+        setSearchQuery('');
+        setIsGlobalSearchActive(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, setSearchQuery, setIsGlobalSearchActive]);
 
   const handleSelectCheck = (check: SafetyCheck) => {
     setWorkflow({
@@ -46,14 +52,19 @@ export const ManualSelectionView = () => {
       checkId: check.id,
       roomName: check.residents[0].location,
       residents: check.residents,
-      // DEFINITIVE FIX: Pass the correct `specialClassifications` array property.
       specialClassifications: check.specialClassifications,
     });
-    handleClose(); // Close the modal after selection
+    setIsOpen(false);
   };
 
+  const showProgressiveDiscovery =
+    searchQuery &&
+    contextualResults.length === 0 &&
+    globalResultsCount > 0 &&
+    !isGlobalSearchActive;
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={handleClose}>
+    <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <div className={styles.contentWrapper}>
         <div className={styles.headerContent}>
           <Drawer.Title asChild>
@@ -71,24 +82,39 @@ export const ManualSelectionView = () => {
         </div>
         <div className={styles.listContainer}>
           {filteredChecks.length === 0 && searchQuery ? (
-            <NoSearchResults query={searchQuery} />
+            <EmptyStateMessage
+              title={
+                showProgressiveDiscovery
+                  ? `No results for "${searchQuery}" in this unit`
+                  : 'No Results Found'
+              }
+              action={
+                showProgressiveDiscovery ? (
+                  <Button
+                    variant="tertiary"
+                    onClick={() => setIsGlobalSearchActive(true)}
+                  >
+                    {/* DEFINITIVE FIX: The icon is now passed as a child span, not a prop, to align with the Button component's architecture. */}
+                    <span className="material-symbols-rounded">search</span>
+                    Show {globalResultsCount} result{globalResultsCount > 1 ? 's' : ''} in all other units
+                  </Button>
+                ) : undefined
+              }
+            />
           ) : (
             <Virtuoso
               data={filteredChecks}
               itemContent={(_index, check) => (
-                <button className="menu-item" onClick={() => handleSelectCheck(check)}>
-                  <div className="checkmark-container">
-                    {/* DEFINITIVE FIX: Check if the array exists and has items. */}
-                    {check.specialClassifications && check.specialClassifications.length > 0 ? (
-                      <span className={`material-symbols-rounded ${styles.warningIcon}`}>warning</span>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                  <span className={styles.checkItemText}>
-                    {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
-                  </span>
-                </button>
+                <ListItem
+                  onClick={() => handleSelectCheck(check)}
+                  title={check.residents[0].location}
+                  subtitle={check.residents.map(r => r.name).join(', ')}
+                  icon={
+                    check.specialClassifications && check.specialClassifications.length > 0
+                      ? 'warning'
+                      : undefined
+                  }
+                />
               )}
             />
           )}

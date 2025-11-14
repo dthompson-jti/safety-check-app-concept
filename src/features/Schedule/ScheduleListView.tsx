@@ -15,7 +15,8 @@ import { SafetyCheck, ScheduleFilter } from '../../types';
 import { CheckCard } from './CheckCard';
 import { CheckListItem } from './CheckListItem';
 import { CheckSkeleton } from '../../components/CheckSkeleton';
-import { NoSearchResults } from '../../components/EmptyStateMessage';
+// DEFINITIVE FIX: Import `EmptyStateMessage` instead of the removed `NoSearchResults`.
+import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
 import styles from './ScheduleLayouts.module.css';
@@ -114,7 +115,8 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
     }
 
     if (checks.length === 0) {
-      if (searchQuery) return <NoSearchResults query={searchQuery} />;
+      // DEFINITIVE FIX: Use the new `EmptyStateMessage` component for search results.
+      if (searchQuery) return <EmptyStateMessage title="No Results Found" message={`Your search for "${searchQuery}" did not return any results.`} />;
       if (isFilterActive) return <FilteredEmptyState filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />;
     }
     

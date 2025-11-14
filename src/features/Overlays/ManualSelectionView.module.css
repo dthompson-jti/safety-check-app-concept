@@ -30,21 +30,8 @@
   border-top: 1px solid var(--surface-border-secondary);
 }
 
-/* 
-  The component now uses the global `.menu-item` class from `menu.css`.
-  This global class handles padding, hover/active states, flex layout,
-  and correctly scopes hover effects to mouse-based devices.
-  Only component-specific overrides or extensions are needed here.
+/*
+  All custom item styling has been removed.
+  The new <ListItem> component is now the single source of truth for
+  list item appearance and interaction, ensuring consistency.
 */
-
-.checkItemText {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.warningIcon {
-  color: var(--surface-fg-secondary);
-  font-variation-settings: 'FILL' 1;
-  font-size: 20px;
-}
