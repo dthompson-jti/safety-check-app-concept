@@ -10,9 +10,11 @@ interface ToastMessageProps {
   icon: string;
 }
 
-// DEFINITIVE FIX: This component is now a self-contained, animated toast instance.
-// It correctly wraps Radix's Root component with Framer Motion for animations.
-// The animation is now a 'tween' to align with the project's new animation principle.
+/**
+ * A self-contained, animated toast instance. It wraps Radix's Root component
+ * with Framer Motion to handle animations, adhering to the project's canonical
+ * 'tween' animation principle for a consistent, high-craft feel.
+ */
 export const ToastMessage = ({ id, message, icon }: ToastMessageProps) => {
   const removeToast = useSetAtom(removeToastAtom);
 

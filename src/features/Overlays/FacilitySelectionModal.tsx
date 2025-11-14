@@ -8,7 +8,7 @@ import {
   selectedFacilityUnitAtom,
   logoutAtom,
   appViewAtom,
-  isScheduleLoadingAtom, // Import the loading atom
+  isScheduleLoadingAtom,
 } from '../../data/atoms';
 import { FullScreenModal } from '../../components/FullScreenModal';
 import { Button } from '../../components/Button';
@@ -28,7 +28,7 @@ export const FacilitySelectionModal = () => {
   const [selectedUnit, setSelectedUnit] = useAtom(selectedFacilityUnitAtom);
   const logout = useSetAtom(logoutAtom);
   const setAppView = useSetAtom(appViewAtom);
-  const setIsScheduleLoading = useSetAtom(isScheduleLoadingAtom); // Get the setter for the loading state
+  const setIsScheduleLoading = useSetAtom(isScheduleLoadingAtom);
 
   const [localGroup, setLocalGroup] = useState(selectedGroup || '');
   const [localUnit, setLocalUnit] = useState(selectedUnit || '');
@@ -49,8 +49,8 @@ export const FacilitySelectionModal = () => {
   };
 
   const handleContinue = () => {
-    // FIX: Trigger the loading state for the schedule view.
-    // This provides immediate feedback to the user that data is being refreshed.
+    // If the context has changed, trigger the loading state for the schedule
+    // view to provide immediate user feedback that data is being refreshed.
     if (selectedGroup !== localGroup || selectedUnit !== localUnit) {
       setIsScheduleLoading(true);
     }

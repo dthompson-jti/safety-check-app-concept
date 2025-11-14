@@ -23,10 +23,6 @@
   margin-top: -8px; /* Optical adjustment */
 }
 
-.searchWrapper {
-  /* This wrapper is no longer needed as the search input is integrated. */
-}
-
 .listContainer {
   overflow-y: auto;
   min-height: 150px; /* Give it a minimum height */

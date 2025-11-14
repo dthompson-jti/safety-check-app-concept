@@ -20,9 +20,11 @@ import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
 import styles from './ScheduleLayouts.module.css';
 
-// DEFINITIVE FIX: The animation is now a 'tween' to align with the project's
-// new animation principle. This provides the "rock-solid" feel by removing all
-// spring-based physics and bounce.
+/**
+ * The application's canonical animation transition. Using a 'tween' provides a
+ * "rock-solid" feel by removing all spring-based physics and bounce, ensuring
+ * a consistent, fluid, and professional motion language.
+ */
 const listTransition: Transition = {
   type: 'tween',
   duration: 0.4,

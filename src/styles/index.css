@@ -14,11 +14,7 @@
 @import url('./utility.css') layer(tokens);
 @import url('./semantics.css') layer(tokens);
 
-/* 
-  Layer 2: Base Styles 
-  FIX: Import the new base.css file here. All rules from it are now correctly
-  scoped to the 'base' layer. The loose rules have been removed from this file.
-*/
+/* Layer 2: Base Styles */
 @import url('./base.css') layer(base);
 @import url('./forms.css') layer(base);
 @import url('./scrollbars.css') layer(base);
@@ -36,7 +32,6 @@
 @import url('./menu.css') layer(components);
 @import url('./tabs.css') layer(components);
 @import url('./toggles.css') layer(components);
-/* REMOVED: The unused navigator.css is no longer imported. */
 @import url('./appearance.css') layer(components);
 
 /* Layer 5: Utility Classes */

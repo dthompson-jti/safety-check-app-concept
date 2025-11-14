@@ -43,7 +43,10 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
-  // Component Variable Contract for footer height
+  // ARCHITECTURE: Implements the "Component Variable Contract" for the footer.
+  // This measures the footer's actual height and sets a CSS variable, allowing
+  // the scrollable content area to add the perfect amount of padding to prevent
+  // its content from being obscured.
   useLayoutEffect(() => {
     const footer = footerRef.current;
     if (footer) {
@@ -55,35 +58,34 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     };
   }, []);
 
-  // DEFINITIVE FIX: Robust shadow logic using ResizeObserver and scroll events.
-  // This correctly determines scrollability on mount/resize and updates on scroll.
+  // ARCHITECTURE: A robust implementation of a scroll affordance (footer shadow).
+  // It uses a ResizeObserver to detect when content becomes scrollable (e.g.,
+  // on initial render or when a keyboard appears) and an onScroll listener to
+  // update the shadow's visibility as the user scrolls.
   useLayoutEffect(() => {
     const contentElement = contentRef.current;
     if (!contentElement) return;
 
     const checkShadowState = () => {
       const { scrollTop, scrollHeight, clientHeight } = contentElement;
-      // The shadow should be visible if there is content to scroll down to.
-      // A 1px buffer is added to account for subpixel rendering differences.
+      // The shadow is visible if the content is scrollable AND not at the bottom.
       const isAtBottom = scrollHeight - scrollTop <= clientHeight + 1;
       const isScrollable = scrollHeight > clientHeight;
       
       setShowScrollShadow(isScrollable && !isAtBottom);
     };
 
-    // Use ResizeObserver to automatically re-check when content size changes.
     const observer = new ResizeObserver(checkShadowState);
     observer.observe(contentElement);
     contentElement.addEventListener('scroll', checkShadowState, { passive: true });
 
-    // Perform an initial check on mount.
-    checkShadowState();
+    checkShadowState(); // Initial check on mount
 
     return () => {
       observer.disconnect();
       contentElement.removeEventListener('scroll', checkShadowState);
     };
-  }, []); // Empty dependency array ensures this runs once on mount.
+  }, []);
 
   const handleBack = () => {
     setWorkflowState({ view: 'none' });

@@ -1,7 +1,6 @@
 // src/features/Shell/PillToggle.tsx
 import { useAtom } from 'jotai';
 import { motion } from 'framer-motion';
-// FIX: Corrected the relative import path to reflect the new file location.
 import { AppView, appViewAtom } from '../../data/atoms';
 import styles from './PillToggle.module.css';
 

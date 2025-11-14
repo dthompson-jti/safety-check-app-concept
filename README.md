@@ -42,8 +42,8 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 ## 4. Directory Structure
 
 -   **/src**: Contains the application entry point, root container, global styles, and global types.
--   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality. This structure is strictly maintained; for example, components that are functionally overlays (like `ManualSelectionView` and `WriteNfcTagModal`) are consolidated in `/features/Overlays` rather than their own top-level directories.
--   **/src/components**: Contains only **truly generic and reusable** UI primitives that are application-agnostic.
+-   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality. This structure is strictly maintained; for example, components that are functionally overlays (like `ManualCheckSelectionModal` and `WriteNfcTagModal`) are consolidated in `/features/Overlays` rather than their own top-level directories. This principle also applies to smaller components; for instance, `PillToggle` is not a generic primitive but is specific to the application `Shell`, and is therefore located in `/features/Shell`.
+-   **/src/components**: Contains only **truly generic and reusable** UI primitives that are application-agnostic (e.g., `Button`, `Tooltip`).
 -   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, etc.).
 -   **/src/styles**: Contains the global styling architecture, including design tokens, base styles, and component themes.
 
@@ -65,5 +65,5 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 
 The project uses **Jotai** for its minimal, atomic state management model. State is divided into two logical areas:
 
-1.  **UI State (`src/data/atoms.ts`):** Manages the "control panel" of the UI. The primary state is managed by a single `appViewAtom`, which dictates which main workspace or view is visible. Other atoms control the visibility of global overlays like the History and Settings modals.
+1.  **UI State (`src/data/atoms.ts`):** Manages the "control panel" of the UI. The primary state is managed by a single `appViewAtom`, which dictates which main workspace or view is visible. Other atoms control the visibility of global overlays like the Settings modal.
 2.  **Application Data (`src/data/appDataAtoms.ts`):** Manages the core data of the application. It uses a reducer-like pattern with a write-only `dispatchActionAtom` to ensure all mutations are centralized and predictable. This architecture supports transient states (e.g., `'completing'`) to orchestrate complex, multi-stage UI animations without disrupting the data model's integrity or causing layout shifts.

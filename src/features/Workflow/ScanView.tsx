@@ -95,7 +95,8 @@ export const ScanView = () => {
   const handleClose = () => setWorkflow({ view: 'none' });
 
   const handleOpenManualSelection = () => {
-    // FIX: Refactor to use the global atom, centralizing modal control.
+    // ARCHITECTURE: This action sets a global atom to open the consolidated
+    // manual selection modal, centralizing control of this UI element.
     setIsManualCheckModalOpen(true);
   };
 
