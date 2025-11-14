@@ -16,6 +16,7 @@
   align-items: center;
   justify-content: space-between;
   height: 60px;
+  /* Horizontal padding must match .overviewBar & .searchBarContainer for alignment */
   padding: 8px 12px;
   position: relative;
 }
@@ -32,12 +33,21 @@
   pointer-events: auto;
 }
 
-.pillToggleWrapper {
-  padding: 4px 0;
-}
-
+/* DEFINITIVE FIX: Use identical fixed-width containers for left/right actions */
+.leftActions,
 .rightActions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-1);
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.statusBar {
+  position: relative;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* This is critical for the animations */
 }

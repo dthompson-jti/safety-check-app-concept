@@ -1,18 +1,54 @@
 /* src/features/Shell/ScheduleSearchBar.module.css */
 
 .searchBarContainer {
-  padding: var(--spacing-2) var(--spacing-4) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: var(--spacing-3);
+  /* DEFINITIVE FIX: Horizontal padding must match .headerContent for alignment */
+  padding: 0 12px;
+}
+
+/* DEFINITIVE FIX: Symmetrical icon containers for alignment */
+.decorativeIconContainer,
+.actionContainer {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* DEFINITIVE FIX: Styling for the decorative icon */
+.decorativeIcon {
+  font-size: 24px;
+  color: var(--surface-fg-quinary);
+}
+
+.inputWrapper {
+  flex-grow: 1;
+  min-width: 0;
 }
 
 /* Override the default SearchInput styles for the integrated variant */
 .searchBarContainer :global(.wrapper[data-variant="integrated"]) {
   background-color: var(--surface-bg-tertiary);
   border: 1px solid var(--surface-border-secondary);
-  height: 48px;
-  padding: var(--spacing-1p5) var(--spacing-4);
+  height: 44px;
+  padding: 0; /* Remove default padding */
   border-radius: var(--radius-md);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+
+/* Adjust internal input to not have an icon */
+.searchBarContainer :global(.wrapper[data-variant="integrated"] > .material-symbols-rounded) {
+  display: none;
+}
+.searchBarContainer :global(.wrapper[data-variant="integrated"] > input) {
+  padding: var(--spacing-1p5) var(--spacing-4);
+}
+
 
 .searchBarContainer :global(.wrapper[data-variant="integrated"].focused) {
   border-color: var(--surface-border-theme);

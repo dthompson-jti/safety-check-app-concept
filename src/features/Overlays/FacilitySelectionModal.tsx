@@ -7,36 +7,30 @@ import {
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
   logoutAtom,
+  appViewAtom, // Import the appViewAtom to control the side menu
 } from '../../data/atoms';
 import { FullScreenModal } from '../../components/FullScreenModal';
 import { Button } from '../../components/Button';
 import { Select, SelectItem } from '../../components/Select';
 import styles from './FacilitySelectionModal.module.css';
 
-// Mock data for prototype purposes
 const facilityData = {
   'death-star': { name: 'Star Wars: Death Star', units: ['AA-23', 'Detention Block', 'Trash Compactor'] },
   'rocinante': { name: 'The Expanse: Rocinante', units: ['Cockpit', 'Galley', 'Engineering'] },
   'hogwarts': { name: 'Harry Potter: Hogwarts', units: ['Gryffindor Tower', 'Slytherin Dungeon', 'The Great Hall'] },
 };
 
-/**
- * A full-screen modal with a dual purpose:
- * 1. As a mandatory, blocking step after login to set the initial operational context.
- * 2. As a user-initiated modal to switch context during a session.
- */
 export const FacilitySelectionModal = () => {
   const [isContextRequired, setIsContextRequired] = useAtom(isContextSelectionRequiredAtom);
   const [isModalOpen, setIsModalOpen] = useAtom(isContextSelectionModalOpenAtom);
   const [selectedGroup, setSelectedGroup] = useAtom(selectedFacilityGroupAtom);
   const [selectedUnit, setSelectedUnit] = useAtom(selectedFacilityUnitAtom);
   const logout = useSetAtom(logoutAtom);
+  const setAppView = useSetAtom(appViewAtom); // Get the setter for the app view
 
-  // Local state manages the form before committing to global Jotai state on submit.
   const [localGroup, setLocalGroup] = useState(selectedGroup || '');
   const [localUnit, setLocalUnit] = useState(selectedUnit || '');
 
-  // Sync local state if global state changes (e.g., when the modal re-opens).
   useEffect(() => {
     setLocalGroup(selectedGroup || '');
     setLocalUnit(selectedUnit || '');
@@ -45,7 +39,6 @@ export const FacilitySelectionModal = () => {
   const isOpen = isContextRequired || isModalOpen;
 
   const handleClose = () => {
-    // If the modal is mandatory, closing it triggers a logout to prevent an invalid state.
     if (isContextRequired) {
       logout();
     } else {
@@ -56,6 +49,13 @@ export const FacilitySelectionModal = () => {
   const handleContinue = () => {
     setSelectedGroup(localGroup);
     setSelectedUnit(localUnit);
+
+    // UX REFINEMENT: If the context was changed via the side menu (i.e., it was not the
+    // initial mandatory selection), close the side menu to reveal the dashboard.
+    if (!isContextRequired) {
+      setAppView('dashboardTime');
+    }
+
     if (isContextRequired) {
       setIsContextRequired(false);
     }
@@ -67,7 +67,7 @@ export const FacilitySelectionModal = () => {
 
   const handleGroupChange = (value: string) => {
     setLocalGroup(value);
-    setLocalUnit(''); // Reset unit selection when the group changes.
+    setLocalUnit('');
   };
 
   return (
