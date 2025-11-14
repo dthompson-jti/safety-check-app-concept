@@ -1,5 +1,20 @@
 /* src/features/Workflow/ScanView.module.css */
 
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0px hsla(4, 85%, 55%, 0.6); }
+  100% { box-shadow: 0 0 0 10px hsla(4, 85%, 55%, 0); }
+}
+
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0px hsla(145, 99%, 36%, 0.6); }
+  100% { box-shadow: 0 0 0 10px hsla(145, 99%, 36%, 0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .scanView {
   position: fixed;
   inset: 0;
@@ -18,7 +33,7 @@
   background-color: var(--surface-bg-primary-solid);
   flex-shrink: 0;
   position: relative;
-  z-index: 2; 
+  z-index: 2;
 }
 
 .header h3 {
@@ -51,7 +66,6 @@
   font-size: 1rem;
   font-weight: 600; /* Bolder for legibility */
   line-height: 1.5;
-  /* REFINED: Ensure all text within the alert uses the warning color for contrast */
   color: var(--surface-fg-warning-primary);
   display: flex;
   align-items: center;
@@ -83,6 +97,17 @@
   position: relative;
   background-color: #000;
   border: 2px solid var(--surface-fg-tertiary);
+  transition: border-color 0.2s;
+}
+
+.viewfinder[data-scan-state='success'] {
+  border-color: var(--surface-fg-success-primary);
+  animation: pulse-green 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.viewfinder[data-scan-state='fail'] {
+  border-color: var(--surface-fg-alert-primary);
+  animation: pulse-red 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .viewfinder video {
@@ -91,7 +116,8 @@
   object-fit: cover;
 }
 
-.scanPaused {
+/* Base styles for the status overlays */
+.statusOverlay {
   width: 100%;
   height: 100%;
   display: flex;
@@ -99,12 +125,30 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  color: var(--surface-fg-success-primary);
+  font-weight: 500;
 }
-.scanPaused .material-symbols-rounded {
+.statusOverlay .material-symbols-rounded {
   font-size: 48px;
   font-variation-settings: 'FILL' 1;
 }
+
+/* State-specific styles */
+.processingState {
+  color: var(--surface-fg-on-solid-faint);
+}
+.processingState .spinner {
+  animation: spin 1.2s linear infinite;
+  font-variation-settings: 'FILL' 0 !important; /* Spinner should be an outline */
+}
+
+.successState {
+  color: var(--surface-fg-success-primary);
+}
+
+.failState {
+  color: var(--surface-fg-alert-primary);
+}
+
 
 .helperText {
   margin: 0;

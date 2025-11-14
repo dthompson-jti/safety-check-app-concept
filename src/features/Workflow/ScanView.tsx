@@ -1,11 +1,11 @@
-// src/features/Workflow/ScanView.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { workflowStateAtom } from '../../data/atoms';
 import { safetyChecksAtom, mockResidents } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
+import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
 import { ManualSelectionView } from './ManualSelectionView';
 import styles from './ScanView.module.css';
@@ -15,15 +15,24 @@ interface PreScanAlertInfo {
   classificationType: string;
 }
 
+// A more robust state machine for the scanner's UI
+type ScanViewState = 'scanning' | 'processing' | 'success' | 'fail';
+
 export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
   const addToast = useSetAtom(addToastAtom);
-  
-  const [isScanning, setIsScanning] = useState(true);
+  const { trigger: triggerHaptic } = useHaptics();
+
+  const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
 
   useEffect(() => {
+    // Reset scan state if the view is re-opened
+    if (workflow.view === 'scanning') {
+      setScanViewState('scanning');
+    }
+
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       const targetCheck = allChecks.find(c => c.id === workflow.targetCheckId);
       if (targetCheck?.specialClassification) {
@@ -35,28 +44,46 @@ export const ScanView = () => {
           });
         }
       }
+    } else {
+      setPreScanAlert(null);
     }
   }, [workflow, allChecks]);
 
-  const handleDecode = (result: string) => {
-    if (!isScanning) return; 
-    setIsScanning(false);
-    
-    const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
+  const failScan = useCallback((message: string) => {
+    addToast({ message, icon: 'error' });
+    triggerHaptic('error');
+    setScanViewState('fail');
+    setTimeout(() => {
+      setScanViewState('scanning');
+    }, 1500);
+  }, [addToast, triggerHaptic]);
 
-    if (check) {
-      setWorkflow({
-        view: 'form',
-        type: 'scheduled',
-        checkId: check.id,
-        roomName: check.residents[0].location,
-        residents: check.residents,
-        specialClassification: check.specialClassification,
-      });
-    } else {
-      addToast({ message: 'QR Code not recognized or check already complete.', icon: 'error' });
-      setTimeout(() => setIsScanning(true), 2000);
-    }
+  const handleDecode = (result: string) => {
+    if (scanViewState !== 'scanning') return;
+    setScanViewState('processing');
+
+    // Short delay to show processing state before result
+    setTimeout(() => {
+      const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
+
+      if (check) {
+        triggerHaptic('success');
+        setScanViewState('success');
+        // Brief delay to show success state before transitioning
+        setTimeout(() => {
+          setWorkflow({
+            view: 'form',
+            type: 'scheduled',
+            checkId: check.id,
+            roomName: check.residents[0].location,
+            residents: check.residents,
+            specialClassification: check.specialClassification,
+          });
+        }, 800);
+      } else {
+        failScan('QR Code not recognized or check already complete.');
+      }
+    }, 300);
   };
 
   const handleError = (error: unknown) => {
@@ -87,6 +114,43 @@ export const ScanView = () => {
   };
 
   const handleSimulateFail = () => handleDecode('invalid-qr-code-id');
+
+  const renderViewfinderContent = () => {
+    switch (scanViewState) {
+      case 'scanning':
+        return (
+          <Scanner
+            onDecode={handleDecode}
+            onError={handleError}
+            constraints={{ facingMode: 'environment' }}
+            scanDelay={500}
+          />
+        );
+      case 'processing':
+        return (
+          <div className={`${styles.statusOverlay} ${styles.processingState}`}>
+            <span className={`material-symbols-rounded ${styles.spinner}`}>progress_activity</span>
+            Processing...
+          </div>
+        );
+      case 'success':
+        return (
+          <div className={`${styles.statusOverlay} ${styles.successState}`}>
+            <span className="material-symbols-rounded">check_circle</span>
+            Success!
+          </div>
+        );
+      case 'fail':
+        return (
+          <div className={`${styles.statusOverlay} ${styles.failState}`}>
+            <span className="material-symbols-rounded">error</span>
+            Scan Failed
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   const isManualSelectionOpen = workflow.view === 'scanning' && workflow.isManualSelectionOpen;
 
@@ -126,20 +190,8 @@ export const ScanView = () => {
         </AnimatePresence>
 
         <main className={styles.cameraContainer}>
-          <div className={styles.viewfinder}>
-            {isScanning ? (
-              <Scanner
-                onDecode={handleDecode}
-                onError={handleError}
-                constraints={{ facingMode: 'environment' }}
-                scanDelay={500}
-              />
-            ) : (
-              <div className={styles.scanPaused}>
-                <span className="material-symbols-rounded">check_circle</span>
-                Processing...
-              </div>
-            )}
+          <div className={styles.viewfinder} data-scan-state={scanViewState}>
+            {renderViewfinderContent()}
           </div>
           <p className={styles.helperText}>Point your camera at the room's QR code</p>
         </main>

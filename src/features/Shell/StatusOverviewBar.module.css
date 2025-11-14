@@ -4,26 +4,15 @@
   display: flex;
   align-items: center;
   width: 100%;
-  gap: var(--spacing-3);
-  /* DEFINITIVE FIX: Horizontal padding must match .headerContent for alignment */
   padding: 0 12px;
 }
 
-.statusPillContainer {
-  display: flex;
-  flex-grow: 1;
-  /* DEFINITIVE FIX: Distribute pills evenly across the available space per mockup */
-  justify-content: space-around;
-  min-width: 0;
-}
-
-.actionContainer {
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
+.contentContainer {
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex-grow: 1;
+  justify-content: space-around;
+  min-width: 0;
 }
 
 .statusPill {
@@ -65,29 +54,29 @@
   transition: color 0.2s ease-in-out;
 }
 
-.statusPill .material-symbols-rounded {
+/* Base styles for the icon, targeted by its own dedicated class. */
+.icon {
   font-size: 20px;
   transition: color 0.2s ease-in-out;
 }
 
-/* DEFINITIVE FIX: Semantic colors for BOTH count and icon, per Figma */
+/* DEFINITIVE FIX: Target the local `.icon` class for coloring, not the global one. */
 .statusPill[data-status='late'] .count,
-.statusPill[data-status='late'] .material-symbols-rounded {
-  color: var(--surface-fg-warning-primary);
+.statusPill[data-status='late'] .icon {
+  color: var(--surface-fg-warning-primary) !important;
 }
 .statusPill[data-status='dueSoon'] .count,
-.statusPill[data-status='dueSoon'] .material-symbols-rounded {
-  color: var(--surface-fg-info-primary);
+.statusPill[data-status='dueSoon'] .icon {
+  color: var(--surface-fg-info-primary) !important;
 }
 .statusPill[data-status='completed'] .count,
-.statusPill[data-status='completed'] .material-symbols-rounded {
-  color: var(--surface-fg-success-primary);
+.statusPill[data-status='completed'] .icon {
+  color: var(--surface-fg-success-primary) !important;
 }
 .statusPill[data-status='queued'] .count,
-.statusPill[data-status='queued'] .material-symbols-rounded {
-  color: var(--surface-fg-tertiary);
+.statusPill[data-status='queued'] .icon {
+  color: var(--surface-fg-tertiary) !important;
 }
-
 
 /* Flash color theming */
 .statusPill[data-status='late'].flash { --flash-color-bg: var(--surface-bg-warning-secondary); }

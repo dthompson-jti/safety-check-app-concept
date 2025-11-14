@@ -1,0 +1,64 @@
+/* src/features/Workflow/ResidentCheckControl.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  /* Adjust gap to accommodate the repositioned classification details */
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.residentName {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.warningIcon {
+  color: var(--surface-fg-warning-primary);
+  font-variation-settings: 'FILL' 1;
+}
+
+.controlSection {
+  width: 100%;
+}
+
+/* --- Classified Variant --- */
+.container[data-classified='true'] {
+  background-color: var(--surface-bg-warning-primary);
+  border-color: var(--surface-border-warning);
+  box-shadow: 0 0 0 2px var(--primitives-yellow-100);
+}
+
+.container[data-classified='true'] .residentName {
+  color: var(--surface-fg-warning-primary);
+}
+
+.classificationDetails {
+  /* REMOVED: No more border-top or padding-top. */
+}
+
+.classificationDetails p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--surface-fg-warning-primary);
+}
+.classificationDetails p strong {
+  color: var(--surface-fg-warning-primary);
+}

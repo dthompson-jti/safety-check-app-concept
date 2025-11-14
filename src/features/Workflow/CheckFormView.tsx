@@ -1,4 +1,3 @@
-// src/features/Workflow/CheckFormView.tsx
 import { useState, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
@@ -13,17 +12,14 @@ import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
-import { IconToggleGroup } from '../../components/IconToggleGroup';
+import { ResidentCheckControl } from './ResidentCheckControl';
 import styles from './CheckFormView.module.css';
 
 type CheckFormViewProps = {
   checkData: Extract<WorkflowState, { view: 'form' }>;
 };
 
-const statusOptions = [
-  { value: 'Awake', label: 'Awake', icon: 'self_improvement' },
-  { value: 'Sleeping', label: 'Sleeping', icon: 'sleep' },
-] as const;
+type StatusValue = 'Awake' | 'Sleeping' | 'Refused';
 
 export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
@@ -34,36 +30,37 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const connectionStatus = useAtomValue(connectionStatusAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
-  const [statuses, setStatuses] = useState<Record<string, string>>({});
-  const [notes, setNotes] = useState('');
+  const [statuses, setStatuses] = useState<Record<string, StatusValue | ''>>(() =>
+    checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
+  );
+
+  const [notes, setNotes] = useState<Record<string, string>>(() =>
+    checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
+  );
 
   const handleBack = () => {
-    setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
+    // If coming from a direct tap, go back to the schedule, otherwise go to scanner
+    if (checkData.type === 'scheduled') {
+      setWorkflowState({ view: 'none' });
+    } else {
+      setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
+    }
   };
 
   const handleCancel = () => {
     setWorkflowState({ view: 'none' });
   };
 
-  const handleSetAll = (status: string) => {
-    if (!status) return;
-    const newStatuses = checkData.residents.reduce<Record<string, string>>((acc, resident) => {
-      acc[resident.id] = status;
-      return acc;
-    }, {});
-    setStatuses(newStatuses);
-  };
-
-  const handleSetIndividualStatus = (residentId: string, status: string) => {
-    if (!status) return;
+  const handleStatusChange = (residentId: string, status: StatusValue) => {
     setStatuses((prev) => ({ ...prev, [residentId]: status }));
   };
 
+  const handleNotesChange = (residentId: string, value: string) => {
+    setNotes((prev) => ({ ...prev, [residentId]: value }));
+  };
+
   const allResidentsHaveStatus = useMemo(() => {
-    return (
-      checkData.residents.length === Object.keys(statuses).length &&
-      checkData.residents.every((res) => statuses[res.id])
-    );
+    return checkData.residents.every((res) => statuses[res.id]);
   }, [statuses, checkData.residents]);
 
   const handleSave = () => {
@@ -71,6 +68,11 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
     triggerHaptic('success');
     setWorkflowState({ view: 'none' });
+    
+    // Consolidate per-resident notes into a single string for the data layer.
+    const consolidatedNotes = Object.values(notes)
+      .filter(note => note.trim() !== '')
+      .join('\n---\n');
 
     if (connectionStatus === 'offline') {
       addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
@@ -78,35 +80,24 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
 
     if (checkData.type === 'scheduled') {
-      // This function orchestrates a multi-stage animation to provide clear, non-disruptive
-      // feedback to the user, adhering to the UX specification.
       const PULSE_ANIMATION_DURATION = 1200;
       const EXIT_ANIMATION_DURATION = 400;
 
-      // STAGE 1 (IMMEDIATE): Set status to 'completing' and trigger the pulse.
-      // The 'completing' status changes the item's style to look "done" but does NOT
-      // change its position in the list, providing a stable element for the pulse animation.
       dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId: checkData.checkId } });
       setRecentlyCompletedCheckId(checkData.checkId);
 
-      // STAGE 2 (DELAYED - VISUAL EXIT): After the pulse, trigger the slide/collapse animation.
-      // This adds the check's ID to a temporary set, which causes the list view component
-      // to filter it from the render tree, triggering its `exit` animation via AnimatePresence.
       setTimeout(() => {
         setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
       }, PULSE_ANIMATION_DURATION);
 
-      // STAGE 3 (DELAYED - FINAL DATA & CLEANUP): After ALL visual animations are complete,
-      // update the data model to the final 'complete' state and clean up all transient
-      // animation state atoms. This allows the list to reflow smoothly into its final state.
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
         dispatch({
           type: 'CHECK_COMPLETE',
           payload: {
             checkId: checkData.checkId,
-            statuses,
-            notes,
+            statuses: statuses as Record<string, string>, // Coerce for dispatch
+            notes: consolidatedNotes,
             completionTime: new Date().toISOString(),
           },
         });
@@ -125,22 +116,13 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         type: 'CHECK_SUPPLEMENTAL_ADD',
         payload: {
           roomId: checkData.roomId,
-          statuses,
-          notes,
+          statuses: statuses as Record<string, string>, // Coerce for dispatch
+          notes: consolidatedNotes,
         },
       });
       addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
     }
   };
-
-  const headerTitle = useMemo(() => {
-    if (checkData.residents.length > 1) {
-      return `${checkData.roomName} - Multiple Residents`;
-    }
-    return `${checkData.roomName} - ${checkData.residents[0]?.name}`;
-  }, [checkData.roomName, checkData.residents]);
-
-  const specialClassification = checkData.type === 'scheduled' ? checkData.specialClassification : undefined;
 
   return (
     <motion.div
@@ -151,78 +133,35 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
       <header className={styles.header}>
-        <Button variant="quaternary" size="m" iconOnly onClick={handleBack} aria-label="Back to scanner">
+        <Button variant="tertiary" size="m" iconOnly onClick={handleBack} aria-label="Back">
           <span className="material-symbols-rounded">arrow_back</span>
         </Button>
         <h3>Record check</h3>
       </header>
 
       <main className={styles.formContent}>
-        <div className={styles.residentInfo}>
-          <h2>{headerTitle}</h2>
-        </div>
-
-        {checkData.residents.length > 1 && (
-          <div className={styles.formGroup}>
-            <label>Set all to</label>
-            <IconToggleGroup
-              id="set-all-status-group"
-              options={statusOptions}
-              value={''} 
-              onValueChange={handleSetAll}
-            />
-          </div>
-        )}
+        {/* REFINED: Room name is now an unwrapped header for a cleaner look. */}
+        <h2 className={styles.roomHeader}>{checkData.roomName}</h2>
 
         <div className={styles.residentListContainer}>
           {checkData.residents.map((resident) => {
-            const isClassified = specialClassification?.residentId === resident.id;
-
-            if (isClassified) {
-              return (
-                <div key={resident.id} className={styles.classifiedResidentWrapper}>
-                  <div className={styles.classifiedResidentHeader}>
-                    <span className={styles.residentName}>{resident.name}</span>
-                    <IconToggleGroup
-                      id={`status-group-${resident.id}`}
-                      options={statusOptions}
-                      value={statuses[resident.id] || ''}
-                      onValueChange={(val) => handleSetIndividualStatus(resident.id, val)}
-                    />
-                  </div>
-                  <div className={styles.classificationDetails}>
-                    <span className="material-symbols-rounded">warning</span>
-                    <p>
-                      <strong>{specialClassification.type}:</strong> {specialClassification.details}
-                    </p>
-                  </div>
-                </div>
-              );
-            }
-
+            const classification =
+              checkData.type === 'scheduled' && checkData.specialClassification?.residentId === resident.id
+                ? checkData.specialClassification
+                : undefined;
+            
             return (
-              <div key={resident.id} className={styles.residentRow}>
-                <span className={styles.residentName}>{resident.name}</span>
-                <IconToggleGroup
-                  id={`status-group-${resident.id}`}
-                  options={statusOptions}
-                  value={statuses[resident.id] || ''}
-                  onValueChange={(val) => handleSetIndividualStatus(resident.id, val)}
-                />
-              </div>
+              <ResidentCheckControl
+                key={resident.id}
+                resident={resident}
+                status={statuses[resident.id]}
+                notes={notes[resident.id]}
+                onStatusChange={handleStatusChange}
+                onNotesChange={handleNotesChange}
+                classification={classification}
+              />
             );
           })}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="notes-input">Notes (optional)</label>
-          <textarea
-            id="notes-input"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Add any relevant observations..."
-            rows={5}
-          />
         </div>
       </main>
 

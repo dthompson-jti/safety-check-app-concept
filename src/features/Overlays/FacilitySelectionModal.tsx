@@ -71,10 +71,10 @@ export const FacilitySelectionModal = () => {
   };
 
   return (
-    <FullScreenModal isOpen={isOpen} onClose={handleClose} title="Select Your Unit">
+    <FullScreenModal isOpen={isOpen} onClose={handleClose} title="Select Unit">
       <div className={styles.content}>
         <p className={styles.instructions}>
-          Please select your facility group and unit to begin your shift.
+          Select your facility group and unit.
         </p>
         <div className={styles.formGroup}>
           <label htmlFor="facility-group">Facility Group</label>

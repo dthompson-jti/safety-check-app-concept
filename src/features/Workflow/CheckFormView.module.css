@@ -31,17 +31,12 @@
   padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
+  gap: var(--spacing-4);
 }
 
-.residentInfo {
-  padding: var(--spacing-4);
-  background-color: var(--surface-bg-primary);
-  border-radius: var(--spacing-2);
-  border: 1px solid var(--surface-border-secondary);
-}
-
-.residentInfo h2 {
+/* REFINED: The .roomInfo container is removed. */
+/* This is the new style for the unwrapped H2 element. */
+.roomHeader {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
@@ -49,78 +44,11 @@
   width: 100%;
 }
 
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-}
-
-.formGroup label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--surface-fg-secondary);
-}
-
 .residentListContainer {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-4);
 }
-
-.residentRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-3) var(--spacing-4);
-  background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
-  border-radius: var(--radius-md);
-}
-
-.residentName {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--surface-fg-primary);
-}
-
-.classifiedResidentWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3) var(--spacing-4);
-  background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-fg-warning-primary);
-  border-radius: var(--radius-md);
-  box-shadow: 0 0 0 2px var(--primitives-yellow-100);
-}
-.classifiedResidentHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.classificationDetails {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-2);
-  padding-top: var(--spacing-3);
-  border-top: 1px solid var(--surface-border-secondary);
-  color: var(--surface-fg-warning-primary);
-}
-.classificationDetails .material-symbols-rounded {
-  margin-top: 2px;
-  font-size: 20px;
-  font-variation-settings: 'FILL' 1;
-}
-.classificationDetails p {
-  margin: 0;
-  font-weight: 500;
-  line-height: 1.5;
-}
-.classificationDetails p,
-.classificationDetails p strong {
-  color: var(--surface-fg-warning-primary);
-}
-
 
 .footer {
   flex-shrink: 0;
@@ -129,6 +57,7 @@
   padding: var(--spacing-4);
   border-top: 1px solid var(--surface-border-secondary);
   background-color: var(--surface-bg-primary);
+  margin-top: auto;
 }
 
 .footer button {

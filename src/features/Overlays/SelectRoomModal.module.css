@@ -1,5 +1,4 @@
 /* src/features/Overlays/SelectRoomModal.module.css */
-/* NEW FILE */
 
 .container {
   display: flex;
@@ -44,6 +43,9 @@
   align-items: flex-start;
   padding-top: var(--spacing-3);
   padding-bottom: var(--spacing-3);
+  /* Ensure long resident lists don't shrink the room name */
+  height: auto;
+  min-height: 52px;
 }
 
 .roomInfo {

@@ -1,63 +1,54 @@
 // src/features/Overlays/SelectRoomModal.tsx
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { useState, useMemo } from 'react';
 import { isManualCheckModalOpenAtom, workflowStateAtom } from '../../data/atoms';
-import { mockResidents } from '../../data/appDataAtoms';
-import { Resident } from '../../types';
+import { safetyChecksAtom } from '../../data/appDataAtoms';
+import { SafetyCheck } from '../../types';
 import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import styles from './SelectRoomModal.module.css';
 
-interface Room {
-  id: string; // Use the ID of the first resident in the room as a stable key
-  location: string;
-  residents: Resident[];
-}
-
 export const SelectRoomModal = () => {
-  // FIX: Use the correctly renamed atom 'isManualCheckModalOpenAtom'.
-  // This resolves the 'unsafe destructuring' error from ESLint.
   const [isOpen, setIsOpen] = useAtom(isManualCheckModalOpenAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
+  const allChecks = useAtomValue(safetyChecksAtom);
   const [query, setQuery] = useState('');
 
-  // Group residents by location to create a list of rooms.
-  // The explicit return type `Room[]` ensures type safety downstream.
-  const uniqueRooms = useMemo((): Room[] => {
-    const roomsMap = new Map<string, Resident[]>();
-    mockResidents.forEach(res => {
-      if (!roomsMap.has(res.location)) {
-        roomsMap.set(res.location, []);
+  // PRD CHANGE: The list of items is simplified to show unique room locations.
+  // This logic now groups all actionable checks by their location.
+  const uniqueActionableChecks = useMemo((): SafetyCheck[] => {
+    const roomsMap = new Map<string, SafetyCheck>();
+    allChecks.forEach(check => {
+      // Only include actionable checks and only the first one found for a given location
+      if (check.status !== 'complete' && check.status !== 'missed' && !roomsMap.has(check.residents[0].location)) {
+        roomsMap.set(check.residents[0].location, check);
       }
-      roomsMap.get(res.location)!.push(res);
     });
-    return Array.from(roomsMap.entries()).map(([location, residents]) => ({
-      id: residents[0].id, // Use first resident's ID for a stable key
-      location,
-      residents,
-    }));
-  }, []);
+    return Array.from(roomsMap.values());
+  }, [allChecks]);
 
-  const filteredRooms = useMemo((): Room[] => {
+
+  const filteredChecks = useMemo((): SafetyCheck[] => {
     if (!query.trim()) {
-      return uniqueRooms;
+      return uniqueActionableChecks;
     }
     const lowerCaseQuery = query.toLowerCase();
-    return uniqueRooms.filter(
-      (room) =>
-        room.location.toLowerCase().includes(lowerCaseQuery) ||
-        room.residents.some((resident) => resident.name.toLowerCase().includes(lowerCaseQuery))
+    return uniqueActionableChecks.filter(
+      (check) =>
+        check.residents[0].location.toLowerCase().includes(lowerCaseQuery) ||
+        check.residents.some((resident) => resident.name.toLowerCase().includes(lowerCaseQuery))
     );
-  }, [query, uniqueRooms]);
+  }, [query, uniqueActionableChecks]);
 
-  const handleSelectRoom = (room: Room) => {
+  const handleSelectCheck = (check: SafetyCheck) => {
     setWorkflowState({
       view: 'form',
-      type: 'supplemental',
-      roomId: room.id,
-      roomName: room.location,
-      residents: room.residents,
+      type: 'scheduled',
+      checkId: check.id,
+      roomName: check.residents[0].location,
+      residents: check.residents,
+      specialClassification: check.specialClassification,
     });
     setIsOpen(false);
     setQuery(''); // Reset query on close
@@ -83,18 +74,16 @@ export const SelectRoomModal = () => {
           />
         </div>
         <div className={styles.listContainer}>
-          {filteredRooms.length > 0 ? (
-            // FIX: By ensuring 'filteredRooms' is strongly typed as Room[],
-            // 'room' is also strongly typed, resolving the 'unsafe assignment' error.
-            filteredRooms.map((room) => (
-              <button key={room.id} className={`menu-item ${styles.roomItem}`} onClick={() => handleSelectRoom(room)}>
+          {filteredChecks.length > 0 ? (
+            filteredChecks.map((check) => (
+              <button key={check.id} className={`menu-item ${styles.roomItem}`} onClick={() => handleSelectCheck(check)}>
                 <div className="checkmark-container">
                   <span className="material-symbols-rounded">meeting_room</span>
                 </div>
                 <div className={styles.roomInfo}>
-                  <span className={styles.roomName}>{room.location}</span>
+                  <span className={styles.roomName}>{check.residents[0].location}</span>
                   <span className={styles.residentNames}>
-                    {room.residents.map((r) => r.name).join(', ')}
+                    {check.residents.map((r) => r.name).join(', ')}
                   </span>
                 </div>
               </button>

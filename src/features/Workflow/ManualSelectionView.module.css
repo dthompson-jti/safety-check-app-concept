@@ -1,50 +1,70 @@
-/* src/features/ManualSelection/ManualSelectionView.module.css */
+/* src/features/Workflow/CheckFormView.module.css */
 
-.contentWrapper {
+.checkFormView {
+  position: fixed;
+  inset: 0;
+  z-index: 101; /* Above scan view */
+  background-color: var(--surface-bg-secondary);
   display: flex;
   flex-direction: column;
-  height: 65vh;
-  max-height: 700px;
 }
 
-.headerContent {
-  padding: 0 var(--spacing-4) var(--spacing-4);
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
 }
 
-.headerContent h2 {
+.header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.formContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.roomInfo {
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border-secondary);
+}
+
+.roomInfo h2 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--surface-fg-primary);
+  width: 100%;
 }
 
-.searchContainer {
-  padding: 0 var(--spacing-4) var(--spacing-4);
+.residentListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.footer {
   flex-shrink: 0;
-}
-
-.listContainer {
-  flex-grow: 1;
-  min-height: 0;
+  display: flex;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
   border-top: 1px solid var(--surface-border-secondary);
+  background-color: var(--surface-bg-primary);
+  margin-top: auto;
 }
 
-/* 
-  The component now uses the global `.menu-item` class from `menu.css`.
-  This global class handles padding, hover/active states, flex layout,
-  and correctly scopes hover effects to mouse-based devices.
-  Only component-specific overrides or extensions are needed here.
-*/
-
-.checkItemText {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.warningIcon {
-  color: var(--surface-fg-secondary);
-  font-variation-settings: 'FILL' 1;
-  font-size: 20px;
+.footer button {
+  flex: 1;
 }

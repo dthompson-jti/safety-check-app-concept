@@ -1,0 +1,75 @@
+/* src/components/SegmentedControl.module.css */
+
+.segmentedControl {
+  display: flex;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  /* The container no longer needs its own border. */
+}
+
+.segmentedControlItem {
+  all: unset; /* Reset button styles */
+  box-sizing: border-box;
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  height: 48px;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-family: var(--font-family-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--surface-fg-secondary);
+  background-color: var(--surface-bg-primary);
+  cursor: pointer;
+  /* Each item has a full border and overlaps its neighbor. */
+  border: 1px solid var(--surface-border-primary);
+  margin-left: -1px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, z-index 0s 0.2s;
+}
+
+.segmentedControlItem:first-child {
+  margin-left: 0;
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+}
+
+.segmentedControlItem:last-child {
+  border-top-right-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+.segmentedControlItem .material-symbols-rounded {
+  font-size: 20px;
+  transition: font-variation-settings 0.2s ease;
+}
+
+@media (hover: hover) {
+  .segmentedControlItem:not([data-state='on']):hover {
+    background-color: var(--control-bg-secondary-hover);
+    color: var(--control-fg-secondary_hover);
+    z-index: 1; /* Bring hovered item above its siblings */
+  }
+}
+
+.segmentedControlItem:focus-visible {
+  outline: 2px solid var(--control-focus-ring-standard);
+  outline-offset: -2px;
+  z-index: 3;
+}
+
+.segmentedControlItem[data-state='on'] {
+  background-color: var(--control-bg-selected);
+  color: var(--control-fg-selected);
+  /* Use the correct border token for the selected state. */
+  border-color: var(--control-border-selected);
+  z-index: 2; /* Bring selected item above all others. */
+}
+
+.segmentedControlItem[data-state='on'] .material-symbols-rounded {
+  font-variation-settings: 'FILL' 1;
+}

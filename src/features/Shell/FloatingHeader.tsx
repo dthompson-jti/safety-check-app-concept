@@ -1,23 +1,20 @@
 // src/features/Shell/FloatingHeader.tsx
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   appViewAtom,
   isManualCheckModalOpenAtom,
-  isScheduleSearchActiveAtom,
 } from '../../data/atoms';
 import { PillToggle } from '../../components/PillToggle';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 import { StatusOverviewBar } from './StatusOverviewBar';
-import { ScheduleSearchBar } from './ScheduleSearchBar';
 import styles from './FloatingHeader.module.css';
 
 export const FloatingHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
-  const [isSearchActive, setIsSearchActive] = useAtom(isScheduleSearchActiveAtom);
 
   const isDashboard = appView === 'dashboardTime' || appView === 'dashboardRoute';
 
@@ -59,14 +56,9 @@ export const FloatingHeader = () => {
         </div>
       </div>
       
+      {/* DEFINITIVE FIX: Search functionality is removed. StatusOverviewBar is now always visible. */}
       <div className={styles.statusBar}>
-        <AnimatePresence mode="wait">
-          {isSearchActive ? (
-            <ScheduleSearchBar key="search-bar" />
-          ) : (
-            <StatusOverviewBar key="status-bar" />
-          )}
-        </AnimatePresence>
+        <StatusOverviewBar key="status-bar" />
       </div>
     </motion.header>
   );
