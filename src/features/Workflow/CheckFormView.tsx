@@ -32,6 +32,9 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const { trigger: triggerHaptic } = useHaptics();
 
   const footerRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLElement>(null);
+  // RENAMED for clarity: This state controls the shadow affordance.
+  const [showScrollShadow, setShowScrollShadow] = useState(false);
 
   const [statuses, setStatuses] = useState<Record<string, StatusValue | ''>>(() =>
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
@@ -41,6 +44,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
+  // Component Variable Contract for footer height
   useLayoutEffect(() => {
     const footer = footerRef.current;
     if (footer) {
@@ -51,6 +55,36 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       document.documentElement.style.removeProperty('--form-footer-height');
     };
   }, []);
+
+  // DEFINITIVE FIX: Robust shadow logic using ResizeObserver and scroll events.
+  // This correctly determines scrollability on mount/resize and updates on scroll.
+  useLayoutEffect(() => {
+    const contentElement = contentRef.current;
+    if (!contentElement) return;
+
+    const checkShadowState = () => {
+      const { scrollTop, scrollHeight, clientHeight } = contentElement;
+      // The shadow should be visible if there is content to scroll down to.
+      // A 1px buffer is added to account for subpixel rendering differences.
+      const isAtBottom = scrollHeight - scrollTop <= clientHeight + 1;
+      const isScrollable = scrollHeight > clientHeight;
+      
+      setShowScrollShadow(isScrollable && !isAtBottom);
+    };
+
+    // Use ResizeObserver to automatically re-check when content size changes.
+    const observer = new ResizeObserver(checkShadowState);
+    observer.observe(contentElement);
+    contentElement.addEventListener('scroll', checkShadowState, { passive: true });
+
+    // Perform an initial check on mount.
+    checkShadowState();
+
+    return () => {
+      observer.disconnect();
+      contentElement.removeEventListener('scroll', checkShadowState);
+    };
+  }, []); // Empty dependency array ensures this runs once on mount.
 
   const handleBack = () => {
     setWorkflowState({ view: 'none' });
@@ -147,7 +181,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         <h3>Record check</h3>
       </header>
 
-      <main className={styles.formContent}>
+      <main className={styles.formContent} ref={contentRef}>
         <h2 className={styles.roomHeader}>{checkData.roomName}</h2>
 
         <div className={styles.residentListContainer}>
@@ -172,7 +206,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         </div>
       </main>
 
-      <footer className={styles.footer} ref={footerRef}>
+      <footer className={styles.footer} ref={footerRef} data-scrolled={showScrollShadow}>
         <Button variant="secondary" size="m" onClick={handleCancel}>
           Cancel
         </Button>

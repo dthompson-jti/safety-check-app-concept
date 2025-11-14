@@ -3,8 +3,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  /* Adjust gap to accommodate the repositioned classification details */
-  gap: var(--spacing-4);
+  gap: var(--spacing-3);
   padding: var(--spacing-4);
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
@@ -22,7 +21,7 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--surface-fg-primary);
+  color: var(--surface-fg-secondary);
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -48,10 +47,7 @@
   color: var(--surface-fg-warning-primary);
 }
 
-.classificationDetails {
-  /* This ruleset is no longer empty */
-}
-
+/* FIX: Removed empty .classificationDetails ruleset to resolve linter warning. */
 .classificationDetails p {
   margin: 0;
   font-size: 0.9rem;
@@ -75,7 +71,8 @@
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   resize: vertical;
-  min-height: 60px;
+  min-height: 40px; 
+  overflow: hidden; 
 }
 
 .notesInput::placeholder {

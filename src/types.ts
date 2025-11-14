@@ -33,3 +33,6 @@ export interface SafetyCheck {
   completionStatus?: string;
   specialClassification?: SpecialClassification;
 }
+
+// FIX: Define and export the missing ScheduleFilter type.
+export type ScheduleFilter = 'all' | 'late' | 'due-soon' | 'queued';

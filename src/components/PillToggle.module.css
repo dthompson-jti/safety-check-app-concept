@@ -15,7 +15,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0 var(--spacing-3);
+  /* TIGHTER LAYOUT: Horizontal padding is reduced. */
+  padding: 0 var(--spacing-2);
   font-family: var(--font-family-sans);
   font-size: 14px;
   font-weight: 500;
@@ -28,19 +29,17 @@
   margin:2px;
   
   height: 44px;
-  /* UPDATE: Use CSS Grid for robust layout that prevents text shifting */
   display: grid;
-  /* Define three columns: flexible space, content-sized middle, flexible space */
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--spacing-1);
 
-  min-width: 6.5rem;
+  /* TIGHTER LAYOUT: Min-width is reduced significantly. */
+  min-width: 5.5rem;
 }
 
 .pillButton.active {
   color: var(--control-fg-secondary);
-  /* UPDATE: Font weight is now semi-bold */
   font-weight: 600;
 }
 
@@ -56,7 +55,6 @@
 .pillLabel {
   position: relative;
   z-index: 2;
-  /* UPDATE: Place the label in the center column of the grid */
   grid-column: 2;
 }
 
@@ -67,7 +65,6 @@
   overflow: hidden;
   white-space: nowrap;
   font-variation-settings: 'opsz' 18;
-  /* UPDATE: Place the icon in the third column to the right of the text */
   grid-column: 3;
-  justify-self: start; /* Align icon to the start of its grid area */
+  justify-self: start;
 }

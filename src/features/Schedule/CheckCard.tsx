@@ -68,7 +68,9 @@ export const CheckCard = ({ check }: CheckCardProps) => {
       animate={{ x: 0, height: 'auto', opacity: 1, marginBottom: 'var(--spacing-3)' }}
       transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       initial={{ opacity: 0 }}
-      exit={{ x: '100%', height: 0, opacity: 0, marginBottom: 0, overflow: 'hidden' }}
+      // DEFINITIVE FIX: The exit animation is now non-directional (no 'x' property).
+      // This provides a smooth collapse animation suitable for both completion and filtering.
+      exit={{ height: 0, opacity: 0, marginBottom: 0, overflow: 'hidden' }}
       className={cardClassName}
       data-status={check.status} 
       onClick={handleCardClick}

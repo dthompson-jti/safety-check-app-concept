@@ -20,13 +20,13 @@
   flex-direction: row;
   align-items: center;
   gap: var(--spacing-1);
-  padding: var(--spacing-2);
+  /* LARGER PADDING: Increased padding for a larger touch target and better presence. */
+  padding: 10px 14px 10px 8px;
   border-radius: var(--radius-md);
   position: relative;
   overflow: visible;
   text-align: center;
   flex-shrink: 0;
-  /* Additions for interactivity */
   background: none;
   border: 1px solid transparent;
   cursor: pointer;
@@ -45,8 +45,9 @@
 }
 
 .statusPill[data-active='true'] {
-  background-color: var(--surface-bg-active);
-  border-color: var(--surface-border-secondary);
+  /* SEMANTIC TOKENS: Use selected state variables for clarity. */
+  background-color: var(--control-bg-selected);
+  border-color: var(--control-border-selected);
 }
 
 
@@ -85,7 +86,6 @@
 .statusPill[data-status='late'] .icon {
   color: var(--surface-fg-warning-primary) !important;
 }
-/* FIX: Add rule to apply blue "info" color for the due-soon state. */
 .statusPill[data-status='due-soon'] .count,
 .statusPill[data-status='due-soon'] .icon {
   color: var(--surface-fg-info-primary) !important;

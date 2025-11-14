@@ -1,4 +1,5 @@
 // src/features/Shell/FloatingHeader.tsx
+import { useLayoutEffect, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -15,15 +16,38 @@ import styles from './FloatingHeader.module.css';
 export const FloatingHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const setIsManualCheckOpen = useSetAtom(isManualCheckModalOpenAtom);
+  const headerRef = useRef<HTMLElement>(null);
 
   const isDashboard = appView === 'dashboardTime' || appView === 'dashboardRoute';
+
+  // DEFINITIVE FIX: Implement the Component Variable Contract.
+  // This measures the header's actual height and sets a CSS variable, providing
+  // a robust way for other components (like the sticky list headers) to position
+  // themselves relative to it.
+  useLayoutEffect(() => {
+    const updateHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--header-height', `${height}px`);
+      }
+    };
+    updateHeight();
+    const resizeObserver = new ResizeObserver(updateHeight);
+    if (headerRef.current) {
+      resizeObserver.observe(headerRef.current);
+    }
+    return () => {
+      resizeObserver.disconnect();
+      document.documentElement.style.removeProperty('--header-height');
+    };
+  }, []);
 
   const handleMenuClick = () => {
     setAppView(appView === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
   return (
-    <motion.header layout="position" className={styles.header}>
+    <motion.header layout="position" className={styles.header} ref={headerRef}>
       <div className={styles.headerContent}>
         <div className={styles.leftActions}>
           <Tooltip content="Open navigation">

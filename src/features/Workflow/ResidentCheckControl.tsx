@@ -1,12 +1,15 @@
+// src/features/Workflow/ResidentCheckControl.tsx
+import { useRef } from 'react';
 import { Resident, SafetyCheck } from '../../types';
 import { SegmentedControl } from '../../components/SegmentedControl';
+// RE-ROUTED: Import path is updated to the new location.
+import { useAutosizeTextArea } from '../../data/useAutosizeTextArea';
 import styles from './ResidentCheckControl.module.css';
 
-// Remove icons from the options, they will now be text-only.
 const statusOptions = [
-  { value: 'Awake', label: 'Awake' },
-  { value: 'Sleeping', label: 'Sleeping' },
   { value: 'Refused', label: 'Refused' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Awake', label: 'Awake' },
 ] as const;
 
 type StatusValue = typeof statusOptions[number]['value'];
@@ -29,6 +32,10 @@ export const ResidentCheckControl = ({
   classification,
 }: ResidentCheckControlProps) => {
   const isClassified = !!classification;
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-sizing logic for the textarea.
+  useAutosizeTextArea(textAreaRef.current, notes);
 
   return (
     <div className={styles.container} data-classified={isClassified}>
@@ -46,7 +53,6 @@ export const ResidentCheckControl = ({
         </h4>
       </div>
 
-      {/* REPOSITION: Classification details are now directly under the name for better proximity. */}
       {isClassified && (
         <div className={styles.classificationDetails}>
           <p>
@@ -64,13 +70,13 @@ export const ResidentCheckControl = ({
         />
       </div>
 
-      {/* REFINED: The label is removed to save vertical space. */}
       <textarea
+        ref={textAreaRef}
         id={`notes-${resident.id}`}
         value={notes}
         onChange={(e) => onNotesChange(resident.id, e.target.value)}
         placeholder="Enter optional notes"
-        rows={3}
+        rows={1} // Start as a single line
         className={styles.notesInput}
       />
     </div>

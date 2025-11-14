@@ -1,6 +1,6 @@
 // src/features/Schedule/ScheduleListView.tsx
 import { useEffect } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import { timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
 import {
@@ -9,12 +9,15 @@ import {
   isScheduleLoadingAtom,
   scheduleSearchQueryAtom,
   isScheduleRefreshingAtom,
+  scheduleFilterAtom,
 } from '../../data/atoms';
-import { SafetyCheck } from '../../types';
+import { SafetyCheck, ScheduleFilter } from '../../types';
 import { CheckCard } from './CheckCard';
 import { CheckListItem } from './CheckListItem';
 import { CheckSkeleton } from '../../components/CheckSkeleton';
 import { NoSearchResults } from '../../components/EmptyStateMessage';
+import { FilterIndicatorChip } from '../../components/FilterIndicatorChip';
+import { FilteredEmptyState } from '../../components/FilteredEmptyState';
 import styles from './ScheduleLayouts.module.css';
 
 interface ScheduleListViewProps {
@@ -22,6 +25,12 @@ interface ScheduleListViewProps {
 }
 
 const SKELETON_COUNT = 8;
+
+const filterLabelMap: Record<Exclude<ScheduleFilter, 'all'>, string> = {
+  late: 'Late',
+  'due-soon': 'Due Soon',
+  queued: 'Queued',
+};
 
 const groupChecksByTime = (checks: SafetyCheck[]) => {
   const groups: Record<string, SafetyCheck[]> = { Late: [], 'Due Soon': [], Upcoming: [] };
@@ -63,22 +72,29 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   const [isLoading, setIsLoading] = useAtom(isScheduleLoadingAtom);
   const isRefreshing = useAtomValue(isScheduleRefreshingAtom);
   const searchQuery = useAtomValue(scheduleSearchQueryAtom);
+  const [filter, setFilter] = useAtom(scheduleFilterAtom);
+  const setIsRefreshing = useSetAtom(isScheduleRefreshingAtom);
 
   useEffect(() => {
-    // Only run this on initial load
     if (isLoading) {
       const timer = setTimeout(() => setIsLoading(false), isSlowLoadEnabled ? 3000 : 750);
       return () => clearTimeout(timer);
     }
   }, [isLoading, setIsLoading, isSlowLoadEnabled]);
+  
+  const handleClearFilter = () => {
+    setIsRefreshing(true);
+    setFilter('all');
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
 
-  const showSkeletons = isLoading || isRefreshing;
+  const showSkeletons = isLoading;
+  const isFilterActive = filter !== 'all';
 
   const renderContent = () => {
     if (showSkeletons) {
       return (
         <>
-          <div style={{ height: '16px' }} />
           {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
             <CheckSkeleton key={index} variant={scheduleViewMode} />
           ))}
@@ -86,15 +102,15 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
       );
     }
 
-    if (checks.length === 0 && searchQuery) {
-      return <NoSearchResults query={searchQuery} />;
+    if (checks.length === 0) {
+      if (searchQuery) return <NoSearchResults query={searchQuery} />;
+      if (isFilterActive) return <FilteredEmptyState filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />;
     }
     
     const groups = viewType === 'time' ? groupChecksByTime(checks) : groupChecksByRoute(checks);
 
     return (
       <>
-        <div style={{ height: '16px' }} />
         <AnimatePresence>
           {groups.flatMap(group => [
             <motion.div
@@ -121,7 +137,18 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   };
   
   return (
-    <div className={styles.scrollContainer} data-view-mode={scheduleViewMode}>
+    <div 
+      className={styles.scrollContainer} 
+      data-view-mode={scheduleViewMode}
+      data-refreshing={isRefreshing}
+    >
+      {/* DEFINITIVE FIX: Add a static spacer div to push content below the floating header. */}
+      <div style={{ height: 'var(--header-height)' }} />
+      {/* DEFINITIVE FIX: Add a key and set mode="wait" to ensure AnimatePresence
+          correctly handles filter changes, preventing the chip from disappearing. */}
+      <AnimatePresence mode="wait">
+        {isFilterActive && <FilterIndicatorChip key={filter} filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />}
+      </AnimatePresence>
       {renderContent()}
     </div>
   );

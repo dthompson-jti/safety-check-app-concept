@@ -5,37 +5,26 @@
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
-  /* Ensures padding is included in the height calculation */
   box-sizing: border-box; 
-  /* Dynamic top padding is set via JS to prevent content from being obscured by the floating header. */
-  padding-top: var(--header-height);
+  /* DEFINITIVE FIX: Padding is removed. A static spacer div is now used to create
+     space for the header, adhering to the Sticky Positioning Contract. */
 }
 
-/* 
-  ARCHITECTURAL NOTE: Horizontal padding is applied conditionally.
-  This is critical for supporting the two distinct visual layouts.
-*/
+.scrollContainer[data-refreshing='true'] > * {
+  opacity: 0.5;
+  pointer-events: none;
+}
 
-/* The 'card' view requires horizontal padding. This creates a "safe zone"
-   for shadows and animations (like the completion pulse) that extend 
-   beyond the component's boundaries, preventing them from being clipped. */
 .scrollContainer[data-view-mode='card'] {
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
 }
-
-/* The 'list' view is designed to be full-width (edge-to-edge). 
-   It has no horizontal padding, allowing list items to span the entire screen width. */
 .scrollContainer[data-view-mode='list'] {
   padding-left: 0;
   padding-right: 0;
 }
 
-
-/* A simple wrapper for the header to participate in the layout animation */
 .headerWrapper {
-  /* Horizontal padding is now handled by the parent .scrollContainer for the card view,
-     ensuring consistent alignment for all content within the scroll area. */
   padding: 0;
 }
 
@@ -45,15 +34,15 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--surface-fg-secondary);
-  text-transform: uppercase;
   letter-spacing: 0.05em;
   position: sticky;
-  /* Stick to the top of the scroll container, respecting its padding. */
-  top: 0;
+  /* DEFINITIVE FIX: The header now sticks to the bottom of the floating header,
+     using the CSS variable provided by the Component Variable Contract. */
+  top: var(--header-height);
   padding-top: 16px;
-  /* Horizontal padding is added here to align with list/card content below. */
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
   background-color: var(--surface-bg-secondary);
   z-index: 5;
+  transition: opacity 0.2s ease-in-out;
 }

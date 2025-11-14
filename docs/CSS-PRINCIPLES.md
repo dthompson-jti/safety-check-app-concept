@@ -42,6 +42,13 @@ When debugging a UI issue, follow this simple diagnostic process to find the roo
 
 React components, UI libraries (Radix), and animation libraries (Framer Motion) can all add wrapper `divs` or change the final DOM structure. Your React code is not the final source of truth—the browser's "Elements" panel is. Always debug the final rendered HTML, not the JSX you assume is being rendered.
 
+#### 4. Use Sentence Case for Readability
+
+To ensure maximum readability and accessibility, all UI text should use sentence case or title case.
+
+-   **The Problem:** Text set in all-caps is demonstrably harder for users to read and scan quickly. It can be perceived as "shouting" and creates significant challenges for users with dyslexia. Screen readers may also misinterpret it, sometimes reading it letter-by-letter.
+-   **The Solution (The Contract):** The source of truth for text casing must be the content itself (the string in the code or from an API). **Do not use `text-transform: uppercase;` in CSS** for headers, titles, or labels. If a design requires a specific capitalization style, it should be applied to the string data directly.
+
 ---
 
 ### Key Architectural Patterns
