@@ -1,4 +1,4 @@
-// src/features/ManualSelection/ManualSelectionView.tsx
+// src/features/Overlays/ManualSelectionView.tsx
 import { useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
@@ -7,6 +7,7 @@ import { safetyChecksAtom } from '../../data/appDataAtoms';
 import { workflowStateAtom } from '../../data/atoms';
 import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
+import { NoSearchResults } from '../../components/EmptyStateMessage';
 import { SafetyCheck } from '../../types';
 import styles from './ManualSelectionView.module.css';
 
@@ -72,26 +73,27 @@ export const ManualSelectionView = ({ isOpen }: ManualSelectionViewProps) => {
           />
         </div>
         <div className={styles.listContainer}>
-          <Virtuoso
-            data={filteredChecks}
-            itemContent={(_index, check) => (
-              // UPDATE: Use the global 'menu-item' class for consistent styling and interaction
-              <button className="menu-item" onClick={() => handleSelectCheck(check)}>
-                {/* UPDATE: Use the standard 'checkmark-container' for icon alignment */}
-                <div className="checkmark-container">
-                  {check.specialClassification ? (
-                    <span className={`material-symbols-rounded ${styles.warningIcon}`}>warning</span>
-                  ) : (
-                    // The placeholder is now just an empty div styled by the container
-                    <></>
-                  )}
-                </div>
-                <span className={styles.checkItemText}>
-                  {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
-                </span>
-              </button>
-            )}
-          />
+          {filteredChecks.length === 0 && searchQuery ? (
+            <NoSearchResults query={searchQuery} />
+          ) : (
+            <Virtuoso
+              data={filteredChecks}
+              itemContent={(_index, check) => (
+                <button className="menu-item" onClick={() => handleSelectCheck(check)}>
+                  <div className="checkmark-container">
+                    {check.specialClassification ? (
+                      <span className={`material-symbols-rounded ${styles.warningIcon}`}>warning</span>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <span className={styles.checkItemText}>
+                    {check.residents[0].location} - {check.residents.map(r => r.name).join(', ')}
+                  </span>
+                </button>
+              )}
+            />
+          )}
         </div>
       </div>
     </BottomSheet>

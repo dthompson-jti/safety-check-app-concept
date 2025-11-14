@@ -54,10 +54,13 @@ export const minuteTickerAtom = atom((get) => {
 export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
 export const completingChecksAtom = atom(new Set<string>());
 
-// NEW: Atoms for search and loading states
 export const isScheduleSearchActiveAtom = atom(false);
 export const scheduleSearchQueryAtom = atom('');
 export const isScheduleLoadingAtom = atom(true);
+// NEW: Atoms for interactive filtering
+export type ScheduleFilter = 'all' | 'late' | 'due-soon' | 'queued';
+export const scheduleFilterAtom = atom<ScheduleFilter>('all');
+export const isScheduleRefreshingAtom = atom(false);
 
 
 // =================================================================
@@ -106,7 +109,7 @@ export const isManualCheckModalOpenAtom = atom(false);
 export const isWriteNfcModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
-export const isHistoryModalOpenAtom = atom(false); // New atom for History modal
+export const isHistoryModalOpenAtom = atom(false);
 
 
 // =================================================================
@@ -120,7 +123,7 @@ interface AppConfig {
   scanMode: 'qr' | 'nfc';
   hapticsEnabled: boolean;
   scheduleViewMode: 'card' | 'list';
-  isSlowLoadEnabled: boolean; // New setting for slow load simulation
+  isSlowLoadEnabled: boolean;
 }
 export const appConfigAtom = atom<AppConfig>({
   scanMode: 'qr',
@@ -130,7 +133,7 @@ export const appConfigAtom = atom<AppConfig>({
 });
 
 // =================================================================
-//                       Global Actions (NEW)
+//                       Global Actions
 // =================================================================
 
 /**
@@ -142,7 +145,7 @@ export const logoutAtom = atom(null, (_get, set) => {
   set(isContextSelectionRequiredAtom, true);
   set(selectedFacilityGroupAtom, null);
   set(selectedFacilityUnitAtom, null);
-  set(appViewAtom, 'dashboardTime'); // Explicitly reset the main view
-  set(workflowStateAtom, { view: 'none' }); // Reset any active workflow
-  set(completingChecksAtom, new Set()); // Clear any transient animation states
+  set(appViewAtom, 'dashboardTime');
+  set(workflowStateAtom, { view: 'none' });
+  set(completingChecksAtom, new Set());
 });

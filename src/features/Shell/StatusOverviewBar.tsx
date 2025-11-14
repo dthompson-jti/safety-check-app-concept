@@ -1,12 +1,18 @@
 // src/features/Shell/StatusOverviewBar.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { statusCountsAtom } from '../../data/appDataAtoms';
-import { connectionStatusAtom } from '../../data/atoms';
+import {
+  connectionStatusAtom,
+  scheduleFilterAtom,
+  ScheduleFilter,
+  isScheduleRefreshingAtom,
+} from '../../data/atoms';
 import styles from './StatusOverviewBar.module.css';
 
-type StatusType = 'late' | 'dueSoon' | 'completed' | 'queued';
+// FIX: Align StatusType with ScheduleFilter values, excluding 'all'
+type StatusType = Exclude<ScheduleFilter, 'all'>;
 
 const usePrevious = <T,>(value: T): T | undefined => {
   const ref = useRef<T | undefined>(undefined);
@@ -16,7 +22,15 @@ const usePrevious = <T,>(value: T): T | undefined => {
   return ref.current;
 };
 
-const StatusPill: React.FC<{ count: number; icon: string; status: StatusType }> = ({ count, icon, status }) => {
+interface StatusPillProps {
+  count: number;
+  icon: string;
+  status: StatusType;
+  filter: ScheduleFilter;
+  onFilterChange: (filter: ScheduleFilter) => void;
+}
+
+const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, filter, onFilterChange }) => {
   const [isFlashing, setIsFlashing] = useState(false);
   const prevCount = usePrevious(count);
 
@@ -28,19 +42,36 @@ const StatusPill: React.FC<{ count: number; icon: string; status: StatusType }> 
     }
   }, [count, prevCount]);
 
+  const handleClick = () => {
+    onFilterChange(filter === status ? 'all' : status);
+  };
+
   return (
-    <div className={`${styles.statusPill} ${isFlashing ? styles.flash : ''}`} data-status={status}>
-      {/* DEFINITIVE FIX: Apply the local `styles.icon` class directly to the icon span. */}
+    <button
+      className={`${styles.statusPill} ${isFlashing ? styles.flash : ''}`}
+      data-status={status}
+      data-active={filter === status}
+      onClick={handleClick}
+      disabled={count === 0}
+    >
       <span className={`material-symbols-rounded ${styles.icon}`}>{icon}</span>
       <span className={styles.count}>{count}</span>
-    </div>
+    </button>
   );
 };
 
 export const StatusOverviewBar = () => {
   const counts = useAtomValue(statusCountsAtom);
   const connectionStatus = useAtomValue(connectionStatusAtom);
+  const [filter, setFilter] = useAtom(scheduleFilterAtom);
+  const setIsRefreshing = useSetAtom(isScheduleRefreshingAtom);
   const isOffline = connectionStatus !== 'online';
+
+  const handleFilterChange = (newFilter: ScheduleFilter) => {
+    setIsRefreshing(true);
+    setFilter(newFilter);
+    setTimeout(() => setIsRefreshing(false), 500); // Simulate refetch
+  };
 
   return (
     <motion.div
@@ -51,10 +82,10 @@ export const StatusOverviewBar = () => {
       transition={{ type: 'tween', duration: 0.2 }}
     >
       <div className={styles.contentContainer}>
-        <StatusPill count={counts.late} icon="notifications" status="late" />
-        <StatusPill count={counts.dueSoon} icon="schedule" status="dueSoon" />
-        {isOffline && <StatusPill count={counts.queued} icon="cloud_off" status="queued" />}
-        <StatusPill count={counts.completed} icon="check_circle" status="completed" />
+        <StatusPill count={counts.late} icon="notifications" status="late" filter={filter} onFilterChange={handleFilterChange} />
+        {/* FIX: Corrected "dueSoon" to "due-soon" to match the ScheduleFilter type */}
+        <StatusPill count={counts.dueSoon} icon="schedule" status="due-soon" filter={filter} onFilterChange={handleFilterChange} />
+        {isOffline && <StatusPill count={counts.queued} icon="cloud_off" status="queued" filter={filter} onFilterChange={handleFilterChange} />}
       </div>
     </motion.div>
   );

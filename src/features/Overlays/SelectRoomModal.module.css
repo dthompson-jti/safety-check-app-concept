@@ -64,6 +64,6 @@
   font-size: 0.85rem;
   color: var(--surface-fg-secondary);
   line-height: 1.4;
-  /* Allow text to wrap */
+  /* Allow text to wrap and prevent collision */
   white-space: normal;
 }

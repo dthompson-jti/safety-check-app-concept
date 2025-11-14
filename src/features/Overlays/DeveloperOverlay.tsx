@@ -27,7 +27,7 @@ export const DeveloperOverlay = () => {
   return (
     <div className={styles.container}>
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Connectivity</h3>
+        <h3 className={styles.sectionHeader}>CONNECTIVITY</h3>
         <p className={styles.sectionHelper}>Simulate the application's network connection status.</p>
         <IconToggleGroup
           options={connectionOptions}
@@ -38,26 +38,30 @@ export const DeveloperOverlay = () => {
       </div>
 
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Device Settings</h3>
+        <h3 className={styles.sectionHeader}>DEVICE SETTINGS</h3>
         <p className={styles.sectionHelper}>Control the primary input method for initiating checks.</p>
         <IconToggleGroup
-            id="scan-mode-toggle"
-            options={scanModeOptions}
-            value={appConfig.scanMode}
-            onValueChange={(mode) => setAppConfig((c) => ({ ...c, scanMode: mode }))}
-          />
+          id="scan-mode-toggle"
+          options={scanModeOptions}
+          value={appConfig.scanMode}
+          onValueChange={(mode) => setAppConfig((c) => ({ ...c, scanMode: mode }))}
+        />
       </div>
       
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Performance</h3>
+        <h3 className={styles.sectionHeader}>PERFORMANCE</h3>
         <p className={styles.sectionHelper}>Test the UI's resilience to network latency.</p>
-        <div className={styles.row}>
-          <label htmlFor="slow-load-switch">Simulate Slow Loading</label>
-          <Switch
-            id="slow-load-switch"
-            checked={appConfig.isSlowLoadEnabled}
-            onCheckedChange={handleSlowLoadChange}
-          />
+        <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem}>
+            <label htmlFor="slow-load-switch" className={styles.itemLabel}>
+              Simulate Slow Loading
+            </label>
+            <Switch
+              id="slow-load-switch"
+              checked={appConfig.isSlowLoadEnabled}
+              onCheckedChange={handleSlowLoadChange}
+            />
+          </div>
         </div>
       </div>
     </div>

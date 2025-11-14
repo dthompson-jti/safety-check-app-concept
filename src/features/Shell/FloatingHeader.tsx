@@ -3,7 +3,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   appViewAtom,
-  isHistoryModalOpenAtom,
+  isManualCheckModalOpenAtom,
 } from '../../data/atoms';
 import { PillToggle } from '../../components/PillToggle';
 import { Tooltip } from '../../components/Tooltip';
@@ -14,7 +14,7 @@ import styles from './FloatingHeader.module.css';
 
 export const FloatingHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
-  const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
+  const setIsManualCheckOpen = useSetAtom(isManualCheckModalOpenAtom);
 
   const isDashboard = appView === 'dashboardTime' || appView === 'dashboardRoute';
 
@@ -48,9 +48,9 @@ export const FloatingHeader = () => {
         </div>
 
         <div className={styles.rightActions}>
-          <Tooltip content="View check history">
-            <Button variant="tertiary" size="m" iconOnly onClick={() => setIsHistoryOpen(true)}>
-              <span className="material-symbols-rounded">history</span>
+          <Tooltip content="Add manual check">
+            <Button variant="tertiary" size="m" iconOnly onClick={() => setIsManualCheckOpen(true)}>
+              <span className="material-symbols-rounded">add</span>
             </Button>
           </Tooltip>
         </div>

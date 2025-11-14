@@ -65,16 +65,16 @@
   cursor: pointer;
 }
 
-.checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):hover {
+.checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):not([data-status='queued']):hover {
   background-color: var(--surface-bg-primary_hover);
   border-color: var(--control-border-tertiary-hover);
   box-shadow: var(--surface-shadow-md), inset 0 -1px 0 0 var(--control-border-tertiary-hover);
 }
 
-/* CRITICAL FIX: The transient 'completing' state should look identical to the final 'complete' state. */
 .checkCard[data-status='complete'],
 .checkCard[data-status='supplemental'],
-.checkCard[data-status='completing'] {
+.checkCard[data-status='completing'],
+.checkCard[data-status='queued'] {
   background-color: var(--surface-bg-secondary);
   border-color: var(--surface-border-tertiary);
   box-shadow: none;
@@ -90,23 +90,11 @@
   transition: background-color 0.2s, width 0.2s;
 }
 
-.statusIndicator[data-status='pending'] {
-  width: 2px;
-}
-.statusIndicator[data-status='due-soon'] {
-  width: 3px;
-}
-.statusIndicator[data-status='late'] {
-  width: 4px;
-}
-
-.statusIndicator[data-status='late'] {
-  background-color: var(--surface-fg-warning-primary);
-}
-.statusIndicator[data-status='due-soon'] {
-  background-color: var(--surface-fg-info-primary);
-}
-
+.statusIndicator[data-status='pending'] { width: 2px; }
+.statusIndicator[data-status='due-soon'] { width: 3px; }
+.statusIndicator[data-status='late'] { width: 4px; }
+.statusIndicator[data-status='late'] { background-color: var(--surface-fg-warning-primary); }
+.statusIndicator[data-status='due-soon'] { background-color: var(--surface-fg-info-primary); }
 
 .mainContent {
   flex-grow: 1;
@@ -137,16 +125,6 @@
   min-width: 0;
 }
 
-.filledIcon {
-  color: var(--surface-fg-secondary);
-  font-size: 16px;
-  font-variation-settings: 
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 16;
-}
-
 .locationText {
   color: var(--surface-fg-secondary);
   font-size: 1rem;
@@ -165,6 +143,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
+}
+
+.residentListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.warningIcon {
+  color: var(--surface-fg-primary);
+  font-size: 16px !important;
+  font-variation-settings: 'FILL' 1, 'opsz' 16;
 }
 
 .timeDisplay {

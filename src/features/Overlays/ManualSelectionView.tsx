@@ -9,6 +9,7 @@ import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
 import { NoSearchResults } from '../../components/EmptyStateMessage';
 import { SafetyCheck } from '../../types';
+// FIX: Correct the import path for the CSS module.
 import styles from './ManualSelectionView.module.css';
 
 interface ManualSelectionViewProps {

@@ -1,0 +1,50 @@
+/* src/features/ManualSelection/ManualSelectionView.module.css */
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 65vh;
+  max-height: 700px;
+}
+
+.headerContent {
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  flex-shrink: 0;
+}
+
+.headerContent h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+.searchContainer {
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  flex-shrink: 0;
+}
+
+.listContainer {
+  flex-grow: 1;
+  min-height: 0;
+  border-top: 1px solid var(--surface-border-secondary);
+}
+
+/* 
+  The component now uses the global `.menu-item` class from `menu.css`.
+  This global class handles padding, hover/active states, flex layout,
+  and correctly scopes hover effects to mouse-based devices.
+  Only component-specific overrides or extensions are needed here.
+*/
+
+.checkItemText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.warningIcon {
+  color: var(--surface-fg-secondary);
+  font-variation-settings: 'FILL' 1;
+  font-size: 20px;
+}

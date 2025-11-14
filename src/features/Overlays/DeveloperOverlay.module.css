@@ -1,10 +1,10 @@
-/* src/features/Developer/DeveloperToolsView.module.css */
+/* src/features/Overlays/DeveloperOverlay.module.css */
 
 .container {
   padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-8);
+  gap: var(--spacing-6);
 }
 
 .settingSection {
@@ -21,6 +21,7 @@
   letter-spacing: 0.05em;
   padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--surface-border-secondary);
+  text-transform: uppercase;
 }
 
 .sectionHelper {
@@ -28,4 +29,30 @@
   color: var(--surface-fg-secondary);
   line-height: 1.5;
   font-size: 0.9em;
+}
+
+.settingsGroup {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg-primary);
+  border-radius: var(--spacing-3);
+  border: 1px solid var(--surface-border-secondary);
+  overflow: hidden;
+}
+
+.settingsItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--surface-border-secondary);
+}
+.settingsItem:last-child {
+  border-bottom: none;
+}
+
+.itemLabel {
+  font-weight: 500;
+  cursor: pointer;
 }

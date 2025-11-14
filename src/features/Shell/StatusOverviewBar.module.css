@@ -19,14 +19,36 @@
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--spacing-1); /* 4px gap between icon and count */
+  gap: var(--spacing-1);
   padding: var(--spacing-2);
   border-radius: var(--radius-md);
   position: relative;
   overflow: visible;
   text-align: center;
   flex-shrink: 0;
+  /* Additions for interactivity */
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
 }
+
+.statusPill:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media(hover: hover) {
+  .statusPill:not([data-active='true']):not(:disabled):hover {
+    background-color: var(--surface-bg-secondary_hover);
+  }
+}
+
+.statusPill[data-active='true'] {
+  background-color: var(--surface-bg-active);
+  border-color: var(--surface-border-secondary);
+}
+
 
 .statusPill::before {
   content: '';
@@ -54,24 +76,19 @@
   transition: color 0.2s ease-in-out;
 }
 
-/* Base styles for the icon, targeted by its own dedicated class. */
 .icon {
   font-size: 20px;
   transition: color 0.2s ease-in-out;
 }
 
-/* DEFINITIVE FIX: Target the local `.icon` class for coloring, not the global one. */
 .statusPill[data-status='late'] .count,
 .statusPill[data-status='late'] .icon {
   color: var(--surface-fg-warning-primary) !important;
 }
-.statusPill[data-status='dueSoon'] .count,
-.statusPill[data-status='dueSoon'] .icon {
+/* FIX: Add rule to apply blue "info" color for the due-soon state. */
+.statusPill[data-status='due-soon'] .count,
+.statusPill[data-status='due-soon'] .icon {
   color: var(--surface-fg-info-primary) !important;
-}
-.statusPill[data-status='completed'] .count,
-.statusPill[data-status='completed'] .icon {
-  color: var(--surface-fg-success-primary) !important;
 }
 .statusPill[data-status='queued'] .count,
 .statusPill[data-status='queued'] .icon {
@@ -80,6 +97,5 @@
 
 /* Flash color theming */
 .statusPill[data-status='late'].flash { --flash-color-bg: var(--surface-bg-warning-secondary); }
-.statusPill[data-status='dueSoon'].flash { --flash-color-bg: var(--surface-bg-info-secondary); }
-.statusPill[data-status='completed'].flash { --flash-color-bg: var(--surface-bg-success-secondary); }
+.statusPill[data-status='due-soon'].flash { --flash-color-bg: var(--surface-bg-info-secondary); }
 .statusPill[data-status='queued'].flash { --flash-color-bg: var(--surface-bg-tertiary_hover); }

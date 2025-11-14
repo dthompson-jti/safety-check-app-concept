@@ -7,7 +7,8 @@ import {
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
   logoutAtom,
-  appViewAtom, // Import the appViewAtom to control the side menu
+  appViewAtom,
+  isScheduleLoadingAtom, // Import the loading atom
 } from '../../data/atoms';
 import { FullScreenModal } from '../../components/FullScreenModal';
 import { Button } from '../../components/Button';
@@ -26,7 +27,8 @@ export const FacilitySelectionModal = () => {
   const [selectedGroup, setSelectedGroup] = useAtom(selectedFacilityGroupAtom);
   const [selectedUnit, setSelectedUnit] = useAtom(selectedFacilityUnitAtom);
   const logout = useSetAtom(logoutAtom);
-  const setAppView = useSetAtom(appViewAtom); // Get the setter for the app view
+  const setAppView = useSetAtom(appViewAtom);
+  const setIsScheduleLoading = useSetAtom(isScheduleLoadingAtom); // Get the setter for the loading state
 
   const [localGroup, setLocalGroup] = useState(selectedGroup || '');
   const [localUnit, setLocalUnit] = useState(selectedUnit || '');
@@ -49,9 +51,10 @@ export const FacilitySelectionModal = () => {
   const handleContinue = () => {
     setSelectedGroup(localGroup);
     setSelectedUnit(localUnit);
+    
+    // FIX: Trigger the loading state for the schedule view.
+    setIsScheduleLoading(true);
 
-    // UX REFINEMENT: If the context was changed via the side menu (i.e., it was not the
-    // initial mandatory selection), close the side menu to reveal the dashboard.
     if (!isContextRequired) {
       setAppView('dashboardTime');
     }

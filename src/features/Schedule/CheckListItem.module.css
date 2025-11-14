@@ -39,14 +39,14 @@
   cursor: pointer;
 }
 
-.checkListItem:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):hover {
+.checkListItem:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):not([data-status='queued']):hover {
   background-color: var(--surface-bg-primary_hover);
 }
 
-/* CRITICAL FIX: The transient 'completing' state should look identical to the final 'complete' state. */
 .checkListItem[data-status='complete'],
 .checkListItem[data-status='supplemental'],
-.checkListItem[data-status='completing'] {
+.checkListItem[data-status='completing'],
+.checkListItem[data-status='queued'] {
   background-color: var(--surface-bg-secondary);
 }
 
@@ -95,16 +95,6 @@
   min-width: 0;
 }
 
-.filledIcon {
-  color: var(--surface-fg-secondary);
-  font-size: 16px;
-  font-variation-settings: 
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 16;
-}
-
 .locationText {
   color: var(--surface-fg-secondary);
   font-size: 1rem;
@@ -123,6 +113,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
+}
+
+.residentListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.warningIcon {
+  color: var(--surface-fg-primary);
+  font-size: 16px !important;
+  font-variation-settings: 'FILL' 1, 'opsz' 16;
 }
 
 .timeDisplay {

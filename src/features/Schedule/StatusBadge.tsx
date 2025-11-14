@@ -19,7 +19,7 @@ const statusTextMap: Record<SafetyCheckStatus, string> = {
 };
 
 const statusIconMap: Partial<Record<SafetyCheckStatus, string>> = {
-  late: 'warning',
+  late: 'notifications', // FIX: Use 'notifications' icon for consistency
   'due-soon': 'schedule',
   complete: 'check_circle',
   completing: 'check_circle',

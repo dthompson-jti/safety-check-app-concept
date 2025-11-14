@@ -7,6 +7,7 @@ import {
   currentTimeAtom,
   historyFilterAtom,
   scheduleSearchQueryAtom,
+  scheduleFilterAtom, // Import the new schedule filter
 } from './atoms';
 
 // =================================================================
@@ -137,8 +138,8 @@ export type AppAction =
   | { type: 'CHECK_SET_COMPLETING'; payload: { checkId: string } }
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload }
-  | { type: 'CHECK_SET_QUEUED'; payload: CheckCompletePayload } // For offline saves
-  | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } }; // For sync process
+  | { type: 'CHECK_SET_QUEUED'; payload: CheckCompletePayload }
+  | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } };
 
 const appDataAtom = atom<AppData, [AppAction], void>(
   (get) => ({ checks: get(baseChecksAtom) }),
@@ -177,8 +178,6 @@ const appDataAtom = atom<AppData, [AppAction], void>(
           draft.checks.forEach(check => {
             if (check.status === 'queued') {
               check.status = 'complete';
-              // Optionally update timestamp on sync, for now we keep the original
-              // check.lastChecked = action.payload.syncTime;
             }
           });
           break;
@@ -245,7 +244,7 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
     });
 });
 
-const filteredChecksAtom = atom((get) => {
+const searchFilteredChecksAtom = atom((get) => {
   const allChecks = get(safetyChecksAtom);
   const query = get(scheduleSearchQueryAtom).toLowerCase().trim();
 
@@ -264,6 +263,19 @@ const filteredChecksAtom = atom((get) => {
   });
 });
 
+const scheduleFilteredChecksAtom = atom((get) => {
+  const checks = get(searchFilteredChecksAtom);
+  const filter = get(scheduleFilterAtom);
+
+  if (filter === 'all') {
+    return checks;
+  }
+  
+  // The 'due-soon' filter is a special case for the UI, but its data is still 'due-soon'
+  const filterKey = filter === 'due-soon' ? 'due-soon' : filter;
+  return checks.filter(check => check.status === filterKey);
+});
+
 const statusOrder: Record<SafetyCheckStatus, number> = {
   late: 0,
   'due-soon': 1,
@@ -276,7 +288,7 @@ const statusOrder: Record<SafetyCheckStatus, number> = {
 };
 
 export const timeSortedChecksAtom = atom((get) => {
-  const checks = get(filteredChecksAtom);
+  const checks = get(scheduleFilteredChecksAtom);
   const sorted = [...checks];
   sorted.sort((a, b) => {
     const statusDiff = statusOrder[a.status] - statusOrder[b.status];
@@ -287,7 +299,7 @@ export const timeSortedChecksAtom = atom((get) => {
 });
 
 export const routeSortedChecksAtom = atom((get) => {
-  const checks = get(filteredChecksAtom);
+  const checks = get(scheduleFilteredChecksAtom);
   const actionable = checks.filter(c => !['complete', 'supplemental', 'queued'].includes(c.status));
   const nonActionable = checks.filter(c => ['complete', 'supplemental', 'queued'].includes(c.status));
 
@@ -302,7 +314,8 @@ export const routeSortedChecksAtom = atom((get) => {
 });
 
 export const statusCountsAtom = atom((get) => {
-  const checks = get(filteredChecksAtom);
+  // Counts should be based on all checks, not the filtered list
+  const checks = get(searchFilteredChecksAtom);
   const counts = { late: 0, dueSoon: 0, pending: 0, completed: 0, queued: 0 };
   for (const check of checks) {
     switch (check.status) {

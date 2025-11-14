@@ -8,6 +8,7 @@ import {
   completingChecksAtom,
   isScheduleLoadingAtom,
   scheduleSearchQueryAtom,
+  isScheduleRefreshingAtom,
 } from '../../data/atoms';
 import { SafetyCheck } from '../../types';
 import { CheckCard } from './CheckCard';
@@ -20,9 +21,8 @@ interface ScheduleListViewProps {
   viewType: 'time' | 'route';
 }
 
-const SKELETON_COUNT = 6;
+const SKELETON_COUNT = 8;
 
-// Helper to group checks for Time View.
 const groupChecksByTime = (checks: SafetyCheck[]) => {
   const groups: Record<string, SafetyCheck[]> = { Late: [], 'Due Soon': [], Upcoming: [] };
   const now = new Date().getTime();
@@ -47,7 +47,6 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
     .filter(g => g.checks.length > 0);
 };
 
-// Helper to group checks for Route View
 const groupChecksByRoute = (checks: SafetyCheck[]) => {
     const actionable = checks.filter(c => !['complete', 'supplemental', 'missed', 'queued'].includes(c.status));
     const groups: { title: string, checks: SafetyCheck[] }[] = [];
@@ -57,21 +56,26 @@ const groupChecksByRoute = (checks: SafetyCheck[]) => {
     return groups;
 };
 
-// Main Component
 export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
   const { scheduleViewMode, isSlowLoadEnabled } = useAtomValue(appConfigAtom);
   const completingChecks = useAtomValue(completingChecksAtom);
   const [isLoading, setIsLoading] = useAtom(isScheduleLoadingAtom);
+  const isRefreshing = useAtomValue(isScheduleRefreshingAtom);
   const searchQuery = useAtomValue(scheduleSearchQueryAtom);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), isSlowLoadEnabled ? 3000 : 500);
-    return () => clearTimeout(timer);
-  }, [setIsLoading, isSlowLoadEnabled]);
+    // Only run this on initial load
+    if (isLoading) {
+      const timer = setTimeout(() => setIsLoading(false), isSlowLoadEnabled ? 3000 : 750);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, setIsLoading, isSlowLoadEnabled]);
+
+  const showSkeletons = isLoading || isRefreshing;
 
   const renderContent = () => {
-    if (isLoading) {
+    if (showSkeletons) {
       return (
         <>
           <div style={{ height: '16px' }} />
