@@ -1,95 +1,68 @@
 // src/features/Overlays/SettingsOverlay.tsx
-import React from 'react';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import {
-  sessionAtom,
-  isWriteNfcModalOpenAtom,
   appConfigAtom,
-  isStatusOverviewOpenAtom,
-  logoutAtom,
+  connectionStatusAtom,
+  isScheduleSearchActiveAtom,
 } from '../../data/atoms';
 import { Switch } from '../../components/Switch';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import styles from './SettingsOverlay.module.css';
 
-const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <div className={styles.settingsSection}>
-    <h3 className={styles.sectionTitle}>{title}</h3>
-    <div className={styles.settingsGroup}>{children}</div>
-  </div>
-);
-
 const viewModeOptions = [
-  { value: 'card', label: 'Cards', icon: 'dashboard' },
-  { value: 'list', label: 'List', icon: 'list' },
+  { value: 'card', label: 'Card View', icon: 'grid_view' },
+  { value: 'list', label: 'List View', icon: 'view_list' },
+] as const;
+
+const connectionOptions = [
+  { value: 'online', label: 'Online', icon: 'wifi' },
+  { value: 'offline', label: 'Offline', icon: 'wifi_off' },
 ] as const;
 
 export const SettingsOverlay = () => {
-  const [session] = useAtom(sessionAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
-  const [isOverviewOpen, setIsOverviewOpen] = useAtom(isStatusOverviewOpenAtom);
-  const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
-  const logout = useSetAtom(logoutAtom);
+  const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
+  const [isSearchActive, setIsSearchActive] = useAtom(isScheduleSearchActiveAtom);
+
+  const handleHapticsChange = (checked: boolean) => {
+    setAppConfig(currentConfig => ({ ...currentConfig, hapticsEnabled: checked }));
+  };
 
   return (
-    <div className={styles.settingsContainer}>
-      <SettingsSection title="User info">
-        <div className={styles.settingsItem}>
-          <span className={styles.itemLabel}>Logged in as</span>
-          <div className={`${styles.itemValue} ${styles.readOnlyValue}`}>
-            {session.userName || 'Unknown'}
-          </div>
-        </div>
-      </SettingsSection>
-
-      <SettingsSection title="View settings">
-        <div className={styles.settingsItem}>
-          <label htmlFor="view-mode-toggle" className={styles.itemLabel}>
-            Schedule view
-          </label>
+    <div className={styles.overlayContainer}>
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Preferences</h3>
+        <div className={styles.settingRow}>
+          <label>Schedule View</label>
           <IconToggleGroup
-            id="view-mode-toggle"
             options={viewModeOptions}
             value={appConfig.scheduleViewMode}
-            onValueChange={(mode) => setAppConfig((c) => ({ ...c, scheduleViewMode: mode }))}
+            onValueChange={(value) => setAppConfig(c => ({...c, scheduleViewMode: value}))}
           />
         </div>
-        <div className={styles.settingsItem}>
-          <label htmlFor="haptics-toggle" className={styles.itemLabel}>
-            Haptic feedback
-          </label>
-          <Switch
-            id="haptics-toggle"
-            checked={appConfig.hapticsEnabled}
-            onCheckedChange={(checked) => setAppConfig((c) => ({ ...c, hapticsEnabled: checked }))}
-          />
+        {/* DEFINITIVE FIX: The Haptics toggle is now implemented to correctly update the appConfig object property. */}
+        <div className={styles.settingRow}>
+          <label>Haptic Feedback</label>
+          <Switch checked={appConfig.hapticsEnabled} onCheckedChange={handleHapticsChange} />
         </div>
-        <div className={styles.settingsItem}>
-          <label htmlFor="overview-toggle" className={styles.itemLabel}>
-            Show status overview
-          </label>
-          <Switch
-            id="overview-toggle"
-            checked={isOverviewOpen}
-            onCheckedChange={setIsOverviewOpen}
-          />
-        </div>
-      </SettingsSection>
+      </div>
 
-      <SettingsSection title="Admin tools">
-        <button className={styles.settingsItem} onClick={() => setIsWriteNfcModalOpen(true)}>
-          <span className={styles.itemLabel}>Write NFC tag</span>
-          <div className={styles.itemValue}>
-            <span className="material-symbols-rounded">chevron_right</span>
-          </div>
-        </button>
-      </SettingsSection>
-
-      <SettingsSection title="Session">
-        <button className={`${styles.settingsItem} ${styles.destructive}`} onClick={logout}>
-          Log out
-        </button>
-      </SettingsSection>
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Developer Tools</h3>
+        <div className={styles.settingRow}>
+          <label>Connection Status</label>
+          <IconToggleGroup
+            options={connectionOptions}
+            value={connectionStatus}
+            onValueChange={setConnectionStatus}
+          />
+        </div>
+        {/* DEFINITIVE FIX: The dev toggle now uses its specific, correctly-typed atom, which resolves the 'unknown' to 'boolean' error. */}
+        <div className={styles.settingRow}>
+          <label>Force Search Bar Visible</label>
+          <Switch checked={isSearchActive} onCheckedChange={setIsSearchActive} />
+        </div>
+      </div>
     </div>
   );
 };

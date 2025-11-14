@@ -3,9 +3,11 @@ import { atom } from 'jotai';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, Resident, SafetyCheckStatus } from '../types';
-// The 'completingChecksAtom' is managed in atoms.ts and used in the view layer.
-// It is not needed here, so the unused import has been removed to fix the linting warning.
-import { currentTimeAtom, historyFilterAtom } from './atoms';
+import {
+  currentTimeAtom,
+  historyFilterAtom,
+  scheduleSearchQueryAtom,
+} from './atoms';
 
 // =================================================================
 //                 Mock Data Store
@@ -132,9 +134,7 @@ type SupplementalCheckPayload = {
 };
 
 export type AppAction =
-  // Sets a check to the transient 'completing' state for animation purposes.
   | { type: 'CHECK_SET_COMPLETING'; payload: { checkId: string } }
-  // Finalizes a check, marking it as 'complete' in the data model.
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload };
 
@@ -200,13 +200,8 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const timeNow = get(currentTimeAtom).getTime();
   const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
 
-  // This atom returns the full list of checks with their statuses updated in real-time.
-  // It is architected to NEVER change the length or order of the array based on status alone,
-  // which is critical for preventing layout jumps during animations. Sorting is handled
-  // by downstream atoms like `timeSortedChecksAtom`.
   return checks.map(check => {
-      // Completed, supplemental, and transient completing states are immutable here.
-      if (check.status === 'complete' || check.status === 'supplemental' || check.status === 'completing') {
+      if (['complete', 'supplemental', 'completing', 'queued'].includes(check.status)) {
         return check;
       }
       const dueTime = new Date(check.dueDate).getTime();
@@ -220,7 +215,6 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
         newStatus = 'pending';
       }
 
-      // Return the original object if the status hasn't changed to avoid needless re-renders.
       if (check.status === newStatus) {
         return check;
       }
@@ -229,21 +223,38 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
     });
 });
 
+const filteredChecksAtom = atom((get) => {
+  const allChecks = get(safetyChecksAtom);
+  const query = get(scheduleSearchQueryAtom).toLowerCase().trim();
+
+  if (!query) {
+    return allChecks;
+  }
+
+  return allChecks.filter((check) => {
+    const roomName = check.residents[0]?.location || '';
+    if (roomName.toLowerCase().includes(query)) {
+      return true;
+    }
+    return check.residents.some((resident) =>
+      resident.name.toLowerCase().includes(query)
+    );
+  });
+});
+
 const statusOrder: Record<SafetyCheckStatus, number> = {
   late: 0,
   'due-soon': 1,
   pending: 2,
-  // CRITICAL ARCHITECTURE: A 'completing' item is sorted as if it were still 'pending'.
-  // This is the key to preventing the item from changing its position in the list
-  // during the completion animation, which would cause a jarring layout jump.
   completing: 2, 
-  missed: 3,
-  complete: 4,
-  supplemental: 5,
+  queued: 3,
+  missed: 4,
+  complete: 5,
+  supplemental: 6,
 };
 
 export const timeSortedChecksAtom = atom((get) => {
-  const checks = get(safetyChecksAtom);
+  const checks = get(filteredChecksAtom);
   const sorted = [...checks];
   sorted.sort((a, b) => {
     const statusDiff = statusOrder[a.status] - statusOrder[b.status];
@@ -254,9 +265,9 @@ export const timeSortedChecksAtom = atom((get) => {
 });
 
 export const routeSortedChecksAtom = atom((get) => {
-  const checks = get(safetyChecksAtom);
-  const actionable = checks.filter(c => c.status !== 'complete' && c.status !== 'supplemental');
-  const nonActionable = checks.filter(c => c.status === 'complete' || c.status === 'supplemental');
+  const checks = get(filteredChecksAtom);
+  const actionable = checks.filter(c => !['complete', 'supplemental'].includes(c.status));
+  const nonActionable = checks.filter(c => ['complete', 'supplemental'].includes(c.status));
 
   actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
   nonActionable.sort((a, b) => {
@@ -269,14 +280,15 @@ export const routeSortedChecksAtom = atom((get) => {
 });
 
 export const statusCountsAtom = atom((get) => {
-  const checks = get(safetyChecksAtom);
-  const counts = { late: 0, dueSoon: 0, due: 0, completed: 0 };
+  const checks = get(filteredChecksAtom);
+  const counts = { late: 0, dueSoon: 0, due: 0, completed: 0, queued: 0 };
   for (const check of checks) {
     switch (check.status) {
       case 'late': counts.late++; break;
       case 'due-soon': counts.dueSoon++; break;
       case 'pending': counts.due++; break;
       case 'complete': counts.completed++; break;
+      case 'queued': counts.queued++; break;
     }
   }
   return counts;
@@ -288,7 +300,6 @@ export const statusCountsAtom = atom((get) => {
 
 const baseHistoricalChecksAtom = atom((get) => {
   const { checks } = get(appDataAtom);
-  // Do not show transient or actionable items in the history view.
   return checks.filter(c => c.status !== 'pending' && c.status !== 'due-soon' && c.status !== 'completing');
 });
 
@@ -301,7 +312,6 @@ export const historyCountsAtom = atom((get) => {
   };
 });
 
-
 const formatDateGroup = (date: Date): string => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -311,6 +321,7 @@ const formatDateGroup = (date: Date): string => {
 
   if (targetDate.getTime() === today.getTime()) return 'Today';
   if (targetDate.getTime() === yesterday.getTime()) return 'Yesterday';
+  // FIX: Corrected typo from 'toLocaleDateDateString' to 'toLocaleDateString'
   return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 };
 

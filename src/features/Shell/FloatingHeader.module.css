@@ -1,42 +1,37 @@
-/* src/features/Header/FloatingHeader.module.css */
+/* src/features/Shell/FloatingHeader.module.css */
 
 .header {
-  /* ARCHITECTURE: The header is now a static block element. Its positioning is controlled by its parent flex container in AppShell. */
   width: 100%;
   background-color: var(--surface-bg-header-translucent);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px); /* For Safari compatibility */
-  
+  -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .headerContent {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px; 
+  height: 60px;
   padding: 8px 12px;
   position: relative;
 }
 
-
-/* This container uses absolute positioning to guarantee the toggle is
-   perfectly centered in the header, regardless of other content or screen width. */
 .centerContent {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* Allow clicks to pass through the wrapper to the content below. */
   pointer-events: none;
 }
-/* Re-enable pointer events for the toggle itself so it remains interactive. */
+
 .centerContent > * {
   pointer-events: auto;
 }
 
-/* NEW: Wrapper to create optical margin around the pill toggle */
 .pillToggleWrapper {
   padding: 4px 0;
 }

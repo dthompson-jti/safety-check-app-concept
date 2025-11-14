@@ -12,19 +12,18 @@ const statusTextMap: Record<SafetyCheckStatus, string> = {
   'due-soon': 'Due Soon',
   pending: 'Due',
   complete: 'Completed',
-  // CRITICAL FIX: The transient 'completing' state should display as 'Completed'.
   completing: 'Completed',
   missed: 'Missed',
+  queued: 'Queued', // FIX: Added entry for the 'queued' status
   supplemental: 'Supplemental',
 };
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  // Do not render a badge for the default 'pending' state.
   if (status === 'pending') {
     return null;
   }
 
-  const text = statusTextMap[status] || 'Scheduled';
+  const text = statusTextMap[status];
 
   return (
     <div className={styles.badge} data-status={status}>

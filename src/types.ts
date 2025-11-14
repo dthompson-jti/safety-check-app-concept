@@ -1,16 +1,15 @@
 // src/types.ts
-// (Assuming this is the location of the type definitions)
 
 export type SafetyCheckStatus =
   | 'pending'
   | 'due-soon'
   | 'late'
-  | 'missed'
   | 'complete'
-  | 'supplemental'
-  | 'completing'; // <-- ADDED: A transient status for animation orchestration.
+  | 'completing' // Transient state for animations
+  | 'missed'
+  | 'queued' // NEW: For offline checks
+  | 'supplemental';
 
-// ... rest of the types
 export interface Resident {
   id: string;
   name: string;

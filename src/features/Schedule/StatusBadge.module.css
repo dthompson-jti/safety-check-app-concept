@@ -30,7 +30,6 @@
 }
 
 /* Variant: Completed / Supplemental */
-/* CRITICAL FIX: Ensure the transient 'completing' state is styled like the final 'complete' state. */
 .badge[data-status='complete'],
 .badge[data-status='supplemental'],
 .badge[data-status='completing'] {
@@ -39,8 +38,9 @@
   border-color: var(--primitives-green-200);
 }
 
-/* Variant: Missed (uses default grey) */
-.badge[data-status='missed'] {
+/* Variant: Missed / Queued (uses default grey) */
+.badge[data-status='missed'],
+.badge[data-status='queued'] {
   background: var(--primitives-grey-50);
   color: var(--surface-fg-secondary);
   border-color: var(--primitives-grey-300);

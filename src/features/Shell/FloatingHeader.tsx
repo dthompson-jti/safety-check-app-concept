@@ -1,59 +1,64 @@
-import { useState } from 'react';
-import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+// src/features/Shell/FloatingHeader.tsx
+import { useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
-import * as RadixPopover from '@radix-ui/react-popover';
 import {
   appViewAtom,
-  isManualCheckModalOpenAtom, // FIX: Renamed from isSelectRoomModalOpenAtom
-  isWriteNfcModalOpenAtom,
-  isStatusOverviewOpenAtom,
+  isManualCheckModalOpenAtom,
+  // isWriteNfcModalOpenAtom, // FIX: Removed unused import
+  isScheduleSearchActiveAtom,
+  scheduleSearchQueryAtom,
 } from '../../data/atoms';
 import { PillToggle } from '../../components/PillToggle';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
-import { ActionMenu, ActionMenuItem } from '../../components/ActionMenu';
 import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 import { StatusOverviewBar } from './StatusOverviewBar';
+import { ScheduleSearchBar } from './ScheduleSearchBar';
 import styles from './FloatingHeader.module.css';
 
 export const FloatingHeader = () => {
-  const [view, setView] = useAtom(appViewAtom);
-  // FIX: Use the renamed atom 'isManualCheckModalOpenAtom'
+  const [appView, setAppView] = useAtom(appViewAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
-  const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
-  const isOverviewOpen = useAtomValue(isStatusOverviewOpenAtom);
+  // const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom); // FIX: Removed unused setter
+  const [isSearchActive, setIsSearchActive] = useAtom(isScheduleSearchActiveAtom);
+  const setScheduleSearchQuery = useSetAtom(scheduleSearchQueryAtom);
 
-  const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
-  const isDashboard = view === 'dashboardTime' || view === 'dashboardRoute';
-
-  const actionMenuItems: (ActionMenuItem | 'separator')[] = [
-    {
-      id: 'supplemental-check',
-      icon: 'add_comment',
-      label: 'Add manual check', // FIX: Terminology updated
-      onClick: () => {
-        // FIX: Use the correct atom setter
-        setIsManualCheckModalOpen(true);
-        setIsActionMenuOpen(false);
-      },
-    },
-    {
-      id: 'write-nfc-tag',
-      icon: 'nfc',
-      label: 'Write NFC tag',
-      onClick: () => {
-        setIsWriteNfcModalOpen(true);
-        setIsActionMenuOpen(false);
-      },
-    },
-  ];
+  const isDashboard = appView === 'dashboardTime' || appView === 'dashboardRoute';
 
   const handleMenuClick = () => {
-    setView(view === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
+    setAppView(appView === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
+  const handleSearchToggle = () => {
+    if (isSearchActive) {
+      setScheduleSearchQuery('');
+    }
+    setIsSearchActive(!isSearchActive);
+  };
+
+  const rightSideActions = (
+    <div className={styles.rightActions}>
+      <Tooltip content={isSearchActive ? 'Close search' : 'Search schedule'}>
+        <Button
+          variant="tertiary"
+          size="m"
+          iconOnly
+          onClick={handleSearchToggle}
+          aria-label={isSearchActive ? 'Close search' : 'Search schedule'}
+        >
+          <span className="material-symbols-rounded">{isSearchActive ? 'close' : 'search'}</span>
+        </Button>
+      </Tooltip>
+      <Tooltip content="Add manual check">
+        <Button variant="tertiary" size="m" iconOnly onClick={() => setIsManualCheckModalOpen(true)}>
+          <span className="material-symbols-rounded">add</span>
+        </Button>
+      </Tooltip>
+    </div>
+  );
+
   return (
-    <header className={styles.header}>
+    <motion.header layout className={styles.header}>
       <div className={styles.headerContent}>
         <Tooltip content="Open navigation">
           <Button variant="tertiary" size="m" iconOnly onClick={handleMenuClick} aria-label="Open navigation menu">
@@ -81,35 +86,33 @@ export const FloatingHeader = () => {
           </AnimatePresence>
         </div>
 
-        <div className={styles.rightActions}>
-          <RadixPopover.Root open={isActionMenuOpen} onOpenChange={setIsActionMenuOpen}>
-            <Tooltip content="More actions">
-              <RadixPopover.Trigger asChild>
-                <Button variant="tertiary" size="m" iconOnly aria-label="More actions">
-                  <span className="material-symbols-rounded">add</span>
-                </Button>
-              </RadixPopover.Trigger>
-            </Tooltip>
-            <RadixPopover.Portal>
-              <RadixPopover.Content className="menu-popover" sideOffset={5} align="end">
-                <ActionMenu items={actionMenuItems} />
-              </RadixPopover.Content>
-            </RadixPopover.Portal>
-          </RadixPopover.Root>
-        </div>
+        {rightSideActions}
       </div>
-      <AnimatePresence>
-        {isOverviewOpen && (
+      <AnimatePresence mode="wait" initial={false}>
+        {isSearchActive ? (
           <motion.div
+            key="search-bar"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'tween', duration: 0.25, ease: 'easeInOut' }}
+            style={{ overflow: 'hidden' }}
+          >
+            <ScheduleSearchBar />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="status-bar"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'tween', duration: 0.25, ease: 'easeInOut' }}
             style={{ overflow: 'hidden' }}
           >
             <StatusOverviewBar />
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 };

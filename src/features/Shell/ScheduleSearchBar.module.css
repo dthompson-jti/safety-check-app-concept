@@ -1,0 +1,20 @@
+/* src/features/Shell/ScheduleSearchBar.module.css */
+
+.searchBarContainer {
+  padding: var(--spacing-2) var(--spacing-4) var(--spacing-4);
+}
+
+/* Override the default SearchInput styles for the integrated variant */
+.searchBarContainer :global(.wrapper[data-variant="integrated"]) {
+  background-color: var(--surface-bg-tertiary);
+  border: 1px solid var(--surface-border-secondary);
+  height: 48px;
+  padding: var(--spacing-1p5) var(--spacing-4);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchBarContainer :global(.wrapper[data-variant="integrated"].focused) {
+  border-color: var(--surface-border-theme);
+  box-shadow: 0 0 0 2px var(--control-focus-ring-standard);
+}
