@@ -19,7 +19,8 @@ This powerful pattern allows components to communicate layout information to the
 
 -   **The Contract:** A component can measure its own dimensions (e.g., height) after it renders and set that value as a CSS Custom Property (variable) on the `:root` element (i.e., `document.documentElement.style.setProperty(...)`).
 -   **The Benefit:** Other components, even in completely different parts of the DOM tree, can then use this variable in their own CSS (e.g., with `calc()`) to dynamically position themselves relative to the first component. This creates a robust, decoupled layout system that adapts automatically.
--   **Example:** The `FloatingFooter` sets `--footer-height`. The global `toast.css` stylesheet uses `bottom: calc(var(--footer-height) + 16px)` to ensure toasts always appear perfectly above the footer, no matter its size.
+-   **Example 1:** The `FloatingFooter` sets `--footer-height`. The global `toast.css` stylesheet uses `bottom: calc(var(--footer-height) + 16px)` to ensure toasts always appear perfectly above the footer, no matter its size.
+-   **Example 2:** The `CheckFormView` has a floating footer. It measures its own height and sets `--form-footer-height`. The form's scrollable content area then uses `padding-bottom: var(--form-footer-height)` to ensure no content is ever obscured by the footer.
 
 ##### The Sticky Positioning Contract
 `position: sticky` is powerful but has a critical dependency on its parent container.
@@ -97,7 +98,7 @@ For mobile-first contextual actions (e.g., initiating a supplemental check, writ
 To add secondary information or communicate status visually, we use a consistent pattern of icons and semantic colors.
 
 -   **Problem:** A component or view has a special status that needs to be communicated at a glance.
--   **Solution:** We use a prominent icon (like the `warning` triangle) paired with a semantic background color (like `--surface-bg-warning-secondary`) to create an unmistakable visual cue. The text content is also given a matching semantic color to ensure high contrast and legibility.
+-   **Solution:** We use a prominent icon (like the `warning` triangle) paired with a semantic background color (like `--surface-bg-warning-secondary`) to create an unmistakable visual cue. The text content is also given a matching semantic color to ensure high contrast and legibility. This styling must be applied explicitly via CSS rules targeting data-attributes (e.g., `[data-status='due-soon']`); semantic meaning is not inferred automatically.
 -   **Implementation Examples:**
     -   A `CheckCard` for a resident with a Special Classification uses a `warning` icon to draw immediate attention in the schedule list.
     -   The **pre-scan alert banner** in `ScanView` uses this same pattern to provide a persistent, high-visibility warning to the caregiver while they are aiming the camera.

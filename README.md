@@ -28,7 +28,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow. This includes secure, client-side validation, a generic, enumeration-resistant error for failed credentials, and a developer shortcut. After login, the user is presented with a **mandatory, full-screen Facility and Unit selection modal** to establish their operational context before proceeding.
 -   **High-Craft Navigation Model:** The application uses a dual-pattern navigation system.
     -   **Push Layout (Side Menu):** The main navigation menu uses a "push" animation. It features a prominent, card-styled **Context Switcher** at the top, which displays the user's current Facility/Unit and allows them to change it. Its contents are built from a consistent, token-driven `MenuItem` component, and it features a distinct, card-styled user profile area in the footer.
-    -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted and Route-Sorted Schedules) exist on a horizontal "film strip." Switching between them uses a sliding panel animation. This is all contained within a persistent application shell (header and footer) that provides global actions and view controls.
+    -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted and Route-Sorted Schedules) exist on a horizontal "film strip." Switching between them uses a sliding panel animation. This is all contained within a persistent application shell (header and footer). The header provides global actions, view controls, and an **interactive status overview bar** that doubles as a quick filtering mechanism for the schedule.
 -   **Dynamic Check Schedule:** A performant list of checks with live timers and two sorting modes (Time and Route). The list features a high-craft, multi-stage completion animation that provides clear user feedback while guaranteeing the stability of all other on-screen elements, preventing jarring layout shifts.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for scanning QR codes (or simulating scans) and recording check outcomes. This includes a "pre-scan alert" to notify caregivers of critical resident information *before* a scan is completed.
 -   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature and a visually distinct UI for residents with special classifications.
@@ -37,12 +37,12 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Bottom Sheet Modals:** A mobile-first pattern used for contextual actions like initiating a Manual Check, writing an NFC tag, or performing a Manual Check Selection, preserving context and improving ergonomics.
 -   **Semantic Haptic Feedback:** A centralized system provides tactile feedback for key actions and state changes (e.g., success on save, warnings for late items), enhancing user awareness on mobile devices.
 -   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete, high-feedback UI simulation for provisioning room NFC tags.
--   **Simulated Connection Status:** A developer toggle in the settings allows for simulating 'Online' and 'Offline' states to test the UI's responsiveness.
+-   **Simulated Connection Status:** A developer toggle simulates 'Online' and 'Offline' states. The prototype includes a complete UI simulation for the offline workflow: checks completed while offline are visually marked as **'Queued'** and are automatically processed via an animated **'Syncing'** state when the connection is restored.
 
 ## 4. Directory Structure
 
 -   **/src**: Contains the application entry point, root container, global styles, and global types.
--   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality (e.g., `/Shell`, `/Schedule`, `/Workflow`).
+-   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality. This structure is strictly maintained; for example, components that are functionally overlays (like `ManualSelectionView` and `WriteNfcTagModal`) are consolidated in `/features/Overlays` rather than their own top-level directories.
 -   **/src/components**: Contains only **truly generic and reusable** UI primitives that are application-agnostic.
 -   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, etc.).
 -   **/src/styles**: Contains the global styling architecture, including design tokens, base styles, and component themes.

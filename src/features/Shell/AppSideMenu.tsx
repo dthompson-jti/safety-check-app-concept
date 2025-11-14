@@ -8,7 +8,6 @@ import {
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
-  isHistoryModalOpenAtom, // Import history modal atom
 } from '../../data/atoms';
 import styles from './AppSideMenu.module.css';
 
@@ -49,7 +48,6 @@ export const AppSideMenu = () => {
   const setIsDevToolsOpen = useSetAtom(isDevToolsModalOpenAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
   const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
-  const setIsHistoryOpen = useSetAtom(isHistoryModalOpenAtom);
 
   return (
     <aside className={styles.sideMenu}>
@@ -64,7 +62,6 @@ export const AppSideMenu = () => {
         <div className={styles.separator} />
         
         <MenuItem icon="add_comment" label="Manual check" onClick={() => setIsManualCheckModalOpen(true)} />
-        <MenuItem icon="history" label="Check history" onClick={() => setIsHistoryOpen(true)} />
         <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setIsWriteNfcModalOpen(true)} />
         <MenuItem icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
       </main>

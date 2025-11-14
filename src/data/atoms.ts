@@ -57,7 +57,6 @@ export const completingChecksAtom = atom(new Set<string>());
 export const isScheduleSearchActiveAtom = atom(false);
 export const scheduleSearchQueryAtom = atom('');
 export const isScheduleLoadingAtom = atom(true);
-// NEW: Atoms for interactive filtering
 export type ScheduleFilter = 'all' | 'late' | 'due-soon' | 'queued';
 export const scheduleFilterAtom = atom<ScheduleFilter>('all');
 export const isScheduleRefreshingAtom = atom(false);
@@ -109,7 +108,7 @@ export const isManualCheckModalOpenAtom = atom(false);
 export const isWriteNfcModalOpenAtom = atom(false);
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
-export const isHistoryModalOpenAtom = atom(false);
+// REMOVED: isHistoryModalOpenAtom is no longer used.
 
 
 // =================================================================
