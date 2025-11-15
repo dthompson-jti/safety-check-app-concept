@@ -1,8 +1,48 @@
 /* src/features/Overlays/NfcWritingSheet.module.css */
 
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 12, 18, 0.75);
+  z-index: 102; /* Higher z-index than the main sheet's overlay */
+}
+
 .sheetContent {
-  padding: var(--spacing-4);
-  padding-bottom: var(--spacing-8); /* Extra space for nested handle */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 103;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg-primary);
+  border-top-left-radius: var(--radius-2xl);
+  border-top-right-radius: var(--radius-2xl);
+  outline: none;
+  padding: 0 var(--spacing-4);
+  max-height: 90vh;
+  box-shadow: var(--surface-shadow-lg);
+  border-top: 1px solid var(--surface-border-secondary);
+  /* 
+    DEFINITIVE FIX: Apply the same animation override to the nested sheet to
+    ensure its animation profile is also snappy and consistent.
+  */
+  --vaul-transition-duration: 400ms;
+  --vaul-easing: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.handleContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-4) 0;
+  flex-shrink: 0;
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-border-primary);
 }
 
 .animationContainer {
@@ -69,7 +109,7 @@
 .devFooter {
     border-top: 1px solid var(--surface-border-secondary);
     padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
-    margin: var(--spacing-4) calc(-1 * var(--spacing-4)) calc(-1 * var(--spacing-8));
+    margin: var(--spacing-4) calc(-1 * var(--spacing-4)) 0;
     background-color: var(--surface-bg-secondary);
 }
 .devFooter p {

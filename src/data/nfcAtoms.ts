@@ -1,7 +1,9 @@
 // src/data/nfcAtoms.ts
 import { atom } from 'jotai';
-import { facilityData, FacilityUnit } from './mock/facilityData';
-import { selectedFacilityUnitAtom } from './atoms';
+import { facilityData } from './mock/facilityData';
+import { selectedFacilityGroupAtom, selectedFacilityUnitAtom } from './atoms';
+import { mockResidents } from './mock/residentData';
+import { getFacilityContextForLocation } from './mock/facilityUtils';
 
 // =================================================================
 //                      Types & Configuration
@@ -18,19 +20,18 @@ export type NfcWorkflowState =
 
 export type NfcSimulationMode = 'forceSuccess' | 'forceErrorWriteFailed' | 'forceErrorTagLocked' | 'random';
 
+// DEFINITIVE FIX: A dedicated type for a provisionable room.
+interface Room {
+  id: string;
+  name: string;
+}
+
 // =================================================================
 //                         Core State Atoms
 // =================================================================
 
 export const nfcWorkflowStateAtom = atom<NfcWorkflowState>({ status: 'idle' });
 export const nfcSimulationAtom = atom<NfcSimulationMode>('random');
-
-/**
- * Tracks rooms that have been successfully provisioned within the current session.
- * This is reset when the main modal is closed.
- */
-// DEFINITIVE FIX: Explicitly type the empty Set to `new Set<string>()`.
-// This resolves the mismatch where TypeScript inferred `Set<unknown>`.
 export const provisionedRoomIdsAtom = atom<Set<string>>(new Set<string>());
 
 // =================================================================
@@ -40,14 +41,18 @@ export const provisionedRoomIdsAtom = atom<Set<string>>(new Set<string>());
 export const nfcSearchQueryAtom = atom('');
 export const isGlobalNfcSearchActiveAtom = atom(false);
 
-/** A flattened, searchable list of all unique rooms from the facility data. */
-const allRoomsAtom = atom<FacilityUnit[]>(() => {
-  // In a real app, rooms would be a separate entity. Here, we treat each "unit" as a room.
-  const allUnits = facilityData.flatMap(group => group.units);
-  return allUnits.map(unit => ({ id: unit.id, name: unit.name }));
+/** 
+ * DEFINITIVE FIX: The source of truth for rooms is the unique `location` field 
+ * from the residents data. This atom now correctly derives a de-duplicated list of rooms.
+ */
+const allRoomsAtom = atom<Room[]>(() => {
+  const uniqueLocations = [...new Set(mockResidents.map(r => r.location))];
+  return uniqueLocations
+    .map(location => ({ id: location, name: location }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 });
 
-const filterRoomsByQuery = (rooms: FacilityUnit[], query: string) => {
+const filterRoomsByQuery = (rooms: Room[], query: string) => {
   if (!query) return rooms;
   const lowerCaseQuery = query.toLowerCase();
   return rooms.filter(room => room.name.toLowerCase().includes(lowerCaseQuery));
@@ -55,16 +60,18 @@ const filterRoomsByQuery = (rooms: FacilityUnit[], query: string) => {
 
 export const contextualNfcSearchResultsAtom = atom((get) => {
   const query = get(nfcSearchQueryAtom);
+  const allRooms = get(allRoomsAtom);
   const selectedUnitId = get(selectedFacilityUnitAtom);
-  
-  if (!selectedUnitId) return [];
+  const selectedGroupId = get(selectedFacilityGroupAtom);
 
-  // This is a simplified context filter for the demo.
-  // It finds the group for the current unit and shows all rooms in that group.
-  const currentGroup = facilityData.find(group => group.units.some(u => u.id === selectedUnitId));
-  if (!currentGroup) return [];
+  if (!selectedUnitId || !selectedGroupId) return [];
 
-  const contextualRooms = currentGroup.units;
+  // Filter all rooms to only those belonging to the current facility context.
+  const contextualRooms = allRooms.filter(room => {
+    const context = getFacilityContextForLocation(room.name);
+    return context?.groupId === selectedGroupId && context?.unitId === selectedUnitId;
+  });
+
   return filterRoomsByQuery(contextualRooms, query);
 });
 
@@ -90,5 +97,5 @@ export const nfcRoomSearchResultsAtom = atom((get) => {
     return get(globalNfcSearchResultsAtom).results;
   }
   
-  return []; // Return empty if contextual search fails and global isn't active
+  return [];
 });

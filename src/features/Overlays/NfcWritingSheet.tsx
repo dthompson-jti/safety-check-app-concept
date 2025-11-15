@@ -11,7 +11,6 @@ import {
 } from '../../data/nfcAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { BottomSheet } from '../../components/BottomSheet';
 import { Button } from '../../components/Button';
 import styles from './NfcWritingSheet.module.css';
 
@@ -50,8 +49,6 @@ export const NfcWritingSheet = () => {
     if (workflowState.status === 'success') {
       triggerHaptic('success');
       addToast({ message: `Tag for '${workflowState.roomName}' written`, icon: 'check_circle' });
-      // DEFINITIVE FIX: Explicitly type the `currentIds` parameter to `Set<string>`.
-      // This resolves the "unsafe spread" error by ensuring TypeScript knows the type.
       setProvisionedIds((currentIds: Set<string>) => new Set([...currentIds, workflowState.roomId]));
 
       const timer = setTimeout(() => {
@@ -122,22 +119,31 @@ export const NfcWritingSheet = () => {
   }
 
   return (
-    <Drawer.NestedRoot open={isOpen}>
-      <BottomSheet.Content className={styles.sheetContent}>
-        <AnimatePresence mode="wait">
-          {renderContent()}
-        </AnimatePresence>
-        {import.meta.env.DEV && isOpen && (
-            <div className={styles.devFooter}>
-                <p>DEV TOOLS</p>
-                <div className={styles.devButtons}>
-                    <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceSuccess')}>Success</Button>
-                    <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceErrorWriteFailed')}>Err: Write</Button>
-                    <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceErrorTagLocked')}>Err: Locked</Button>
-                </div>
-            </div>
-        )}
-      </BottomSheet.Content>
+    // DEFINITIVE FIX: Add an `onClose` handler to the nested root. This allows vaul
+    // to communicate the user's dismiss gesture (tapping the overlay) back to our
+    // application state, ensuring the sheet closes reliably.
+    <Drawer.NestedRoot open={isOpen} onClose={handleCancel}>
+      <Drawer.Portal>
+        <Drawer.Overlay className={styles.overlay} />
+        <Drawer.Content className={styles.sheetContent}>
+          <div className={styles.handleContainer}>
+            <div className={styles.handle} />
+          </div>
+          <AnimatePresence mode="wait">
+            {renderContent()}
+          </AnimatePresence>
+          {import.meta.env.DEV && isOpen && (
+              <div className={styles.devFooter}>
+                  <p>DEV TOOLS</p>
+                  <div className={styles.devButtons}>
+                      <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceSuccess')}>Success</Button>
+                      <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceErrorWriteFailed')}>Err: Write</Button>
+                      <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceErrorTagLocked')}>Err: Locked</Button>
+                  </div>
+              </div>
+          )}
+        </Drawer.Content>
+      </Drawer.Portal>
     </Drawer.NestedRoot>
   );
 };

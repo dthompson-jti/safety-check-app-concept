@@ -1,21 +1,5 @@
 /* src/features/Overlays/ManualCheckListItem.module.css */
 
-.manualCheckItem {
-  /* No special styles needed now, ActionListItem provides the base */
-}
-
-.iconContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--surface-fg-warning-primary);
-}
-
-.icon {
-  font-size: 20px;
-}
-
 .contentContainer {
   display: flex;
   flex-direction: column;
@@ -37,4 +21,21 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.residentName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.inlineIcon {
+  font-size: 16px;
+  color: var(--surface-fg-primary);
+  transform: translateY(-1px);
+  /* DEFINITIVE FIX: Make the icon solid to match other instances in the app. */
+  font-variation-settings: 'FILL' 1;
 }

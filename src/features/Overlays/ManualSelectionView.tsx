@@ -101,10 +101,8 @@ export const ManualSelectionView = () => {
                 <ManualCheckListItem
                   onClick={() => handleSelectCheck(check)}
                   title={check.residents[0].location}
-                  subtitle={check.residents.map(r => r.name).join(', ')}
-                  hasWarning={
-                    !!check.specialClassifications && check.specialClassifications.length > 0
-                  }
+                  residents={check.residents}
+                  specialClassifications={check.specialClassifications}
                 />
               )}
             />

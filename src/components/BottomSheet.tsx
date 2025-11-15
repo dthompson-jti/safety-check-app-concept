@@ -14,6 +14,8 @@ interface BottomSheetProps {
 const BottomSheetRoot = ({ isOpen, onClose, children, title }: BottomSheetProps) => (
   <Drawer.Root open={isOpen} onClose={onClose} dismissible={true}>
     <Drawer.Portal>
+      {/* DEFINITIVE FIX: The Drawer.Overlay is restored here. This ensures that any
+          bottom sheet using this component will now render the dark backdrop. */}
       <Drawer.Overlay className={styles.overlay} />
       <Drawer.Content className={styles.content}>
         <div className={styles.handleContainer}>

@@ -3,7 +3,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: var(--surface-backdrop);
+  background-color: rgba(10, 12, 18, 0.75);
   z-index: 100;
 }
 
@@ -21,6 +21,13 @@
   outline: none;
   padding: 0 var(--spacing-4);
   max-height: 90vh;
+  /* 
+    DEFINITIVE FIX: Override vaul's default animation properties to match the
+    application's primary "snappy" transition profile. This ensures a consistent
+    and high-craft feel for all bottom sheet interactions.
+  */
+  --vaul-transition-duration: 400ms;
+  --vaul-easing: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .handleContainer {
