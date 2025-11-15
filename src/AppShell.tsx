@@ -17,7 +17,7 @@ import { FloatingFooter } from './features/Shell/FloatingFooter';
 import { OfflineBanner } from './features/Shell/OfflineBanner';
 import { ScanView } from './features/Workflow/ScanView';
 import { CheckFormView } from './features/Workflow/CheckFormView';
-import { WriteNfcTagModal } from './features/Overlays/WriteNfcTagModal';
+import { ProvisionNfcModal } from './features/Overlays/ProvisionNfcModal';
 import { ManualSelectionView } from './features/Overlays/ManualSelectionView';
 import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
@@ -142,7 +142,8 @@ export const AppShell = () => {
       </AnimatePresence>
       
       <FacilitySelectionModal />
-      <WriteNfcTagModal />
+      {/* DEFINITIVE FIX: The old WriteNfcTagModal is replaced with the new ProvisionNfcModal */}
+      <ProvisionNfcModal />
       <ManualSelectionView />
       
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">

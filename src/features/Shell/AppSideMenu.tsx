@@ -4,12 +4,12 @@ import {
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
   isManualCheckModalOpenAtom,
-  isWriteNfcModalOpenAtom,
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
 } from '../../data/atoms';
-import { facilityData } from '../../data/mock/facilityData';
+import { nfcWorkflowStateAtom } from '../../data/nfcAtoms';
+import { ContextSwitcherCard } from './ContextSwitcherCard';
 import styles from './AppSideMenu.module.css';
 
 const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; label: string; onClick: () => void; disabled?: boolean }) => (
@@ -19,39 +19,15 @@ const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; la
   </button>
 );
 
-/**
- * A card component in the side menu that displays the current operational
- * context (Group and Unit) and allows the user to change it.
- */
-const ContextSwitcherCard = () => {
-  const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
-  const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
-  const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
-
-  const group = facilityData.find(g => g.id === facilityGroupId);
-  const unit = group?.units.find(u => u.id === facilityUnitId);
-
-  const groupDisplayName = group?.name || '—';
-  const unitDisplayName = unit?.name || '—';
-
-  return (
-    <button className={styles.contextCard} onClick={() => setIsContextModalOpen(true)}>
-      <div className={styles.contextInfo}>
-        <span className={styles.contextLabel}>Group</span>
-        <span className={styles.contextValue}>{groupDisplayName}</span>
-        <span className={styles.contextLabel}>Unit</span>
-        <span className={styles.contextValue}>{unitDisplayName}</span>
-      </div>
-      <span className="material-symbols-rounded">swap_horiz</span>
-    </button>
-  );
-};
-
 export const AppSideMenu = () => {
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
   const setIsDevToolsOpen = useSetAtom(isDevToolsModalOpenAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
-  const setIsWriteNfcModalOpen = useSetAtom(isWriteNfcModalOpenAtom);
+  const setNfcWorkflowState = useSetAtom(nfcWorkflowStateAtom);
+  const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
+
+  const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
+  const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
 
   return (
     <aside className={styles.sideMenu}>
@@ -62,11 +38,15 @@ export const AppSideMenu = () => {
       </header>
 
       <main className={styles.content}>
-        <ContextSwitcherCard />
+        <ContextSwitcherCard
+          groupId={facilityGroupId}
+          unitId={facilityUnitId}
+          onClick={() => setIsContextModalOpen(true)}
+        />
         <div className={styles.separator} />
         
         <MenuItem icon="add_comment" label="Manual check" onClick={() => setIsManualCheckModalOpen(true)} />
-        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setIsWriteNfcModalOpen(true)} />
+        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setNfcWorkflowState({ status: 'selecting' })} />
         <MenuItem icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
       </main>
 

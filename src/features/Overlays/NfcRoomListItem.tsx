@@ -2,7 +2,7 @@
 import { useAtomValue } from 'jotai';
 import { provisionedRoomIdsAtom } from '../../data/nfcAtoms';
 import { ActionListItem } from '../../components/ActionListItem';
-import styles from './WriteNfcTagModal.module.css'; // Re-use styles
+import styles from './ProvisionNfcModal.module.css'; // Use styles from the new modal
 
 interface NfcRoomListItemProps {
   roomId: string;
@@ -15,14 +15,16 @@ export const NfcRoomListItem = ({ roomId, roomName, onClick }: NfcRoomListItemPr
   const isProvisioned = provisionedIds.has(roomId);
 
   return (
-    <ActionListItem onClick={onClick} disabled={isProvisioned}>
+    // DEFINITIVE FIX: The `disabled` prop is removed. The item remains interactive.
+    <ActionListItem onClick={onClick}>
       <div className={styles.listItemContent}>
-        <span className={styles.listItemTitle}>{roomName}</span>
+        {/* DEFINITIVE FIX: The icon is now rendered on the left. */}
         {isProvisioned && (
           <span className={`material-symbols-rounded ${styles.successIcon}`}>
             check_circle
           </span>
         )}
+        <span className={styles.listItemTitle}>{roomName}</span>
       </div>
     </ActionListItem>
   );

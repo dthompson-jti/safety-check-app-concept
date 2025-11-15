@@ -1,7 +1,7 @@
 // src/data/nfcAtoms.ts
 import { atom } from 'jotai';
-import { facilityData } from './mock/facilityData';
-import { selectedFacilityGroupAtom, selectedFacilityUnitAtom } from './atoms';
+// DEFINITIVE FIX: Removed unused `facilityData` import.
+import { nfcProvisioningGroupIdAtom, nfcProvisioningUnitIdAtom } from './atoms';
 import { mockResidents } from './mock/residentData';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
 
@@ -20,7 +20,6 @@ export type NfcWorkflowState =
 
 export type NfcSimulationMode = 'forceSuccess' | 'forceErrorWriteFailed' | 'forceErrorTagLocked' | 'random';
 
-// DEFINITIVE FIX: A dedicated type for a provisionable room.
 interface Room {
   id: string;
   name: string;
@@ -35,16 +34,13 @@ export const nfcSimulationAtom = atom<NfcSimulationMode>('random');
 export const provisionedRoomIdsAtom = atom<Set<string>>(new Set<string>());
 
 // =================================================================
-//          Progressive Disclosure Search State & Logic
+//        Provisioning Modal - Local Context & Search State
 // =================================================================
 
-export const nfcSearchQueryAtom = atom('');
-export const isGlobalNfcSearchActiveAtom = atom(false);
+export { nfcProvisioningGroupIdAtom, nfcProvisioningUnitIdAtom };
 
-/** 
- * DEFINITIVE FIX: The source of truth for rooms is the unique `location` field 
- * from the residents data. This atom now correctly derives a de-duplicated list of rooms.
- */
+export const nfcSearchQueryAtom = atom('');
+
 const allRoomsAtom = atom<Room[]>(() => {
   const uniqueLocations = [...new Set(mockResidents.map(r => r.location))];
   return uniqueLocations
@@ -58,44 +54,19 @@ const filterRoomsByQuery = (rooms: Room[], query: string) => {
   return rooms.filter(room => room.name.toLowerCase().includes(lowerCaseQuery));
 };
 
-export const contextualNfcSearchResultsAtom = atom((get) => {
+// This atom now provides the final list of rooms for the provisioning modal's UI.
+export const nfcRoomSearchResultsAtom = atom((get) => {
   const query = get(nfcSearchQueryAtom);
   const allRooms = get(allRoomsAtom);
-  const selectedUnitId = get(selectedFacilityUnitAtom);
-  const selectedGroupId = get(selectedFacilityGroupAtom);
+  const selectedUnitId = get(nfcProvisioningUnitIdAtom);
+  const selectedGroupId = get(nfcProvisioningGroupIdAtom);
 
   if (!selectedUnitId || !selectedGroupId) return [];
 
-  // Filter all rooms to only those belonging to the current facility context.
   const contextualRooms = allRooms.filter(room => {
     const context = getFacilityContextForLocation(room.name);
     return context?.groupId === selectedGroupId && context?.unitId === selectedUnitId;
   });
 
   return filterRoomsByQuery(contextualRooms, query);
-});
-
-export const globalNfcSearchResultsAtom = atom((get) => {
-  const query = get(nfcSearchQueryAtom);
-  const allRooms = get(allRoomsAtom);
-  const results = filterRoomsByQuery(allRooms, query);
-  return { results, count: results.length };
-});
-
-export const nfcRoomSearchResultsAtom = atom((get) => {
-  const query = get(nfcSearchQueryAtom);
-  if (!query) {
-    return get(contextualNfcSearchResultsAtom);
-  }
-
-  const contextualResults = get(contextualNfcSearchResultsAtom);
-  if (contextualResults.length > 0) {
-    return contextualResults;
-  }
-
-  if (get(isGlobalNfcSearchActiveAtom)) {
-    return get(globalNfcSearchResultsAtom).results;
-  }
-  
-  return [];
 });

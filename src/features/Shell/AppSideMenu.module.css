@@ -101,59 +101,10 @@
   }
 }
 
-.contextCard {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3);
-  cursor: pointer;
-  text-align: left;
-  border-radius: var(--radius-lg);
-  background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
-  box-shadow: var(--surface-shadow-xs);
-  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s;
-}
-
-@media (hover: hover) {
-  .contextCard:hover {
-    background-color: var(--surface-bg-primary_hover);
-    border-color: var(--control-border-tertiary-hover);
-  }
-}
-
-.contextCard:active {
-  background-color: var(--surface-bg-primary_pressed);
-  border-color: var(--control-border-tertiary-hover);
-  transform: translateY(1px);
-  box-shadow: none;
-}
-
-.contextInfo {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px;
-}
-
-.contextLabel {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--surface-fg-tertiary);
-  letter-spacing: 0.05em;
-}
-
-.contextValue {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--surface-fg-primary);
-}
-
-.contextCard .material-symbols-rounded {
-  font-size: 24px;
-  color: var(--surface-fg-secondary);
-}
+/* 
+  DEFINITIVE FIX: All context card styles are removed from this file 
+  and moved to the new reusable component's CSS module.
+*/
 
 .footer {
   flex-shrink: 0;

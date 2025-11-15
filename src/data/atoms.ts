@@ -1,7 +1,7 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
-// DEFINITIVE FIX: Removed unused 'SafetyCheck' import to resolve ESLint warning.
 import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
+import { nfcWorkflowStateAtom } from './nfcAtoms';
 
 // =================================================================
 //                         App State
@@ -104,13 +104,22 @@ export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 // =================================================================
 
 export const isManualCheckModalOpenAtom = atom(false);
-export const isWriteNfcModalOpenAtom = atom(false);
+
+export const isWriteNfcModalOpenAtom = atom(
+  (get) => get(nfcWorkflowStateAtom).status !== 'idle'
+);
+
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
 
 // State for the Manual Selection "Progressive Discovery" search feature
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
+
+// DEFINITIVE FIX: Dedicated atoms for the NFC modal's local context.
+// These are defined here but exported from nfcAtoms.ts to keep related state co-located.
+export const nfcProvisioningGroupIdAtom = atom<string | null>(null);
+export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 
 
 // =================================================================
@@ -137,10 +146,6 @@ export const appConfigAtom = atom<AppConfig>({
 //                       Global Actions
 // =================================================================
 
-/**
- * A write-only atom that centralizes the logout process.
- * It resets all session-specific state to ensure a clean slate for the next login.
- */
 export const logoutAtom = atom(null, (_get, set) => {
   set(sessionAtom, { isAuthenticated: false, userName: null });
   set(isContextSelectionRequiredAtom, true);
