@@ -1,0 +1,55 @@
+/* src/components/BottomSheet.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--surface-backdrop);
+  z-index: 100;
+}
+
+.content {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg-primary);
+  border-top-left-radius: var(--radius-2xl);
+  border-top-right-radius: var(--radius-2xl);
+  outline: none;
+  padding: 0 var(--spacing-4);
+  max-height: 90vh;
+}
+
+.handleContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-4) 0;
+  flex-shrink: 0;
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-border-primary);
+}
+
+.header {
+  padding: 0 0 var(--spacing-4);
+  flex-shrink: 0;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+.customContentContainer {
+  /* This class is for the optional Content compound component */
+  /* It can be used for custom layouts inside the sheet */
+}

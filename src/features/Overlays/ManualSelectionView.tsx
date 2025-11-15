@@ -2,7 +2,6 @@
 import { useEffect } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
-import { Drawer } from 'vaul';
 import {
   manualSelectionResultsAtom,
   contextualManualSearchResultsAtom,
@@ -18,7 +17,7 @@ import { BottomSheet } from '../../components/BottomSheet';
 import { SearchInput } from '../../components/SearchInput';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { Button } from '../../components/Button';
-import { ListItem } from '../../components/ListItem';
+import { ManualCheckListItem } from './ManualCheckListItem';
 import { SafetyCheck } from '../../types';
 import styles from './ManualSelectionView.module.css';
 
@@ -64,13 +63,8 @@ export const ManualSelectionView = () => {
     !isGlobalSearchActive;
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
+    <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} title="Select check manually">
       <div className={styles.contentWrapper}>
-        <div className={styles.headerContent}>
-          <Drawer.Title asChild>
-            <h2>Select check manually</h2>
-          </Drawer.Title>
-        </div>
         <div className={styles.searchContainer}>
           <SearchInput
             variant="standalone"
@@ -94,7 +88,6 @@ export const ManualSelectionView = () => {
                     variant="tertiary"
                     onClick={() => setIsGlobalSearchActive(true)}
                   >
-                    {/* DEFINITIVE FIX: The icon is now passed as a child span, not a prop, to align with the Button component's architecture. */}
                     <span className="material-symbols-rounded">search</span>
                     Show {globalResultsCount} result{globalResultsCount > 1 ? 's' : ''} in all other units
                   </Button>
@@ -105,14 +98,12 @@ export const ManualSelectionView = () => {
             <Virtuoso
               data={filteredChecks}
               itemContent={(_index, check) => (
-                <ListItem
+                <ManualCheckListItem
                   onClick={() => handleSelectCheck(check)}
                   title={check.residents[0].location}
                   subtitle={check.residents.map(r => r.name).join(', ')}
-                  icon={
-                    check.specialClassifications && check.specialClassifications.length > 0
-                      ? 'warning'
-                      : undefined
+                  hasWarning={
+                    !!check.specialClassifications && check.specialClassifications.length > 0
                   }
                 />
               )}

@@ -1,0 +1,35 @@
+/* src/components/ActionListItem.module.css */
+.actionListItem {
+display: flex;
+align-items: center;
+width: 100%;
+text-align: left;
+gap: var(--spacing-3);
+font-family: var(--font-family-sans);
+color: var(--surface-fg-primary);
+background: none;
+cursor: pointer;
+padding: var(--spacing-2p5) var(--spacing-4);
+border: 1px solid transparent;
+transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+user-select: none;
+outline: none;
+min-height: 56px;
+}
+.actionListItem:disabled {
+color: var(--control-fg-disabled);
+cursor: not-allowed;
+opacity: 0.7;
+}
+@media (hover: hover) {
+.actionListItem:not(:disabled):hover {
+background-color: var(--surface-bg-secondary_hover);
+}
+}
+.actionListItem:not(:disabled):active {
+background-color: var(--surface-bg-active);
+}
+.actionListItem:focus-visible {
+outline: 2px solid var(--control-focus-ring-standard);
+outline-offset: -2px;
+}

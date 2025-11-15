@@ -7,21 +7,12 @@
   max-height: 700px;
 }
 
-.headerContent {
-  padding: 0 var(--spacing-4) var(--spacing-4);
-  flex-shrink: 0;
-}
-
-.headerContent h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--surface-fg-primary);
-}
-
 .searchContainer {
-  padding: 0 var(--spacing-4) var(--spacing-4);
+  padding: var(--spacing-4);
   flex-shrink: 0;
+  border-top: 1px solid var(--surface-border-secondary);
+  margin: 0 calc(-1 * var(--spacing-4));
+  padding-top: var(--spacing-4);
 }
 
 .listContainer {
@@ -29,9 +20,3 @@
   min-height: 0;
   border-top: 1px solid var(--surface-border-secondary);
 }
-
-/*
-  All custom item styling has been removed.
-  The new <ListItem> component is now the single source of truth for
-  list item appearance and interaction, ensuring consistency.
-*/

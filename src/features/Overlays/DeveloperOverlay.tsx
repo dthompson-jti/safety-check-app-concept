@@ -1,6 +1,7 @@
 // src/features/Overlays/DeveloperOverlay.tsx
 import { useAtom } from 'jotai';
 import { connectionStatusAtom, ConnectionStatus, appConfigAtom } from '../../data/atoms';
+import { nfcSimulationAtom, NfcSimulationMode } from '../../data/nfcAtoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Switch } from '../../components/Switch';
 import styles from './DeveloperOverlay.module.css';
@@ -16,9 +17,17 @@ const scanModeOptions = [
   { value: 'nfc', label: 'NFC', icon: 'nfc' },
 ] as const;
 
+const nfcSimOptions: readonly { value: NfcSimulationMode; label: string; icon: string }[] = [
+    { value: 'forceSuccess', label: 'Success', icon: 'check' },
+    { value: 'forceErrorWriteFailed', label: 'Write Fail', icon: 'wifi_off' },
+    { value: 'forceErrorTagLocked', label: 'Tag Locked', icon: 'lock' },
+    { value: 'random', label: 'Random', icon: 'casino' },
+] as const;
+
 export const DeveloperOverlay = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
+  const [nfcSimMode, setNfcSimMode] = useAtom(nfcSimulationAtom);
 
   const handleSlowLoadChange = (checked: boolean) => {
     setAppConfig(current => ({ ...current, isSlowLoadEnabled: checked }));
@@ -34,6 +43,17 @@ export const DeveloperOverlay = () => {
           value={connectionStatus}
           onValueChange={setConnectionStatus}
           id="connection-status-toggle"
+        />
+      </div>
+
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>NFC SIMULATION</h3>
+        <p className={styles.sectionHelper}>Force the outcome of the next NFC tag write operation.</p>
+        <IconToggleGroup
+          options={nfcSimOptions}
+          value={nfcSimMode}
+          onValueChange={setNfcSimMode}
+          id="nfc-sim-toggle"
         />
       </div>
 

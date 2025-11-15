@@ -1,89 +1,37 @@
 /* src/features/Overlays/WriteNfcTagModal.module.css */
-
 .contentWrapper {
-  display: flex;
-  flex-direction: column;
-  height: 65vh;
-  max-height: 700px;
+display: flex;
+flex-direction: column;
+height: 65vh;
+max-height: 700px;
 }
-
-.headerContent {
-  padding: 0 var(--spacing-4) var(--spacing-4);
-  flex-shrink: 0;
-}
-
-.headerContent h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--surface-fg-primary);
-}
-
 .searchContainer {
-  padding: 0 var(--spacing-4) var(--spacing-4);
-  flex-shrink: 0;
+padding: var(--spacing-4) var(--spacing-4) var(--spacing-4);
+flex-shrink: 0;
+border-top: 1px solid var(--surface-border-secondary);
+margin: 0 calc(-1 * var(--spacing-4));
+padding-top: var(--spacing-4);
 }
-
 .listContainer {
-  flex-grow: 1;
-  min-height: 0;
-  border-top: 1px solid var(--surface-border-secondary);
-  border-bottom: 1px solid var(--surface-border-secondary);
-  overflow-y: auto;
-  margin: 0 calc(-1 * var(--spacing-4)); /* Bleed to edges */
+flex-grow: 1;
+min-height: 0;
+border-top: 1px solid var(--surface-border-secondary);
 }
-
-.animationContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-4);
-  padding: var(--spacing-8) var(--spacing-4);
-  text-align: center;
-  min-height: 250px; /* Ensure it has height */
+/* For NfcRoomListItem */
+.listItemContent {
+display: flex;
+align-items: center;
+justify-content: space-between;
+width: 100%;
 }
-
-.animationContainer p {
-  margin: 0;
-  color: var(--surface-fg-secondary);
-  font-size: 1rem;
+.listItemTitle {
+font-size: 0.95rem;
+font-weight: 500;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
-
-/* State icons */
-.animationContainer .material-symbols-rounded {
-  font-size: 48px;
-  font-variation-settings: 'FILL' 1;
-}
-
-.animationContainer .spinner {
-  animation: spin 1.2s linear infinite;
-  color: var(--surface-fg-theme-primary);
-}
-
-.animationContainer .success {
-  color: var(--surface-fg-success-primary);
-}
-
-.animationContainer .error {
-  color: var(--surface-fg-alert-primary);
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.footerContent {
-  width: 100%;
-  display: flex;
-  gap: var(--spacing-2);
-  margin-top: auto; /* Push to bottom */
-  padding-top: var(--spacing-4);
-  flex-shrink: 0;
-}
-
-.footerContent > button {
-  flex: 1;
+.successIcon {
+color: var(--surface-fg-success-primary);
+font-variation-settings: 'FILL' 1;
 }

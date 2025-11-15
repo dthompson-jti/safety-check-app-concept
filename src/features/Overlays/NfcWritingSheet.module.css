@@ -1,0 +1,87 @@
+/* src/features/Overlays/NfcWritingSheet.module.css */
+
+.sheetContent {
+  padding: var(--spacing-4);
+  padding-bottom: var(--spacing-8); /* Extra space for nested handle */
+}
+
+.animationContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-8) var(--spacing-4);
+  text-align: center;
+  min-height: 250px;
+}
+
+.animationContainer h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+.animationContainer p {
+  margin: 0;
+  color: var(--surface-fg-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 30ch;
+}
+
+.animationContainer .material-symbols-rounded {
+  font-size: 48px;
+  font-variation-settings: 'FILL' 1;
+}
+
+.animationContainer .spinner {
+  animation: spin 1.2s linear infinite;
+  color: var(--surface-fg-theme-primary);
+}
+
+.animationContainer .success {
+  color: var(--surface-fg-success-primary);
+}
+
+.animationContainer .error {
+  color: var(--surface-fg-alert-primary);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.buttonRow {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+  width: 100%;
+}
+
+.buttonRow > button {
+  flex: 1;
+}
+
+/* Dev Tools */
+.devFooter {
+    border-top: 1px solid var(--surface-border-secondary);
+    padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
+    margin: var(--spacing-4) calc(-1 * var(--spacing-4)) calc(-1 * var(--spacing-8));
+    background-color: var(--surface-bg-secondary);
+}
+.devFooter p {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--surface-fg-secondary);
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin: 0 0 var(--spacing-2);
+}
+.devButtons {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-2);
+}

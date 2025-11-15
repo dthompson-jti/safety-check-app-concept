@@ -1,159 +1,151 @@
 // src/features/Overlays/WriteNfcTagModal.tsx
-import { useMemo, useState } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
-import { Drawer } from 'vaul';
-import { isWriteNfcModalOpenAtom } from '../../data/atoms';
+import { useEffect } from 'react';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+import { Virtuoso } from 'react-virtuoso';
+import {
+  nfcWorkflowStateAtom,
+  nfcSimulationAtom,
+  provisionedRoomIdsAtom,
+  nfcSearchQueryAtom,
+  isGlobalNfcSearchActiveAtom,
+  nfcRoomSearchResultsAtom,
+  contextualNfcSearchResultsAtom,
+  globalNfcSearchResultsAtom,
+  NfcError,
+} from '../../data/nfcAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
-import { mockResidents } from '../../data/mock/residentData';
+import { isWriteNfcModalOpenAtom } from '../../data/atoms';
 import { BottomSheet } from '../../components/BottomSheet';
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
-import { ListItem } from '../../components/ListItem';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
+import { NfcWritingSheet } from './NfcWritingSheet';
+import { NfcRoomListItem } from './NfcRoomListItem';
 import styles from './WriteNfcTagModal.module.css';
 
-type ModalState = 'initial' | 'writing' | 'success' | 'error';
-type LocationInfo = { id: string; name: string };
+const errorMessages: Record<NfcError['code'], string> = {
+  WRITE_FAILED: 'A network error prevented writing the tag.',
+  TAG_LOCKED: 'This tag is locked and cannot be overwritten.',
+};
 
 export const WriteNfcTagModal = () => {
-  const [isOpen, setIsOpen] = useAtom(isWriteNfcModalOpenAtom);
+  const isOpen = useAtomValue(isWriteNfcModalOpenAtom);
+  const setWorkflowState = useSetAtom(nfcWorkflowStateAtom);
+  const simulationMode = useAtomValue(nfcSimulationAtom);
   const addToast = useSetAtom(addToastAtom);
+  const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
 
-  const [modalState, setModalState] = useState<ModalState>('initial');
-  const [selectedRoomId, setSelectedRoomId] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useAtom(nfcSearchQueryAtom);
+  const [isGlobalSearchActive, setIsGlobalSearchActive] = useAtom(isGlobalNfcSearchActiveAtom);
 
-  const uniqueLocations = useMemo((): LocationInfo[] => {
-    const locationsMap = mockResidents.reduce((acc, resident) => {
-      if (!acc.has(resident.location)) {
-        acc.set(resident.location, { id: resident.id, name: resident.location });
-      }
-      return acc;
-    }, new Map<string, LocationInfo>());
+  const filteredLocations = useAtomValue(nfcRoomSearchResultsAtom);
+  const contextualResults = useAtomValue(contextualNfcSearchResultsAtom);
+  const { count: globalResultsCount } = useAtomValue(globalNfcSearchResultsAtom);
 
-    return Array.from(locationsMap.values()).sort((a, b) => a.name.localeCompare(b.name));
-  }, []);
+  // Effect to reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      const timer = setTimeout(() => {
+        setSearchQuery('');
+        setIsGlobalSearchActive(false);
+        setProvisionedIds(new Set());
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, setSearchQuery, setIsGlobalSearchActive, setProvisionedIds]);
 
-  const filteredLocations = useMemo(() => {
-    if (!searchQuery) return uniqueLocations;
-    return uniqueLocations.filter(loc =>
-      loc.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [uniqueLocations, searchQuery]);
-
-  const resetAndClose = () => {
-    setIsOpen(false);
-    setTimeout(() => {
-      setModalState('initial');
-      setSelectedRoomId('');
-      setSearchQuery('');
-    }, 300);
+  const handleClose = () => {
+    setWorkflowState({ status: 'idle' });
   };
 
-  const handleWriteTag = () => {
-    if (!selectedRoomId) return;
-    setModalState('writing');
+  const handleSelectRoom = (roomId: string, roomName: string) => {
+    setWorkflowState({ status: 'writing', roomId, roomName });
 
+    // This timeout simulates the NFC hardware interaction
     setTimeout(() => {
-      const success = Math.random() > 0.2; // 80% success rate simulation
-      if (success) {
-        setModalState('success');
-        addToast({ message: 'NFC tag written successfully', icon: 'check_circle' });
+      let outcome: 'success' | 'error' = 'success';
+      // DEFINITIVE FIX: Explicitly type `errorCode` to match the expected string literal union.
+      // This satisfies TypeScript's strict type checking for the state update payload.
+      let errorCode: NfcError['code'] = 'WRITE_FAILED';
+
+      if (simulationMode === 'forceSuccess') {
+        outcome = 'success';
+      } else if (simulationMode === 'forceErrorWriteFailed') {
+        outcome = 'error';
+        errorCode = 'WRITE_FAILED';
+      } else if (simulationMode === 'forceErrorTagLocked') {
+        outcome = 'error';
+        errorCode = 'TAG_LOCKED';
+      } else { // Random
+        outcome = Math.random() > 0.2 ? 'success' : 'error';
+        errorCode = Math.random() > 0.5 ? 'WRITE_FAILED' : 'TAG_LOCKED';
+      }
+
+      if (outcome === 'success') {
+        setWorkflowState({ status: 'success', roomId, roomName });
       } else {
-        setModalState('error');
+        setWorkflowState({
+          status: 'error',
+          roomId,
+          roomName,
+          error: { code: errorCode, message: errorMessages[errorCode] },
+        });
         addToast({ message: 'Failed to write NFC tag', icon: 'error' });
       }
-    }, 2000);
+    }, 1500);
   };
 
-  const renderAnimationArea = () => {
-    switch (modalState) {
-      case 'writing':
-        return (
-          <div className={styles.animationContainer}>
-            <span className={`material-symbols-rounded ${styles.spinner}`}>nfc</span>
-            <p>Hold device near physical tag to write.</p>
-          </div>
-        );
-      case 'success':
-        return (
-          <div className={styles.animationContainer}>
-            <span className={`material-symbols-rounded ${styles.success}`}>check_circle</span>
-            <p>Success! Tag is ready.</p>
-          </div>
-        );
-      case 'error':
-        return (
-          <div className={styles.animationContainer}>
-            <span className={`material-symbols-rounded ${styles.error}`}>error</span>
-            <p>Error writing to tag. Please try again.</p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const renderInitialContent = () => (
-    <>
-      <div className={styles.searchContainer}>
-        <SearchInput
-          variant="standalone"
-          placeholder="Search for a room..."
-          value={searchQuery}
-          onChange={setSearchQuery}
-          autoFocus
-        />
-      </div>
-      <div className={styles.listContainer}>
-        {filteredLocations.length > 0 ? (
-          filteredLocations.map(location => (
-            <ListItem
-              key={location.id}
-              title={location.name}
-              onClick={() => setSelectedRoomId(location.id)}
-              isActive={selectedRoomId === location.id}
-            />
-          ))
-        ) : (
-          <EmptyStateMessage title={`No rooms found for "${searchQuery}"`} />
-        )}
-      </div>
-    </>
-  );
+  const showProgressiveDiscovery =
+    searchQuery &&
+    contextualResults.length === 0 &&
+    globalResultsCount > 0 &&
+    !isGlobalSearchActive;
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={modalState === 'writing' ? () => {} : resetAndClose}>
+    <BottomSheet isOpen={isOpen} onClose={handleClose} title="Provision NFC tag">
       <div className={styles.contentWrapper}>
-        <div className={styles.headerContent}>
-          <Drawer.Title asChild>
-            <h2>Provision NFC tag</h2>
-          </Drawer.Title>
+        <div className={styles.searchContainer}>
+          <SearchInput
+            variant="standalone"
+            placeholder="Search for a room..."
+            value={searchQuery}
+            onChange={setSearchQuery}
+            autoFocus
+          />
         </div>
-
-        {modalState === 'initial' ? renderInitialContent() : renderAnimationArea()}
-
-        <div className={styles.footerContent}>
-          {modalState === 'initial' ? (
-            <>
-              <Button variant="secondary" size="m" onClick={resetAndClose}>
-                Cancel
-              </Button>
-              <Button variant="primary" size="m" onClick={handleWriteTag} disabled={!selectedRoomId}>
-                Write tag
-              </Button>
-            </>
-          ) : modalState === 'success' || modalState === 'error' ? (
-            <Button variant="primary" size="m" onClick={resetAndClose}>
-              Done
-            </Button>
+        <div className={styles.listContainer}>
+          {filteredLocations.length === 0 && searchQuery ? (
+            <EmptyStateMessage
+              title={
+                showProgressiveDiscovery
+                  ? `No rooms found for "${searchQuery}" in this unit`
+                  : 'No Results Found'
+              }
+              action={
+                showProgressiveDiscovery ? (
+                  <Button variant="tertiary" onClick={() => setIsGlobalSearchActive(true)}>
+                    <span className="material-symbols-rounded">search</span>
+                    Show {globalResultsCount} result{globalResultsCount > 1 ? 's' : ''} in all other units
+                  </Button>
+                ) : undefined
+              }
+            />
           ) : (
-            <Button variant="secondary" size="m" disabled>
-              Writing...
-            </Button>
+            <Virtuoso
+              data={filteredLocations}
+              itemContent={(_index, location) => (
+                <NfcRoomListItem
+                  key={location.id}
+                  roomId={location.id}
+                  roomName={location.name}
+                  onClick={() => handleSelectRoom(location.id, location.name)}
+                />
+              )}
+            />
           )}
         </div>
       </div>
+      <NfcWritingSheet />
     </BottomSheet>
   );
 };
