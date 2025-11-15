@@ -2,7 +2,8 @@
 import { useAtomValue } from 'jotai';
 import { provisionedRoomIdsAtom } from '../../data/nfcAtoms';
 import { ActionListItem } from '../../components/ActionListItem';
-import styles from './ProvisionNfcModal.module.css'; // Use styles from the new modal
+// DEFINITIVE FIX: The import path is updated to the new view's CSS module.
+import styles from '../Workflow/ProvisionNfcView.module.css';
 
 interface NfcRoomListItemProps {
   roomId: string;
@@ -15,10 +16,8 @@ export const NfcRoomListItem = ({ roomId, roomName, onClick }: NfcRoomListItemPr
   const isProvisioned = provisionedIds.has(roomId);
 
   return (
-    // DEFINITIVE FIX: The `disabled` prop is removed. The item remains interactive.
     <ActionListItem onClick={onClick}>
       <div className={styles.listItemContent}>
-        {/* DEFINITIVE FIX: The icon is now rendered on the left. */}
         {isProvisioned && (
           <span className={`material-symbols-rounded ${styles.successIcon}`}>
             check_circle

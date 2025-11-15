@@ -17,7 +17,7 @@ import { FloatingFooter } from './features/Shell/FloatingFooter';
 import { OfflineBanner } from './features/Shell/OfflineBanner';
 import { ScanView } from './features/Workflow/ScanView';
 import { CheckFormView } from './features/Workflow/CheckFormView';
-import { ProvisionNfcModal } from './features/Overlays/ProvisionNfcModal';
+import { ProvisionNfcView } from './features/Workflow/ProvisionNfcView';
 import { ManualSelectionView } from './features/Overlays/ManualSelectionView';
 import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
@@ -88,7 +88,7 @@ export const AppShell = () => {
   }, [workflowState]);
 
   const isMenuOpen = appView === 'sideMenu';
-  const isChromeVisible = workflowState.view !== 'scanning' && workflowState.view !== 'form';
+  const isChromeVisible = workflowState.view === 'none';
 
   const closeMenu = () => {
     setAppView('dashboardTime');
@@ -139,11 +139,10 @@ export const AppShell = () => {
       <AnimatePresence>
         {workflowState.view === 'scanning' && <ScanView />}
         {workflowState.view === 'form' && <CheckFormView checkData={workflowState} />}
+        {workflowState.view === 'provisioning' && <ProvisionNfcView />}
       </AnimatePresence>
       
       <FacilitySelectionModal />
-      {/* DEFINITIVE FIX: The old WriteNfcTagModal is replaced with the new ProvisionNfcModal */}
-      <ProvisionNfcModal />
       <ManualSelectionView />
       
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">

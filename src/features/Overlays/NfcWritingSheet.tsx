@@ -9,7 +9,6 @@ import {
   provisionedRoomIdsAtom,
   NfcSimulationMode,
 } from '../../data/nfcAtoms';
-import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
 import styles from './NfcWritingSheet.module.css';
@@ -39,7 +38,6 @@ const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
 export const NfcWritingSheet = () => {
   const [workflowState, setWorkflowState] = useAtom(nfcWorkflowStateAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
-  const addToast = useSetAtom(addToastAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
   const isOpen = workflowState.status === 'writing' || workflowState.status === 'success' || workflowState.status === 'error';
@@ -48,7 +46,6 @@ export const NfcWritingSheet = () => {
   useEffect(() => {
     if (workflowState.status === 'success') {
       triggerHaptic('success');
-      addToast({ message: `Tag for '${workflowState.roomName}' written`, icon: 'check_circle' });
       setProvisionedIds((currentIds: Set<string>) => new Set([...currentIds, workflowState.roomId]));
 
       const timer = setTimeout(() => {
@@ -60,7 +57,7 @@ export const NfcWritingSheet = () => {
     if (workflowState.status === 'error') {
       triggerHaptic('error');
     }
-  }, [workflowState, setWorkflowState, setProvisionedIds, addToast, triggerHaptic]);
+  }, [workflowState, setWorkflowState, setProvisionedIds, triggerHaptic]);
 
   const handleRetry = () => {
     if (context) {
@@ -119,10 +116,7 @@ export const NfcWritingSheet = () => {
   }
 
   return (
-    // DEFINITIVE FIX: Add an `onClose` handler to the nested root. This allows vaul
-    // to communicate the user's dismiss gesture (tapping the overlay) back to our
-    // application state, ensuring the sheet closes reliably.
-    <Drawer.NestedRoot open={isOpen} onClose={handleCancel}>
+    <Drawer.Root open={isOpen} onClose={handleCancel}>
       <Drawer.Portal>
         <Drawer.Overlay className={styles.overlay} />
         <Drawer.Content className={styles.sheetContent}>
@@ -144,6 +138,6 @@ export const NfcWritingSheet = () => {
           )}
         </Drawer.Content>
       </Drawer.Portal>
-    </Drawer.NestedRoot>
+    </Drawer.Root>
   );
 };

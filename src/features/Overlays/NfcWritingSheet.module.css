@@ -4,7 +4,7 @@
   position: fixed;
   inset: 0;
   background-color: rgba(10, 12, 18, 0.75);
-  z-index: 102; /* Higher z-index than the main sheet's overlay */
+  z-index: 102; /* Higher z-index than the main view's content */
 }
 
 .sheetContent {
@@ -23,10 +23,6 @@
   max-height: 90vh;
   box-shadow: var(--surface-shadow-lg);
   border-top: 1px solid var(--surface-border-secondary);
-  /* 
-    DEFINITIVE FIX: Apply the same animation override to the nested sheet to
-    ensure its animation profile is also snappy and consistent.
-  */
   --vaul-transition-duration: 400ms;
   --vaul-easing: cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -1,7 +1,8 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
 import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
-import { nfcWorkflowStateAtom } from './nfcAtoms';
+// DEFINITIVE FIX: Removed unused import to resolve linter warning.
+// import { nfcWorkflowStateAtom } from './nfcAtoms';
 
 // =================================================================
 //                         App State
@@ -94,7 +95,8 @@ export type WorkflowState =
       roomId: string;
       roomName: string;
       residents: Resident[];
-    };
+    }
+  | { view: 'provisioning' };
 
 
 export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
@@ -106,7 +108,7 @@ export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 export const isManualCheckModalOpenAtom = atom(false);
 
 export const isWriteNfcModalOpenAtom = atom(
-  (get) => get(nfcWorkflowStateAtom).status !== 'idle'
+  (get) => get(workflowStateAtom).view === 'provisioning'
 );
 
 export const isSettingsModalOpenAtom = atom(false);
@@ -116,8 +118,6 @@ export const isDevToolsModalOpenAtom = atom(false);
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
 
-// DEFINITIVE FIX: Dedicated atoms for the NFC modal's local context.
-// These are defined here but exported from nfcAtoms.ts to keep related state co-located.
 export const nfcProvisioningGroupIdAtom = atom<string | null>(null);
 export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 

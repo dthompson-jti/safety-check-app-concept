@@ -7,8 +7,8 @@ import {
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
+  workflowStateAtom,
 } from '../../data/atoms';
-import { nfcWorkflowStateAtom } from '../../data/nfcAtoms';
 import { ContextSwitcherCard } from './ContextSwitcherCard';
 import styles from './AppSideMenu.module.css';
 
@@ -23,7 +23,7 @@ export const AppSideMenu = () => {
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
   const setIsDevToolsOpen = useSetAtom(isDevToolsModalOpenAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
-  const setNfcWorkflowState = useSetAtom(nfcWorkflowStateAtom);
+  const setWorkflowState = useSetAtom(workflowStateAtom);
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
 
   const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
@@ -46,7 +46,7 @@ export const AppSideMenu = () => {
         <div className={styles.separator} />
         
         <MenuItem icon="add_comment" label="Manual check" onClick={() => setIsManualCheckModalOpen(true)} />
-        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setNfcWorkflowState({ status: 'selecting' })} />
+        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setWorkflowState({ view: 'provisioning' })} />
         <MenuItem icon="code" label="Developer settings" onClick={() => setIsDevToolsOpen(true)} />
       </main>
 
