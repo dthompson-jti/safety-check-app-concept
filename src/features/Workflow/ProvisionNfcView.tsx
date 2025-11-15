@@ -69,31 +69,7 @@ export const ProvisionNfcView = () => {
   };
 
   const handleSelectRoom = (roomId: string, roomName: string) => {
-    setNfcWorkflowState({ status: 'writing', roomId, roomName });
-
-    setTimeout(() => {
-      let outcome: 'success' | 'error' = 'success';
-      let errorCode: NfcError['code'] = 'WRITE_FAILED';
-
-      if (simulationMode === 'forceSuccess') outcome = 'success';
-      else if (simulationMode === 'forceErrorWriteFailed') {
-        outcome = 'error'; errorCode = 'WRITE_FAILED';
-      } else if (simulationMode === 'forceErrorTagLocked') {
-        outcome = 'error'; errorCode = 'TAG_LOCKED';
-      } else {
-        outcome = Math.random() > 0.2 ? 'success' : 'error';
-        errorCode = Math.random() > 0.5 ? 'WRITE_FAILED' : 'TAG_LOCKED';
-      }
-
-      if (outcome === 'success') {
-        setNfcWorkflowState({ status: 'success', roomId, roomName });
-      } else {
-        setNfcWorkflowState({
-          status: 'error', roomId, roomName,
-          error: { code: errorCode, message: errorMessages[errorCode] },
-        });
-      }
-    }, 1500);
+    setNfcWorkflowState({ status: 'ready', roomId, roomName });
   };
 
   return (

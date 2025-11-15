@@ -1,6 +1,5 @@
 // src/data/nfcAtoms.ts
 import { atom } from 'jotai';
-// DEFINITIVE FIX: Removed unused `facilityData` import.
 import { nfcProvisioningGroupIdAtom, nfcProvisioningUnitIdAtom } from './atoms';
 import { mockResidents } from './mock/residentData';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
@@ -14,6 +13,8 @@ export type NfcError = { code: 'WRITE_FAILED'; message: string } | { code: 'TAG_
 export type NfcWorkflowState =
   | { status: 'idle' }
   | { status: 'selecting' }
+  // DEFINITIVE FIX: Add the new 'ready' state to the type definition.
+  | { status: 'ready'; roomId: string; roomName: string }
   | { status: 'writing'; roomId: string; roomName: string }
   | { status: 'success'; roomId: string; roomName: string }
   | { status: 'error'; roomId: string; roomName: string; error: NfcError };

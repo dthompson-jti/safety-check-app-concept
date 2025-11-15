@@ -72,6 +72,13 @@
   font-variation-settings: 'FILL' 1;
 }
 
+/* DEFINITIVE FIX: Style for the new, larger icon */
+.largeIcon {
+  font-size: 64px !important;
+  color: var(--surface-fg-secondary);
+}
+
+
 .animationContainer .spinner {
   animation: spin 1.2s linear infinite;
   color: var(--surface-fg-theme-primary);

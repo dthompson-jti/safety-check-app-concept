@@ -1,6 +1,6 @@
 // src/features/Overlays/NfcWritingSheet.tsx
 import { useEffect } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { Drawer } from 'vaul';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import {
@@ -8,6 +8,8 @@ import {
   NfcWorkflowState,
   provisionedRoomIdsAtom,
   NfcSimulationMode,
+  nfcSimulationAtom,
+  NfcError,
 } from '../../data/nfcAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
@@ -20,6 +22,11 @@ const iconVariants: Variants = {
     opacity: 1,
     transition: { type: 'spring', stiffness: 400, damping: 15 },
   },
+};
+
+const errorMessages: Record<NfcError['code'], string> = {
+  WRITE_FAILED: 'A network error prevented writing the tag.',
+  TAG_LOCKED: 'This tag is locked and cannot be overwritten.',
 };
 
 const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -37,13 +44,48 @@ const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
 
 export const NfcWritingSheet = () => {
   const [workflowState, setWorkflowState] = useAtom(nfcWorkflowStateAtom);
+  const simulationMode = useAtomValue(nfcSimulationAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
-  const isOpen = workflowState.status === 'writing' || workflowState.status === 'success' || workflowState.status === 'error';
+  const isOpen = workflowState.status !== 'idle' && workflowState.status !== 'selecting';
   const context = 'roomId' in workflowState ? workflowState : null;
 
   useEffect(() => {
+    if (workflowState.status === 'ready' && context) {
+      const timer = setTimeout(() => {
+        setWorkflowState({ status: 'writing', roomId: context.roomId, roomName: context.roomName });
+      }, 1500); // Auto-trigger writing after a delay
+      return () => clearTimeout(timer);
+    }
+    
+    if (workflowState.status === 'writing' && context) {
+      const writeTimer = setTimeout(() => {
+        let outcome: 'success' | 'error' = 'success';
+        let errorCode: NfcError['code'] = 'WRITE_FAILED';
+
+        if (simulationMode === 'forceSuccess') outcome = 'success';
+        else if (simulationMode === 'forceErrorWriteFailed') {
+          outcome = 'error'; errorCode = 'WRITE_FAILED';
+        } else if (simulationMode === 'forceErrorTagLocked') {
+          outcome = 'error'; errorCode = 'TAG_LOCKED';
+        } else {
+          outcome = Math.random() > 0.2 ? 'success' : 'error';
+          errorCode = Math.random() > 0.5 ? 'WRITE_FAILED' : 'TAG_LOCKED';
+        }
+
+        if (outcome === 'success') {
+          setWorkflowState({ status: 'success', roomId: context.roomId, roomName: context.roomName });
+        } else {
+          setWorkflowState({
+            status: 'error', roomId: context.roomId, roomName: context.roomName,
+            error: { code: errorCode, message: errorMessages[errorCode] },
+          });
+        }
+      }, 1500);
+      return () => clearTimeout(writeTimer);
+    }
+
     if (workflowState.status === 'success') {
       triggerHaptic('success');
       setProvisionedIds((currentIds: Set<string>) => new Set([...currentIds, workflowState.roomId]));
@@ -57,7 +99,7 @@ export const NfcWritingSheet = () => {
     if (workflowState.status === 'error') {
       triggerHaptic('error');
     }
-  }, [workflowState, setWorkflowState, setProvisionedIds, triggerHaptic]);
+  }, [workflowState, setWorkflowState, setProvisionedIds, triggerHaptic, context, simulationMode]);
 
   const handleRetry = () => {
     if (context) {
@@ -72,6 +114,17 @@ export const NfcWritingSheet = () => {
   const renderContent = () => {
     if (!context) return null;
     switch (workflowState.status) {
+      case 'ready':
+        return (
+          <ContentWrapper>
+            <motion.span variants={iconVariants} className={`material-symbols-rounded ${styles.largeIcon}`}>contactless</motion.span>
+            <h2>Ready to Scan</h2>
+            <p>Hold device near NFC tag for '{context.roomName}'</p>
+            <div className={styles.buttonRow}>
+              <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+            </div>
+          </ContentWrapper>
+        );
       case 'writing':
         return (
           <ContentWrapper>
@@ -126,7 +179,7 @@ export const NfcWritingSheet = () => {
           <AnimatePresence mode="wait">
             {renderContent()}
           </AnimatePresence>
-          {import.meta.env.DEV && isOpen && (
+          {isOpen && (
               <div className={styles.devFooter}>
                   <p>DEV TOOLS</p>
                   <div className={styles.devButtons}>
