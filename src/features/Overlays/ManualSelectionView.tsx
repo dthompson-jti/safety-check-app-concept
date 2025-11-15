@@ -63,7 +63,7 @@ export const ManualSelectionView = () => {
     !isGlobalSearchActive;
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} title="Select check manually">
+    <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add manual check">
       <div className={styles.contentWrapper}>
         <div className={styles.searchContainer}>
           <SearchInput

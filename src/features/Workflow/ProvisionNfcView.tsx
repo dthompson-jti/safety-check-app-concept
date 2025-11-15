@@ -73,7 +73,7 @@ export const ProvisionNfcView = () => {
       transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
       <header className={styles.header}>
-        <h3>Write NFC Tags</h3>
+        <h3>Write NFC tags</h3>
         <Button variant="tertiary" size="m" iconOnly onClick={handleClose} aria-label="Close">
           <span className="material-symbols-rounded">close</span>
         </Button>

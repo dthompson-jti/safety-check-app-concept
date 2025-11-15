@@ -70,13 +70,13 @@ export const FacilitySelectionModal = () => {
   };
 
   return (
-    <FullScreenModal isOpen={isOpen} onClose={handleClose} title="Select Unit">
+    <FullScreenModal isOpen={isOpen} onClose={handleClose} title="Select unit">
       <div className={styles.content}>
         <p className={styles.instructions}>
-          Select your facility group and unit.
+          Select facility group and unit.
         </p>
         <div className={styles.formGroup}>
-          <label htmlFor="facility-group">Facility Group</label>
+          <label htmlFor="facility-group">Facility group</label>
           <Select value={localGroup} onValueChange={handleGroupChange} placeholder="Select a group...">
             {facilityData.map((group) => (
               <SelectItem key={group.id} value={group.id}>{group.name}</SelectItem>
@@ -84,7 +84,7 @@ export const FacilitySelectionModal = () => {
           </Select>
         </div>
         <div className={styles.formGroup}>
-          <label htmlFor="facility-unit">Facility Unit</label>
+          <label htmlFor="facility-unit">Facility unit</label>
           <Select value={localUnit} onValueChange={setLocalUnit} placeholder={localGroup ? "Select a unit..." : "Select a group first"} disabled={!localGroup}>
             {availableUnits.map(unit => (
               <SelectItem key={unit.id} value={unit.id}>{unit.name}</SelectItem>

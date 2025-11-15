@@ -36,7 +36,7 @@ export const DeveloperOverlay = () => {
   return (
     <div className={styles.container}>
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>CONNECTIVITY</h3>
+        <h3 className={styles.sectionHeader}>Connectivity</h3>
         <p className={styles.sectionHelper}>Simulate the application's network connection status.</p>
         <IconToggleGroup
           options={connectionOptions}
@@ -47,7 +47,7 @@ export const DeveloperOverlay = () => {
       </div>
 
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>NFC SIMULATION</h3>
+        <h3 className={styles.sectionHeader}>NFC simulation</h3>
         <p className={styles.sectionHelper}>Force the outcome of the next NFC tag write operation.</p>
         <IconToggleGroup
           options={nfcSimOptions}
@@ -58,8 +58,8 @@ export const DeveloperOverlay = () => {
       </div>
 
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>DEVICE SETTINGS</h3>
-        <p className={styles.sectionHelper}>Control the primary input method for initiating checks.</p>
+        <h3 className={styles.sectionHeader}>Device settings</h3>
+        <p className={styles.sectionHelper}>Select method for checks.</p>
         <IconToggleGroup
           id="scan-mode-toggle"
           options={scanModeOptions}
@@ -69,12 +69,12 @@ export const DeveloperOverlay = () => {
       </div>
       
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>PERFORMANCE</h3>
-        <p className={styles.sectionHelper}>Test the UI's resilience to network latency.</p>
+        <h3 className={styles.sectionHeader}>Performance</h3>
+        <p className={styles.sectionHelper}>Increase loading durations.</p>
         <div className={styles.settingsGroup}>
           <div className={styles.settingsItem}>
             <label htmlFor="slow-load-switch" className={styles.itemLabel}>
-              Simulate Slow Loading
+              Simulate slow loading
             </label>
             <Switch
               id="slow-load-switch"
