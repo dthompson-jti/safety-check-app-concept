@@ -1,6 +1,6 @@
 // src/features/Workflow/ProvisionNfcView.tsx
 import { useEffect } from 'react';
-import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+import { useSetAtom, useAtomValue, useAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { Virtuoso } from 'react-virtuoso';
 import {
@@ -11,13 +11,11 @@ import {
 } from '../../data/atoms';
 import {
   nfcWorkflowStateAtom,
-  nfcSimulationAtom,
   provisionedRoomIdsAtom,
   nfcSearchQueryAtom,
   nfcRoomSearchResultsAtom,
   nfcProvisioningGroupIdAtom,
   nfcProvisioningUnitIdAtom,
-  NfcError,
 } from '../../data/nfcAtoms';
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
@@ -27,15 +25,9 @@ import { NfcRoomListItem } from '../Overlays/NfcRoomListItem';
 import { ContextSwitcherCard } from '../Shell/ContextSwitcherCard';
 import styles from './ProvisionNfcView.module.css';
 
-const errorMessages: Record<NfcError['code'], string> = {
-  WRITE_FAILED: 'A network error prevented writing the tag.',
-  TAG_LOCKED: 'This tag is locked and cannot be overwritten.',
-};
-
 export const ProvisionNfcView = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const setNfcWorkflowState = useSetAtom(nfcWorkflowStateAtom);
-  const simulationMode = useAtomValue(nfcSimulationAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
 
