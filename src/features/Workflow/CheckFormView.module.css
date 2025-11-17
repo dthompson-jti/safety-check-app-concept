@@ -23,6 +23,7 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
+  text-transform: capitalize;
 }
 
 .formContent {
@@ -40,9 +41,27 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  /* HIERARCHY: Color is changed to secondary */
   color: var(--surface-fg-secondary);
   width: 100%;
+}
+
+.infoNote {
+  margin: calc(-1 * var(--spacing-2)) 0 0 0;
+  font-size: 0.9rem;
+  color: var(--surface-fg-secondary);
+}
+
+.checkTypeSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+}
+
+.checkTypeSection label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--surface-fg-secondary);
 }
 
 .residentListContainer {
@@ -50,6 +69,66 @@
   flex-direction: column;
   gap: var(--spacing-4);
 }
+
+.attestationContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-2);
+}
+
+.attestationContainer input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--control-border-tertiary);
+  border-radius: var(--radius-sm);
+  background-color: var(--control-bg-secondary);
+  flex-shrink: 0;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.attestationContainer input[type='checkbox']::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  /* DEFINITIVE FIX: Use a white color variable for the checkmark. */
+  box-shadow: inset 1em 1em var(--primitives-base-white);
+  background-color: CanvasText;
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.attestationContainer input[type='checkbox']:checked {
+  background-color: var(--control-bg-theme);
+  border-color: var(--control-bg-theme);
+}
+
+.attestationContainer input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+.attestationLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--surface-fg-secondary);
+  cursor: pointer;
+}
+
 
 .footer {
   /* Floating footer styles */

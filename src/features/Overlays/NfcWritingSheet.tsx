@@ -1,14 +1,11 @@
 // src/features/Overlays/NfcWritingSheet.tsx
-import { useEffect } from 'react';
-import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+import { useEffect, useRef } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
 import { Drawer } from 'vaul';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import {
   nfcWorkflowStateAtom,
-  NfcWorkflowState,
   provisionedRoomIdsAtom,
-  NfcSimulationMode,
-  nfcSimulationAtom,
   NfcError,
 } from '../../data/nfcAtoms';
 import { useHaptics } from '../../data/useHaptics';
@@ -29,6 +26,8 @@ const errorMessages: Record<NfcError['code'], string> = {
   TAG_LOCKED: 'This tag is locked and cannot be overwritten.',
 };
 
+type SimulationOutcome = 'success' | 'write_fail' | 'tag_locked';
+
 const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
   <motion.div
     initial="hidden"
@@ -44,62 +43,45 @@ const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
 
 export const NfcWritingSheet = () => {
   const [workflowState, setWorkflowState] = useAtom(nfcWorkflowStateAtom);
-  const simulationMode = useAtomValue(nfcSimulationAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
   const { trigger: triggerHaptic } = useHaptics();
+  const simulationOutcomeRef = useRef<SimulationOutcome>('success');
 
   const isOpen = workflowState.status !== 'idle' && workflowState.status !== 'selecting';
   const context = 'roomId' in workflowState ? workflowState : null;
 
   useEffect(() => {
-    if (workflowState.status === 'ready' && context) {
-      const timer = setTimeout(() => {
-        setWorkflowState({ status: 'writing', roomId: context.roomId, roomName: context.roomName });
-      }, 1500); // Auto-trigger writing after a delay
-      return () => clearTimeout(timer);
-    }
-    
+    // This effect now triggers the final step of the simulation after the "writing" state.
     if (workflowState.status === 'writing' && context) {
       const writeTimer = setTimeout(() => {
-        let outcome: 'success' | 'error' = 'success';
-        let errorCode: NfcError['code'] = 'WRITE_FAILED';
-
-        if (simulationMode === 'forceSuccess') outcome = 'success';
-        else if (simulationMode === 'forceErrorWriteFailed') {
-          outcome = 'error'; errorCode = 'WRITE_FAILED';
-        } else if (simulationMode === 'forceErrorTagLocked') {
-          outcome = 'error'; errorCode = 'TAG_LOCKED';
-        } else {
-          outcome = Math.random() > 0.2 ? 'success' : 'error';
-          errorCode = Math.random() > 0.5 ? 'WRITE_FAILED' : 'TAG_LOCKED';
-        }
-
+        const outcome = simulationOutcomeRef.current;
         if (outcome === 'success') {
           setWorkflowState({ status: 'success', roomId: context.roomId, roomName: context.roomName });
+        } else if (outcome === 'write_fail') {
+          setWorkflowState({
+            status: 'error', roomId: context.roomId, roomName: context.roomName,
+            error: { code: 'WRITE_FAILED', message: errorMessages.WRITE_FAILED },
+          });
         } else {
           setWorkflowState({
             status: 'error', roomId: context.roomId, roomName: context.roomName,
-            error: { code: errorCode, message: errorMessages[errorCode] },
+            error: { code: 'TAG_LOCKED', message: errorMessages.TAG_LOCKED },
           });
         }
       }, 1500);
       return () => clearTimeout(writeTimer);
     }
-
+    
     if (workflowState.status === 'success') {
       triggerHaptic('success');
       setProvisionedIds((currentIds: Set<string>) => new Set([...currentIds, workflowState.roomId]));
-
-      const timer = setTimeout(() => {
-        setWorkflowState({ status: 'selecting' });
-      }, 2000);
-
+      const timer = setTimeout(() => setWorkflowState({ status: 'selecting' }), 2000);
       return () => clearTimeout(timer);
     }
     if (workflowState.status === 'error') {
       triggerHaptic('error');
     }
-  }, [workflowState, setWorkflowState, setProvisionedIds, triggerHaptic, context, simulationMode]);
+  }, [workflowState, setWorkflowState, setProvisionedIds, triggerHaptic, context]);
 
   const handleRetry = () => {
     if (context) {
@@ -111,6 +93,13 @@ export const NfcWritingSheet = () => {
     setWorkflowState({ status: 'selecting' });
   };
 
+  // This function now initiates the simulation by setting the outcome and transitioning to the 'writing' state.
+  const handleDevSimulate = (outcome: SimulationOutcome) => {
+    if (!context || workflowState.status !== 'ready') return;
+    simulationOutcomeRef.current = outcome;
+    setWorkflowState({ status: 'writing', roomId: context.roomId, roomName: context.roomName });
+  };
+
   const renderContent = () => {
     if (!context) return null;
     switch (workflowState.status) {
@@ -120,9 +109,6 @@ export const NfcWritingSheet = () => {
             <motion.span variants={iconVariants} className={`material-symbols-rounded ${styles.largeIcon}`}>contactless</motion.span>
             <h2>Ready to Scan</h2>
             <p>Hold device near NFC tag for '{context.roomName}'</p>
-            <div className={styles.buttonRow}>
-              <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
-            </div>
           </ContentWrapper>
         );
       case 'writing':
@@ -156,17 +142,6 @@ export const NfcWritingSheet = () => {
         return null;
     }
   };
-  
-  const setSimulationState = (mode: NfcSimulationMode) => {
-    if (!context) return;
-    const simulationMap: Record<NfcSimulationMode, NfcWorkflowState> = {
-        forceSuccess: { status: 'success', roomId: context.roomId, roomName: context.roomName },
-        forceErrorWriteFailed: { status: 'error', roomId: context.roomId, roomName: context.roomName, error: { code: 'WRITE_FAILED', message: 'A network error prevented writing the tag.' } },
-        forceErrorTagLocked: { status: 'error', roomId: context.roomId, roomName: context.roomName, error: { code: 'TAG_LOCKED', message: 'This tag is locked and cannot be overwritten.' } },
-        random: { status: 'writing', roomId: context.roomId, roomName: context.roomName } // No-op
-    };
-    setWorkflowState(simulationMap[mode]);
-  }
 
   return (
     <Drawer.Root open={isOpen} onClose={handleCancel}>
@@ -179,13 +154,13 @@ export const NfcWritingSheet = () => {
           <AnimatePresence mode="wait">
             {renderContent()}
           </AnimatePresence>
-          {isOpen && (
+          {workflowState.status === 'ready' && (
               <div className={styles.devFooter}>
                   <p>DEV TOOLS</p>
                   <div className={styles.devButtons}>
-                      <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceSuccess')}>Success</Button>
-                      <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceErrorWriteFailed')}>Err: Write</Button>
-                      <Button size="xs" variant="tertiary" onClick={() => setSimulationState('forceErrorTagLocked')}>Err: Locked</Button>
+                      <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('success')}>Simulate Success</Button>
+                      <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('write_fail')}>Simulate Write Fail</Button>
+                      <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('tag_locked')}>Simulate Tag Locked</Button>
                   </div>
               </div>
           )}

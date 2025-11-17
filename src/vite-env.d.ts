@@ -8,7 +8,9 @@ interface ImportMeta {
 }
 
 interface ImportMetaEnv {
-  [key: string]: any;
+  // DEFINITIVE FIX: Replaced `any` with a more specific type to resolve the linter error.
+  // Environment variables can be strings, booleans, or not defined.
+  [key: string]: string | boolean | undefined;
   BASE_URL: string;
   MODE: string;
   DEV: boolean;
@@ -23,7 +25,7 @@ declare module '*.module.css' {
 }
 
 declare module '*.module.scss' {
-  const classes: { readonly [key: string]: string };
+  const classes: { readonly [key:string]: string };
   export default classes;
 }
 

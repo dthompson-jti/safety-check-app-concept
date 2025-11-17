@@ -1,7 +1,6 @@
 // src/features/Overlays/DeveloperOverlay.tsx
 import { useAtom } from 'jotai';
 import { connectionStatusAtom, ConnectionStatus, appConfigAtom } from '../../data/atoms';
-import { nfcSimulationAtom, NfcSimulationMode } from '../../data/nfcAtoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Switch } from '../../components/Switch';
 import styles from './DeveloperOverlay.module.css';
@@ -17,20 +16,16 @@ const scanModeOptions = [
   { value: 'nfc', label: 'NFC', icon: 'nfc' },
 ] as const;
 
-const nfcSimOptions: readonly { value: NfcSimulationMode; label: string; icon: string }[] = [
-    { value: 'forceSuccess', label: 'Success', icon: 'check' },
-    { value: 'forceErrorWriteFailed', label: 'Write Fail', icon: 'wifi_off' },
-    { value: 'forceErrorTagLocked', label: 'Tag Locked', icon: 'lock' },
-    { value: 'random', label: 'Random', icon: 'casino' },
-] as const;
-
 export const DeveloperOverlay = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
-  const [nfcSimMode, setNfcSimMode] = useAtom(nfcSimulationAtom);
 
   const handleSlowLoadChange = (checked: boolean) => {
     setAppConfig(current => ({ ...current, isSlowLoadEnabled: checked }));
+  };
+
+  const handleCheckTypeChange = (checked: boolean) => {
+    setAppConfig(current => ({ ...current, isCheckTypeEnabled: checked }));
   };
 
   return (
@@ -47,17 +42,6 @@ export const DeveloperOverlay = () => {
       </div>
 
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>NFC simulation</h3>
-        <p className={styles.sectionHelper}>Force the outcome of the next NFC tag write operation.</p>
-        <IconToggleGroup
-          options={nfcSimOptions}
-          value={nfcSimMode}
-          onValueChange={setNfcSimMode}
-          id="nfc-sim-toggle"
-        />
-      </div>
-
-      <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Device settings</h3>
         <p className={styles.sectionHelper}>Select method for checks.</p>
         <IconToggleGroup
@@ -68,6 +52,23 @@ export const DeveloperOverlay = () => {
         />
       </div>
       
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>Feature Toggles</h3>
+        <p className={styles.sectionHelper}>Enable or disable optional UI features.</p>
+        <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem}>
+            <label htmlFor="check-type-switch" className={styles.itemLabel}>
+              Show check type
+            </label>
+            <Switch
+              id="check-type-switch"
+              checked={appConfig.isCheckTypeEnabled}
+              onCheckedChange={handleCheckTypeChange}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Performance</h3>
         <p className={styles.sectionHelper}>Increase loading durations.</p>

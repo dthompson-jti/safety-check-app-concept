@@ -8,11 +8,13 @@ import {
   connectionStatusAtom,
   recentlyCompletedCheckIdAtom,
   completingChecksAtom,
+  appConfigAtom,
 } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
+import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
 import styles from './CheckFormView.module.css';
 
@@ -21,6 +23,12 @@ type CheckFormViewProps = {
 };
 
 type StatusValue = 'Awake' | 'Sleeping' | 'Refused';
+type CheckTypeValue = 'Locked down' | 'Example 2';
+
+const checkTypeOptions = [
+  { value: 'Locked down', label: 'Locked down' },
+  { value: 'Example 2', label: 'Example 2' },
+] as const;
 
 export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
@@ -29,6 +37,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
   const setCompletingChecks = useSetAtom(completingChecksAtom);
   const connectionStatus = useAtomValue(connectionStatusAtom);
+  const { isCheckTypeEnabled } = useAtomValue(appConfigAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
   const footerRef = useRef<HTMLElement>(null);
@@ -42,6 +51,11 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const [notes, setNotes] = useState<Record<string, string>>(() =>
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
+
+  // DEFINITIVE FIX: The initial state is now always an empty string, requiring explicit user selection.
+  const [checkType, setCheckType] = useState<CheckTypeValue | ''>('');
+  const [isAttested, setIsAttested] = useState(false);
+  const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
 
   useLayoutEffect(() => {
     const footer = footerRef.current;
@@ -94,12 +108,16 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     setNotes((prev) => ({ ...prev, [residentId]: value }));
   };
 
-  const allResidentsHaveStatus = useMemo(() => {
-    return checkData.residents.every((res) => statuses[res.id]);
-  }, [statuses, checkData.residents]);
+  const canSave = useMemo(() => {
+    const allResidentsHaveStatus = checkData.residents.every((res) => statuses[res.id]);
+    if (!allResidentsHaveStatus) return false;
+    if (isCheckTypeEnabled && !checkType) return false;
+    if (isManualCheck && !isAttested) return false;
+    return true;
+  }, [statuses, checkData.residents, isCheckTypeEnabled, checkType, isManualCheck, isAttested]);
 
   const handleSave = () => {
-    if (!allResidentsHaveStatus) return;
+    if (!canSave) return;
 
     triggerHaptic('success');
     setWorkflowState({ view: 'none' });
@@ -157,6 +175,8 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
     }
   };
+  
+  const headerTitle = isManualCheck ? 'Manual record check' : 'Record check';
 
   return (
     <motion.div
@@ -170,16 +190,27 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         <Button variant="tertiary" size="m" iconOnly onClick={handleBack} aria-label="Back">
           <span className="material-symbols-rounded">arrow_back</span>
         </Button>
-        <h3>Record check</h3>
+        <h3>{headerTitle}</h3>
       </header>
 
       <main className={styles.formContent} ref={contentRef}>
         <h2 className={styles.roomHeader}>{checkData.roomName}</h2>
+        {isManualCheck && <p className={styles.infoNote}>This will be recorded as a manual check.</p>}
+
+        {isCheckTypeEnabled && (
+          <div className={styles.checkTypeSection}>
+            <label htmlFor="check-type-control">Check type</label>
+            <SegmentedControl
+              id="check-type-control"
+              options={checkTypeOptions}
+              value={checkType}
+              onValueChange={setCheckType}
+            />
+          </div>
+        )}
 
         <div className={styles.residentListContainer}>
           {checkData.residents.map((resident) => {
-            // DEFINITIVE FIX: Use the `find` method on the `specialClassifications` array
-            // to locate the correct classification object for this specific resident.
             const classification =
               checkData.type === 'scheduled'
                 ? checkData.specialClassifications?.find(sc => sc.residentId === resident.id)
@@ -198,13 +229,27 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
             );
           })}
         </div>
+        
+        {isManualCheck && (
+          <div className={styles.attestationContainer}>
+            <input
+              type="checkbox"
+              id="attestation-checkbox"
+              checked={isAttested}
+              onChange={(e) => setIsAttested(e.target.checked)}
+            />
+            <label htmlFor="attestation-checkbox" className={styles.attestationLabel}>
+              I verify that I am present at this room at the time of check.
+            </label>
+          </div>
+        )}
       </main>
 
       <footer className={styles.footer} ref={footerRef} data-scrolled={showScrollShadow}>
         <Button variant="secondary" size="m" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button variant="primary" size="m" onClick={handleSave} disabled={!allResidentsHaveStatus}>
+        <Button variant="primary" size="m" onClick={handleSave} disabled={!canSave}>
           Save
         </Button>
       </footer>

@@ -53,6 +53,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
       setWorkflowState({
         view: 'form',
         type: 'scheduled',
+        method: 'manual',
         checkId: check.id,
         roomName: check.residents[0].location,
         residents: check.residents,

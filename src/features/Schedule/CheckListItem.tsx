@@ -50,6 +50,7 @@ export const CheckListItem = ({ check, transition }: CheckListItemProps) => {
       setWorkflowState({
         view: 'form',
         type: 'scheduled',
+        method: 'manual',
         checkId: check.id,
         roomName: check.residents[0].location,
         residents: check.residents,

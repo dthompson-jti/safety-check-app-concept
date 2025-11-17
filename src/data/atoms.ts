@@ -84,6 +84,7 @@ export type WorkflowState =
   | {
       view: 'form';
       type: 'scheduled';
+      method: 'scan' | 'manual';
       checkId: string;
       roomName: string;
       residents: Resident[];
@@ -134,12 +135,14 @@ interface AppConfig {
   hapticsEnabled: boolean;
   scheduleViewMode: 'card' | 'list';
   isSlowLoadEnabled: boolean;
+  isCheckTypeEnabled: boolean;
 }
 export const appConfigAtom = atom<AppConfig>({
   scanMode: 'qr',
   hapticsEnabled: true,
   scheduleViewMode: 'card',
   isSlowLoadEnabled: false,
+  isCheckTypeEnabled: false,
 });
 
 // =================================================================

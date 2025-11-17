@@ -46,7 +46,7 @@ export const AppSideMenu = () => {
         <div className={styles.separator} />
         
         <MenuItem icon="add_comment" label="Manual check" onClick={() => setIsManualCheckModalOpen(true)} />
-        <MenuItem icon="nfc" label="Write NFC tag" onClick={() => setWorkflowState({ view: 'provisioning' })} />
+        <MenuItem icon="nfc" label="Write NFC tags" onClick={() => setWorkflowState({ view: 'provisioning' })} />
         <MenuItem icon="code" label="Developer tools" onClick={() => setIsDevToolsOpen(true)} />
       </main>
 

@@ -78,6 +78,7 @@ export const ScanView = () => {
           setWorkflow({
             view: 'form',
             type: 'scheduled',
+            method: 'scan',
             checkId: check.id,
             roomName: check.residents[0].location,
             residents: check.residents,

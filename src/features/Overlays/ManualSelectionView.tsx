@@ -48,6 +48,7 @@ export const ManualSelectionView = () => {
     setWorkflow({
       view: 'form',
       type: 'scheduled',
+      method: 'manual',
       checkId: check.id,
       roomName: check.residents[0].location,
       residents: check.residents,
