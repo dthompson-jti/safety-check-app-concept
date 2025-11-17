@@ -6,7 +6,6 @@ import { sessionAtom } from '../../data/atoms';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { Modal } from '../../components/Modal';
-import { FullScreenPlaceholder } from '../../components/FullScreenPlaceholder';
 import styles from './LoginView.module.css';
 
 export const LoginView = () => {
@@ -73,80 +72,108 @@ export const LoginView = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className={styles.loginFormCard}>
-          <div className={styles.appTitle}>
-            <span
-              className={`material-symbols-rounded ${styles.shortcutIcon}`}
-              onClick={handleShortcutLogin}
-              title="Developer Shortcut Login"
-            >
-              shield
-            </span>
-            <h3>eSupervision Mobile</h3>
+        <main className={styles.mainContent}>
+          <div className={styles.loginFormCard}>
+            <div className={styles.appTitle}>
+              <span
+                className={`material-symbols-rounded ${styles.shortcutIcon}`}
+                onClick={handleShortcutLogin}
+                title="Developer Shortcut Login"
+              >
+                shield
+              </span>
+              <h3>eSupervision Mobile</h3>
+            </div>
+            <form onSubmit={handleLogin} className={styles.formFields} noValidate>
+              {/* The form-level error animates the entire form for a general failure. */}
+              <motion.div
+                animate={isAttempted && formError ? shakeAnimation : {}}
+                onAnimationComplete={() => setIsAttempted(false)}
+              >
+                {formError && <div className={styles.formError}>{formError}</div>}
+              </motion.div>
+
+              {/* Inline errors animate just the specific input that has an issue. */}
+              <motion.div animate={isAttempted && usernameError ? shakeAnimation : {}}>
+                <TextInput
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  isInvalid={!!usernameError}
+                  autoFocus
+                />
+                {usernameError && <div className={styles.errorMessage}>{usernameError}</div>}
+              </motion.div>
+
+              <motion.div animate={isAttempted && passwordError ? shakeAnimation : {}}>
+                <TextInput
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  isInvalid={!!passwordError}
+                />
+                {passwordError && <div className={styles.errorMessage}>{passwordError}</div>}
+              </motion.div>
+
+              <Button type="submit" variant="primary" size="m" style={{ width: '100%', marginTop: '8px' }}>
+                Log In
+              </Button>
+              <div className={styles.supportLink}>
+                <button type="button" onClick={() => setIsHelpModalOpen(true)}>Trouble signing in?</button>
+              </div>
+            </form>
           </div>
-          <form onSubmit={handleLogin} className={styles.formFields} noValidate>
-            {/* The form-level error animates the entire form for a general failure. */}
-            <motion.div
-              animate={isAttempted && formError ? shakeAnimation : {}}
-              onAnimationComplete={() => setIsAttempted(false)}
-            >
-              {formError && <div className={styles.formError}>{formError}</div>}
-            </motion.div>
-            
-            {/* Inline errors animate just the specific input that has an issue. */}
-            <motion.div animate={isAttempted && usernameError ? shakeAnimation : {}}>
-              <TextInput
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                isInvalid={!!usernameError}
-                autoFocus
-              />
-              {usernameError && <div className={styles.errorMessage}>{usernameError}</div>}
-            </motion.div>
-            
-            <motion.div animate={isAttempted && passwordError ? shakeAnimation : {}}>
-              <TextInput
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                isInvalid={!!passwordError}
-              />
-              {passwordError && <div className={styles.errorMessage}>{passwordError}</div>}
-            </motion.div>
-            
-            <Button type="submit" variant="primary" size="m" style={{ width: '100%', marginTop: '8px' }}>
-              Log In
-            </Button>
-          </form>
-          <div className={styles.supportLink}>
-            <button type="button" onClick={() => setIsHelpModalOpen(true)}>Trouble signing in?</button>
-          </div>
-        </div>
+        </main>
+
+        <footer className={styles.pageFooter}>
+          <p>&copy; Journal Technologies 2025.</p>
+          <p>
+            <a href="#privacy">Privacy Policy</a>
+            <span className={styles.footerSeparator}>&middot;</span>
+            <a href="#terms">Terms of Use</a>
+          </p>
+        </footer>
       </motion.div>
 
       {/* The assistance modal manages expectations about prototype functionality. */}
       <Modal
         isOpen={isHelpModalOpen}
         onClose={() => setIsHelpModalOpen(false)}
-        title="Assistance"
+        title="How to Sign In"
         width="90%"
         height="auto"
-        description="Information about prototype login assistance."
+        description="Information on how to sign in to the prototype application."
       >
         <Modal.Content>
-          <FullScreenPlaceholder
-            icon="help"
-            title="Assistance"
-            message="This is a high-fidelity prototype. In a production application, this screen would guide you through a secure password reset process. For now, please use the provided test credentials or contact your administrator for access."
-          />
+          <div className={styles.modalBodyLayout}>
+            <div className={styles.modalIcon}>
+              <span className="material-symbols-rounded large-feature-icon">help</span>
+            </div>
+            <div className={styles.modalTextContent}>
+              <h3>How to Sign In</h3>
+              <p>
+                To sign-in, use your eSeries credentials. To change your password, go to eSeries and select reset password.
+              </p>
+              <div
+                className={styles.infoNote}
+                data-appearance-type="tertiary"
+                data-bordered="true"
+              >
+                <h4>Password & Account Help</h4>
+                <ul>
+                  <li>This prototype does not support actual password resets.</li>
+                  <li>In a production environment, this section would contain agency-specific instructions or links to a self-service portal.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </Modal.Content>
         <Modal.Footer>
           <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-            <Button variant="primary" onClick={() => setIsHelpModalOpen(false)}>
-              Got it
+            <Button variant="secondary" onClick={() => setIsHelpModalOpen(false)} style={{ width: '100%' }}>
+              Close
             </Button>
           </div>
         </Modal.Footer>

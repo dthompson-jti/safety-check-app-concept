@@ -1,12 +1,20 @@
 /* src/features/Session/LoginView.module.css */
 .loginViewWrapper {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column; /* UPDATED for sticky footer */
   min-height: 100vh;
   background-color: var(--surface-bg-secondary);
-  padding: var(--spacing-4);
   font-family: var(--font-family-sans);
+}
+
+/* NEW: Main content area that grows to push footer down */
+.mainContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--spacing-4);
 }
 
 .loginFormCard {
@@ -66,19 +74,23 @@
 }
 
 .supportLink {
-  margin-top: var(--spacing-4);
+  margin-top: var(--spacing-2);
   font-size: 0.85rem;
   color: var(--surface-fg-secondary);
+  text-align: left;
 }
 .supportLink button {
   all: unset;
   color: var(--surface-fg-theme-primary);
-  text-decoration: none;
   font-weight: 500;
   cursor: pointer;
+  /* UPDATED: Ensure consistent underline style */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
 }
 .supportLink button:hover {
-  text-decoration: underline;
+  color: var(--surface-fg-theme-strong);
 }
 
 .errorMessage {
@@ -98,4 +110,112 @@
   text-align: center;
   border: 1px solid var(--surface-border-alert_subtle);
   margin-bottom: var(--spacing-2);
+}
+
+/* --- NEW & UPDATED STYLES --- */
+
+.pageFooter {
+  width: 100%;
+  text-align: center;
+  padding: var(--spacing-4) 0 var(--spacing-2);
+  color: var(--surface-fg-tertiary);
+  font-size: 0.8rem;
+  flex-shrink: 0; /* Prevent footer from shrinking */
+}
+
+.pageFooter p {
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.pageFooter p:last-child {
+  margin-bottom: 0;
+}
+
+.pageFooter a {
+  /* UPDATED: Inherit global underline but use contextual color */
+  color: var(--surface-fg-tertiary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.pageFooter a:hover {
+  color: var(--surface-fg-secondary);
+}
+
+.footerSeparator {
+  color: var(--surface-fg-quinary);
+  margin: 0 var(--spacing-1);
+}
+
+.modalBodyLayout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  text-align: left;
+}
+
+/* On wider screens, place icon and text side-by-side */
+@media (min-width: 480px) {
+  .modalBodyLayout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.modalIcon {
+  flex-shrink: 0;
+  text-align: center;
+  /* Use a media query to only add right margin on wider screens */
+  margin-right: 0;
+}
+
+@media (min-width: 480px) {
+  .modalIcon {
+    margin-right: var(--spacing-2);
+  }
+}
+
+.modalTextContent {
+  flex-grow: 1;
+}
+
+.modalTextContent h3 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-2);
+  font-size: 1.25rem;
+  color: var(--surface-fg-primary);
+}
+
+.modalTextContent p {
+  margin-top: 0;
+  margin-bottom: var(--spacing-4);
+  color: var(--surface-fg-secondary);
+  line-height: 1.6;
+}
+
+.infoNote {
+  padding: var(--spacing-3);
+  border-radius: var(--spacing-2);
+}
+
+.infoNote h4 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-2);
+  color: var(--surface-fg-primary);
+  font-size: 0.9rem;
+}
+
+.infoNote ul {
+  margin: 0;
+  padding-left: var(--spacing-5);
+  color: var(--surface-fg-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.infoNote ul li {
+  margin-bottom: var(--spacing-1);
+}
+.infoNote ul li:last-child {
+  margin-bottom: 0;
 }

@@ -55,3 +55,16 @@ body {
   'GRAD' 0,
   'opsz' 20;
 }
+
+/* --- NEW: Global Link Styles --- */
+a {
+  color: var(--surface-fg-theme-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--surface-fg-theme-strong);
+}
