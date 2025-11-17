@@ -1,6 +1,6 @@
 // src/features/Overlays/SettingsOverlay.tsx
-import { useAtom } from 'jotai';
-import { appConfigAtom } from '../../data/atoms';
+import { useAtom, useSetAtom } from 'jotai';
+import { appConfigAtom, sessionAtom } from '../../data/atoms';
 import { Switch } from '../../components/Switch';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import styles from './SettingsOverlay.module.css';
@@ -12,9 +12,15 @@ const viewModeOptions = [
 
 export const SettingsOverlay = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
+  const setSession = useSetAtom(sessionAtom);
 
   const handleHapticsChange = (checked: boolean) => {
     setAppConfig(currentConfig => ({ ...currentConfig, hapticsEnabled: checked }));
+  };
+
+  const handleLogout = () => {
+    // Resets the session state, effectively logging the user out.
+    setSession({ isAuthenticated: false, userName: null });
   };
 
   return (
@@ -45,7 +51,19 @@ export const SettingsOverlay = () => {
           </div>
         </div>
       </div>
-      {/* Other sections like Account, etc. would go here */}
+      
+      {/* NEW: Account section with Logout button */}
+      <div className={styles.settingsSection}>
+        <h3 className={styles.sectionTitle}>ACCOUNT</h3>
+        <div className={styles.settingsGroup}>
+          <button
+            className={`${styles.settingsItem} ${styles.destructive}`}
+            onClick={handleLogout}
+          >
+            Log Out
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
