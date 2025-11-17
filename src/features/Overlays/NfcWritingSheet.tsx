@@ -45,13 +45,14 @@ export const NfcWritingSheet = () => {
   const [workflowState, setWorkflowState] = useAtom(nfcWorkflowStateAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
   const { trigger: triggerHaptic } = useHaptics();
+  // Stores the selected simulation outcome from the 'ready' sheet's dev tools.
   const simulationOutcomeRef = useRef<SimulationOutcome>('success');
 
   const isOpen = workflowState.status !== 'idle' && workflowState.status !== 'selecting';
   const context = 'roomId' in workflowState ? workflowState : null;
 
   useEffect(() => {
-    // This effect now triggers the final step of the simulation after the "writing" state.
+    // This effect runs the final step of the simulation after the 'writing' state begins.
     if (workflowState.status === 'writing' && context) {
       const writeTimer = setTimeout(() => {
         const outcome = simulationOutcomeRef.current;
@@ -68,7 +69,7 @@ export const NfcWritingSheet = () => {
             error: { code: 'TAG_LOCKED', message: errorMessages.TAG_LOCKED },
           });
         }
-      }, 1500);
+      }, 1500); // This delay simulates the actual time it takes to write a tag.
       return () => clearTimeout(writeTimer);
     }
     
@@ -85,6 +86,7 @@ export const NfcWritingSheet = () => {
 
   const handleRetry = () => {
     if (context) {
+      // Retrying will re-use the last selected simulation outcome.
       setWorkflowState({ status: 'writing', roomId: context.roomId, roomName: context.roomName });
     }
   };
@@ -93,7 +95,8 @@ export const NfcWritingSheet = () => {
     setWorkflowState({ status: 'selecting' });
   };
 
-  // This function now initiates the simulation by setting the outcome and transitioning to the 'writing' state.
+  // This handler, called from the dev tools, sets the desired simulation outcome
+  // and then transitions the state machine to the 'writing' phase.
   const handleDevSimulate = (outcome: SimulationOutcome) => {
     if (!context || workflowState.status !== 'ready') return;
     simulationOutcomeRef.current = outcome;
@@ -154,6 +157,8 @@ export const NfcWritingSheet = () => {
           <AnimatePresence mode="wait">
             {renderContent()}
           </AnimatePresence>
+          {/* The dev tools are only shown on the 'ready' screen, allowing the developer
+              to choose the outcome before the simulation starts. */}
           {workflowState.status === 'ready' && (
               <div className={styles.devFooter}>
                   <p>DEV TOOLS</p>

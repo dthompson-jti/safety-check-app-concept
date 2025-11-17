@@ -17,7 +17,11 @@ export const NfcRoomListItem = ({ roomId, roomName, onClick }: NfcRoomListItemPr
   return (
     <ActionListItem onClick={onClick}>
       <div className={styles.listItemContent}>
-        {/* DEFINITIVE FIX: Wrap the icon in a container that always reserves space. */}
+        {/* 
+          This container reserves a fixed space for the icon.
+          This prevents the room name text from shifting left or right
+          when the icon appears, ensuring a stable and professional layout.
+        */}
         <div className={styles.iconContainer}>
           {isProvisioned && (
             <span className={`material-symbols-rounded ${styles.successIcon}`}>

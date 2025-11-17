@@ -37,7 +37,6 @@ export const ScanView = () => {
 
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       const targetCheck = allChecks.find(c => c.id === workflow.targetCheckId);
-      // DEFINITIVE FIX: Use the first item from the `specialClassifications` array for the alert.
       const firstClassification = targetCheck?.specialClassifications?.[0];
       if (firstClassification) {
         const resident = mockResidents.find(r => r.id === firstClassification.residentId);
@@ -66,15 +65,14 @@ export const ScanView = () => {
     if (scanViewState !== 'scanning') return;
     setScanViewState('processing');
 
-    // Short delay to show processing state before result
     setTimeout(() => {
       const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
 
       if (check) {
         triggerHaptic('success');
         setScanViewState('success');
-        // Brief delay to show success state before transitioning
         setTimeout(() => {
+          // A successful scan sets the method to 'scan', bypassing the attestation requirement.
           setWorkflow({
             view: 'form',
             type: 'scheduled',
@@ -82,7 +80,6 @@ export const ScanView = () => {
             checkId: check.id,
             roomName: check.residents[0].location,
             residents: check.residents,
-            // DEFINITIVE FIX: Pass the correct `specialClassifications` array property.
             specialClassifications: check.specialClassifications,
           });
         }, 800);

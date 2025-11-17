@@ -128,7 +128,7 @@
 }
 
 .pageFooter p:last-child {
-  margin-bottom: 0;
+  margin-bottom: var(--spacing-3);
 }
 
 .pageFooter a {
@@ -144,7 +144,7 @@
 
 .footerSeparator {
   color: var(--surface-fg-quinary);
-  margin: 0 var(--spacing-1);
+  margin: 0 var(--spacing-1)
 }
 
 .modalBodyLayout {

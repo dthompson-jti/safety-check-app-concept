@@ -1,8 +1,6 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
 import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
-// DEFINITIVE FIX: Removed unused import to resolve linter warning.
-// import { nfcWorkflowStateAtom } from './nfcAtoms';
 
 // =================================================================
 //                         App State
@@ -84,6 +82,12 @@ export type WorkflowState =
   | {
       view: 'form';
       type: 'scheduled';
+      /**
+       * The method used to initiate the check.
+       * 'scan' - from a QR or NFC scan.
+       * 'manual' - from tapping a card or using manual selection.
+       * This dictates whether attestation is required.
+       */
       method: 'scan' | 'manual';
       checkId: string;
       roomName: string;
@@ -135,6 +139,7 @@ interface AppConfig {
   hapticsEnabled: boolean;
   scheduleViewMode: 'card' | 'list';
   isSlowLoadEnabled: boolean;
+  /** When true, shows the 'Check Type' segmented control on the CheckFormView. */
   isCheckTypeEnabled: boolean;
 }
 export const appConfigAtom = atom<AppConfig>({

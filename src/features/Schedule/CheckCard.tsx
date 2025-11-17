@@ -17,8 +17,6 @@ interface CheckCardProps {
 }
 
 const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
-  // DEFINITIVE FIX: Check if this resident's ID exists in the `specialClassifications` array.
-  // This correctly handles multiple classifications within a single check.
   const isClassified = check.specialClassifications?.some(
     (sc) => sc.residentId === resident.id
   );
@@ -50,6 +48,8 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const handleCardClick = () => {
     if (isActionable) {
+      // Manually initiating a check from the UI sets the method to 'manual'.
+      // This is the flag that triggers the attestation requirement on the form.
       setWorkflowState({
         view: 'form',
         type: 'scheduled',
@@ -57,7 +57,6 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
         checkId: check.id,
         roomName: check.residents[0].location,
         residents: check.residents,
-        // DEFINITIVE FIX: Pass the entire `specialClassifications` array.
         specialClassifications: check.specialClassifications,
       });
     }
@@ -72,8 +71,6 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   return (
     <motion.div
       layout
-      // Apply the shared transition for enter and layout animations.
-      // Use a slightly faster duration for the individual item exit animation.
       transition={transition}
       animate={{ x: 0, height: 'auto', opacity: 1, marginBottom: 'var(--spacing-3)' }}
       initial={{ opacity: 0 }}

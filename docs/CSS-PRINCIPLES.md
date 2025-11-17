@@ -42,12 +42,22 @@ When debugging a UI issue, follow this simple diagnostic process to find the roo
 
 React components, UI libraries (Radix), and animation libraries (Framer Motion) can all add wrapper `divs` or change the final DOM structure. Your React code is not the final source of truth—the browser's "Elements" panel is. Always debug the final rendered HTML, not the JSX you assume is being rendered.
 
+**Note on Native Elements:** This project often styles native HTML elements (like `<input type="checkbox">`) directly with CSS modules rather than creating abstract React components for them. This is a deliberate choice to avoid unnecessary abstractions for simple elements. Always inspect the final DOM to see what element you are *actually* styling.
+
 #### 4. Use Sentence Case for Readability
 
 To ensure maximum readability and accessibility, all UI text should use sentence case or title case.
 
 -   **The Problem:** Text set in all-caps is demonstrably harder for users to read and scan quickly. It can be perceived as "shouting" and creates significant challenges for users with dyslexia. Screen readers may also misinterpret it, sometimes reading it letter-by-letter.
 -   **The Solution (The Contract):** The source of truth for text casing must be the content itself (the string in the code or from an API). **Do not use `text-transform: uppercase;` in CSS** for headers, titles, or labels. If a design requires a specific capitalization style, it should be applied to the string data directly.
+
+#### 5. Design for Layout Stability
+
+A key principle of high-craft UI is the absence of unexpected content shifts. CSS should be written defensively to prevent elements from "jumping" as content or state changes.
+
+-   **The Problem:** When a new element (like an icon or a badge) is conditionally rendered, it can push adjacent content, causing a jarring layout shift that disorients the user.
+-   **The Solution (The Contract):** When an element is only sometimes visible, its container must **always reserve the necessary space** for it.
+-   **Implementation Example:** In the "Write NFC Tag" view, each room in the list can optionally display a "success" icon. Instead of rendering the icon directly, we render a fixed-size `iconContainer` for every list item. The icon is then placed *inside* this container. This way, the layout is identical whether the icon is visible or not, and the room names remain perfectly aligned in a stable vertical line.
 
 ---
 
