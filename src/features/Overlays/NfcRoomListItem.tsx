@@ -2,7 +2,6 @@
 import { useAtomValue } from 'jotai';
 import { provisionedRoomIdsAtom } from '../../data/nfcAtoms';
 import { ActionListItem } from '../../components/ActionListItem';
-// DEFINITIVE FIX: The import path is updated to the new view's CSS module.
 import styles from '../Workflow/ProvisionNfcView.module.css';
 
 interface NfcRoomListItemProps {
@@ -18,11 +17,14 @@ export const NfcRoomListItem = ({ roomId, roomName, onClick }: NfcRoomListItemPr
   return (
     <ActionListItem onClick={onClick}>
       <div className={styles.listItemContent}>
-        {isProvisioned && (
-          <span className={`material-symbols-rounded ${styles.successIcon}`}>
-            check_circle
-          </span>
-        )}
+        {/* DEFINITIVE FIX: Wrap the icon in a container that always reserves space. */}
+        <div className={styles.iconContainer}>
+          {isProvisioned && (
+            <span className={`material-symbols-rounded ${styles.successIcon}`}>
+              check_circle
+            </span>
+          )}
+        </div>
         <span className={styles.listItemTitle}>{roomName}</span>
       </div>
     </ActionListItem>
