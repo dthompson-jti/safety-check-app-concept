@@ -1,6 +1,11 @@
 // src/features/Overlays/DeveloperOverlay.tsx
 import { useAtom } from 'jotai';
-import { connectionStatusAtom, ConnectionStatus, appConfigAtom } from '../../data/atoms';
+import { 
+  connectionStatusAtom, 
+  ConnectionStatus, 
+  appConfigAtom,
+  hardwareSimulationAtom 
+} from '../../data/atoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Switch } from '../../components/Switch';
 import styles from './DeveloperOverlay.module.css';
@@ -19,6 +24,7 @@ const scanModeOptions = [
 export const DeveloperOverlay = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
+  const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
 
   const handleSlowLoadChange = (checked: boolean) => {
     setAppConfig(current => ({ ...current, isSlowLoadEnabled: checked }));
@@ -26,6 +32,14 @@ export const DeveloperOverlay = () => {
 
   const handleCheckTypeChange = (checked: boolean) => {
     setAppConfig(current => ({ ...current, isCheckTypeEnabled: checked }));
+  };
+
+  const handleCameraFailChange = (checked: boolean) => {
+    setSimulation(current => ({ ...current, cameraFails: checked }));
+  };
+
+  const handleNfcFailChange = (checked: boolean) => {
+    setSimulation(current => ({ ...current, nfcFails: checked }));
   };
 
   return (
@@ -39,6 +53,33 @@ export const DeveloperOverlay = () => {
           onValueChange={setConnectionStatus}
           id="connection-status-toggle"
         />
+      </div>
+
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>Hardware Simulation</h3>
+        <p className={styles.sectionHelper}>Simulate device hardware failures.</p>
+        <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem}>
+            <label htmlFor="camera-fail-switch" className={styles.itemLabel}>
+              Force Camera Failure
+            </label>
+            <Switch
+              id="camera-fail-switch"
+              checked={simulation.cameraFails}
+              onCheckedChange={handleCameraFailChange}
+            />
+          </div>
+          <div className={styles.settingsItem}>
+            <label htmlFor="nfc-fail-switch" className={styles.itemLabel}>
+              Force NFC Reader Failure
+            </label>
+            <Switch
+              id="nfc-fail-switch"
+              checked={simulation.nfcFails}
+              onCheckedChange={handleNfcFailChange}
+            />
+          </div>
+        </div>
       </div>
 
       <div className={styles.settingSection}>

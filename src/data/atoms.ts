@@ -132,7 +132,38 @@ export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 // =================================================================
 
 export type ConnectionStatus = 'online' | 'offline' | 'syncing';
-export const connectionStatusAtom = atom<ConnectionStatus>('online');
+
+// Internal atom to hold the raw status
+const _connectionStatusAtom = atom<ConnectionStatus>('online');
+
+// Timestamp for when the app went offline (used for the duration timer)
+export const offlineTimestampAtom = atom<number | null>(null);
+
+// Hardware Simulation State
+export interface HardwareSimulation {
+  cameraFails: boolean;
+  nfcFails: boolean;
+}
+export const hardwareSimulationAtom = atom<HardwareSimulation>({
+  cameraFails: false,
+  nfcFails: false,
+});
+
+// Read/Write atom that manages side effects (setting the timestamp)
+export const connectionStatusAtom = atom(
+  (get) => get(_connectionStatusAtom),
+  (get, set, newStatus: ConnectionStatus) => {
+    const currentStatus = get(_connectionStatusAtom);
+    
+    if (newStatus === 'offline' && currentStatus !== 'offline') {
+      set(offlineTimestampAtom, Date.now());
+    } else if (newStatus === 'online') {
+      set(offlineTimestampAtom, null);
+    }
+    
+    set(_connectionStatusAtom, newStatus);
+  }
+);
 
 interface AppConfig {
   scanMode: 'qr' | 'nfc';

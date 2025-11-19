@@ -7,6 +7,7 @@ import {
   workflowStateAtom, 
   isManualCheckModalOpenAtom,
   appViewAtom,
+  hardwareSimulationAtom,
 } from '../../data/atoms';
 import { 
   safetyChecksAtom, 
@@ -35,6 +36,7 @@ export const ScanView = () => {
   const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
   const routeSortedChecks = useAtomValue(routeSortedChecksAtom);
+  const simulation = useAtomValue(hardwareSimulationAtom);
   
   const addToast = useSetAtom(addToastAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
@@ -118,19 +120,12 @@ export const ScanView = () => {
   };
 
   // Logic: Smart Simulation
-  // Instead of a random check, this finds the "Top" check based on the user's current view.
-  // This allows for deterministic demos: User sorts by Route -> Clicks Scan -> Gets the first room on the route.
   const handleSimulateSuccess = () => {
-    // 1. If a specific target was passed (e.g. from "Scan" button on a card), use it.
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       handleDecode(workflow.targetCheckId);
       return;
     }
-
-    // 2. Otherwise, determine context from the active dashboard view.
     const candidateList = appView === 'dashboardRoute' ? routeSortedChecks : timeSortedChecks;
-    
-    // 3. Find the first actionable check in that list.
     const actionableCandidate = candidateList.find(c => 
       c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental'
     );
@@ -138,7 +133,6 @@ export const ScanView = () => {
     if (actionableCandidate) {
       handleDecode(actionableCandidate.id);
     } else {
-      // 4. Fallback: Just grab any incomplete check if the top one isn't available.
       const anyIncomplete = allChecks.find(c => c.status !== 'complete');
       if (anyIncomplete) {
          handleDecode(anyIncomplete.id);
@@ -151,6 +145,16 @@ export const ScanView = () => {
   const handleSimulateFail = () => handleDecode('invalid-qr-code-id');
 
   const renderViewfinderContent = () => {
+    // SIMULATION OVERRIDE
+    if (simulation.cameraFails) {
+       return (
+          <div className={`${styles.statusOverlay} ${styles.failState}`}>
+            <span className="material-symbols-rounded">no_photography</span>
+            Camera Error
+          </div>
+       );
+    }
+
     switch (scanViewState) {
       case 'scanning':
         return (
@@ -226,7 +230,11 @@ export const ScanView = () => {
           <div className={styles.viewfinder} data-scan-state={scanViewState}>
             {renderViewfinderContent()}
           </div>
-          <p className={styles.helperText}>Point your camera at the room's QR code</p>
+          <p className={styles.helperText}>
+            {simulation.cameraFails 
+              ? "Camera hardware is not responding." 
+              : "Point your camera at the room's QR code"}
+          </p>
         </main>
         <footer className={styles.footer}>
           <p className={styles.subtlePrompt}>Can't scan?</p>
@@ -236,11 +244,11 @@ export const ScanView = () => {
           <div className={styles.devControlsContainer}>
             <p className={styles.devControlsHeader}>Dev controls</p>
             <div className={styles.devControls}>
-              <Button variant="on-solid" size="s" onClick={handleSimulateSuccess}>
+              <Button variant="on-solid" size="s" onClick={handleSimulateSuccess} disabled={simulation.cameraFails}>
                 <span className="material-symbols-rounded">check_circle</span>
                 Simulate success
               </Button>
-              <Button variant="on-solid" size="s" onClick={handleSimulateFail}>
+              <Button variant="on-solid" size="s" onClick={handleSimulateFail} disabled={simulation.cameraFails}>
                 <span className="material-symbols-rounded">error</span>
                 Simulate fail
               </Button>

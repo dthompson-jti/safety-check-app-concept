@@ -3,49 +3,89 @@
 .banner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-2) var(--spacing-4);
-  font-family: var(--font-family-sans);
-  font-size: 0.9rem;
-  text-align: center;
-  flex-shrink: 0;
-  z-index: 60; /* Above header */
+  /* Ensure it sits above other content */
+  position: relative;
+  z-index: 60;
+  
+  padding: var(--spacing-3) var(--spacing-4);
   background-color: var(--surface-bg-secondary-solid);
-}
-
-.bannerText {
+  border-bottom: 1px solid var(--surface-border-secondary);
+  
+  font-family: var(--font-family-sans);
   color: var(--surface-fg-on-solid-faint);
-  font-weight: 500; /* Medium font weight */
+  box-shadow: var(--surface-shadow-sm);
 }
 
-/*
-  Style the icon using its own dedicated class from the module.
-  This is the most robust and idiomatic way to style a child element, avoiding
-  all selector ambiguity. `!important` is retained as a final guarantee against
-  the Material Symbols library's own global styles.
-*/
+/* Icon Container: Vertically centered, even side margins */
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-4);
+  margin-left: var(--spacing-1);
+  flex-shrink: 0;
+}
+
+/* Icon: One step larger, now WHITE (on-solid) */
 .icon {
-  font-size: 20px;
-  color: var(--surface-fg-on-solid-faint) !important;
+  font-size: 28px;
+  color: var(--surface-fg-on-solid) !important;
+  font-variation-settings: 'FILL' 1;
 }
 
+/* Text Stack: Takes available space */
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 2px;
+}
+
+/* Row 1: Status - Now WHITE (on-solid) */
+.statusText {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--surface-fg-on-solid);
+  font-variant-numeric: tabular-nums; /* Prevent jitter */
+  line-height: 1.2;
+}
+
+/* Row 2: Queue Info - Already White */
+.queueText {
+  font-size: 0.85rem;
+  color: var(--surface-fg-on-solid); /* High contrast white */
+  line-height: 1.2;
+}
+
+/* Sync Button: Floats right, underlined */
 .syncButton {
-  font-weight: 600; /* Semi-bold */
-  text-decoration: underline;
-  cursor: pointer;
   background: none;
   border: none;
-  padding: var(--spacing-1);
-  color: var(--surface-fg-on-solid); /* Solid white */
+  padding: var(--spacing-2);
+  margin-left: var(--spacing-3);
+  
+  font-family: var(--font-family-sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--surface-fg-on-solid);
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
+.syncButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* Spinner Animation */
 .spinner {
   animation: spin 1.5s linear infinite;
 }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
-  /* Rotate counter-clockwise to match the icon's direction. */
   to { transform: rotate(-360deg); }
 }

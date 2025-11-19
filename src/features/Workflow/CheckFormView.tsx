@@ -187,7 +187,8 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
       if (connectionStatus === 'offline') {
         dispatch({ type: 'CHECK_SET_QUEUED', payload });
-        addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
+        // FIX: Suppress toast when offline to reduce noise, relying on the Offline Banner instead.
+        // addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
         return;
       }
       
@@ -223,7 +224,9 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
           notes: consolidatedNotes,
         },
       });
-      addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
+      if (connectionStatus !== 'offline') {
+        addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
+      }
     }
   };
   

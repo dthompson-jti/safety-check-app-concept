@@ -107,7 +107,7 @@ export const FloatingFooter = () => {
         <motion.div 
           className={styles.nfcContainer}
           animate={{ opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           onClick={handleNfcClick}
         >
           <span className={`material-symbols-rounded ${styles.nfcIcon}`}>

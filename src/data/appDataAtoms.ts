@@ -260,6 +260,11 @@ export const statusCountsAtom = atom((get) => {
   return counts;
 });
 
+export const queuedChecksCountAtom = atom((get) => {
+  const { checks } = get(appDataAtom);
+  return checks.filter(c => c.status === 'queued').length;
+});
+
 // =================================================================
 //           Derived Atoms for Manual Selection View
 // =================================================================
