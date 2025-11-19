@@ -52,7 +52,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
-  // The 'Check Type' control must have a value selected by the user.
   const [checkType, setCheckType] = useState<CheckTypeValue | ''>('');
   const [isAttested, setIsAttested] = useState(false);
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
@@ -108,13 +107,10 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     setNotes((prev) => ({ ...prev, [residentId]: value }));
   };
 
-  // The 'Save' button is only enabled when all required inputs have values.
   const canSave = useMemo(() => {
     const allResidentsHaveStatus = checkData.residents.every((res) => statuses[res.id]);
     if (!allResidentsHaveStatus) return false;
-    // If the check type feature is on, a type must be selected.
     if (isCheckTypeEnabled && !checkType) return false;
-    // If the check was initiated manually, the user must attest to their presence.
     if (isManualCheck && !isAttested) return false;
     return true;
   }, [statuses, checkData.residents, isCheckTypeEnabled, checkType, isManualCheck, isAttested]);
@@ -179,7 +175,8 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
   };
   
-  const headerTitle = isManualCheck ? 'Manual record check' : 'Record check';
+  // Typography: Title Case
+  const headerTitle = isManualCheck ? 'Manual Record Check' : 'Record Check';
 
   return (
     <motion.div
@@ -249,11 +246,12 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       </main>
 
       <footer className={styles.footer} ref={footerRef} data-scrolled={showScrollShadow}>
-        <Button variant="secondary" size="m" onClick={handleCancel}>
-          Cancel
-        </Button>
+        {/* Button Reordering: Primary (Save) on Left, Secondary (Cancel) on Right */}
         <Button variant="primary" size="m" onClick={handleSave} disabled={!canSave}>
           Save
+        </Button>
+        <Button variant="secondary" size="m" onClick={handleCancel}>
+          Cancel
         </Button>
       </footer>
     </motion.div>

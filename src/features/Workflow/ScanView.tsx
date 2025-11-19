@@ -16,7 +16,6 @@ interface PreScanAlertInfo {
   classificationType: string;
 }
 
-// A more robust state machine for the scanner's UI
 type ScanViewState = 'scanning' | 'processing' | 'success' | 'fail';
 
 export const ScanView = () => {
@@ -30,7 +29,6 @@ export const ScanView = () => {
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
 
   useEffect(() => {
-    // Reset scan state if the view is re-opened
     if (workflow.view === 'scanning') {
       setScanViewState('scanning');
     }
@@ -72,7 +70,6 @@ export const ScanView = () => {
         triggerHaptic('success');
         setScanViewState('success');
         setTimeout(() => {
-          // A successful scan sets the method to 'scan', bypassing the attestation requirement.
           setWorkflow({
             view: 'form',
             type: 'scheduled',
@@ -163,7 +160,8 @@ export const ScanView = () => {
         transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >
         <header className={styles.header}>
-          <h3>Scan room QR code</h3>
+          {/* Typography: Title Case */}
+          <h3>Scan Room QR Code</h3>
           <Button variant="on-solid" size="m" iconOnly onClick={handleClose} aria-label="Close scanner">
             <span className="material-symbols-rounded">close</span>
           </Button>

@@ -1,6 +1,7 @@
 // src/features/Shell/AppSideMenu.tsx
 import { useSetAtom, useAtomValue } from 'jotai';
 import {
+  sessionAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
   isManualCheckModalOpenAtom,
@@ -25,9 +26,14 @@ export const AppSideMenu = () => {
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
+  const setSession = useSetAtom(sessionAtom);
 
   const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
   const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
+
+  const handleLogout = () => {
+    setSession({ isAuthenticated: false, userName: null });
+  };
 
   return (
     <aside className={styles.sideMenu}>
@@ -51,6 +57,10 @@ export const AppSideMenu = () => {
       </main>
 
       <footer className={styles.footer}>
+        <MenuItem icon="logout" label="Log out" onClick={handleLogout} />
+
+        <div className={styles.separator} />
+
         <button className={styles.userProfileCard} onClick={() => setIsSettingsOpen(true)}>
           <div className={styles.userInfo}>
             <span className={styles.userName}>Jane Doe</span>

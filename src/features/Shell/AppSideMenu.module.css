@@ -45,6 +45,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
+  /* Push footer to bottom */
+  flex-grow: 1; 
 }
 
 .separator {
@@ -101,21 +103,16 @@
   }
 }
 
-/* 
-  DEFINITIVE FIX: All context card styles are removed from this file 
-  and moved to the new reusable component's CSS module.
-*/
-
 .footer {
   flex-shrink: 0;
   padding: var(--spacing-4);
-  padding-top: var(--spacing-2);
-  margin-top: auto;
-  position: sticky;
-  bottom: 0;
-  z-index: 1;
-  background-image: linear-gradient(to top, var(--surface-bg-secondary) 85%, transparent);
+  /* Remove sticky positioning to allow natural flow with flex-grow spacer */
+  background-color: var(--surface-bg-secondary);
+  display: flex;
+  flex-direction: column;
 }
+
+/* .footerSpacer removed as .separator handles the spacing now */
 
 .userProfileCard {
   display: flex;
@@ -130,7 +127,6 @@
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
   box-shadow: var(--surface-shadow-xs);
-  /* --- FIX: Set base color for icon and add color to transition --- */
   color: var(--surface-fg-tertiary);
   transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
 }
@@ -139,7 +135,6 @@
   .userProfileCard:hover {
     background-color: var(--surface-bg-primary_hover);
     border-color: var(--control-border-tertiary-hover);
-    /* --- FIX: Update color on hover, which icon will inherit --- */
     color: var(--surface-fg-secondary);
   }
 }
@@ -169,5 +164,4 @@
 
 .userProfileCard .material-symbols-rounded {
   font-size: 24px;
-  /* Color is now inherited from the parent button */
 }

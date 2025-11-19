@@ -39,9 +39,12 @@
 }
 
 
-/* --- Common Child Styles --- */
-.wrapper .material-symbols-rounded {
-  color: var(--surface-fg-quaternary);
+/* --- Child Styles --- */
+
+/* The Search Icon */
+.searchIcon {
+  color: var(--surface-fg-quinary);
+  order: 3; /* Visual safety: ensure it stays on the right */
 }
 
 .wrapper input {
@@ -49,13 +52,20 @@
   font-family: var(--font-family-sans);
   font-size: 0.9em;
   color: var(--surface-fg-primary);
-  width: 100%;
   flex: 1;
+  width: 100%; /* Ensure it takes available space */
   box-sizing: border-box;
+  order: 1;
 }
 
 .wrapper input::placeholder {
   color: var(--control-fg-placeholder);
+}
+
+/* Ensure the clear button doesn't shrink */
+.clearButton {
+  flex-shrink: 0;
+  order: 2;
 }
 
 .visuallyHidden {

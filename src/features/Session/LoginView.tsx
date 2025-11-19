@@ -27,7 +27,6 @@ export const LoginView = () => {
     setFormError('');
 
     // STAGE 1: Client-side validation for simple, common errors (e.g., empty fields).
-    // This provides immediate, specific feedback without a "server" roundtrip.
     let hasError = false;
     if (username.trim() === '') {
       setUsernameError('Username is required.');
@@ -44,19 +43,28 @@ export const LoginView = () => {
       // On success, authenticate the user.
       setSession({ isAuthenticated: true, userName: username.trim() });
     } else {
-      // SECURITY BEST PRACTICE: For any failed login, show a single, generic
-      // error. This prevents "username enumeration" where an attacker could
-      // otherwise determine if a username is valid or not.
-      setFormError('The username or password you entered is incorrect.');
+      // SECURITY BEST PRACTICE: Generic error message.
+      setFormError('Incorrect username or password.');
     }
   };
 
-  /** A developer-only shortcut to bypass the login screen for faster iteration. */
   const handleShortcutLogin = () => {
     setSession({ isAuthenticated: true, userName: 'Dev Shortcut' });
   };
 
-  // UX: A subtle "shake" animation provides strong visual feedback for an error.
+  // Reset errors when user starts typing to provide immediate feedback loop
+  const handleUsernameChange = (val: string) => {
+    setUsername(val);
+    if (usernameError) setUsernameError('');
+    if (formError) setFormError('');
+  };
+
+  const handlePasswordChange = (val: string) => {
+    setPassword(val);
+    if (passwordError) setPasswordError('');
+    if (formError) setFormError('');
+  };
+
   const shakeAnimation = {
     x: [0, -8, 8, -8, 8, 0],
     transition: { duration: 0.4 },
@@ -85,21 +93,25 @@ export const LoginView = () => {
               <h3>eSupervision Mobile</h3>
             </div>
             <form onSubmit={handleLogin} className={styles.formFields} noValidate>
-              {/* The form-level error animates the entire form for a general failure. */}
+              
               <motion.div
                 animate={isAttempted && formError ? shakeAnimation : {}}
                 onAnimationComplete={() => setIsAttempted(false)}
               >
-                {formError && <div className={styles.formError}>{formError}</div>}
+                {formError && (
+                  <div className={styles.formError}>
+                    <span className="material-symbols-rounded">dangerous</span>
+                    <span>{formError}</span>
+                  </div>
+                )}
               </motion.div>
 
-              {/* Inline errors animate just the specific input that has an issue. */}
               <motion.div animate={isAttempted && usernameError ? shakeAnimation : {}}>
                 <TextInput
                   type="text"
                   placeholder="Username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => handleUsernameChange(e.target.value)}
                   isInvalid={!!usernameError}
                   autoFocus
                 />
@@ -111,7 +123,7 @@ export const LoginView = () => {
                   type="password"
                   placeholder="Password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => handlePasswordChange(e.target.value)}
                   isInvalid={!!passwordError}
                 />
                 {passwordError && <div className={styles.errorMessage}>{passwordError}</div>}
@@ -137,7 +149,6 @@ export const LoginView = () => {
         </footer>
       </motion.div>
 
-      {/* The assistance modal manages expectations about prototype functionality. */}
       <Modal
         isOpen={isHelpModalOpen}
         onClose={() => setIsHelpModalOpen(false)}
@@ -148,7 +159,6 @@ export const LoginView = () => {
       >
         <Modal.Content>
           <div className={styles.modalBodyLayout}>
-            {/* The icon div has been removed. */}
             <div className={styles.modalTextContent}>
               <h3>How to Sign In</h3>
               <p>

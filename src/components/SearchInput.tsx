@@ -35,7 +35,7 @@ export const SearchInput = ({
       <label htmlFor={inputId} className={styles.visuallyHidden}>
         {placeholder}
       </label>
-      <span className="material-symbols-rounded">search</span>
+      
       <input
         ref={inputRef}
         id={inputId}
@@ -46,6 +46,7 @@ export const SearchInput = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
+
       {variant === 'standalone' && value && (
         <Button
           variant="quaternary"
@@ -53,10 +54,13 @@ export const SearchInput = ({
           iconOnly
           onClick={() => onChange('')}
           aria-label="Clear search"
+          className={styles.clearButton}
         >
           <span className="material-symbols-rounded">close</span>
         </Button>
       )}
+
+      <span className={`material-symbols-rounded ${styles.searchIcon}`}>search</span>
     </div>
   );
 };

@@ -1,13 +1,12 @@
 /* src/features/Session/LoginView.module.css */
 .loginViewWrapper {
   display: flex;
-  flex-direction: column; /* UPDATED for sticky footer */
+  flex-direction: column;
   min-height: 100vh;
   background-color: var(--surface-bg-secondary);
   font-family: var(--font-family-sans);
 }
 
-/* NEW: Main content area that grows to push footer down */
 .mainContent {
   flex: 1;
   display: flex;
@@ -44,7 +43,7 @@
 }
 
 .shortcutIcon {
-  font-size: 4rem !important; /* 64px */
+  font-size: 4rem !important;
   color: var(--surface-fg-quinary);
   opacity: 0.5;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
@@ -57,19 +56,10 @@
   opacity: 0.8;
 }
 
-.helperText {
-  margin: var(--spacing-2) 0 0;
-  color: var(--surface-fg-secondary);
-  font-size: 0.9rem;
-  max-width: 280px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .formFields {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3); /* Reduced gap to accommodate error messages */
+  gap: var(--spacing-3);
   text-align: left;
 }
 
@@ -84,7 +74,6 @@
   color: var(--surface-fg-theme-primary);
   font-weight: 500;
   cursor: pointer;
-  /* UPDATED: Ensure consistent underline style */
   text-decoration: underline;
   text-underline-offset: 3px;
   transition: color 0.2s;
@@ -100,27 +89,37 @@
   padding: 0 var(--spacing-1);
 }
 
+/* UPDATED: High-Craft Error Banner */
 .formError {
-  background-color: var(--surface-bg-error-primary);
+  background-color: var(--surface-bg-error-primary); /* White background */
   color: var(--surface-fg-alert-primary);
   font-size: 0.9rem;
   font-weight: 500;
   padding: var(--spacing-3);
-  border-radius: var(--spacing-2);
-  text-align: center;
-  border: 1px solid var(--surface-border-alert_subtle);
+  border-radius: var(--radius-md);
+  text-align: left;
+  border: 1px solid var(--surface-border-alert); /* Red border */
+  box-shadow: var(--surface-shadow-md);
   margin-bottom: var(--spacing-2);
+  
+  display: flex;
+  align-items: flex-start; /* Align icon to top if text wraps */
+  gap: var(--spacing-3);
 }
 
-/* --- NEW & UPDATED STYLES --- */
+.formError .material-symbols-rounded {
+  font-size: 20px;
+  flex-shrink: 0;
+}
 
+/* Footer Styles */
 .pageFooter {
   width: 100%;
   text-align: center;
   padding: var(--spacing-4) 0 var(--spacing-2);
   color: var(--surface-fg-tertiary);
   font-size: 0.8rem;
-  flex-shrink: 0; /* Prevent footer from shrinking */
+  flex-shrink: 0;
 }
 
 .pageFooter p {
@@ -132,7 +131,6 @@
 }
 
 .pageFooter a {
-  /* UPDATED: Inherit global underline but use contextual color */
   color: var(--surface-fg-tertiary);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -147,11 +145,10 @@
   margin: 0 var(--spacing-1);
 }
 
+/* Modal Styles */
 .modalBodyLayout {
   text-align: left;
 }
-
-/* The .modalIcon and .modalHelpIcon classes have been removed. */
 
 .modalTextContent {
   flex-grow: 1;
