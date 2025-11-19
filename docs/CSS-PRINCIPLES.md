@@ -62,6 +62,20 @@ CSS should be written defensively to prevent elements from "jumping" as content 
 
 Any container component with `overflow: hidden` **must provide an internal "safe zone" of padding** (standard is `2px`) to ensure the focus rings of its children are not clipped.
 
+#### The Mobile Drill-Down Contract
+
+To replicate native "Push" and "Pop" page transitions on the web:
+
+1.  **The Container:** Must be `position: relative` and `overflow: hidden`. This creates the "viewport" for the sliding pages.
+2.  **The Pages:** Must be `position: absolute` with `inset: 0`. This allows the entering page and exiting page to exist simultaneously within the viewport without stacking vertically.
+
+#### The Icon Alignment Contract (`ActionListItem`)
+
+In lists where some items have icons and others do not (e.g., selection lists):
+
+-   **Rule:** Text labels must always align vertically.
+-   **Implementation:** Use a dedicated `leadingIconContainer` (or an `indent` prop) with a fixed width to reserve space on the left side of the item, even when the icon itself is absent.
+
 #### The Shared Menu System (`menu.css`)
 
 To enforce the "Single Source of Truth" principle, we use a shared, global stylesheet (`.menu-popover`, `.menu-item`) for all list-based selection components (Dropdowns, Context Menus, Selects).

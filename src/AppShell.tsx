@@ -1,10 +1,9 @@
 // src/AppShell.tsx
 import { useEffect, useRef, useState, useLayoutEffect } from 'react';
-import { useAtomValue, useSetAtom, useAtom } from 'jotai';
+import { useAtomValue, useAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   workflowStateAtom,
-  currentTimeAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
   connectionStatusAtom,
@@ -35,7 +34,6 @@ export const AppShell = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const workflowState = useAtomValue(workflowStateAtom);
   const connectionStatus = useAtomValue(connectionStatusAtom);
-  const setCurrentTime = useSetAtom(currentTimeAtom);
 
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
@@ -43,13 +41,6 @@ export const AppShell = () => {
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
   const appChromeRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [setCurrentTime]);
 
   useEffect(() => {
     if (sideMenuRef.current) {

@@ -18,14 +18,16 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Framework:** React 18
 -   **Language:** TypeScript
 -   **Styling:** Global CSS with a layered cascade (`@layer`), design tokens, and data-attribute styling.
--   **State Management:** Jotai
+-   **State Management:** Jotai (Core), Jotai Utils (Storage)
 -   **Animation:** Framer Motion
 -   **UI Primitives:** Radix UI
 -   **Bottom Sheet Modals:** Vaul
 
 ## 3. Prototype Features
 
--   **Simulated Login/Logout:** A complete start-of-shift session workflow. This includes secure, client-side validation, a generic, enumeration-resistant error for failed credentials, and a developer shortcut. After login, the user is presented with a **mandatory, full-screen Facility and Unit selection modal** to establish their operational context.
+-   **Simulated Login/Logout:** A complete start-of-shift session workflow. This includes secure, client-side validation, a generic, enumeration-resistant error for failed credentials, and a developer shortcut.
+-   **State Persistence:** The application mimics native behavior by persisting the user's session, view preferences (List vs. Card), and completed checks across page reloads.
+-   **High-Performance Render Engine:** A centralized heartbeat system drives the countdown timers for safety checks, ensuring 60fps scrolling performance even with dozens of active timers.
 -   **High-Craft Navigation Model:** The application uses a dual-pattern navigation system.
     -   **Push Layout (Side Menu):** The main navigation menu uses a "push" animation. It features a prominent, card-styled **Context Switcher** at the top.
     -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted and Route-Sorted Schedules) exist on a horizontal "film strip." Switching between them uses a sliding panel animation.
@@ -59,7 +61,10 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 
 ## 6. State Management
 
-The project uses **Jotai** for its minimal, atomic state management model. State is divided into two logical areas:
+The project uses **Jotai** for its minimal, atomic state management model. State is divided into three logical tiers:
 
-1.  **UI State (`src/data/atoms.ts`):** Manages the "control panel" of the UI (views, modals, toggles).
-2.  **Application Data (`src/data/appDataAtoms.ts`):** Manages the core data of the application using a reducer-like pattern with a write-only `dispatchActionAtom` to ensure all mutations are centralized and predictable. This architecture supports transient states (e.g., `'completing'`) to orchestrate complex UI animations without data inconsistencies.
+1.  **Persisted State (`src/data/atoms.ts`):** Uses `atomWithStorage` to handle data that must survive a reload, such as the User Session, App Configuration, and View Preferences.
+2.  **App Data (`src/data/appDataAtoms.ts`):** Manages the core business logic (e.g., the Safety Checks list). This layer subscribes to the temporal state to recalculate statuses efficiently.
+3.  **Temporal State (The Heartbeat):** A centralized `requestAnimationFrame` loop in `App.tsx` drives two global atoms:
+    *   `fastTickerAtom` (100ms): For smooth UI countdowns.
+    *   `slowTickerAtom` (1000ms): For business logic updates.

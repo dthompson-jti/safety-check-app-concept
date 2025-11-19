@@ -1,40 +1,50 @@
 /* src/features/Overlays/FacilitySelectionModal.module.css */
 
-.content {
-  padding: var(--spacing-4);
+.container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-8);
-  flex-grow: 1;
+  height: 100%;
+  background-color: var(--surface-bg-secondary);
+  position: relative;
+  overflow: hidden; 
 }
 
-.instructions {
-  margin: 0;
-  color: var(--surface-fg-secondary);
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.formGroup {
+/* Context Banner (Sticky Header for Step 2) */
+.contextBanner {
+  /* Selected Token Styling */
+  background-color: var(--control-bg-selected);
+  color: var(--control-fg-selected);
+  
+  /* Borders on top and bottom */
+  border-top: 1px solid var(--control-border-selected);
+  border-bottom: 1px solid var(--control-border-selected);
+  
+  padding: var(--spacing-3) var(--spacing-4);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: var(--spacing-2);
-}
-
-.formGroup label {
-  font-weight: 600;
   font-size: 0.9rem;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
-.footer {
-  padding: var(--spacing-4);
-  border-top: 1px solid var(--surface-border-secondary);
+.viewWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg-secondary);
+  overflow-y: auto; 
+  -webkit-overflow-scrolling: touch;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
   background-color: var(--surface-bg-primary);
-  margin-top: auto;
-}
-
-.continueButton {
-  width: 100%;
-  height: 48px;
-  font-size: 1rem;
+  /* We remove the border-top here because the sticky banner handles it */
+  border-bottom: 1px solid var(--surface-border-secondary);
 }

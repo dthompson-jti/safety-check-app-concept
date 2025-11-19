@@ -1,10 +1,11 @@
 // src/data/appDataAtoms.ts
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, SafetyCheckStatus } from '../types';
 import {
-  currentTimeAtom,
+  slowTickerAtom, // Use the slow ticker for status calculations
   historyFilterAtom,
   scheduleSearchQueryAtom,
   scheduleFilterAtom,
@@ -21,9 +22,8 @@ import { getFacilityContextForLocation } from './mock/facilityUtils';
 //                 Mock Data Store
 // =================================================================
 
-const baseChecksAtom = atom(initialChecks, (_get, set, update: SafetyCheck[]) => {
-    set(baseChecksAtom, update);
-});
+// Persist the base checks data so completed checks remain after reload.
+const baseChecksAtom = atomWithStorage<SafetyCheck[]>('sc_checks_v1', initialChecks);
 
 
 // =================================================================
@@ -129,12 +129,23 @@ export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
 //                Derived, Read-Only Atoms for UI
 // =================================================================
 
+/**
+ * This atom is the "Brain" of the schedule list.
+ * It derives the current status (Pending, Due Soon, Late) based on the current time.
+ * 
+ * OPTIMIZATION:
+ * It subscribes to `slowTickerAtom` (approx. 1s update) instead of the fast ticker.
+ * This drastically reduces the frequency of full list re-calculations/re-sorts
+ * while maintaining "good enough" precision for status changes.
+ */
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const { checks } = get(appDataAtom);
-  const timeNow = get(currentTimeAtom).getTime();
+  // We subscribe to the slow ticker to trigger periodic status updates
+  const timeNow = get(slowTickerAtom);
   const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
 
   return checks.map(check => {
+      // Stable statuses don't need recalculation
       if (['complete', 'supplemental', 'completing', 'queued'].includes(check.status)) {
         return check;
       }
@@ -149,6 +160,9 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
         newStatus = 'pending';
       }
 
+      // Referential Equality Check:
+      // If the status hasn't changed, return the *original object reference*.
+      // This allows downstream memoized components to skip re-renders.
       if (check.status === newStatus) {
         return check;
       }
@@ -179,6 +193,8 @@ const contextFilteredChecksAtom = atom((get) => {
 
 const searchFilteredChecksAtom = atom((get) => {
   const allChecks = get(contextFilteredChecksAtom);
+  // NOTE: We access the query atom directly here. 
+  // Jotai handles the dependency graph automatically.
   const query = get(scheduleSearchQueryAtom).toLowerCase().trim();
 
   if (!query) {

@@ -1,13 +1,34 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
+
+// =================================================================
+//                      Global Time State (Heartbeat)
+// =================================================================
+
+/**
+ * The High-Frequency Ticker (approx. 100ms).
+ * Used for UI components that need smooth sub-second updates (e.g., countdown timers).
+ * Components subscribing to this atom will re-render approximately 10 times per second.
+ */
+export const fastTickerAtom = atom<number>(Date.now());
+
+/**
+ * The Low-Frequency Ticker (approx. 1000ms).
+ * Used for business logic (status calculations, sorting) to prevent
+ * excessive re-calculations of large lists.
+ */
+export const slowTickerAtom = atom<number>(Date.now());
 
 // =================================================================
 //                         App State
 // =================================================================
 
 export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute';
-export const appViewAtom = atom<AppView>('dashboardTime');
+
+// Persist the user's view preference to local storage
+export const appViewAtom = atomWithStorage<AppView>('sc_view', 'dashboardTime');
 
 
 // =================================================================
@@ -19,7 +40,8 @@ interface Session {
   userName: string | null;
 }
 
-export const sessionAtom = atom<Session>({
+// Persist the session so the user stays logged in on reload
+export const sessionAtom = atomWithStorage<Session>('sc_session', {
   isAuthenticated: false,
   userName: null,
 });
@@ -28,6 +50,8 @@ export const sessionAtom = atom<Session>({
 //                  Context Selection State
 // =================================================================
 
+// Context selection is intentionally transient.
+// Users must re-confirm their physical location upon app restart/shift start.
 export const isContextSelectionRequiredAtom = atom(true);
 export const isContextSelectionModalOpenAtom = atom(false);
 export const selectedFacilityGroupAtom = atom<string | null>(null);
@@ -37,19 +61,6 @@ export const selectedFacilityUnitAtom = atom<string | null>(null);
 // =================================================================
 //                   Schedule View State
 // =================================================================
-
-export const currentTimeAtom = atom(new Date());
-
-export const minuteTickerAtom = atom((get) => {
-  const now = get(currentTimeAtom);
-  return new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    now.getHours(),
-    now.getMinutes()
-  ).getTime();
-});
 
 export const recentlyCompletedCheckIdAtom = atom<string | null>(null);
 export const completingChecksAtom = atom(new Set<string>());
@@ -133,7 +144,8 @@ export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 
 export type ConnectionStatus = 'online' | 'offline' | 'syncing';
 
-// Internal atom to hold the raw status
+// Internal atom to hold the raw status. 
+// We do NOT persist this. The app should always detect fresh status on boot.
 const _connectionStatusAtom = atom<ConnectionStatus>('online');
 
 // Timestamp for when the app went offline (used for the duration timer)
@@ -173,7 +185,9 @@ interface AppConfig {
   /** When true, shows the 'Check Type' segmented control on the CheckFormView. */
   isCheckTypeEnabled: boolean;
 }
-export const appConfigAtom = atom<AppConfig>({
+
+// Persist app configuration to local storage
+export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   scanMode: 'qr',
   hapticsEnabled: true,
   scheduleViewMode: 'card',
@@ -193,4 +207,5 @@ export const logoutAtom = atom(null, (_get, set) => {
   set(appViewAtom, 'dashboardTime');
   set(workflowStateAtom, { view: 'none' });
   set(completingChecksAtom, new Set());
+  // We intentionally do not clear persisted checks on logout to simulate device-level data retention.
 });

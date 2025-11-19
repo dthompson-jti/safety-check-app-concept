@@ -1,9 +1,13 @@
 // src/data/useCountdown.ts
-import { useState, useEffect, useRef } from 'react';
+import { useAtomValue } from 'jotai';
 import { SafetyCheckStatus } from '../types';
+import { fastTickerAtom } from './atoms';
 
-const formatTime = (due: Date, now: Date): string => {
-  const diffSeconds = (due.getTime() - now.getTime()) / 1000;
+/**
+ * Formats the remaining time into a human-readable string.
+ */
+const formatTime = (due: Date, nowTime: number): string => {
+  const diffSeconds = (due.getTime() - nowTime) / 1000;
 
   // --- Overdue Logic ---
   if (diffSeconds < 0) {
@@ -56,45 +60,26 @@ const formatTime = (due: Date, now: Date): string => {
 
 /**
  * A high-performance hook that provides a dynamically formatted countdown string.
- * It uses requestAnimationFrame for smooth sub-second updates without causing
- * unnecessary re-renders for sub-minute timers.
+ * 
+ * It subscribes to the global `fastTickerAtom` (100ms heartbeat) instead of maintaining
+ * its own `requestAnimationFrame` loop. This centralization prevents "React Thrashing"
+ * when multiple timers are active, ensuring 60fps scrolling performance.
+ * 
  * @param dueTime The target Date object for the countdown.
- * @param status The current business status of the check. The hook will only
- * run its animation loop for actionable statuses.
+ * @param status The current business status of the check.
  * @returns A formatted string representing the time remaining.
  */
 export const useCountdown = (dueTime: Date, status: SafetyCheckStatus): string => {
-  const [now, setNow] = useState(() => new Date());
-  const animationFrameId = useRef<number | null>(null);
+  // Subscribe to the global heartbeat
+  const nowTime = useAtomValue(fastTickerAtom);
 
+  // Optimization: If the status isn't actionable, we don't calculate time.
   const isActionable = status === 'pending' || status === 'due-soon' || status === 'late';
 
-  useEffect(() => {
-    if (!isActionable) {
-      return;
-    }
-
-    const animate = () => {
-      setNow(new Date());
-      animationFrameId.current = requestAnimationFrame(animate);
-    };
-
-    animationFrameId.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
-  }, [isActionable]);
-
-  switch (status) {
-    case 'complete':
-    case 'supplemental':
-      return '';
-    case 'missed':
-      return 'Missed';
-    default:
-      return formatTime(dueTime, now);
+  if (!isActionable) {
+    if (status === 'missed') return 'Missed';
+    return ''; // Complete, supplemental, etc.
   }
+
+  return formatTime(dueTime, nowTime);
 };
