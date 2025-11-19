@@ -1,5 +1,5 @@
 // src/features/Workflow/CheckFormView.tsx
-import { useState, useMemo, useRef, useLayoutEffect } from 'react';
+import { useState, useMemo, useRef, useLayoutEffect, useEffect } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import {
@@ -13,6 +13,9 @@ import {
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useSound } from '../../data/useSound';
+import { useVisualViewport } from '../../data/useVisualViewport';
+import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAtoms';
 import { Button } from '../../components/Button';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
@@ -36,25 +39,64 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const addToast = useSetAtom(addToastAtom);
   const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
   const setCompletingChecks = useSetAtom(completingChecksAtom);
+  
+  // Draft State Atoms
+  const drafts = useAtomValue(draftFormsAtom);
+  const saveDraft = useSetAtom(saveDraftAtom);
+  const clearDraft = useSetAtom(clearDraftAtom);
+
   const connectionStatus = useAtomValue(connectionStatusAtom);
   const { isCheckTypeEnabled } = useAtomValue(appConfigAtom);
+  
   const { trigger: triggerHaptic } = useHaptics();
+  const { play: playSound } = useSound();
+  
+  // Hook: Monitors the *Visual* Viewport to handle keyboard resize events correctly
+  useVisualViewport();
 
   const footerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLElement>(null);
   const [showScrollShadow, setShowScrollShadow] = useState(false);
 
+  // Initialize State: Prefer Draft Data, then fall back to initial
+  const draft = checkData.type === 'scheduled' ? drafts[checkData.checkId] : undefined;
+
   const [statuses, setStatuses] = useState<Record<string, StatusValue | ''>>(() =>
-    checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
+    draft?.statuses || checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
   const [notes, setNotes] = useState<Record<string, string>>(() =>
-    checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
+    draft?.notes || checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
-  const [checkType, setCheckType] = useState<CheckTypeValue | ''>('');
-  const [isAttested, setIsAttested] = useState(false);
+  const [checkType, setCheckType] = useState<CheckTypeValue | ''>(
+    (draft?.checkType as CheckTypeValue) || ''
+  );
+  
+  const [isAttested, setIsAttested] = useState(draft?.isAttested || false);
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
+
+  // Draft Logic: Flag to track if we are unmounting due to success (don't save draft) or cancellation/back (save draft)
+  const isSubmitted = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      // Architecture: Resilient Form State
+      // If the form is unmounting and wasn't submitted, save the user's work.
+      if (!isSubmitted.current && checkData.type === 'scheduled') {
+        saveDraft({
+          checkId: checkData.checkId,
+          draft: {
+            statuses: statuses as Record<string, string>,
+            notes,
+            checkType,
+            isAttested
+          }
+        });
+      }
+    };
+  }, [checkData, statuses, notes, checkType, isAttested, saveDraft]);
+
 
   useLayoutEffect(() => {
     const footer = footerRef.current;
@@ -118,7 +160,17 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const handleSave = () => {
     if (!canSave) return;
 
+    // Mark as submitted to prevent draft saving on unmount
+    isSubmitted.current = true;
+
+    // Clean up any previous draft for this check
+    if (checkData.type === 'scheduled') {
+      clearDraft(checkData.checkId);
+    }
+
     triggerHaptic('success');
+    playSound('success');
+    
     setWorkflowState({ view: 'none' });
     
     const consolidatedNotes = Object.values(notes)
@@ -175,12 +227,14 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
   };
   
-  // Typography: Title Case
   const headerTitle = isManualCheck ? 'Manual Record Check' : 'Record Check';
 
   return (
     <motion.div
       className={styles.checkFormView}
+      // The Variable Contract: Using visual-viewport height ensures the footer 
+      // remains perfectly docked above the keyboard on all devices.
+      style={{ height: 'var(--visual-viewport-height, 100dvh)' }}
       initial={{ x: '100%' }}
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
@@ -246,7 +300,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       </main>
 
       <footer className={styles.footer} ref={footerRef} data-scrolled={showScrollShadow}>
-        {/* Button Reordering: Primary (Save) on Left, Secondary (Cancel) on Right */}
         <Button variant="primary" size="m" onClick={handleSave} disabled={!canSave}>
           Save
         </Button>

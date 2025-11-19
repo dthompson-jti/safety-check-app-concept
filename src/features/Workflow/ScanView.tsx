@@ -3,11 +3,20 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scanner } from '@yudiel/react-qr-scanner';
-import { workflowStateAtom, isManualCheckModalOpenAtom } from '../../data/atoms';
-import { safetyChecksAtom } from '../../data/appDataAtoms';
+import { 
+  workflowStateAtom, 
+  isManualCheckModalOpenAtom,
+  appViewAtom,
+} from '../../data/atoms';
+import { 
+  safetyChecksAtom, 
+  timeSortedChecksAtom, 
+  routeSortedChecksAtom 
+} from '../../data/appDataAtoms';
 import { mockResidents } from '../../data/mock/residentData';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useSound } from '../../data/useSound';
 import { Button } from '../../components/Button';
 import styles from './ScanView.module.css';
 
@@ -21,13 +30,22 @@ type ScanViewState = 'scanning' | 'processing' | 'success' | 'fail';
 export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
+  
+  // Atoms for Context-Aware Simulation
+  const appView = useAtomValue(appViewAtom);
+  const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
+  const routeSortedChecks = useAtomValue(routeSortedChecksAtom);
+  
   const addToast = useSetAtom(addToastAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
+  
   const { trigger: triggerHaptic } = useHaptics();
+  const { play: playSound } = useSound();
 
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
 
+  // Effect: Monitor the target check for Critical Information (Pre-Scan Alerts)
   useEffect(() => {
     if (workflow.view === 'scanning') {
       setScanViewState('scanning');
@@ -53,11 +71,12 @@ export const ScanView = () => {
   const failScan = useCallback((message: string) => {
     addToast({ message, icon: 'error' });
     triggerHaptic('error');
+    playSound('error');
     setScanViewState('fail');
     setTimeout(() => {
       setScanViewState('scanning');
     }, 1500);
-  }, [addToast, triggerHaptic]);
+  }, [addToast, triggerHaptic, playSound]);
 
   const handleDecode = (result: string) => {
     if (scanViewState !== 'scanning') return;
@@ -68,6 +87,7 @@ export const ScanView = () => {
 
       if (check) {
         triggerHaptic('success');
+        playSound('success');
         setScanViewState('success');
         setTimeout(() => {
           setWorkflow({
@@ -97,17 +117,34 @@ export const ScanView = () => {
     setIsManualCheckModalOpen(true);
   };
 
+  // Logic: Smart Simulation
+  // Instead of a random check, this finds the "Top" check based on the user's current view.
+  // This allows for deterministic demos: User sorts by Route -> Clicks Scan -> Gets the first room on the route.
   const handleSimulateSuccess = () => {
+    // 1. If a specific target was passed (e.g. from "Scan" button on a card), use it.
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       handleDecode(workflow.targetCheckId);
       return;
     }
-    const incompleteChecks = allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed');
-    if (incompleteChecks.length > 0) {
-      const randomCheck = incompleteChecks[Math.floor(Math.random() * incompleteChecks.length)];
-      handleDecode(randomCheck.id);
+
+    // 2. Otherwise, determine context from the active dashboard view.
+    const candidateList = appView === 'dashboardRoute' ? routeSortedChecks : timeSortedChecks;
+    
+    // 3. Find the first actionable check in that list.
+    const actionableCandidate = candidateList.find(c => 
+      c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental'
+    );
+
+    if (actionableCandidate) {
+      handleDecode(actionableCandidate.id);
     } else {
-      addToast({ message: 'No incomplete checks to simulate.', icon: 'info' });
+      // 4. Fallback: Just grab any incomplete check if the top one isn't available.
+      const anyIncomplete = allChecks.find(c => c.status !== 'complete');
+      if (anyIncomplete) {
+         handleDecode(anyIncomplete.id);
+      } else {
+        addToast({ message: 'No incomplete checks found to simulate.', icon: 'info' });
+      }
     }
   };
 
@@ -160,7 +197,6 @@ export const ScanView = () => {
         transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >
         <header className={styles.header}>
-          {/* Typography: Title Case */}
           <h3>Scan Room QR Code</h3>
           <Button variant="on-solid" size="m" iconOnly onClick={handleClose} aria-label="Close scanner">
             <span className="material-symbols-rounded">close</span>
