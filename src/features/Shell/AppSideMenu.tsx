@@ -39,7 +39,7 @@ export const AppSideMenu = () => {
     <aside className={styles.sideMenu}>
       <header className={styles.header}>
         <h1 className={styles.title}>eSupervision</h1>
-        <h2 className={styles.subtitle}>Room Check</h2>
+        <h2 className={styles.subtitle}>Safety Check</h2>
         <div className={styles.headerSeparator} />
       </header>
 

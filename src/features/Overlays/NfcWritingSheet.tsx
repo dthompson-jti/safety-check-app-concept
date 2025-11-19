@@ -110,7 +110,7 @@ export const NfcWritingSheet = () => {
         return (
           <ContentWrapper>
             <motion.span variants={iconVariants} className={`material-symbols-rounded ${styles.largeIcon}`}>contactless</motion.span>
-            <h2>Ready to Scan</h2>
+            <h2>Ready to Write</h2>
             <p>Hold device near NFC tag for '{context.roomName}'</p>
           </ContentWrapper>
         );
