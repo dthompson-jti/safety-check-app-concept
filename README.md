@@ -25,28 +25,26 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 ## 3. Prototype Features
 
--   **Simulated Login/Logout:** A complete start-of-shift session workflow. This includes secure, client-side validation, a generic, enumeration-resistant error for failed credentials, and a developer shortcut.
+-   **Simulated Login/Logout:** A complete start-of-shift session workflow. This includes secure, client-side validation and a generic, enumeration-resistant error for failed credentials.
+-   **Sequential Context Selection:** Upon login, the user enters a mandatory, full-screen **Drill-Down Navigation** flow to select their Facility and Unit. This replaces traditional dropdowns with a native-style "Push/Pop" page transition pattern.
 -   **State Persistence:** The application mimics native behavior by persisting the user's session, view preferences (List vs. Card), and completed checks across page reloads.
 -   **High-Performance Render Engine:** A centralized heartbeat system drives the countdown timers for safety checks, ensuring 60fps scrolling performance even with dozens of active timers.
--   **High-Craft Navigation Model:** The application uses a dual-pattern navigation system.
-    -   **Push Layout (Side Menu):** The main navigation menu uses a "push" animation. It features a prominent, card-styled **Context Switcher** at the top.
-    -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted and Route-Sorted Schedules) exist on a horizontal "film strip." Switching between them uses a sliding panel animation.
--   **Multi-Sensory Feedback:** The application goes beyond visual cues to implement a tangible user experience. It combines **Haptic Feedback** (via `navigator.vibrate`) with **Synthesized Audio** (via Web Audio API) to provide confirmation for scans, saves, and errors. The audio system uses client-side synthesis to ensure zero latency and offline reliability without external asset dependencies.
--   **Dynamic Check Schedule:** A performant list of checks with live timers and two sorting modes (Time and Route). The list features a high-craft, multi-stage completion animation.
--   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes.
-    -   **Smart Simulation:** The scan workflow logic is context-aware. When testing, the "Simulate Success" action intelligently identifies the top-priority check based on the current view (Route vs Time) to ensure deterministic demos.
-    -   **Resilient Form State:** A "Drafts" system automatically caches form data. If a user accidentally navigates back or cancels, their data is preserved upon return, preventing frustration.
--   **Multi-Resident Check Form:** The check recording form supports rooms with multiple residents, including a "Set All" convenience feature and a visually distinct UI for residents with special classifications.
+-   **High-Craft Navigation Model:** The application uses a multi-pattern navigation system optimized for different hierarchies:
+    -   **Push Layout (Side Menu):** The main navigation menu uses a simple "push" animation.
+    -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted vs Route-Sorted) exist on a horizontal "film strip" with sliding panel animations.
+    -   **Drill-Down (Hierarchical Data):** Deeply nested selections (like Facility -> Unit) use a "Stack" metaphor where new views slide in from the right, maintaining a sticky header context.
+-   **Multi-Sensory Feedback:** The application goes beyond visual cues to implement a tangible user experience. It combines **Haptic Feedback** (via `navigator.vibrate`) with **Synthesized Audio** (via Web Audio API) to provide confirmation for scans, saves, and errors.
+-   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.
+-   **Resilient Form State:** A "Drafts" system automatically caches form data, preventing data loss during accidental navigation.
 -   **Sophisticated Modal System:** The app employs a multi-tiered modal strategy (Full-Screen for immersion, Bottom Sheet for context) to optimize user experience.
--   **Simulated Admin Tools:** A dedicated settings area for administrative tasks, including a complete UI simulation for provisioning room NFC tags. When in **NFC Mode**, the main application footer transitions to a passive "Ready to Scan" state with a pulsating indicator, mimicking native NFC behavior.
--   **Simulated Connection Status:** A developer toggle simulates 'Online' and 'Offline' states. The prototype includes a complete UI simulation for the offline workflow, where checks are queued and synced when connectivity is restored.
+-   **Simulated Admin Tools & Offline Mode:** Complete UI simulations for NFC tag provisioning and offline data synchronization workflows.
 
 ## 4. Directory Structure
 
 -   **/src**: Contains the application entry point, root container, global styles, and global types.
 -   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality.
 -   **/src/components**: Contains only **truly generic and reusable** UI primitives that are application-agnostic.
--   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, etc.). It includes a `/src/data/mock` subdirectory that decouples the raw mock data definitions from the state atoms.
+-   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, etc.).
 -   **/src/styles**: Contains the global styling architecture, including design tokens, base styles, and component themes.
 
 **Import Rule:** Always use relative paths (`./`, `../`). This project does not use TypeScript path aliases.
@@ -63,8 +61,6 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 
 The project uses **Jotai** for its minimal, atomic state management model. State is divided into three logical tiers:
 
-1.  **Persisted State (`src/data/atoms.ts`):** Uses `atomWithStorage` to handle data that must survive a reload, such as the User Session, App Configuration, and View Preferences.
-2.  **App Data (`src/data/appDataAtoms.ts`):** Manages the core business logic (e.g., the Safety Checks list). This layer subscribes to the temporal state to recalculate statuses efficiently.
-3.  **Temporal State (The Heartbeat):** A centralized `requestAnimationFrame` loop in `App.tsx` drives two global atoms:
-    *   `fastTickerAtom` (100ms): For smooth UI countdowns.
-    *   `slowTickerAtom` (1000ms): For business logic updates.
+1.  **Persisted State (`src/data/atoms.ts`):** Uses `atomWithStorage` to handle data that must survive a reload (Session, Config, Preferences).
+2.  **App Data (`src/data/appDataAtoms.ts`):** Manages the core business logic (Safety Checks list).
+3.  **Temporal State (The Heartbeat):** A centralized `requestAnimationFrame` loop in `App.tsx` drives UI countdowns and business logic updates.

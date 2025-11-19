@@ -64,17 +64,17 @@ Any container component with `overflow: hidden` **must provide an internal "safe
 
 #### The Mobile Drill-Down Contract
 
-To replicate native "Push" and "Pop" page transitions on the web:
+To replicate native "Push" and "Pop" page transitions on the web (e.g., iOS NavigationController):
 
-1.  **The Container:** Must be `position: relative` and `overflow: hidden`. This creates the "viewport" for the sliding pages.
-2.  **The Pages:** Must be `position: absolute` with `inset: 0`. This allows the entering page and exiting page to exist simultaneously within the viewport without stacking vertically.
+1.  **The Container:** Must be `position: relative` and `overflow: hidden`. This creates the "viewport" or "stage" for the sliding pages.
+2.  **The Pages:** Must be `position: absolute` with `inset: 0`. This allows the entering page and exiting page to exist simultaneously within the viewport without stacking vertically, preventing layout jumps during the transition.
 
 #### The Icon Alignment Contract (`ActionListItem`)
 
-In lists where some items have icons and others do not (e.g., selection lists):
+In lists where some items have icons and others do not (e.g., mixed selection lists):
 
--   **Rule:** Text labels must always align vertically.
--   **Implementation:** Use a dedicated `leadingIconContainer` (or an `indent` prop) with a fixed width to reserve space on the left side of the item, even when the icon itself is absent.
+-   **Rule:** Text labels must always align vertically with each other to reduce visual noise.
+-   **Implementation:** Use a dedicated `leadingIconContainer` (or an `indent` prop) with a fixed width (e.g., `24px`) to reserve space on the left side of the item, even when the icon itself is absent.
 
 #### The Shared Menu System (`menu.css`)
 

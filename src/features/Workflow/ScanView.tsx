@@ -32,7 +32,6 @@ export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
   
-  // Atoms for Context-Aware Simulation
   const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
   const routeSortedChecks = useAtomValue(routeSortedChecksAtom);
@@ -47,7 +46,6 @@ export const ScanView = () => {
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
 
-  // Effect: Monitor the target check for Critical Information (Pre-Scan Alerts)
   useEffect(() => {
     if (workflow.view === 'scanning') {
       setScanViewState('scanning');
@@ -119,7 +117,6 @@ export const ScanView = () => {
     setIsManualCheckModalOpen(true);
   };
 
-  // Logic: Smart Simulation
   const handleSimulateSuccess = () => {
     if (workflow.view === 'scanning' && workflow.targetCheckId) {
       handleDecode(workflow.targetCheckId);
@@ -145,7 +142,6 @@ export const ScanView = () => {
   const handleSimulateFail = () => handleDecode('invalid-qr-code-id');
 
   const renderViewfinderContent = () => {
-    // SIMULATION OVERRIDE
     if (simulation.cameraFails) {
        return (
           <div className={`${styles.statusOverlay} ${styles.failState}`}>
@@ -195,6 +191,7 @@ export const ScanView = () => {
     <>
       <motion.div
         className={styles.scanView}
+        // Physics-Semantic Contract: Slide Up (y) -> Close (X) button
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}

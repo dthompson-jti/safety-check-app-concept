@@ -39,13 +39,11 @@ export const ProvisionNfcView = () => {
   const [modalGroupId, setModalGroupId] = useAtom(nfcProvisioningGroupIdAtom);
   const [modalUnitId, setModalUnitId] = useAtom(nfcProvisioningUnitIdAtom);
 
-  // Sync local state to global state when the view is active.
   useEffect(() => {
     setModalGroupId(globalGroupId);
     setModalUnitId(globalUnitId);
   }, [globalGroupId, globalUnitId, setModalGroupId, setModalUnitId]);
 
-  // Effect to reset state when view closes
   useEffect(() => {
     return () => {
       setSearchQuery('');
@@ -67,13 +65,15 @@ export const ProvisionNfcView = () => {
   return (
     <motion.div
       className={styles.viewContainer}
-      initial={{ x: '100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '100%' }}
+      // PHYSICS: Slide Up (Tool/Sheet)
+      initial={{ y: '100%' }}
+      animate={{ y: 0 }}
+      exit={{ y: '100%' }}
       transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
       <header className={styles.header}>
         <h3>Write NFC tags</h3>
+        {/* BUTTON: Top-Right Close (Tool Metaphor) */}
         <Button variant="tertiary" size="m" iconOnly onClick={handleClose} aria-label="Close">
           <span className="material-symbols-rounded">close</span>
         </Button>

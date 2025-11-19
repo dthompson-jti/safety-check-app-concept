@@ -18,12 +18,9 @@ import styles from './FacilitySelectionModal.module.css';
 
 type Step = 'group' | 'unit';
 
-// Animation variants for sliding pages.
-// Handles the transition direction (left vs right) based on navigation depth.
-const variants = {
+// Internal Stack Physics (Step 1 -> Step 2)
+const contentVariants = {
   enter: (direction: number) => ({
-    // If direction is 0 (initial mount), we force x: 0 to avoid a slide-in effect.
-    // Otherwise, slide from right (1) or left (-1).
     x: direction === 0 ? 0 : (direction > 0 ? '100%' : '-100%'),
     opacity: 1,
   }),
@@ -48,32 +45,29 @@ export const FacilitySelectionModal = () => {
   const setIsScheduleLoading = useSetAtom(isScheduleLoadingAtom);
 
   // Local Navigation State
-  // tempGroupId allows exploration of groups without committing the selection to global state.
   const [step, setStep] = useState<Step>('group');
   const [direction, setDirection] = useState(0);
   const [tempGroupId, setTempGroupId] = useState<string | null>(selectedGroup);
-
-  // Control exit direction for the parent FullScreenModal (Slide left on success, right on close)
+  
+  // RELIABILITY FIX: Explicitly control exit direction for the parent modal
   const [modalExitDirection, setModalExitDirection] = useState<'right' | 'left'>('right');
 
   const isOpen = isContextRequired || isModalOpen;
 
-  // Reset local state when the modal OPENS.
-  // We deliberately avoid dependening on 'selectedGroup' to prevent race conditions
-  // where saving the group would trigger a reset of the exit direction.
+  // Reset state when opening
   useEffect(() => {
     if (isOpen) {
       setStep('group');
       setDirection(0);
       setTempGroupId(selectedGroup);
-      setModalExitDirection('right');
+      setModalExitDirection('right'); // Default to "Back" behavior
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]); 
 
-  // -- Navigation Handlers --
-
   const handleCloseOrLogout = () => {
+    // Ensure we exit to the Right (Backwards)
+    setModalExitDirection('right');
+    
     if (isContextRequired) {
       logout();
     } else {
@@ -83,41 +77,37 @@ export const FacilitySelectionModal = () => {
 
   const handleGroupSelect = (groupId: string) => {
     setTempGroupId(groupId);
-    setDirection(1); // Slide forward (Right to Left)
+    setDirection(1); // Slide Forward
     setStep('unit');
   };
 
   const handleBackToGroups = () => {
-    setDirection(-1); // Slide backward (Left to Right)
+    setDirection(-1); // Slide Backward
     setStep('group');
   };
 
   const handleUnitSelect = (unitId: string) => {
     if (!tempGroupId) return;
     
-    // 1. Set exit direction to Left (Forward) to indicate progress/success
-    setModalExitDirection('left');
+    // 1. BARN DOOR FIX: Set direction first
+    setModalExitDirection('left'); // Exit Left (Progress Forward)
 
-    // Trigger loading simulation only if the context actually changed
     if (tempGroupId !== selectedGroup || unitId !== selectedUnit) {
       setIsScheduleLoading(true);
     }
     
-    // 2. Commit selection to global state
     setSelectedGroup(tempGroupId);
     setSelectedUnit(unitId);
 
-    // If this was the initial login flow, allow entry to dashboard
     if (!isContextRequired) {
       setAppView('dashboardTime');
     } else {
       setIsContextRequired(false);
     }
     
-    // 3. Close Modal with a double-RAF delay.
-    // This ensures the 'modalExitDirection' state change is painted to the DOM 
-    // before the 'isModalOpen' state change triggers the unmount, ensuring the 
-    // correct exit animation plays.
+    // 2. BARN DOOR FIX: The Double-RAF Pattern
+    // This ensures the 'modalExitDirection' state change paints to the DOM
+    // BEFORE we trigger the unmount via setIsModalOpen(false).
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setIsModalOpen(false);
@@ -125,30 +115,27 @@ export const FacilitySelectionModal = () => {
     });
   };
 
-  // -- Derived UI State --
-
   const currentGroup = facilityData.find(g => g.id === tempGroupId);
   const units = currentGroup?.units || [];
 
-  // Configure header based on depth
-  const headerConfig = step === 'group' 
-    ? {
-        title: 'Select Facility',
-        leftIcon: isContextRequired ? 'logout' : 'close', 
-        onAction: handleCloseOrLogout
-      }
-    : {
-        title: 'Select Unit',
-        leftIcon: 'arrow_back',
-        onAction: handleBackToGroups
-      };
+  const getLeftIcon = () => {
+    if (step === 'unit') return 'arrow_back';
+    return isContextRequired ? 'logout' : 'arrow_back';
+  };
+
+  const handleLeftAction = step === 'group' ? handleCloseOrLogout : handleBackToGroups;
+
+  // DESIGN FIX: Static title "Select Facility"
+  const modalTitle = isContextRequired ? "Sign In" : "Select Facility";
 
   return (
     <FullScreenModal 
       isOpen={isOpen} 
-      onClose={headerConfig.onAction} 
-      title={headerConfig.title}
-      leftIcon={headerConfig.leftIcon}
+      onClose={handleLeftAction} 
+      title={modalTitle}
+      leftIcon={getLeftIcon()}
+      transitionType="slide-horizontal"
+      // RELIABILITY FIX: Pass the specific exit direction
       exitDirection={modalExitDirection}
     >
       <div className={styles.container}>
@@ -158,17 +145,14 @@ export const FacilitySelectionModal = () => {
               key="group-list"
               className={styles.viewWrapper}
               custom={direction}
-              variants={variants}
+              variants={contentVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ 
-                type: 'tween', 
-                duration: 0.3, 
-                ease: [0.32, 0.72, 0, 1] 
-              }}
+              transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
             >
-              <div className={styles.listContainer}>
+              {/* DESIGN FIX: No inline header. List starts immediately. */}
+              <div className={styles.listContainer} style={{ borderTop: 'none' }}>
                 {facilityData.map((group) => (
                   <ActionListItem
                     key={group.id}
@@ -184,16 +168,13 @@ export const FacilitySelectionModal = () => {
               key="unit-list"
               className={styles.viewWrapper}
               custom={direction}
-              variants={variants}
+              variants={contentVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ 
-                type: 'tween', 
-                duration: 0.3, 
-                ease: [0.32, 0.72, 0, 1] 
-              }}
+              transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
             >
+              {/* Step 2: Keep sticky banner for context */}
               <div className={styles.contextBanner}>
                 <span className="material-symbols-rounded" style={{ fontSize: 20 }}>domain</span>
                 {currentGroup?.name}
@@ -213,11 +194,6 @@ export const FacilitySelectionModal = () => {
                     />
                   );
                 })}
-                {units.length === 0 && (
-                   <div style={{ padding: '24px', textAlign: 'center', color: 'var(--surface-fg-tertiary)' }}>
-                      No units available.
-                   </div>
-                )}
               </div>
             </motion.div>
           )}

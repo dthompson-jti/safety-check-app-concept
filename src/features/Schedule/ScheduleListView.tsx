@@ -15,7 +15,6 @@ import { SafetyCheck, ScheduleFilter } from '../../types';
 import { CheckCard } from './CheckCard';
 import { CheckListItem } from './CheckListItem';
 import { CheckSkeleton } from '../../components/CheckSkeleton';
-// DEFINITIVE FIX: Import `EmptyStateMessage` instead of the removed `NoSearchResults`.
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
@@ -72,7 +71,8 @@ const groupChecksByRoute = (checks: SafetyCheck[]) => {
     const actionable = checks.filter(c => !['complete', 'supplemental', 'missed', 'queued'].includes(c.status));
     const groups: { title: string, checks: SafetyCheck[] }[] = [];
     if (actionable.length > 0) {
-        groups.push({ title: 'Upcoming', checks: actionable });
+        // CHANGED: Updated title from 'Upcoming' to 'Walking Order' per PRD terminology.
+        groups.push({ title: 'Walking Order', checks: actionable });
     }
     return groups;
 };
@@ -115,7 +115,6 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
     }
 
     if (checks.length === 0) {
-      // DEFINITIVE FIX: Use the new `EmptyStateMessage` component for search results.
       if (searchQuery) return <EmptyStateMessage title="No Results Found" message={`Your search for "${searchQuery}" did not return any results.`} />;
       if (isFilterActive) return <FilteredEmptyState filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />;
     }

@@ -4,37 +4,51 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Button } from './Button';
 import styles from './FullScreenModal.module.css';
 
+export type ModalTransitionType = 'slide-horizontal' | 'slide-vertical';
+export type ExitDirection = 'left' | 'right';
+
 interface FullScreenModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  /** Optional override for the left navigation icon. Defaults to 'arrow_back'. */
   leftIcon?: string;
-  /** Optional component to render on the right side of the header. */
   rightAction?: React.ReactNode;
-  /** Controls which way the modal slides out when closing. Defaults to 'right' (Back). */
-  exitDirection?: 'left' | 'right';
+  transitionType?: ModalTransitionType;
+  /** 
+   * DYNAMIC EXIT: Allows overriding the exit direction.
+   * Essential for "Success" (slide left) vs "Back" (slide right) flows.
+   */
+  exitDirection?: ExitDirection;
 }
 
-// Animation variants for the modal wrapper
-const modalVariants: Variants = {
-  enter: { x: '100%' },
-  visible: { x: 0 },
-  exit: (exitDirection: 'left' | 'right') => ({
-    x: exitDirection === 'left' ? '-100%' : '100%',
-    transition: { 
-      type: 'tween', 
-      duration: 0.35, 
-      ease: [0.16, 1, 0.3, 1] 
-    } as const
-  })
+const variants: Variants = {
+  hidden: (type: ModalTransitionType) => ({
+    x: type === 'slide-horizontal' ? '100%' : 0,
+    y: type === 'slide-vertical' ? '100%' : 0,
+  }),
+  visible: { 
+    x: 0, 
+    y: 0 
+  },
+  exit: ({ type, direction }: { type: ModalTransitionType, direction?: ExitDirection }) => {
+    // If an explicit direction is provided, use it (for horizontal flows)
+    if (type === 'slide-horizontal' && direction) {
+      return { 
+        x: direction === 'left' ? '-100%' : '100%',
+        transition: { type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }
+      };
+    }
+    
+    // Default behavior
+    return {
+      x: type === 'slide-horizontal' ? '100%' : 0,
+      y: type === 'slide-vertical' ? '100%' : 0,
+      transition: { type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }
+    };
+  }
 };
 
-/**
- * A full-screen overlay component acting as a navigation shell.
- * Supports custom header actions and Framer Motion entrance/exit animations.
- */
 export const FullScreenModal: React.FC<FullScreenModalProps> = ({ 
   isOpen, 
   onClose, 
@@ -42,31 +56,30 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({
   children,
   leftIcon = 'arrow_back',
   rightAction,
-  exitDirection = 'right'
+  transitionType = 'slide-horizontal',
+  exitDirection
 }) => {
   return (
-    <AnimatePresence custom={exitDirection}>
+    <AnimatePresence custom={{ type: transitionType, direction: exitDirection }}>
       {isOpen && (
         <motion.div
           className={styles.modalWrapper}
-          custom={exitDirection}
-          variants={modalVariants}
-          initial="enter"
+          custom={{ type: transitionType, direction: exitDirection }}
+          variants={variants}
+          initial="hidden"
           animate="visible"
           exit="exit"
-          // Use the same transition curve for entrance
           transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className={styles.backdrop} />
           <div className={styles.modalContainer}>
             <header className={styles.header}>
-              <Button variant="quaternary" size="m" iconOnly onClick={onClose} aria-label="Back or Close">
+              <Button variant="quaternary" size="m" iconOnly onClick={onClose} aria-label="Back">
                 <span className="material-symbols-rounded">{leftIcon}</span>
               </Button>
               
               <h2>{title}</h2>
               
-              {/* Render Right Action if present, otherwise a spacer to balance the header layout */}
               <div className={styles.rightActionContainer}>
                 {rightAction || <div style={{ width: '38px' }} />}
               </div>
