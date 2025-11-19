@@ -148,9 +148,7 @@ export const LoginView = () => {
       >
         <Modal.Content>
           <div className={styles.modalBodyLayout}>
-            <div className={styles.modalIcon}>
-              <span className="material-symbols-rounded large-feature-icon">help</span>
-            </div>
+            {/* The icon div has been removed. */}
             <div className={styles.modalTextContent}>
               <h3>How to Sign In</h3>
               <p>

@@ -1,0 +1,59 @@
+Here are 5 PRDs, ordered from lowest risk/highest immediate impact to highest architectural complexity.
+
+---
+
+## PRD 1: Visual Physics & Context-Aware Simulation
+**Priority:** High (Quick Wins) | **Risk:** Low
+
+### 1. Overview
+This initiative unifies the application's motion language by applying spring physics to global layout transitions, fixes the jarring layout shift during loading states, and ensures the "Simulate Scan" feature is context-aware for better demos.
+
+### 2. Problem & Goals
+*   **Problem:**
+    *   Full-screen slides feel robotic due to linear tweening.
+    *   Replacing Skeletons with Cards causes a visible "blink" or layout jump.
+    *   The "Simulate Success" button in Scan View picks a random check, often confusing the user by completing an item outside their current view/unit (e.g., scanning a Sci-Fi check while in JDC).
+*   **Goals:**
+    *   Implement fluid spring physics for the main film-strip navigation.
+    *   Create a seamless cross-fade between loading skeletons and real content.
+    *   Ensure the "Simulate Scan" button always targets the top-most *pending* item in the currently active view.
+
+### 3. Scope & Key Initiatives
+*   **Global Physics:** Update `MainLayout` to use spring physics.
+*   **Skeleton Crossfade:** Refactor `ScheduleListView` to strictly position skeletons to prevent layout shifts during data insertion.
+*   **Smart Simulation:** Update `ScanView` logic to read the current `contextFilteredChecksAtom` instead of the raw global list.
+*   **Out of Scope:** Changing animation physics for small micro-interactions (toggles, checkboxes) which should remain tweens.
+
+### 4. UX/UI Specification & Wireframes
+**Visual Design:**
+*   **Main Layout:** Swipes should have "weight" and "momentum" (Spring damping ~30, stiffness ~300).
+*   **Loading:** Content should fade in *over* the skeleton while the skeleton fades out, occupying the exact same pixel space.
+
+### 5. Architecture & Implementation Plan
+1.  **Animation:** Update `viewTransition` in `MainLayout.tsx` to use `type: "spring"`.
+2.  **Skeleton Wrapper:** Wrap `CheckSkeleton` and the list in a CSS Grid where both occupy `grid-area: 1 / 1`. This allows them to overlap perfectly during the cross-fade transition handled by `AnimatePresence`.
+3.  **Smart Scan Logic:**
+    *   Inject `contextFilteredChecksAtom` into `ScanView`.
+    *   Filter for the first item where `status !== 'complete'`.
+    *   Use that ID for `handleDecode`.
+
+### 6. File Manifest
+*   `src/layouts/MainLayout.tsx` [MODIFIED]
+*   `src/features/Schedule/ScheduleListView.tsx` [MODIFIED]
+*   `src/features/Schedule/ScheduleLayouts.module.css` [MODIFIED]
+*   `src/features/Workflow/ScanView.tsx` [MODIFIED]
+*   `src/components/CheckSkeleton.tsx` [REFERENCE]
+
+### 7. Unintended Consequences Check
+*   **Spring Physics:** Ensure `overflow: hidden` is strictly set on `MainLayout.module.css`, otherwise spring "overshoot" might reveal whitespace or scrollbars.
+
+### 8. Risks & Mitigations
+*   **Risk:** Overlapping content during crossfade might cause double-height scrollbars momentarily.
+*   **Mitigation:** Use `mode="popLayout"` in Framer Motion or explicit CSS Grid stacking to enforce dimensions.
+
+### 9. Definition of Done
+*   [ ] Swiping between Time and Route views feels "heavy" and fluid (Spring).
+*   [ ] Loading skeletons transition to cards with zero layout shift.
+*   [ ] Clicking "Simulate Success" in JDC A-Wing completes a check in JDC A-Wing.
+
+---

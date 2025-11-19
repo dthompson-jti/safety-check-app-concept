@@ -130,13 +130,17 @@
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
   box-shadow: var(--surface-shadow-xs);
-  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  /* --- FIX: Set base color for icon and add color to transition --- */
+  color: var(--surface-fg-tertiary);
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
 }
 
 @media (hover: hover) {
   .userProfileCard:hover {
     background-color: var(--surface-bg-primary_hover);
     border-color: var(--control-border-tertiary-hover);
+    /* --- FIX: Update color on hover, which icon will inherit --- */
+    color: var(--surface-fg-secondary);
   }
 }
 
@@ -165,5 +169,5 @@
 
 .userProfileCard .material-symbols-rounded {
   font-size: 24px;
-  color: var(--surface-fg-secondary);
+  /* Color is now inherited from the parent button */
 }

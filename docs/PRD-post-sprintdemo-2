@@ -1,0 +1,44 @@
+
+## PRD 2: Performance Core (Centralized Heartbeat)
+**Priority:** High (Performance) | **Risk:** Low
+
+### 1. Overview
+Refactor the countdown timer logic to use a single, centralized "Heartbeat" atom rather than having every list item run its own animation loop.
+
+### 2. Problem & Goals
+*   **Problem:** Currently, `useCountdown.ts` instantiates a `requestAnimationFrame` loop for *every* row. With 100 rows, this is 100 simultaneous loops, draining battery and CPU.
+*   **Goals:** Reduce to exactly **one** `requestAnimationFrame` loop for the entire application.
+
+### 3. Scope & Key Initiatives
+*   **Heartbeat Atom:** Create a global `nowAtom` that updates once per second (or 100ms).
+*   **Subscription:** Update `useCountdown` to read from this atom instead of setting its own state.
+*   **Out of Scope:** changing the visual formatting of the time string.
+
+### 4. UX/UI Specification
+*   *No visual changes.* The countdowns will look identical but perform better.
+
+### 5. Architecture & Implementation Plan
+1.  **Create `src/data/timeAtoms.ts`:**
+    *   Create `globalTickerAtom`.
+    *   Create a hook `useGlobalTicker` that sets up the interval/RAF only when there is at least one subscriber.
+2.  **Refactor `useCountdown`:**
+    *   Remove `useState` and `useEffect` loops.
+    *   Simply return `formatTime(due, useAtomValue(globalTickerAtom))`.
+
+### 6. File Manifest
+*   `src/data/timeAtoms.ts` [NEW]
+*   `src/data/useCountdown.ts` [MODIFIED]
+*   `src/features/Schedule/CheckCard.tsx` [REFERENCE]
+*   `src/features/Schedule/CheckListItem.tsx` [REFERENCE]
+
+### 7. Unintended Consequences Check
+*   Check `AppShell.tsx` where `currentTimeAtom` is currently set. This might be redundant or can be merged.
+
+### 8. Risks & Mitigations
+*   **Risk:** If the global atom updates too frequently (e.g., every frame), it will trigger a re-render of *every* card 60 times a second.
+*   **Mitigation:** Throttle the global ticker to 100ms or 1s depending on the finest granularity needed (we display seconds, so 100ms is safe).
+
+### 9. Definition of Done
+*   [ ] Only one active interval/RAF is visible in Chrome Performance Profiler when the schedule is open.
+*   [ ] Timers still count down accurately.
+
