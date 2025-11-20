@@ -22,7 +22,8 @@ import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
 import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
 import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
-import { GestureProvider, useGestureContext } from './context/GestureContext';
+import { GestureProvider } from './context/GestureProvider';
+import { useGestureContext } from './context/GestureContext';
 import styles from './AppShell.module.css';
 
 const viewTransition = {
