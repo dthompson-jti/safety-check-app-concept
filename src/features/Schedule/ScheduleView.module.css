@@ -1,17 +1,15 @@
-/* src/features/Schedule/ScheduleLayouts.module.css */
+/* src/features/Schedule/ScheduleView.module.css */
 
-/* This is the top-level container for the schedule list. */
 .scrollContainer {
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  /* For smooth scrolling on iOS */
   box-sizing: border-box;
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
 }
 
-.scrollContainer[data-refreshing='true']>* {
+.scrollContainer[data-refreshing='true'] > * {
   opacity: 0.5;
   pointer-events: none;
 }
@@ -28,12 +26,15 @@
   color: var(--surface-fg-secondary);
   letter-spacing: 0.05em;
   position: sticky;
-  /* The header sticks to the bottom of the floating header using the 
-     Component Variable Contract (--header-height). */
+  /* The Component Variable Contract: Stacks below AppHeader */
   top: var(--header-height);
   padding-top: 16px;
+  /* Match container padding context */
+  margin-left: calc(-1 * var(--spacing-4));
+  margin-right: calc(-1 * var(--spacing-4));
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
+  
   background-color: var(--surface-bg-secondary);
   z-index: 5;
   transition: opacity 0.2s ease-in-out;

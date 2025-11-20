@@ -6,8 +6,6 @@ import {
   WorkflowState,
   workflowStateAtom,
   connectionStatusAtom,
-  recentlyCompletedCheckIdAtom,
-  completingChecksAtom,
   appConfigAtom,
 } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
@@ -19,6 +17,7 @@ import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAt
 import { Button } from '../../components/Button';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
+import { useCompleteCheck } from './useCompleteCheck';
 import styles from './CheckEntryView.module.css';
 
 type CheckEntryViewProps = {
@@ -51,8 +50,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
-  const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
-  const setCompletingChecks = useSetAtom(completingChecksAtom);
 
   // Draft State Atoms
   const drafts = useAtomValue(draftFormsAtom);
@@ -64,11 +61,11 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     isCheckTypeEnabled,
     manualConfirmationEnabled,
     markMultipleEnabled,
-    simpleSubmitEnabled
   } = useAtomValue(appConfigAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useSound();
+  const { completeCheck } = useCompleteCheck();
 
   // Hook: Monitors the *Visual* Viewport to handle keyboard resize events correctly
   useVisualViewport();
@@ -212,52 +209,24 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     triggerHaptic('success');
     playSound('success');
 
-    setWorkflowState({ view: 'none' });
-
     const consolidatedNotes = Object.values(notes)
       .filter(note => note.trim() !== '')
       .join('\n---\n');
 
     if (checkData.type === 'scheduled') {
-      const payload = {
+      // Use the new hook for scheduled checks
+      completeCheck({
         checkId: checkData.checkId,
         statuses: statuses as Record<string, string>,
         notes: consolidatedNotes,
-        completionTime: new Date().toISOString(),
-      };
-
-      if (connectionStatus === 'offline') {
-        dispatch({ type: 'CHECK_SET_QUEUED', payload });
-        return;
-      }
-
-      // Simple submit skips animation delay for faster dev testing
-      const PULSE_ANIMATION_DURATION = simpleSubmitEnabled ? 0 : 1200;
-      const EXIT_ANIMATION_DURATION = simpleSubmitEnabled ? 0 : 400;
-
-      dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId: checkData.checkId } });
-      setRecentlyCompletedCheckId(checkData.checkId);
-
-      if (!simpleSubmitEnabled) {
-        setTimeout(() => {
-          setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
-        }, PULSE_ANIMATION_DURATION);
-      }
-
-      const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
-      setTimeout(() => {
-        dispatch({ type: 'CHECK_COMPLETE', payload });
-
-        setCompletingChecks((prev) => {
-          const next = new Set(prev);
-          next.delete(checkData.checkId);
-          return next;
-        });
-
-        setRecentlyCompletedCheckId(null);
-      }, TOTAL_ANIMATION_DURATION);
+        onSuccess: () => {
+          setWorkflowState({ view: 'none' });
+        }
+      });
 
     } else if (checkData.type === 'supplemental') {
+      // Supplemental checks logic remains here for now as it's slightly different (ADD vs COMPLETE)
+      // Or we could extend the hook, but for now let's keep it simple.
       dispatch({
         type: 'CHECK_SUPPLEMENTAL_ADD',
         payload: {
@@ -267,6 +236,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
           incidentType,
         },
       });
+      setWorkflowState({ view: 'none' });
       if (connectionStatus !== 'offline') {
         addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
       }

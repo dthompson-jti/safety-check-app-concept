@@ -1,54 +1,50 @@
 // src/features/Schedule/StatusBadge.tsx
 import React from 'react';
-import { SafetyCheckStatus } from '../../types';
+import { SafetyCheckStatus, SafetyCheckType } from '../../types';
 import styles from './StatusBadge.module.css';
 
 interface StatusBadgeProps {
   status: SafetyCheckStatus;
-  type?: string;
+  type?: SafetyCheckType;
 }
 
-const statusTextMap: Record<SafetyCheckStatus, string> = {
-  late: 'Late',
-  'due-soon': 'Due Soon',
-  pending: 'Due',
-  complete: 'Completed',
-  completing: 'Completed',
-  missed: 'Missed',
-  queued: 'Queued',
+const getStatusConfig = (status: SafetyCheckStatus) => {
+  switch (status) {
+    case 'late':
+      return { label: 'Late', icon: 'notifications' };
+    case 'due-soon':
+      return { label: 'Due Soon', icon: 'schedule' };
+    case 'missed':
+      return { label: 'Missed', icon: 'error' };
+    case 'complete':
+      return { label: 'Complete', icon: 'check_circle' };
+    case 'completing':
+      return { label: 'Completing', icon: 'pending' };
+    case 'queued':
+      return { label: 'Queued', icon: 'cloud_off' };
+    default:
+      return { label: status, icon: 'info' };
+  }
 };
-
-const statusIconMap: Partial<Record<SafetyCheckStatus, string>> = {
-  late: 'notifications',
-  'due-soon': 'schedule',
-  complete: 'check_circle',
-  completing: 'check_circle',
-  missed: 'cancel',
-  queued: 'cloud_off',
-};
-
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type }) => {
-  if (type === 'supplemental') {
-    return (
-      <div className={styles.badge} data-status="supplemental">
-        <span className={`material-symbols-rounded ${styles.badgeIcon}`}>add_comment</span>
-        Supplemental
-      </div>
-    );
-  }
-
+  // User Request: "Upcoming" items (which are 'pending') should NOT have a badge.
+  // "Due Soon" items SHOULD have a badge.
   if (status === 'pending') {
     return null;
   }
 
-  const text = statusTextMap[status];
-  const icon = statusIconMap[status];
+  const config = getStatusConfig(status);
+
+  // specific override for supplemental if needed, or just use status
+  const label = type === 'supplemental' && status === 'complete' ? 'Supplemental' : config.label;
 
   return (
     <div className={styles.badge} data-status={status}>
-      {icon && <span className={`material-symbols-rounded ${styles.badgeIcon}`}>{icon}</span>}
-      {text}
+      <span className={`material-symbols-rounded ${styles.badgeIcon}`}>
+        {config.icon}
+      </span>
+      {label}
     </div>
   );
 };

@@ -17,8 +17,6 @@ interface StatusPillProps {
 
 const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status }) => {
   return (
-    // Removed interactivity (onClick) and disabled logic as requested.
-    // The pill is now purely informational.
     <div
       className={styles.statusPill}
       data-status={status}
@@ -44,7 +42,7 @@ export const StatusBar = () => {
       <div className={styles.contentContainer}>
         <StatusPill count={counts.late} icon="notifications" status="late" />
         <StatusPill count={counts.dueSoon} icon="schedule" status="due-soon" />
-        {/* Queued pill functionality moved to OfflineBanner */}
+        {/* Queued items are handled by OfflineBanner now */}
       </div>
     </motion.div>
   );

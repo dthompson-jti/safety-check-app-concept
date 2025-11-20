@@ -1,54 +1,48 @@
 // src/types.ts
 
-// A central definition for residents, used across the application.
-export interface Resident {
-  id: string;
-  name: string;
-  location: string;
-}
-
-// All possible business statuses for a safety check.
 export type SafetyCheckStatus =
   | 'pending'
   | 'due-soon'
   | 'late'
-  | 'complete'
-  | 'completing'
   | 'missed'
+  | 'completing'
+  | 'complete'
   | 'queued';
 
-// Defines a special classification attached to a specific resident within a check.
+export type SafetyCheckType = 'scheduled' | 'supplemental';
+
 export interface SpecialClassification {
   type: string;
   details: string;
   residentId: string;
 }
 
-/**
- * The core data structure for a single safety check.
- * This is the definitive structure used throughout the application.
- */
-export interface SafetyCheck {
+export interface Resident {
   id: string;
-  type: 'scheduled' | 'supplemental' | 'incident';
-  residents: Resident[];
-  status: SafetyCheckStatus;
-  dueDate: string;
-  walkingOrderIndex: number;
-  lastChecked?: string;
-  notes?: string;
-  completionStatus?: string;
-  specialClassifications?: SpecialClassification[];
-  incidentType?: string;
+  name: string;
+  location: string;
 }
 
-/**
- * Represents the filter options available in the Schedule view.
- */
+export interface SafetyCheck {
+  id: string;
+  type: SafetyCheckType;
+  residents: Resident[];
+  status: SafetyCheckStatus;
+  dueDate: string; // ISO Date String
+  walkingOrderIndex: number;
+  specialClassifications?: SpecialClassification[];
+  
+  // Optional fields for completed/historical checks
+  lastChecked?: string; // ISO Date String
+  completionStatus?: string;
+  notes?: string;
+  incidentType?: string; // For supplemental checks
+
+  // Lifecycle Fields
+  generationId: number; // 1, 2, 3... The iteration count for this room
+  baseInterval: number; // Minutes between checks
+}
+
 export type ScheduleFilter = 'all' | 'late' | 'due-soon' | 'queued';
 
-/**
- * DEFINITIVE FIX: The HistoryFilter type is now defined and exported from the
- * central types file, establishing a single source of truth.
- */
 export type HistoryFilter = 'all' | 'lateOrMissed' | 'supplemental';

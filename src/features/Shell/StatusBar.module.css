@@ -20,7 +20,6 @@
   flex-direction: row;
   align-items: center;
   gap: var(--spacing-1);
-  /* LARGER PADDING: Increased padding for a larger touch target and better presence. */
   padding: 10px 14px 10px 8px;
   border-radius: var(--radius-md);
   position: relative;
@@ -29,52 +28,8 @@
   flex-shrink: 0;
   background: none;
   border: 1px solid transparent;
-  cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
-}
-
-.statusPill:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-@media(hover: hover) {
-  .statusPill:not([data-active='true']):not(:disabled):hover {
-    background-color: var(--surface-bg-secondary_hover);
-  }
-}
-
-.statusPill[data-active='true'] {
-  /* SEMANTIC TOKENS: Use selected state variables for clarity. */
-  background-color: var(--control-bg-selected);
-  border-color: var(--control-border-selected);
-}
-
-
-.statusPill::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: inherit;
-  background-color: var(--flash-color-bg);
-  opacity: 0;
-  z-index: -1;
-}
-
-.statusPill.flash::before {
-  animation: pulse-outward 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes pulse-outward {
-  0% {
-    transform: scale(0.7);
-    opacity: 0.6;
-  }
-
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
+  cursor: default;
 }
 
 .count {
@@ -102,17 +57,4 @@
 .statusPill[data-status='queued'] .count,
 .statusPill[data-status='queued'] .icon {
   color: var(--surface-fg-tertiary) !important;
-}
-
-/* Flash color theming */
-.statusPill[data-status='late'].flash {
-  --flash-color-bg: var(--surface-bg-warning-secondary);
-}
-
-.statusPill[data-status='due-soon'].flash {
-  --flash-color-bg: var(--surface-bg-info-secondary);
-}
-
-.statusPill[data-status='queued'].flash {
-  --flash-color-bg: var(--surface-bg-tertiary_hover);
 }

@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import * as ToastPrimitive from '@radix-ui/react-toast';
 import { sessionAtom, fastTickerAtom, slowTickerAtom } from './data/atoms';
 import { toastsAtom } from './data/toastAtoms';
+import { useCheckLifecycle } from './data/useCheckLifecycle';
 
 // Components
 import { AppShell } from './AppShell';
@@ -24,6 +25,9 @@ function App() {
   // Refs for the animation loop
   const requestRef = useRef<number | null>(null);
   const lastSlowTickRef = useRef<number>(Date.now());
+
+  // Activate Lifecycle Engine
+  useCheckLifecycle();
 
   // =================================================================
   //                 Global Heartbeat (The Engine)

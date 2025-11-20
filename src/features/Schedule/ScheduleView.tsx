@@ -17,7 +17,7 @@ import { ScheduleSkeleton } from '../../components/ScheduleSkeleton';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
-import styles from './ScheduleLayouts.module.css';
+import styles from './ScheduleView.module.css';
 
 const listTransition: Transition = {
   type: 'tween',
@@ -110,6 +110,8 @@ export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
     if (checks.length === 0) {
       if (searchQuery) return <EmptyStateMessage title="No Results Found" message={`Your search for "${searchQuery}" did not return any results.`} />;
       if (isFilterActive) return <FilteredEmptyState filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />;
+      // Fallback for empty state if no search/filter
+      return <EmptyStateMessage title="All Checks Complete" message="There are no checks due at this time." />;
     }
 
     const groups = viewType === 'time' ? groupChecksByTime(checks) : groupChecksByRoute(checks);

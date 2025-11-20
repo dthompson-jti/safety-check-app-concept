@@ -1,13 +1,16 @@
 // src/features/Overlays/DeveloperModal.tsx
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import {
   connectionStatusAtom,
   ConnectionStatus,
   appConfigAtom,
   hardwareSimulationAtom
 } from '../../data/atoms';
+import { dispatchActionAtom } from '../../data/appDataAtoms';
+import { addToastAtom } from '../../data/toastAtoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Switch } from '../../components/Switch';
+import { Button } from '../../components/Button';
 import styles from './DeveloperModal.module.css';
 
 const connectionOptions: readonly { value: ConnectionStatus; label: string; icon: string }[] = [
@@ -25,6 +28,8 @@ export const DeveloperModal = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
+  const dispatch = useSetAtom(dispatchActionAtom);
+  const addToast = useSetAtom(addToastAtom);
 
   const handleSlowLoadChange = (checked: boolean) => {
     setAppConfig(current => ({ ...current, isSlowLoadEnabled: checked }));
@@ -42,7 +47,6 @@ export const DeveloperModal = () => {
     setSimulation(current => ({ ...current, nfcFails: checked }));
   };
 
-  // New Toggles
   const handleManualConfirmChange = (checked: boolean) => {
     setAppConfig(current => ({ ...current, manualConfirmationEnabled: checked }));
   };
@@ -53,6 +57,15 @@ export const DeveloperModal = () => {
 
   const handleSimpleSubmitChange = (checked: boolean) => {
     setAppConfig(current => ({ ...current, simpleSubmitEnabled: checked }));
+  };
+
+  const handleStatusIndicatorsChange = (checked: boolean) => {
+    setAppConfig(current => ({ ...current, showStatusIndicators: checked }));
+  };
+
+  const handleResetData = () => {
+    dispatch({ type: 'RESET_DATA' });
+    addToast({ message: 'Application data reset to defaults.', icon: 'delete' });
   };
 
   return (
@@ -111,6 +124,16 @@ export const DeveloperModal = () => {
         <p className={styles.sectionHelper}>Enable or disable optional UI features.</p>
         <div className={styles.settingsGroup}>
           <div className={styles.settingsItem}>
+            <label htmlFor="status-indicators-switch" className={styles.itemLabel}>
+              Show status indicators (colored bars)
+            </label>
+            <Switch
+              id="status-indicators-switch"
+              checked={appConfig.showStatusIndicators}
+              onCheckedChange={handleStatusIndicatorsChange}
+            />
+          </div>
+          <div className={styles.settingsItem}>
             <label htmlFor="check-type-switch" className={styles.itemLabel}>
               Show check type
             </label>
@@ -168,6 +191,14 @@ export const DeveloperModal = () => {
             />
           </div>
         </div>
+      </div>
+
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>Danger Zone</h3>
+        <Button variant="secondary" onClick={handleResetData}>
+           <span className="material-symbols-rounded">restart_alt</span>
+           Reset Application Data
+        </Button>
       </div>
     </div>
   );

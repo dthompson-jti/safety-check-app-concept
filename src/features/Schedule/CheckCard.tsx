@@ -6,6 +6,7 @@ import { SafetyCheck, Resident } from '../../types';
 import {
   workflowStateAtom,
   recentlyCompletedCheckIdAtom,
+  appConfigAtom
 } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
 import { StatusBadge } from './StatusBadge';
@@ -45,6 +46,7 @@ const ResidentListItem = ({ resident, check }: { resident: Resident; check: Safe
 export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
+  const { showStatusIndicators } = useAtomValue(appConfigAtom);
 
   const isPulsing = recentlyCompletedCheckId === check.id;
 
@@ -84,11 +86,13 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
       exit={{ height: 0, opacity: 0, overflow: 'hidden', marginBottom: 0 }}
       className={cardClassName}
       data-status={check.status}
+      // New: Data attribute to control CSS padding and indicator visibility
+      data-indicators-visible={showStatusIndicators}
       onClick={handleCardClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}
     >
-      {showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
+      {showStatusIndicators && showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
 
       <div className={styles.mainContent}>
         <div className={styles.topRow}>

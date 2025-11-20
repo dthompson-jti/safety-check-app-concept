@@ -189,6 +189,8 @@ interface AppConfig {
   markMultipleEnabled: boolean;
   /** Dev Tool: When true, skips the completion animation for faster testing. */
   simpleSubmitEnabled: boolean;
+  /** Dev Tool: When true, hides the colored left status bar on cards for a cleaner look. */
+  showStatusIndicators: boolean;
 }
 
 // Persist app configuration to local storage
@@ -200,6 +202,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   manualConfirmationEnabled: true,
   markMultipleEnabled: false,
   simpleSubmitEnabled: false,
+  showStatusIndicators: false,
 });
 
 // =================================================================

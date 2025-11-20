@@ -16,6 +16,7 @@ export const initialChecks: SafetyCheck[] = (() => {
   const inNMinutes = (n: number) => new Date(now.getTime() + n * 60 * 1000).toISOString();
 
   let walkingIndex = 1;
+  const DEFAULT_INTERVAL = 15; // Minutes
 
   // Helper to create checks from the table data for consistency.
   const createCheck = (location: string, specialClassifications: { type: string, details: string, residentId: string }[] = []) => {
@@ -27,6 +28,8 @@ export const initialChecks: SafetyCheck[] = (() => {
       dueDate: inNMinutes(walkingIndex * 2), // Stagger due dates
       walkingOrderIndex: walkingIndex++,
       specialClassifications,
+      generationId: 1,
+      baseInterval: DEFAULT_INTERVAL,
     } as SafetyCheck;
   };
 
@@ -105,7 +108,29 @@ export const initialChecks: SafetyCheck[] = (() => {
     createCheck("Ceres Station Docks"),
 
     // Add some completed checks for history view
-    { id: 'chk_completed_1', type: 'scheduled', residents: [mockResidents[0]], status: 'complete', dueDate: inNMinutes(-30), walkingOrderIndex: walkingIndex++, lastChecked: inNMinutes(-32), completionStatus: 'All good' },
-    { id: 'chk_completed_2', type: 'scheduled', residents: [mockResidents[1]], status: 'complete', dueDate: inNMinutes(-60), walkingOrderIndex: walkingIndex++, lastChecked: inNMinutes(-61), completionStatus: 'Assisted' },
+    { 
+      id: 'chk_completed_1', 
+      type: 'scheduled', 
+      residents: [mockResidents[0]], 
+      status: 'complete', 
+      dueDate: inNMinutes(-30), 
+      walkingOrderIndex: walkingIndex++, 
+      lastChecked: inNMinutes(-32), 
+      completionStatus: 'All good',
+      generationId: 1,
+      baseInterval: DEFAULT_INTERVAL
+    },
+    { 
+      id: 'chk_completed_2', 
+      type: 'scheduled', 
+      residents: [mockResidents[1]], 
+      status: 'complete', 
+      dueDate: inNMinutes(-60), 
+      walkingOrderIndex: walkingIndex++, 
+      lastChecked: inNMinutes(-61), 
+      completionStatus: 'Assisted',
+      generationId: 1,
+      baseInterval: DEFAULT_INTERVAL
+    },
   ];
 })();

@@ -13,7 +13,10 @@ import {
   selectedFacilityUnitAtom,
   manualSearchQueryAtom,
   isGlobalSearchActiveAtom,
+  completingChecksAtom,
+  recentlyCompletedCheckIdAtom
 } from './atoms';
+import { draftFormsAtom } from './formAtoms';
 import { initialChecks } from './mock/checkData';
 import { mockResidents } from './mock/residentData';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
@@ -51,14 +54,49 @@ type SupplementalCheckPayload = {
 export type AppAction =
   | { type: 'CHECK_SET_COMPLETING'; payload: { checkId: string } }
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
+  | { type: 'CHECK_MISSED'; payload: { checkId: string } }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload }
   | { type: 'CHECK_SET_QUEUED'; payload: CheckCompletePayload }
-  | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } };
+  | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } }
+  | { type: 'RESET_DATA' };
+
+/**
+ * Lifecycle Logic: Regenerates the next check based on the previous one.
+ */
+const generateNextCheck = (previousCheck: SafetyCheck): SafetyCheck => {
+  const prevDueDate = new Date(previousCheck.dueDate);
+  const intervalMs = previousCheck.baseInterval * 60 * 1000;
+  
+  // Next Due = Previous Due + Interval
+  const nextDueDate = new Date(prevDueDate.getTime() + intervalMs);
+
+  return {
+    ...previousCheck,
+    id: `chk_${nanoid()}`,
+    status: 'pending',
+    dueDate: nextDueDate.toISOString(),
+    generationId: previousCheck.generationId + 1,
+    // Clear historical data
+    lastChecked: undefined,
+    completionStatus: undefined,
+    notes: undefined,
+  };
+};
 
 const appDataAtom = atom<AppData, [AppAction], void>(
   (get) => ({ checks: get(baseChecksAtom) }),
   (get, set, action) => {
     const currentChecks = get(baseChecksAtom);
+    
+    if (action.type === 'RESET_DATA') {
+        set(baseChecksAtom, initialChecks);
+        // Clear related state
+        set(completingChecksAtom, new Set());
+        set(recentlyCompletedCheckIdAtom, null);
+        set(draftFormsAtom, {});
+        return;
+    }
+
     const nextState = produce({ checks: currentChecks }, (draft: Draft<AppData>) => {
       switch (action.type) {
         case 'CHECK_SET_COMPLETING': {
@@ -71,12 +109,29 @@ const appDataAtom = atom<AppData, [AppAction], void>(
         case 'CHECK_COMPLETE': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
+            // 1. Mark current as complete
             check.status = 'complete';
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
+
+            // 2. Generate next check
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
+            draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
+        }
+        case 'CHECK_MISSED': {
+            const check = draft.checks.find(c => c.id === action.payload.checkId);
+            if (check) {
+              // 1. Mark as missed
+              check.status = 'missed';
+              
+              // 2. Generate next check
+              const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
+              draft.checks.push(nextCheck as Draft<SafetyCheck>);
+            }
+            break;
         }
         case 'CHECK_SET_QUEUED': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
@@ -85,6 +140,10 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
+
+            // Offline Queue: We also generate the next one locally so work continues
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
+            draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
         }
@@ -112,6 +171,8 @@ const appDataAtom = atom<AppData, [AppAction], void>(
               notes,
               completionStatus: Object.values(statuses)[0] || 'Complete',
               incidentType,
+              generationId: 0,
+              baseInterval: 0,
             };
             draft.checks.push(newCheck);
           }
@@ -149,7 +210,7 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
 
   return checks.map(check => {
     // Stable statuses don't need recalculation
-    if (['complete', 'completing', 'queued'].includes(check.status)) {
+    if (['complete', 'completing', 'queued', 'missed'].includes(check.status)) {
       return check;
     }
 
@@ -188,6 +249,7 @@ const contextFilteredChecksAtom = atom((get) => {
   }
 
   // Filter out completed, missed, and supplemental checks for the main schedule view
+  // This effectively "Archives" the missed checks from the user's To-Do list.
   const incompleteChecks = allChecks.filter(c =>
     c.status !== 'complete' &&
     c.status !== 'missed' &&

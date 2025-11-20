@@ -272,21 +272,37 @@ const AppShellContent = () => {
         {workflowState.view === 'provisioning' && <NfcWriteView />}
       </AnimatePresence>
 
-      <FacilitySelectionModal />
+      {/* Modals and Overlays */}
       <ManualCheckSelectorSheet />
+      <FacilitySelectionModal />
 
-      <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
+      <FullScreenModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        title="Settings"
+        transitionType="slide-horizontal"
+        exitDirection="right"
+      >
         <SettingsModal />
       </FullScreenModal>
-      <FullScreenModal isOpen={isDevToolsOpen} onClose={() => setIsDevToolsOpen(false)} title="Developer tools">
+
+      <FullScreenModal
+        isOpen={isDevToolsOpen}
+        onClose={() => setIsDevToolsOpen(false)}
+        title="Developer Tools"
+        transitionType="slide-horizontal"
+        exitDirection="right"
+      >
         <DeveloperModal />
       </FullScreenModal>
     </div>
   );
 };
 
-export const AppShell = () => (
-  <GestureProvider>
-    <AppShellContent />
-  </GestureProvider>
-);
+export const AppShell = () => {
+  return (
+    <GestureProvider>
+      <AppShellContent />
+    </GestureProvider>
+  );
+};

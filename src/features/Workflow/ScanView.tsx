@@ -1,5 +1,5 @@
 // src/features/Workflow/ScanView.tsx
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scanner } from '@yudiel/react-qr-scanner';
@@ -19,6 +19,8 @@ import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useSound } from '../../data/useSound';
 import { Button } from '../../components/Button';
+import { appConfigAtom } from '../../data/atoms';
+import { useCompleteCheck } from './useCompleteCheck';
 import styles from './ScanView.module.css';
 
 interface PreScanAlertInfo {
@@ -31,6 +33,7 @@ type ScanViewState = 'scanning' | 'processing' | 'success' | 'fail';
 export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
+  const appConfig = useAtomValue(appConfigAtom);
 
   const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
@@ -42,9 +45,14 @@ export const ScanView = () => {
 
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useSound();
+  const { completeCheck } = useCompleteCheck();
 
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
+
+  // Refs for duplicate scan prevention
+  const lastScanned = useRef<string | null>(null);
+  const lastScanTime = useRef<number>(0);
 
   useEffect(() => {
     if (workflow.view === 'scanning') {
@@ -80,15 +88,48 @@ export const ScanView = () => {
 
   const handleDecode = (result: string) => {
     if (scanViewState !== 'scanning') return;
+
+    // Prevent duplicate scans
+    if (lastScanned.current === result && (Date.now() - lastScanTime.current < 2000)) {
+      return;
+    }
+    lastScanned.current = result;
+    lastScanTime.current = Date.now();
+
     setScanViewState('processing');
 
     setTimeout(() => {
-      const check = allChecks.find(c => c.id === result && c.status !== 'complete' && c.status !== 'missed');
+      // In a real app, we'd parse "room:{id}" but here we assume the QR code IS the check ID for simplicity in some cases,
+      // or we handle the "room:" prefix if present.
+      const checkId = result.startsWith('room:') ? result.split(':')[1] : result;
+
+      const check = allChecks.find(c => c.id === checkId && c.status !== 'complete' && c.status !== 'missed');
 
       if (check) {
         triggerHaptic('success');
         playSound('success');
         setScanViewState('success');
+
+        // NEW: Simple Submit Logic
+        if (appConfig.simpleSubmitEnabled) {
+          // Auto-complete the check
+          const defaultStatuses = check.residents.reduce((acc, resident) => {
+            acc[resident.id] = 'Awake';
+            return acc;
+          }, {} as Record<string, string>);
+
+          completeCheck({
+            checkId: check.id,
+            statuses: defaultStatuses,
+            notes: '',
+            onSuccess: () => {
+              addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle' });
+              setWorkflow({ view: 'none' });
+            }
+          });
+          return;
+        }
+
         setTimeout(() => {
           setWorkflow({
             view: 'form',

@@ -15,6 +15,7 @@ import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useSound } from '../../data/useSound';
 import { Button } from '../../components/Button';
+import { useCompleteCheck } from '../Workflow/useCompleteCheck';
 import styles from './AppFooter.module.css';
 
 /**
@@ -37,6 +38,7 @@ export const AppFooter = () => {
   const footerRef = useRef<HTMLElement>(null);
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useSound();
+  const { completeCheck } = useCompleteCheck();
 
   useLayoutEffect(() => {
     const updateHeight = () => {
@@ -81,6 +83,26 @@ export const AppFooter = () => {
       // 3. Provide immediate Success Feedback
       triggerHaptic('success');
       playSound('success');
+
+      // NEW: Simple Submit Logic
+      if (appConfig.simpleSubmitEnabled) {
+        // Auto-complete the check
+        // We need to construct a default status map (all residents 'Awake')
+        const defaultStatuses = targetCheck.residents.reduce((acc, resident) => {
+          acc[resident.id] = 'Awake';
+          return acc;
+        }, {} as Record<string, string>);
+
+        completeCheck({
+          checkId: targetCheck.id,
+          statuses: defaultStatuses,
+          notes: '',
+          onSuccess: () => {
+            addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle' });
+          }
+        });
+        return;
+      }
 
       // 4. Navigate directly to the Check Form (bypassing camera view)
       setWorkflowState({

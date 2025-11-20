@@ -69,6 +69,7 @@
   color: var(--surface-fg-secondary);
   text-align: left;
 }
+
 .supportLink button {
   all: unset;
   color: var(--surface-fg-theme-primary);
@@ -78,6 +79,7 @@
   text-underline-offset: 3px;
   transition: color 0.2s;
 }
+
 .supportLink button:hover {
   color: var(--surface-fg-theme-strong);
 }
@@ -91,19 +93,21 @@
 
 /* UPDATED: High-Craft Error Banner */
 .formError {
-  background-color: var(--surface-bg-error-primary); /* White background */
+  background-color: var(--surface-bg-error-primary);
+  /* White background */
   color: var(--surface-fg-alert-primary);
   font-size: 0.9rem;
   font-weight: 500;
   padding: var(--spacing-3);
   border-radius: var(--radius-md);
   text-align: left;
-  border: 1px solid var(--surface-border-alert); /* Red border */
+  border: 1px solid var(--surface-border-alert);
+  /* Red border */
   box-shadow: var(--surface-shadow-md);
   margin-bottom: var(--spacing-2);
-  
+
   display: flex;
-  align-items: flex-start; /* Align icon to top if text wraps */
+  align-items: center;
   gap: var(--spacing-3);
 }
 
@@ -191,6 +195,7 @@
 .infoNote ul li {
   margin-bottom: var(--spacing-1);
 }
+
 .infoNote ul li:last-child {
   margin-bottom: 0;
 }

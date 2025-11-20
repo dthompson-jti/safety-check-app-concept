@@ -1,4 +1,4 @@
-/* src/features/SafetyCheckSchedule/CheckCard.module.css */
+/* src/features/Schedule/CheckCard.module.css */
 
 /* Keyframes for status flashes */
 @keyframes card-flash-glow-due-soon {
@@ -31,9 +31,14 @@
   background-color: var(--surface-bg-primary);
   border-radius: var(--radius-xl);
   box-shadow: none;
-  transition: background-color 0.2s, border-color 0.2s, opacity 0.2s ease-in-out;
+  transition: background-color 0.2s, border-color 0.2s, opacity 0.2s ease-in-out, padding-left 0.2s;
   overflow: hidden;
-  padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) var(--spacing-5);
+  
+  /* Base padding */
+  padding-top: var(--spacing-3);
+  padding-bottom: var(--spacing-3);
+  padding-right: var(--spacing-3);
+  
   border: 1px solid var(--surface-border-secondary);
   
   /* Ensure we have spacing between cards in the list view */
@@ -42,6 +47,19 @@
   --status-animation-name: none;
   animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* --- Layout Variance based on Indicator Visibility --- */
+
+/* Case 1: Indicators Visible (Asymmetric Padding) */
+.checkCard[data-indicators-visible='true'] {
+  padding-left: var(--spacing-5);
+}
+
+/* Case 2: Indicators Hidden (Symmetric Padding) */
+.checkCard[data-indicators-visible='false'] {
+  padding-left: var(--spacing-3);
+}
+
 
 .checkCard::before {
   content: '';
