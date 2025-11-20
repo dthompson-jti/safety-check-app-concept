@@ -40,8 +40,8 @@ interface Session {
   userName: string | null;
 }
 
-// Persist the session so the user stays logged in on reload
-export const sessionAtom = atomWithStorage<Session>('sc_session', {
+// Session is NOT persisted, so reload always forces login per user request.
+export const sessionAtom = atom<Session>({
   isAuthenticated: false,
   userName: null,
 });

@@ -219,10 +219,10 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
         checkId: checkData.checkId,
         statuses: statuses as Record<string, string>,
         notes: consolidatedNotes,
-        onSuccess: () => {
-          setWorkflowState({ view: 'none' });
-        }
       });
+
+      // Close immediately to show the list animation
+      setWorkflowState({ view: 'none' });
 
     } else if (checkData.type === 'supplemental') {
       // Supplemental checks logic remains here for now as it's slightly different (ADD vs COMPLETE)
