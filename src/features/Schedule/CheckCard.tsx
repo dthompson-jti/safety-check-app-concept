@@ -70,7 +70,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const { residents } = check;
   const roomName = residents[0]?.location || 'N/A';
-  
+
   const showIndicator = !['complete', 'supplemental', 'missed', 'completing', 'queued'].includes(check.status);
   const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
 
@@ -83,7 +83,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
       initial={{ opacity: 0 }}
       exit={{ height: 0, opacity: 0, overflow: 'hidden', marginBottom: 0 }}
       className={cardClassName}
-      data-status={check.status} 
+      data-status={check.status}
       onClick={handleCardClick}
       aria-disabled={!isActionable}
       whileTap={isActionable ? { scale: 0.98 } : {}}
@@ -95,7 +95,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
           <div className={styles.locationInfo}>
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          <StatusBadge status={check.status} />
+          <StatusBadge status={check.status} type={check.type} />
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>

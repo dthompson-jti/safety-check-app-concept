@@ -5,6 +5,7 @@ import styles from './StatusBadge.module.css';
 
 interface StatusBadgeProps {
   status: SafetyCheckStatus;
+  type?: string;
 }
 
 const statusTextMap: Record<SafetyCheckStatus, string> = {
@@ -15,21 +16,28 @@ const statusTextMap: Record<SafetyCheckStatus, string> = {
   completing: 'Completed',
   missed: 'Missed',
   queued: 'Queued',
-  supplemental: 'Supplemental',
 };
 
 const statusIconMap: Partial<Record<SafetyCheckStatus, string>> = {
-  late: 'notifications', // FIX: Use 'notifications' icon for consistency
+  late: 'notifications',
   'due-soon': 'schedule',
   complete: 'check_circle',
   completing: 'check_circle',
-  supplemental: 'add_comment',
   missed: 'cancel',
   queued: 'cloud_off',
 };
 
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type }) => {
+  if (type === 'supplemental') {
+    return (
+      <div className={styles.badge} data-status="supplemental">
+        <span className={`material-symbols-rounded ${styles.badgeIcon}`}>add_comment</span>
+        Supplemental
+      </div>
+    );
+  }
+
   if (status === 'pending') {
     return null;
   }

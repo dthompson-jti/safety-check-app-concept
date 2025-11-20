@@ -3,16 +3,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scanner } from '@yudiel/react-qr-scanner';
-import { 
-  workflowStateAtom, 
+import {
+  workflowStateAtom,
   isManualCheckModalOpenAtom,
   appViewAtom,
   hardwareSimulationAtom,
 } from '../../data/atoms';
-import { 
-  safetyChecksAtom, 
-  timeSortedChecksAtom, 
-  routeSortedChecksAtom 
+import {
+  safetyChecksAtom,
+  timeSortedChecksAtom,
+  routeSortedChecksAtom
 } from '../../data/appDataAtoms';
 import { mockResidents } from '../../data/mock/residentData';
 import { addToastAtom } from '../../data/toastAtoms';
@@ -31,15 +31,15 @@ type ScanViewState = 'scanning' | 'processing' | 'success' | 'fail';
 export const ScanView = () => {
   const [workflow, setWorkflow] = useAtom(workflowStateAtom);
   const allChecks = useAtomValue(safetyChecksAtom);
-  
+
   const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
   const routeSortedChecks = useAtomValue(routeSortedChecksAtom);
   const simulation = useAtomValue(hardwareSimulationAtom);
-  
+
   const addToast = useSetAtom(addToastAtom);
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
-  
+
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useSound();
 
@@ -123,8 +123,8 @@ export const ScanView = () => {
       return;
     }
     const candidateList = appView === 'dashboardRoute' ? routeSortedChecks : timeSortedChecks;
-    const actionableCandidate = candidateList.find(c => 
-      c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental'
+    const actionableCandidate = candidateList.find(c =>
+      c.status !== 'complete' && c.status !== 'missed' && c.type !== 'supplemental'
     );
 
     if (actionableCandidate) {
@@ -132,7 +132,7 @@ export const ScanView = () => {
     } else {
       const anyIncomplete = allChecks.find(c => c.status !== 'complete');
       if (anyIncomplete) {
-         handleDecode(anyIncomplete.id);
+        handleDecode(anyIncomplete.id);
       } else {
         addToast({ message: 'No incomplete checks found to simulate.', icon: 'info' });
       }
@@ -143,12 +143,12 @@ export const ScanView = () => {
 
   const renderViewfinderContent = () => {
     if (simulation.cameraFails) {
-       return (
-          <div className={`${styles.statusOverlay} ${styles.failState}`}>
-            <span className="material-symbols-rounded">no_photography</span>
-            Camera Error
-          </div>
-       );
+      return (
+        <div className={`${styles.statusOverlay} ${styles.failState}`}>
+          <span className="material-symbols-rounded">no_photography</span>
+          Camera Error
+        </div>
+      );
     }
 
     switch (scanViewState) {
@@ -229,8 +229,8 @@ export const ScanView = () => {
             {renderViewfinderContent()}
           </div>
           <p className={styles.helperText}>
-            {simulation.cameraFails 
-              ? "Camera hardware is not responding." 
+            {simulation.cameraFails
+              ? "Camera hardware is not responding."
               : "Point your camera at the room's QR code"}
           </p>
         </main>

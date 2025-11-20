@@ -74,7 +74,7 @@ export const AppFooter = () => {
 
     // 2. Find the first actionable check (not complete/missed)
     const targetCheck = candidateList.find(c =>
-      c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental'
+      c.status !== 'complete' && c.status !== 'missed' && c.type !== 'supplemental'
     );
 
     if (targetCheck) {
