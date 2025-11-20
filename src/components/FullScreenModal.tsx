@@ -74,7 +74,8 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({
           <div className={styles.backdrop} />
           <div className={styles.modalContainer}>
             <header className={styles.header}>
-              <Button variant="quaternary" size="m" iconOnly onClick={onClose} aria-label="Back">
+              {/* UPDATED: Changed from quaternary to tertiary to match other tool headers */}
+              <Button variant="tertiary" size="m" iconOnly onClick={onClose} aria-label="Back">
                 <span className="material-symbols-rounded">{leftIcon}</span>
               </Button>
               

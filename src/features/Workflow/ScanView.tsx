@@ -199,6 +199,7 @@ export const ScanView = () => {
       >
         <header className={styles.header}>
           <h3>Scan Room QR Code</h3>
+          {/* BUTTON: On-Solid variant for visibility on dark background */}
           <Button variant="on-solid" size="m" iconOnly onClick={handleClose} aria-label="Close scanner">
             <span className="material-symbols-rounded">close</span>
           </Button>

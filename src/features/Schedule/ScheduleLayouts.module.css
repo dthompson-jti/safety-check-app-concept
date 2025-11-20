@@ -6,7 +6,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
   box-sizing: border-box; 
-  /* DEFINITIVE FIX: Padding is removed. A static spacer div is now used to create
+  /* Padding is removed here. A static spacer div is used to create
      space for the header, adhering to the Sticky Positioning Contract. */
 }
 
@@ -36,8 +36,8 @@
   color: var(--surface-fg-secondary);
   letter-spacing: 0.05em;
   position: sticky;
-  /* DEFINITIVE FIX: The header now sticks to the bottom of the floating header,
-     using the CSS variable provided by the Component Variable Contract. */
+  /* The header sticks to the bottom of the floating header using the 
+     Component Variable Contract (--header-height). */
   top: var(--header-height);
   padding-top: 16px;
   padding-left: var(--spacing-4);

@@ -26,12 +26,18 @@ type CheckFormViewProps = {
 };
 
 type StatusValue = 'Awake' | 'Sleeping' | 'Refused';
-type CheckTypeValue = 'Locked down' | 'Example 2';
+type CheckTypeValue = 'Locked down' | 'Random';
 
 const checkTypeOptions = [
   { value: 'Locked down', label: 'Locked down' },
-  { value: 'Example 2', label: 'Example 2' },
+  { value: 'Random', label: 'Random' },
 ] as const;
+
+const markMultipleOptions = [
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Awake', label: 'Awake' },
+];
 
 export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
@@ -46,7 +52,12 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const clearDraft = useSetAtom(clearDraftAtom);
 
   const connectionStatus = useAtomValue(connectionStatusAtom);
-  const { isCheckTypeEnabled } = useAtomValue(appConfigAtom);
+  const { 
+    isCheckTypeEnabled, 
+    manualConfirmationEnabled, 
+    markMultipleEnabled, 
+    simpleSubmitEnabled 
+  } = useAtomValue(appConfigAtom);
   
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useSound();
@@ -79,10 +90,11 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   // Draft Logic: Flag to track if we are unmounting due to success (don't save draft) or cancellation/back (save draft)
   const isSubmitted = useRef(false);
 
+  // Architecture: Resilient Form State
+  // If the form is unmounting and wasn't submitted, save the user's work to a global atom.
+  // This ensures data persists if the user accidentally navigates away or hits back.
   useEffect(() => {
     return () => {
-      // Architecture: Resilient Form State
-      // If the form is unmounting and wasn't submitted, save the user's work.
       if (!isSubmitted.current && checkData.type === 'scheduled') {
         saveDraft({
           checkId: checkData.checkId,
@@ -149,13 +161,34 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     setNotes((prev) => ({ ...prev, [residentId]: value }));
   };
 
+  // Mark Multiple Logic
+  const handleApplyAll = (status: string) => {
+    if (!status) return;
+    const newStatuses = { ...statuses };
+    checkData.residents.forEach(r => {
+      newStatuses[r.id] = status as StatusValue;
+    });
+    setStatuses(newStatuses);
+  };
+
+  // Derive the current "All set to" value for the segmented control
+  const currentMarkAllValue = useMemo(() => {
+    const uniqueValues = new Set(Object.values(statuses));
+    // If there's only one unique value and it's not empty string, return it.
+    if (uniqueValues.size === 1) {
+      const val = uniqueValues.values().next().value;
+      if (val) return val;
+    }
+    return '';
+  }, [statuses]);
+
   const canSave = useMemo(() => {
     const allResidentsHaveStatus = checkData.residents.every((res) => statuses[res.id]);
     if (!allResidentsHaveStatus) return false;
     if (isCheckTypeEnabled && !checkType) return false;
-    if (isManualCheck && !isAttested) return false;
+    if (isManualCheck && manualConfirmationEnabled && !isAttested) return false;
     return true;
-  }, [statuses, checkData.residents, isCheckTypeEnabled, checkType, isManualCheck, isAttested]);
+  }, [statuses, checkData.residents, isCheckTypeEnabled, checkType, isManualCheck, isAttested, manualConfirmationEnabled]);
 
   const handleSave = () => {
     if (!canSave) return;
@@ -187,20 +220,21 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
       if (connectionStatus === 'offline') {
         dispatch({ type: 'CHECK_SET_QUEUED', payload });
-        // FIX: Suppress toast when offline to reduce noise, relying on the Offline Banner instead.
-        // addToast({ message: `Check for ${checkData.roomName} queued.`, icon: 'cloud_off' });
         return;
       }
       
-      const PULSE_ANIMATION_DURATION = 1200;
-      const EXIT_ANIMATION_DURATION = 400;
+      // Simple submit skips animation delay for faster dev testing
+      const PULSE_ANIMATION_DURATION = simpleSubmitEnabled ? 0 : 1200;
+      const EXIT_ANIMATION_DURATION = simpleSubmitEnabled ? 0 : 400;
 
       dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId: checkData.checkId } });
       setRecentlyCompletedCheckId(checkData.checkId);
 
-      setTimeout(() => {
-        setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
-      }, PULSE_ANIMATION_DURATION);
+      if (!simpleSubmitEnabled) {
+        setTimeout(() => {
+          setCompletingChecks((prev) => new Set(prev).add(checkData.checkId));
+        }, PULSE_ANIMATION_DURATION);
+      }
 
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
@@ -230,7 +264,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
     }
   };
   
-  const headerTitle = isManualCheck ? 'Manual Record Check' : 'Record Check';
+  const headerTitle = 'Record Check';
 
   return (
     <motion.div
@@ -247,12 +281,16 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         <Button variant="tertiary" size="m" iconOnly onClick={handleBack} aria-label="Back">
           <span className="material-symbols-rounded">arrow_back</span>
         </Button>
-        <h3>{headerTitle}</h3>
+        <h3 className={styles.headerTitle}>
+          {headerTitle}
+        </h3>
       </header>
 
       <main className={styles.formContent} ref={contentRef}>
-        <h2 className={styles.roomHeader}>{checkData.roomName}</h2>
-        {isManualCheck && <p className={styles.infoNote}>This will be recorded as a manual check.</p>}
+        <h2 className={styles.roomHeader}>
+          {checkData.roomName}
+          {isManualCheck && <span className={styles.manualLabel}>Manual</span>}
+        </h2>
 
         {isCheckTypeEnabled && (
           <div className={styles.checkTypeSection}>
@@ -262,6 +300,17 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
               options={checkTypeOptions}
               value={checkType}
               onValueChange={setCheckType}
+            />
+          </div>
+        )}
+
+        {markMultipleEnabled && checkData.residents.length > 1 && (
+          <div className={styles.markMultipleContainer}>
+             <SegmentedControl
+              id="mark-all-control"
+              options={markMultipleOptions}
+              value={currentMarkAllValue}
+              onValueChange={handleApplyAll}
             />
           </div>
         )}
@@ -287,7 +336,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
           })}
         </div>
         
-        {isManualCheck && (
+        {isManualCheck && manualConfirmationEnabled && (
           <div className={styles.attestationContainer}>
             <input
               type="checkbox"

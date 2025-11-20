@@ -16,19 +16,25 @@ interface CheckCardProps {
   transition: Transition; // Accept the shared transition object
 }
 
+const getClassificationBadge = (type: string): string => {
+  const normalized = type.toLowerCase();
+  if (normalized.includes('high risk')) return 'MSR';
+  if (normalized.includes('suicide')) return 'SR';
+  if (normalized.includes('watch')) return 'SW';
+  // Fallback: First two chars uppercase
+  return type.substring(0, 2).toUpperCase();
+};
+
 const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
-  const isClassified = check.specialClassifications?.some(
+  const classification = check.specialClassifications?.find(
     (sc) => sc.residentId === resident.id
   );
 
   return (
     <li className={styles.residentListItem}>
-      {isClassified && (
-        <span
-          className={`material-symbols-rounded ${styles.warningIcon}`}
-          aria-label="Special Classification"
-        >
-          warning
+      {classification && (
+        <span className={styles.classificationBadge}>
+          {getClassificationBadge(classification.type)}
         </span>
       )}
       {resident.name}
@@ -72,9 +78,10 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
     <motion.div
       layout
       transition={transition}
-      animate={{ x: 0, height: 'auto', opacity: 1, marginBottom: 'var(--spacing-3)' }}
+      // Padding updated via CSS class, margin handled in CSS now too
+      animate={{ x: 0, height: 'auto', opacity: 1 }}
       initial={{ opacity: 0 }}
-      exit={{ height: 0, opacity: 0, marginBottom: 0, overflow: 'hidden' }}
+      exit={{ height: 0, opacity: 0, overflow: 'hidden', marginBottom: 0 }}
       className={cardClassName}
       data-status={check.status} 
       onClick={handleCardClick}

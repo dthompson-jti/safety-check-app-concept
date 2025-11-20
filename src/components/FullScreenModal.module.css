@@ -30,7 +30,7 @@
   justify-content: space-between;
   padding: var(--spacing-2) var(--spacing-2);
   min-height: 56px;
-  background-color: var(--surface-bg-primary);
+  background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
 }

@@ -15,7 +15,7 @@
   justify-content: space-between;
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-4);
-  background-color: var(--surface-bg-primary);
+  background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
 }
@@ -53,12 +53,9 @@
 }
 
 .iconContainer {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  /* Hidden to remove indent since icon is gone */
+  display: none;
+  width: 0;
 }
 
 .listItemTitle {

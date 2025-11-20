@@ -42,6 +42,19 @@ export const DeveloperOverlay = () => {
     setSimulation(current => ({ ...current, nfcFails: checked }));
   };
 
+  // New Toggles
+  const handleManualConfirmChange = (checked: boolean) => {
+    setAppConfig(current => ({ ...current, manualConfirmationEnabled: checked }));
+  };
+
+  const handleMarkMultipleChange = (checked: boolean) => {
+    setAppConfig(current => ({ ...current, markMultipleEnabled: checked }));
+  };
+
+  const handleSimpleSubmitChange = (checked: boolean) => {
+    setAppConfig(current => ({ ...current, simpleSubmitEnabled: checked }));
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.settingSection}>
@@ -105,6 +118,36 @@ export const DeveloperOverlay = () => {
               id="check-type-switch"
               checked={appConfig.isCheckTypeEnabled}
               onCheckedChange={handleCheckTypeChange}
+            />
+          </div>
+           <div className={styles.settingsItem}>
+            <label htmlFor="manual-confirm-switch" className={styles.itemLabel}>
+              Manual confirmation
+            </label>
+            <Switch
+              id="manual-confirm-switch"
+              checked={appConfig.manualConfirmationEnabled}
+              onCheckedChange={handleManualConfirmChange}
+            />
+          </div>
+           <div className={styles.settingsItem}>
+            <label htmlFor="mark-multiple-switch" className={styles.itemLabel}>
+              Mark multiple
+            </label>
+            <Switch
+              id="mark-multiple-switch"
+              checked={appConfig.markMultipleEnabled}
+              onCheckedChange={handleMarkMultipleChange}
+            />
+          </div>
+           <div className={styles.settingsItem}>
+            <label htmlFor="simple-submit-switch" className={styles.itemLabel}>
+              Simple submit
+            </label>
+            <Switch
+              id="simple-submit-switch"
+              checked={appConfig.simpleSubmitEnabled}
+              onCheckedChange={handleSimpleSubmitChange}
             />
           </div>
         </div>

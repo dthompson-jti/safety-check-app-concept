@@ -49,7 +49,7 @@ export const FacilitySelectionModal = () => {
   const [direction, setDirection] = useState(0);
   const [tempGroupId, setTempGroupId] = useState<string | null>(selectedGroup);
   
-  // RELIABILITY FIX: Explicitly control exit direction for the parent modal
+  // Explicitly control exit direction for the parent modal to handle "Back" vs "Success" flows
   const [modalExitDirection, setModalExitDirection] = useState<'right' | 'left'>('right');
 
   const isOpen = isContextRequired || isModalOpen;
@@ -62,7 +62,7 @@ export const FacilitySelectionModal = () => {
       setTempGroupId(selectedGroup);
       setModalExitDirection('right'); // Default to "Back" behavior
     }
-  }, [isOpen]); 
+  }, [isOpen, selectedGroup]); 
 
   const handleCloseOrLogout = () => {
     // Ensure we exit to the Right (Backwards)
@@ -89,8 +89,8 @@ export const FacilitySelectionModal = () => {
   const handleUnitSelect = (unitId: string) => {
     if (!tempGroupId) return;
     
-    // 1. BARN DOOR FIX: Set direction first
-    setModalExitDirection('left'); // Exit Left (Progress Forward)
+    // 1. Set direction first (Exit Left for Progress/Success)
+    setModalExitDirection('left');
 
     if (tempGroupId !== selectedGroup || unitId !== selectedUnit) {
       setIsScheduleLoading(true);
@@ -105,9 +105,9 @@ export const FacilitySelectionModal = () => {
       setIsContextRequired(false);
     }
     
-    // 2. BARN DOOR FIX: The Double-RAF Pattern
+    // 2. The Double-RAF Pattern
     // This ensures the 'modalExitDirection' state change paints to the DOM
-    // BEFORE we trigger the unmount via setIsModalOpen(false).
+    // BEFORE we trigger the unmount via setIsModalOpen(false), preventing the "barn door" effect.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setIsModalOpen(false);
@@ -125,7 +125,6 @@ export const FacilitySelectionModal = () => {
 
   const handleLeftAction = step === 'group' ? handleCloseOrLogout : handleBackToGroups;
 
-  // DESIGN FIX: Static title "Select Facility"
   const modalTitle = isContextRequired ? "Sign In" : "Select Facility";
 
   return (
@@ -135,7 +134,6 @@ export const FacilitySelectionModal = () => {
       title={modalTitle}
       leftIcon={getLeftIcon()}
       transitionType="slide-horizontal"
-      // RELIABILITY FIX: Pass the specific exit direction
       exitDirection={modalExitDirection}
     >
       <div className={styles.container}>
@@ -151,7 +149,6 @@ export const FacilitySelectionModal = () => {
               exit="exit"
               transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
             >
-              {/* DESIGN FIX: No inline header. List starts immediately. */}
               <div className={styles.listContainer} style={{ borderTop: 'none' }}>
                 {facilityData.map((group) => (
                   <ActionListItem

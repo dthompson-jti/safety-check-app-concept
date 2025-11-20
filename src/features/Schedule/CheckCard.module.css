@@ -29,13 +29,15 @@
   display: flex;
   position: relative;
   background-color: var(--surface-bg-primary);
-  border-radius: var(--radius-md);
-  box-shadow: var(--surface-shadow-xs);
-  /* REFINED UX: Add opacity to transition property for the dimming effect. */
-  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s, opacity 0.2s ease-in-out;
+  border-radius: var(--radius-xl);
+  box-shadow: none;
+  transition: background-color 0.2s, border-color 0.2s, opacity 0.2s ease-in-out;
   overflow: hidden;
-  padding: 8px 16px 8px 20px;
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) var(--spacing-5);
   border: 1px solid var(--surface-border-secondary);
+  
+  /* Ensure we have spacing between cards in the list view */
+  margin-bottom: var(--spacing-4);
 
   --status-animation-name: none;
   animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -69,7 +71,6 @@
 .checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):not([data-status='queued']):hover {
   background-color: var(--surface-bg-primary_hover);
   border-color: var(--control-border-tertiary-hover);
-  box-shadow: var(--surface-shadow-md), inset 0 -1px 0 0 var(--control-border-tertiary-hover);
 }
 
 .checkCard[data-status='complete'],
@@ -84,8 +85,8 @@
 .statusIndicator {
   position: absolute;
   left: 7px;
-  top: 5px;
-  bottom: 5px;
+  top: 8px;
+  bottom: 8px;
   border-radius: 4px;
   background-color: var(--surface-border-primary);
   transition: background-color 0.2s, width 0.2s;
@@ -152,10 +153,14 @@
   gap: var(--spacing-2);
 }
 
-.warningIcon {
+.classificationBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
   color: var(--surface-fg-primary);
-  font-size: 16px !important;
-  font-variation-settings: 'FILL' 1, 'opsz' 16;
+  background-color: var(--surface-bg-warning-secondary);
+  padding: 1px 4px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 
 .timeDisplay {

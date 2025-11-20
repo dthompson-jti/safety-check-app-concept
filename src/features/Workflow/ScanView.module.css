@@ -73,7 +73,8 @@
 }
 .alertSeparator {
   font-weight: 300;
-  opacity: 0.6;
+  color: var(--surface-fg-quaternary);
+  opacity: 1;
 }
 
 

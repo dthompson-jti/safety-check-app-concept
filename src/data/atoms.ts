@@ -184,6 +184,12 @@ interface AppConfig {
   isSlowLoadEnabled: boolean;
   /** When true, shows the 'Check Type' segmented control on the CheckFormView. */
   isCheckTypeEnabled: boolean;
+  /** Dev Tool: When true, shows the 'I attest...' checkbox on manual checks. */
+  manualConfirmationEnabled: boolean;
+  /** Dev Tool: When true, shows 'Mark All' buttons on the check form. */
+  markMultipleEnabled: boolean;
+  /** Dev Tool: When true, skips the completion animation for faster testing. */
+  simpleSubmitEnabled: boolean;
 }
 
 // Persist app configuration to local storage
@@ -193,6 +199,9 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   scheduleViewMode: 'card',
   isSlowLoadEnabled: false,
   isCheckTypeEnabled: false,
+  manualConfirmationEnabled: true,
+  markMultipleEnabled: false,
+  simpleSubmitEnabled: false,
 });
 
 // =================================================================

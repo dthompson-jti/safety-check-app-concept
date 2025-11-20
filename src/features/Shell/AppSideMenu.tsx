@@ -4,7 +4,6 @@ import {
   sessionAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
-  isManualCheckModalOpenAtom,
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
@@ -23,7 +22,6 @@ const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; la
 export const AppSideMenu = () => {
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
   const setIsDevToolsOpen = useSetAtom(isDevToolsModalOpenAtom);
-  const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
   const setSession = useSetAtom(sessionAtom);
@@ -38,7 +36,7 @@ export const AppSideMenu = () => {
   return (
     <aside className={styles.sideMenu}>
       <header className={styles.header}>
-        <h1 className={styles.title}>eSupervision</h1>
+        <h1 className={styles.title}>eProbation</h1>
         <h2 className={styles.subtitle}>Safety Check</h2>
         <div className={styles.headerSeparator} />
       </header>
@@ -51,7 +49,6 @@ export const AppSideMenu = () => {
         />
         <div className={styles.separator} />
         
-        <MenuItem icon="add_comment" label="Manual check" onClick={() => setIsManualCheckModalOpen(true)} />
         <MenuItem icon="nfc" label="Write NFC tags" onClick={() => setWorkflowState({ view: 'provisioning' })} />
         <MenuItem icon="code" label="Developer tools" onClick={() => setIsDevToolsOpen(true)} />
       </main>

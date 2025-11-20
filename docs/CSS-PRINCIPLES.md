@@ -26,6 +26,7 @@ Handling full-screen layouts on mobile browsers requires more than just `100vh`.
 -   **The Problem:** `100vh` refers to the *Layout Viewport*, which often includes the area *behind* the on-screen keyboard. When the keyboard opens, `100vh` elements are pushed up or covered, hiding critical actions.
 -   **The Solution:** We use a `useVisualViewport` hook to listen for resize events and set a `--visual-viewport-height` variable.
 -   **The Contract:** Any full-screen overlay (like `CheckFormView`) that contains input fields **must** set its height to `var(--visual-viewport-height, 100dvh)`. This ensures the bottom of the component is always visible, even when the keyboard is open.
+-   **The Footer Padding Contract:** Scrollable containers must always include `padding-bottom: var(--footer-height)` (plus any safe area insets) to ensure the last item in the list is never hidden behind a fixed footer.
 
 #### 2. Diagnose, Don't Guess
 
@@ -87,3 +88,10 @@ For mobile-first contextual actions, use a "Bottom Sheet" modal pattern (via `va
 #### The Icon Badging Pattern for Visual Status
 
 Use a consistent pattern of prominent icons paired with semantic background colors to communicate status visually (e.g., warning triangle + yellow background for special resident classifications).
+
+#### The Sticky Stacking Context
+
+When using `position: sticky` for list headers (e.g., "Late", "Due Soon"):
+
+-   **Rule:** The sticky element must have an opaque background color (usually `var(--surface-bg-secondary)` or `var(--surface-bg-tertiary)`) to prevent content from "bleeding" through it as it scrolls underneath.
+-   **Rule:** It must utilize the `top: var(--header-height)` variable to stack perfectly beneath the global floating header.

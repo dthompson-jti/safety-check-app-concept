@@ -73,7 +73,7 @@ export const ProvisionNfcView = () => {
     >
       <header className={styles.header}>
         <h3>Write NFC tags</h3>
-        {/* BUTTON: Top-Right Close (Tool Metaphor) */}
+        {/* BUTTON: Tertiary variant for the close action */}
         <Button variant="tertiary" size="m" iconOnly onClick={handleClose} aria-label="Close">
           <span className="material-symbols-rounded">close</span>
         </Button>

@@ -20,11 +20,6 @@ import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
 import styles from './ScheduleLayouts.module.css';
 
-/**
- * The application's canonical animation transition. Using a 'tween' provides a
- * "rock-solid" feel by removing all spring-based physics and bounce, ensuring
- * a consistent, fluid, and professional motion language.
- */
 const listTransition: Transition = {
   type: 'tween',
   duration: 0.4,
@@ -71,7 +66,6 @@ const groupChecksByRoute = (checks: SafetyCheck[]) => {
     const actionable = checks.filter(c => !['complete', 'supplemental', 'missed', 'queued'].includes(c.status));
     const groups: { title: string, checks: SafetyCheck[] }[] = [];
     if (actionable.length > 0) {
-        // CHANGED: Updated title from 'Upcoming' to 'Walking Order' per PRD terminology.
         groups.push({ title: 'Walking Order', checks: actionable });
     }
     return groups;
