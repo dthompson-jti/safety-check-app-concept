@@ -26,12 +26,20 @@ type CheckEntryViewProps = {
 };
 
 type StatusValue = 'Awake' | 'Sleeping' | 'Refused';
-type CheckTypeValue = 'Locked down' | 'Random';
+type SecurityCheckTypeValue = 'Locked down' | 'Random';
 
-const checkTypeOptions = [
+const securityCheckTypeOptions = [
   { value: 'Locked down', label: 'Locked down' },
   { value: 'Random', label: 'Random' },
 ] as const;
+
+const incidentTypeOptions = [
+  { value: 'Noise Complaint', label: 'Noise Complaint' },
+  { value: 'Resident Request', label: 'Resident Request' },
+  { value: 'Medical Alert', label: 'Medical Alert' },
+  { value: 'Security Concern', label: 'Security Concern' },
+  { value: 'Other', label: 'Other' },
+];
 
 const markMultipleOptions = [
   { value: 'Refused', label: 'Refused' },
@@ -80,12 +88,15 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     draft?.notes || checkData.residents.reduce((acc, res) => ({ ...acc, [res.id]: '' }), {})
   );
 
-  const [checkType, setCheckType] = useState<CheckTypeValue | ''>(
-    (draft?.checkType as CheckTypeValue) || ''
+  const [securityCheckType, setSecurityCheckType] = useState<SecurityCheckTypeValue | ''>(
+    (draft?.checkType as SecurityCheckTypeValue) || ''
   );
+
+  const [incidentType, setIncidentType] = useState<string>('');
 
   const [isAttested, setIsAttested] = useState(draft?.isAttested || false);
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
+  const isSupplementalCheck = checkData.type === 'supplemental';
 
   // Draft Logic: Flag to track if we are unmounting due to success (don't save draft) or cancellation/back (save draft)
   const isSubmitted = useRef(false);
@@ -101,13 +112,13 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
           draft: {
             statuses: statuses as Record<string, string>,
             notes,
-            checkType,
+            checkType: securityCheckType,
             isAttested
           }
         });
       }
     };
-  }, [checkData, statuses, notes, checkType, isAttested, saveDraft]);
+  }, [checkData, statuses, notes, securityCheckType, isAttested, saveDraft]);
 
 
   useLayoutEffect(() => {
@@ -181,10 +192,11 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const canSave = useMemo(() => {
     const allResidentsHaveStatus = checkData.residents.every((res) => statuses[res.id]);
     if (!allResidentsHaveStatus) return false;
-    if (isCheckTypeEnabled && !checkType) return false;
+    if (isCheckTypeEnabled && !securityCheckType) return false;
     if (isManualCheck && manualConfirmationEnabled && !isAttested) return false;
+    if (isSupplementalCheck && !incidentType) return false;
     return true;
-  }, [statuses, checkData.residents, isCheckTypeEnabled, checkType, isManualCheck, isAttested, manualConfirmationEnabled]);
+  }, [statuses, checkData.residents, isCheckTypeEnabled, securityCheckType, isManualCheck, isAttested, manualConfirmationEnabled, isSupplementalCheck, incidentType]);
 
   const handleSave = () => {
     if (!canSave) return;
@@ -252,6 +264,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
           roomId: checkData.roomId,
           statuses: statuses as Record<string, string>,
           notes: consolidatedNotes,
+          incidentType,
         },
       });
       if (connectionStatus !== 'offline') {
@@ -288,14 +301,31 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
           {isManualCheck && <span className={styles.manualLabel}>Manual</span>}
         </h2>
 
+        {isSupplementalCheck && (
+          <div className={styles.incidentTypeSection}>
+            <label htmlFor="incident-type-select" className={styles.sectionLabel}>Reason for Check</label>
+            <select
+              id="incident-type-select"
+              className={styles.selectInput}
+              value={incidentType}
+              onChange={(e) => setIncidentType(e.target.value)}
+            >
+              <option value="" disabled>Select a reason...</option>
+              {incidentTypeOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {isCheckTypeEnabled && (
           <div className={styles.checkTypeSection}>
             <label htmlFor="check-type-control">Check type</label>
             <SegmentedControl
               id="check-type-control"
-              options={checkTypeOptions}
-              value={checkType}
-              onValueChange={setCheckType}
+              options={securityCheckTypeOptions}
+              value={securityCheckType}
+              onValueChange={setSecurityCheckType}
             />
           </div>
         )}

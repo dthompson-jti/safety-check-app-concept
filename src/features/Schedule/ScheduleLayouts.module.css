@@ -4,24 +4,16 @@
 .scrollContainer {
   height: 100%;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
-  box-sizing: border-box; 
-  /* Padding is removed here. A static spacer div is used to create
-     space for the header, adhering to the Sticky Positioning Contract. */
-}
-
-.scrollContainer[data-refreshing='true'] > * {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.scrollContainer[data-view-mode='card'] {
+  -webkit-overflow-scrolling: touch;
+  /* For smooth scrolling on iOS */
+  box-sizing: border-box;
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
 }
-.scrollContainer[data-view-mode='list'] {
-  padding-left: 0;
-  padding-right: 0;
+
+.scrollContainer[data-refreshing='true']>* {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .headerWrapper {

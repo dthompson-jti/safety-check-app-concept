@@ -72,22 +72,6 @@
 }
 
 .checkTypeSection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-  margin-top: var(--spacing-2);
-}
-
-.checkTypeSection label {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--surface-fg-secondary);
-}
-
-.markMultipleContainer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
   margin-bottom: var(--spacing-2);
 }
 

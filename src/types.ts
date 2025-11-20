@@ -15,8 +15,7 @@ export type SafetyCheckStatus =
   | 'complete'
   | 'completing'
   | 'missed'
-  | 'queued'
-  | 'supplemental';
+  | 'queued';
 
 // Defines a special classification attached to a specific resident within a check.
 export interface SpecialClassification {
@@ -30,7 +29,8 @@ export interface SpecialClassification {
  * This is the definitive structure used throughout the application.
  */
 export interface SafetyCheck {
-  id:string;
+  id: string;
+  type: 'scheduled' | 'supplemental' | 'incident';
   residents: Resident[];
   status: SafetyCheckStatus;
   dueDate: string;
@@ -39,6 +39,7 @@ export interface SafetyCheck {
   notes?: string;
   completionStatus?: string;
   specialClassifications?: SpecialClassification[];
+  incidentType?: string;
 }
 
 /**

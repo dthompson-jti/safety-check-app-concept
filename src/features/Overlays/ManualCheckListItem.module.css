@@ -4,7 +4,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-0p5);
-  min-width: 0; /* Allow text to truncate */
+  min-width: 0;
+  /* Allow text to truncate */
 }
 
 .title {
@@ -24,6 +25,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  gap: var(--spacing-1);
 }
 
 .residentName {

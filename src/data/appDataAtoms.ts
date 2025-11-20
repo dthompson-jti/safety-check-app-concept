@@ -37,7 +37,7 @@ interface AppData {
 type CheckCompletePayload = {
   checkId: string;
   notes: string;
-  statuses: Record<string, string>; 
+  statuses: Record<string, string>;
   completionTime: string;
 };
 
@@ -45,6 +45,7 @@ type SupplementalCheckPayload = {
   roomId: string;
   notes: string;
   statuses: Record<string, string>;
+  incidentType?: string;
 };
 
 export type AppAction =
@@ -96,19 +97,21 @@ const appDataAtom = atom<AppData, [AppAction], void>(
           break;
         }
         case 'CHECK_SUPPLEMENTAL_ADD': {
-          const { roomId, notes, statuses } = action.payload;
+          const { roomId, notes, statuses, incidentType } = action.payload;
           const residentsInRoom = mockResidents.filter(r => r.id === roomId || r.location === mockResidents.find(res => res.id === roomId)?.location);
 
           if (residentsInRoom.length > 0) {
             const newCheck: SafetyCheck = {
               id: `sup_${nanoid()}`,
+              type: 'supplemental',
               residents: residentsInRoom,
-              status: 'supplemental',
+              status: 'complete', // Supplemental checks are created in 'complete' state
               dueDate: new Date().toISOString(),
               walkingOrderIndex: 999,
               lastChecked: new Date().toISOString(),
               notes,
               completionStatus: Object.values(statuses)[0] || 'Complete',
+              incidentType,
             };
             draft.checks.push(newCheck);
           }
@@ -121,7 +124,7 @@ const appDataAtom = atom<AppData, [AppAction], void>(
 );
 
 export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
-    set(appDataAtom, action);
+  set(appDataAtom, action);
 });
 
 
@@ -145,50 +148,59 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
 
   return checks.map(check => {
-      // Stable statuses don't need recalculation
-      if (['complete', 'supplemental', 'completing', 'queued'].includes(check.status)) {
-        return check;
-      }
-      const dueTime = new Date(check.dueDate).getTime();
+    // Stable statuses don't need recalculation
+    if (['complete', 'completing', 'queued'].includes(check.status)) {
+      return check;
+    }
 
-      let newStatus: SafetyCheckStatus = 'pending';
-      if (dueTime < timeNow) {
-        newStatus = 'late';
-      } else if (dueTime < threeMinutesFromNow) {
-        newStatus = 'due-soon';
-      } else {
-        newStatus = 'pending';
-      }
+    // Supplemental checks don't have due dates in the same way, but they are usually complete.
+    if (check.type === 'supplemental') return check;
 
-      // Referential Equality Check:
-      // If the status hasn't changed, return the *original object reference*.
-      // This allows downstream memoized components to skip re-renders.
-      if (check.status === newStatus) {
-        return check;
-      }
+    const dueTime = new Date(check.dueDate).getTime();
 
-      return { ...check, status: newStatus };
-    });
+    let newStatus: SafetyCheckStatus = 'pending';
+    if (dueTime < timeNow) {
+      newStatus = 'late';
+    } else if (dueTime < threeMinutesFromNow) {
+      newStatus = 'due-soon';
+    } else {
+      newStatus = 'pending';
+    }
+
+    // Referential Equality Check:
+    // If the status hasn't changed, return the *original object reference*.
+    // This allows downstream memoized components to skip re-renders.
+    if (check.status === newStatus) {
+      return check;
+    }
+
+    return { ...check, status: newStatus };
+  });
 });
 
 const contextFilteredChecksAtom = atom((get) => {
-    const allChecks = get(safetyChecksAtom);
-    const selectedGroupId = get(selectedFacilityGroupAtom);
-    const selectedUnitId = get(selectedFacilityUnitAtom);
+  const allChecks = get(safetyChecksAtom);
+  const selectedGroupId = get(selectedFacilityGroupAtom);
+  const selectedUnitId = get(selectedFacilityUnitAtom);
 
-    if (!selectedGroupId || !selectedUnitId) {
-        return [];
-    }
+  if (!selectedGroupId || !selectedUnitId) {
+    return [];
+  }
 
-    const incompleteChecks = allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental');
+  // Filter out completed, missed, and supplemental checks for the main schedule view
+  const incompleteChecks = allChecks.filter(c =>
+    c.status !== 'complete' &&
+    c.status !== 'missed' &&
+    c.type !== 'supplemental'
+  );
 
-    return incompleteChecks.filter(check => {
-        if (!check.residents[0]) return false;
-        const location = check.residents[0].location;
-        const context = getFacilityContextForLocation(location);
-        
-        return context?.groupId === selectedGroupId && context?.unitId === selectedUnitId;
-    });
+  return incompleteChecks.filter(check => {
+    if (!check.residents[0]) return false;
+    const location = check.residents[0].location;
+    const context = getFacilityContextForLocation(location);
+
+    return context?.groupId === selectedGroupId && context?.unitId === selectedUnitId;
+  });
 });
 
 const searchFilteredChecksAtom = atom((get) => {
@@ -219,7 +231,7 @@ const scheduleFilteredChecksAtom = atom((get) => {
   if (filter === 'all') {
     return checks;
   }
-  
+
   const filterKey = filter === 'due-soon' ? 'due-soon' : filter;
   return checks.filter(check => check.status === filterKey);
 });
@@ -228,11 +240,10 @@ const statusOrder: Record<SafetyCheckStatus, number> = {
   late: 0,
   'due-soon': 1,
   pending: 2,
-  completing: 2, 
+  completing: 2,
   queued: 3,
   missed: 4,
   complete: 5,
-  supplemental: 6,
 };
 
 export const timeSortedChecksAtom = atom((get) => {
@@ -248,8 +259,8 @@ export const timeSortedChecksAtom = atom((get) => {
 
 export const routeSortedChecksAtom = atom((get) => {
   const checks = get(scheduleFilteredChecksAtom);
-  const actionable = checks.filter(c => !['complete', 'supplemental', 'queued'].includes(c.status));
-  const nonActionable = checks.filter(c => ['complete', 'supplemental', 'queued'].includes(c.status));
+  const actionable = checks.filter(c => !['complete', 'queued'].includes(c.status) && c.type !== 'supplemental');
+  const nonActionable = checks.filter(c => ['complete', 'queued'].includes(c.status) || c.type === 'supplemental');
 
   actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
   nonActionable.sort((a, b) => {
@@ -305,7 +316,11 @@ export const contextualManualSearchResultsAtom = atom((get) => {
 export const globalManualSearchResultsAtom = atom((get) => {
   const query = get(manualSearchQueryAtom);
   const allChecks = get(safetyChecksAtom);
-  const incompleteChecks = allChecks.filter(c => c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental');
+  const incompleteChecks = allChecks.filter(c =>
+    c.status !== 'complete' &&
+    c.status !== 'missed' &&
+    c.type !== 'supplemental'
+  );
   const results = filterChecksByQuery(incompleteChecks, query);
   return { results, count: results.length };
 });
@@ -324,7 +339,7 @@ export const manualSelectionResultsAtom = atom((get) => {
   if (get(isGlobalSearchActiveAtom)) {
     return get(globalManualSearchResultsAtom).results;
   }
-  
+
   return []; // Return empty if contextual search fails and global isn't active
 });
 
@@ -343,7 +358,7 @@ export const historyCountsAtom = atom((get) => {
   return {
     all: historicalChecks.length,
     lateOrMissed: historicalChecks.filter(c => c.status === 'late' || c.status === 'missed').length,
-    supplemental: historicalChecks.filter(c => c.status === 'supplemental').length,
+    supplemental: historicalChecks.filter(c => c.type === 'supplemental').length,
   };
 });
 
@@ -367,7 +382,7 @@ export const groupedHistoryAtom = atom((get) => {
   if (filter === 'lateOrMissed') {
     filteredChecks = historicalChecksBase.filter(c => c.status === 'late' || c.status === 'missed');
   } else if (filter === 'supplemental') {
-    filteredChecks = historicalChecksBase.filter(c => c.status === 'supplemental');
+    filteredChecks = historicalChecksBase.filter(c => c.type === 'supplemental');
   }
 
   filteredChecks.sort((a, b) => {
