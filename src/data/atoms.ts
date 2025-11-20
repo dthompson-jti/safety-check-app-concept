@@ -86,32 +86,32 @@ export const historyFilterAtom = atom<HistoryFilter>('all');
 export type WorkflowState =
   | { view: 'none' }
   | {
-      view: 'scanning';
-      isManualSelectionOpen: boolean;
-      targetCheckId?: string;
-    }
+    view: 'scanning';
+    isManualSelectionOpen: boolean;
+    targetCheckId?: string;
+  }
   | {
-      view: 'form';
-      type: 'scheduled';
-      /**
-       * The method used to initiate the check.
-       * 'scan' - from a QR or NFC scan.
-       * 'manual' - from tapping a card or using manual selection.
-       * This dictates whether attestation is required.
-       */
-      method: 'scan' | 'manual';
-      checkId: string;
-      roomName: string;
-      residents: Resident[];
-      specialClassifications?: SpecialClassification[];
-    }
+    view: 'form';
+    type: 'scheduled';
+    /**
+     * The method used to initiate the check.
+     * 'scan' - from a QR or NFC scan.
+     * 'manual' - from tapping a card or using manual selection.
+     * This dictates whether attestation is required.
+     */
+    method: 'scan' | 'manual';
+    checkId: string;
+    roomName: string;
+    residents: Resident[];
+    specialClassifications?: SpecialClassification[];
+  }
   | {
-      view: 'form';
-      type: 'supplemental';
-      roomId: string;
-      roomName: string;
-      residents: Resident[];
-    }
+    view: 'form';
+    type: 'supplemental';
+    roomId: string;
+    roomName: string;
+    residents: Resident[];
+  }
   | { view: 'provisioning' };
 
 
@@ -166,13 +166,13 @@ export const connectionStatusAtom = atom(
   (get) => get(_connectionStatusAtom),
   (get, set, newStatus: ConnectionStatus) => {
     const currentStatus = get(_connectionStatusAtom);
-    
+
     if (newStatus === 'offline' && currentStatus !== 'offline') {
       set(offlineTimestampAtom, Date.now());
     } else if (newStatus === 'online') {
       set(offlineTimestampAtom, null);
     }
-    
+
     set(_connectionStatusAtom, newStatus);
   }
 );
@@ -180,9 +180,8 @@ export const connectionStatusAtom = atom(
 interface AppConfig {
   scanMode: 'qr' | 'nfc';
   hapticsEnabled: boolean;
-  scheduleViewMode: 'card' | 'list';
   isSlowLoadEnabled: boolean;
-  /** When true, shows the 'Check Type' segmented control on the CheckFormView. */
+  /** When true, shows the 'Check Type' segmented control on the CheckEntryView. */
   isCheckTypeEnabled: boolean;
   /** Dev Tool: When true, shows the 'I attest...' checkbox on manual checks. */
   manualConfirmationEnabled: boolean;
@@ -196,7 +195,6 @@ interface AppConfig {
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   scanMode: 'qr',
   hapticsEnabled: true,
-  scheduleViewMode: 'card',
   isSlowLoadEnabled: false,
   isCheckTypeEnabled: false,
   manualConfirmationEnabled: true,

@@ -11,16 +11,16 @@ import {
 } from './data/atoms';
 import { MainLayout } from './layouts/MainLayout';
 import { AppSideMenu } from './features/Shell/AppSideMenu';
-import { FloatingHeader } from './features/Shell/FloatingHeader';
-import { FloatingFooter } from './features/Shell/FloatingFooter';
+import { AppHeader } from './features/Shell/AppHeader';
+import { AppFooter } from './features/Shell/AppFooter';
 import { OfflineBanner } from './features/Shell/OfflineBanner';
 import { ScanView } from './features/Workflow/ScanView';
-import { CheckFormView } from './features/Workflow/CheckFormView';
-import { ProvisionNfcView } from './features/Workflow/ProvisionNfcView';
-import { ManualSelectionView } from './features/Overlays/ManualSelectionView';
+import { CheckEntryView } from './features/Workflow/CheckEntryView';
+import { NfcWriteView } from './features/Workflow/NfcWriteView';
+import { ManualCheckSelectorSheet } from './features/Overlays/ManualCheckSelectorSheet';
 import { FullScreenModal } from './components/FullScreenModal';
-import { SettingsOverlay } from './features/Overlays/SettingsOverlay';
-import { DeveloperOverlay } from './features/Overlays/DeveloperOverlay';
+import { SettingsModal } from './features/Overlays/SettingsModal';
+import { DeveloperModal } from './features/Overlays/DeveloperModal';
 import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
 import { GestureProvider } from './context/GestureProvider';
 import { useGestureContext } from './context/GestureContext';
@@ -260,26 +260,26 @@ const AppShellContent = () => {
 
         <div ref={appChromeRef} className={styles.chromeContainer}>
           {connectionStatus !== 'online' && <OfflineBanner />}
-          {isChromeVisible && <FloatingHeader />}
+          {isChromeVisible && <AppHeader />}
         </div>
 
-        {isChromeVisible && <FloatingFooter />}
+        {isChromeVisible && <AppFooter />}
       </motion.div>
 
       <AnimatePresence>
         {workflowState.view === 'scanning' && <ScanView />}
-        {workflowState.view === 'form' && <CheckFormView checkData={workflowState} />}
-        {workflowState.view === 'provisioning' && <ProvisionNfcView />}
+        {workflowState.view === 'form' && <CheckEntryView checkData={workflowState} />}
+        {workflowState.view === 'provisioning' && <NfcWriteView />}
       </AnimatePresence>
 
       <FacilitySelectionModal />
-      <ManualSelectionView />
+      <ManualCheckSelectorSheet />
 
       <FullScreenModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} title="Settings">
-        <SettingsOverlay />
+        <SettingsModal />
       </FullScreenModal>
       <FullScreenModal isOpen={isDevToolsOpen} onClose={() => setIsDevToolsOpen(false)} title="Developer tools">
-        <DeveloperOverlay />
+        <DeveloperModal />
       </FullScreenModal>
     </div>
   );

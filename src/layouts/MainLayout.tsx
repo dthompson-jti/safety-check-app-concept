@@ -1,6 +1,6 @@
 // src/layouts/MainLayout.tsx
 import { motion, useTransform } from 'framer-motion';
-import { ScheduleListView } from '../features/Schedule/ScheduleListView';
+import { ScheduleView } from '../features/Schedule/ScheduleView';
 import { useGestureContext } from '../context/GestureContext';
 import styles from './MainLayout.module.css';
 
@@ -21,12 +21,12 @@ export const MainLayout = () => {
       >
         <div className={styles.panel}>
           <main className={styles.mainContent}>
-            <ScheduleListView key="time" viewType="time" />
+            <ScheduleView key="time" viewType="time" />
           </main>
         </div>
         <div className={styles.panel}>
           <main className={styles.mainContent}>
-            <ScheduleListView key="route" viewType="route" />
+            <ScheduleView key="route" viewType="route" />
           </main>
         </div>
       </motion.div>

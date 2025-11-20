@@ -1,4 +1,4 @@
-/* src/features/Shell/ConnectionStatusIndicator.module.css */
+/* src/features/Shell/ConnectivityBadge.module.css */
 
 .badge {
   display: inline-flex;
@@ -31,6 +31,7 @@
   from {
     transform: rotate(0deg);
   }
+
   /* Rotate counter-clockwise to match the icon's direction. */
   to {
     transform: rotate(-360deg);

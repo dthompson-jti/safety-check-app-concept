@@ -1,6 +1,6 @@
 // src/features/Overlays/NfcRoomListItem.tsx
 import { ActionListItem } from '../../components/ActionListItem';
-import styles from '../Workflow/ProvisionNfcView.module.css';
+import styles from '../Workflow/NfcWriteView.module.css';
 
 interface NfcRoomListItemProps {
   roomId: string;

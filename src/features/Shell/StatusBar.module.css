@@ -1,6 +1,6 @@
-/* src/features/Shell/StatusOverviewBar.module.css */
+/* src/features/Shell/StatusBar.module.css */
 
-.overviewBar {
+.statusBar {
   display: flex;
   align-items: center;
   width: 100%;
@@ -66,8 +66,15 @@
 }
 
 @keyframes pulse-outward {
-  0% { transform: scale(0.7); opacity: 0.6; }
-  100% { transform: scale(1.5); opacity: 0; }
+  0% {
+    transform: scale(0.7);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 
 .count {
@@ -86,16 +93,26 @@
 .statusPill[data-status='late'] .icon {
   color: var(--surface-fg-warning-primary) !important;
 }
+
 .statusPill[data-status='due-soon'] .count,
 .statusPill[data-status='due-soon'] .icon {
   color: var(--surface-fg-info-primary) !important;
 }
+
 .statusPill[data-status='queued'] .count,
 .statusPill[data-status='queued'] .icon {
   color: var(--surface-fg-tertiary) !important;
 }
 
 /* Flash color theming */
-.statusPill[data-status='late'].flash { --flash-color-bg: var(--surface-bg-warning-secondary); }
-.statusPill[data-status='due-soon'].flash { --flash-color-bg: var(--surface-bg-info-secondary); }
-.statusPill[data-status='queued'].flash { --flash-color-bg: var(--surface-bg-tertiary_hover); }
+.statusPill[data-status='late'].flash {
+  --flash-color-bg: var(--surface-bg-warning-secondary);
+}
+
+.statusPill[data-status='due-soon'].flash {
+  --flash-color-bg: var(--surface-bg-info-secondary);
+}
+
+.statusPill[data-status='queued'].flash {
+  --flash-color-bg: var(--surface-bg-tertiary_hover);
+}

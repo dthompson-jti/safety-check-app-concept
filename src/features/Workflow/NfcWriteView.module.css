@@ -1,9 +1,10 @@
-/* src/features/Workflow/ProvisionNfcView.module.css */
+/* src/features/Workflow/NfcWriteView.module.css */
 
 .viewContainer {
   position: fixed;
   inset: 0;
-  z-index: 101; /* Above other content */
+  z-index: 101;
+  /* Above other content */
   background-color: var(--surface-bg-secondary);
   display: flex;
   flex-direction: column;
@@ -49,7 +50,8 @@
   align-items: center;
   gap: var(--spacing-3);
   width: 100%;
-  min-height: 24px; /* Corresponds to icon size */
+  min-height: 24px;
+  /* Corresponds to icon size */
 }
 
 .iconContainer {

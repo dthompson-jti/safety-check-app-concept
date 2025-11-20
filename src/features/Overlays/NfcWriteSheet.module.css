@@ -1,10 +1,11 @@
-/* src/features/Overlays/NfcWritingSheet.module.css */
+/* src/features/Overlays/NfcWriteSheet.module.css */
 
 .overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(10, 12, 18, 0.75);
-  z-index: 102; /* Higher z-index than the main view's content */
+  z-index: 102;
+  /* Higher z-index than the main view's content */
 }
 
 .sheetContent {
@@ -93,8 +94,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .buttonRow {
@@ -104,27 +110,29 @@
   width: 100%;
 }
 
-.buttonRow > button {
+.buttonRow>button {
   flex: 1;
 }
 
 /* Dev Tools */
 .devFooter {
-    border-top: 1px solid var(--surface-border-secondary);
-    padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
-    margin: var(--spacing-4) calc(-1 * var(--spacing-4)) 0;
-    background-color: var(--surface-bg-secondary);
+  border-top: 1px solid var(--surface-border-secondary);
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
+  margin: var(--spacing-4) calc(-1 * var(--spacing-4)) 0;
+  background-color: var(--surface-bg-secondary);
 }
+
 .devFooter p {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--surface-fg-secondary);
-    letter-spacing: 0.05em;
-    text-align: center;
-    margin: 0 0 var(--spacing-2);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin: 0 0 var(--spacing-2);
 }
+
 .devButtons {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-2);
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-2);
 }

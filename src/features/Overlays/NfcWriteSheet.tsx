@@ -1,4 +1,4 @@
-// src/features/Overlays/NfcWritingSheet.tsx
+// src/features/Overlays/NfcWriteSheet.tsx
 import { useEffect, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { Drawer } from 'vaul';
@@ -10,7 +10,7 @@ import {
 } from '../../data/nfcAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
-import styles from './NfcWritingSheet.module.css';
+import styles from './NfcWriteSheet.module.css';
 
 const iconVariants: Variants = {
   hidden: { scale: 0.5, opacity: 0 },
@@ -41,7 +41,7 @@ const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
   </motion.div>
 );
 
-export const NfcWritingSheet = () => {
+export const NfcWriteSheet = () => {
   const [workflowState, setWorkflowState] = useAtom(nfcWorkflowStateAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
   const { trigger: triggerHaptic } = useHaptics();
@@ -72,7 +72,7 @@ export const NfcWritingSheet = () => {
       }, 1500); // This delay simulates the actual time it takes to write a tag.
       return () => clearTimeout(writeTimer);
     }
-    
+
     if (workflowState.status === 'success') {
       triggerHaptic('success');
       setProvisionedIds((currentIds: Set<string>) => new Set([...currentIds, workflowState.roomId]));
@@ -160,14 +160,14 @@ export const NfcWritingSheet = () => {
           {/* The dev tools are only shown on the 'ready' screen, allowing the developer
               to choose the outcome before the simulation starts. */}
           {workflowState.status === 'ready' && (
-              <div className={styles.devFooter}>
-                  <p>DEV TOOLS</p>
-                  <div className={styles.devButtons}>
-                      <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('success')}>Simulate Success</Button>
-                      <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('write_fail')}>Simulate Write Fail</Button>
-                      <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('tag_locked')}>Simulate Tag Locked</Button>
-                  </div>
+            <div className={styles.devFooter}>
+              <p>DEV TOOLS</p>
+              <div className={styles.devButtons}>
+                <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('success')}>Simulate Success</Button>
+                <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('write_fail')}>Simulate Write Fail</Button>
+                <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('tag_locked')}>Simulate Tag Locked</Button>
               </div>
+            </div>
           )}
         </Drawer.Content>
       </Drawer.Portal>

@@ -1,4 +1,4 @@
-// src/features/Overlays/ManualSelectionView.tsx
+// src/features/Overlays/ManualCheckSelectorSheet.tsx
 import { useEffect } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { Virtuoso } from 'react-virtuoso';
@@ -19,9 +19,9 @@ import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { Button } from '../../components/Button';
 import { ManualCheckListItem } from './ManualCheckListItem';
 import { SafetyCheck } from '../../types';
-import styles from './ManualSelectionView.module.css';
+import styles from './ManualCheckSelectorSheet.module.css';
 
-export const ManualSelectionView = () => {
+export const ManualCheckSelectorSheet = () => {
   const [isOpen, setIsOpen] = useAtom(isManualCheckModalOpenAtom);
   const [searchQuery, setSearchQuery] = useAtom(manualSearchQueryAtom);
   const [isGlobalSearchActive, setIsGlobalSearchActive] = useAtom(isGlobalSearchActiveAtom);

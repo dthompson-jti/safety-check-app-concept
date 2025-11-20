@@ -1,7 +1,12 @@
-/* src/components/CheckSkeleton.module.css */
+/* src/components/ScheduleSkeleton.module.css */
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .shimmer {
@@ -10,35 +15,22 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 25%,
-    var(--surface-bg-secondary_hover) 50%,
-    transparent 75%
-  );
+  background: linear-gradient(90deg,
+      transparent 25%,
+      var(--surface-bg-secondary_hover) 50%,
+      transparent 75%);
   animation: shimmer 1.5s infinite linear;
 }
 
-.cardWrapper,
-.listWrapper {
+.cardWrapper {
   position: relative;
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
   overflow: hidden;
   padding: 8px 16px 8px 20px;
-}
-
-.cardWrapper {
   border-radius: var(--radius-md);
   box-shadow: var(--surface-shadow-xs);
   margin-bottom: var(--spacing-3);
-}
-
-.listWrapper {
-  border-bottom: 1px solid var(--surface-border-secondary);
-  border-top: none;
-  border-left: none;
-  border-right: none;
 }
 
 .indicator {

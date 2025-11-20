@@ -1,21 +1,21 @@
-// src/features/Shell/FloatingFooter.tsx
+// src/features/Shell/AppFooter.tsx
 import { useLayoutEffect, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { 
-  workflowStateAtom, 
-  appConfigAtom, 
-  appViewAtom 
+import {
+  workflowStateAtom,
+  appConfigAtom,
+  appViewAtom
 } from '../../data/atoms';
-import { 
-  timeSortedChecksAtom, 
-  routeSortedChecksAtom 
+import {
+  timeSortedChecksAtom,
+  routeSortedChecksAtom
 } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useSound } from '../../data/useSound';
 import { Button } from '../../components/Button';
-import styles from './FloatingFooter.module.css';
+import styles from './AppFooter.module.css';
 
 /**
  * The main, persistent footer for the application.
@@ -24,10 +24,10 @@ import styles from './FloatingFooter.module.css';
  * 1. Component Variable Contract: It measures its own height and sets `--footer-height`.
  *    This ensures the scrolling content area always has the exact correct padding-bottom.
  */
-export const FloatingFooter = () => {
+export const AppFooter = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const appConfig = useAtomValue(appConfigAtom);
-  
+
   // State needed for Smart NFC Simulation
   const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
@@ -46,7 +46,7 @@ export const FloatingFooter = () => {
       }
     };
     updateHeight();
-    
+
     const observer = new ResizeObserver(updateHeight);
     if (footerRef.current) {
       observer.observe(footerRef.current);
@@ -71,9 +71,9 @@ export const FloatingFooter = () => {
   const handleNfcClick = () => {
     // 1. Determine context based on current dashboard view
     const candidateList = appView === 'dashboardRoute' ? routeSortedChecks : timeSortedChecks;
-    
+
     // 2. Find the first actionable check (not complete/missed)
-    const targetCheck = candidateList.find(c => 
+    const targetCheck = candidateList.find(c =>
       c.status !== 'complete' && c.status !== 'missed' && c.status !== 'supplemental'
     );
 
@@ -104,7 +104,7 @@ export const FloatingFooter = () => {
       {appConfig.scanMode === 'nfc' ? (
         // NFC Mode: Passive feedback indicator
         // PROTOTYPE SHORTCUT: Clicking this triggers the "Instant Scan" logic
-        <motion.div 
+        <motion.div
           className={styles.nfcContainer}
           animate={{ opacity: [0.6, 1, 0.6] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}

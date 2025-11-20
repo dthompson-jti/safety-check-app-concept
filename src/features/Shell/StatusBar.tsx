@@ -1,10 +1,10 @@
-// src/features/Shell/StatusOverviewBar.tsx
+// src/features/Shell/StatusBar.tsx
 import React from 'react';
 import { useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { statusCountsAtom } from '../../data/appDataAtoms';
 import type { ScheduleFilter } from '../../types';
-import styles from './StatusOverviewBar.module.css';
+import styles from './StatusBar.module.css';
 
 // This type correctly excludes 'all' from the possible statuses for a pill.
 type StatusType = Exclude<ScheduleFilter, 'all'>;
@@ -22,7 +22,7 @@ const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status }) => {
     <div
       className={styles.statusPill}
       data-status={status}
-      data-active="false" 
+      data-active="false"
     >
       <span className={`material-symbols-rounded ${styles.icon}`}>{icon}</span>
       <span className={styles.count}>{count}</span>
@@ -30,12 +30,12 @@ const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status }) => {
   );
 };
 
-export const StatusOverviewBar = () => {
+export const StatusBar = () => {
   const counts = useAtomValue(statusCountsAtom);
 
   return (
     <motion.div
-      className={styles.overviewBar}
+      className={styles.statusBar}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}

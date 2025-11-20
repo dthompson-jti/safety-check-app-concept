@@ -1,16 +1,16 @@
-// src/features/Shell/PillToggle.tsx
+// src/features/Shell/ViewModeSwitcher.tsx
 import { useAtom } from 'jotai';
 import { motion, useTransform } from 'framer-motion';
 import { AppView, appViewAtom } from '../../data/atoms';
 import { useGestureContext } from '../../context/GestureContext';
-import styles from './PillToggle.module.css';
+import styles from './ViewModeSwitcher.module.css';
 
 const options: { id: AppView; label: string }[] = [
   { id: 'dashboardTime', label: 'Time' },
   { id: 'dashboardRoute', label: 'Route' },
 ];
 
-export const PillToggle = () => {
+export const ViewModeSwitcher = () => {
   const [activeView, setActiveView] = useAtom(appViewAtom);
   const { filmStripProgress } = useGestureContext();
 
@@ -21,7 +21,7 @@ export const PillToggle = () => {
   const x = useTransform(filmStripProgress, [0, 1], ['0%', '100%']);
 
   return (
-    <div className={styles.pillToggleContainer}>
+    <div className={styles.container}>
       {/* 
         The active pill is now a sibling to the buttons, absolutely positioned.
         We need to ensure the container has relative positioning (it does).
@@ -32,7 +32,7 @@ export const PillToggle = () => {
         and position it absolutely within the container.
       */}
       <motion.div
-        className={styles.activePill}
+        className={styles.activeIndicator}
         style={{
           x,
           // We need to set the width explicitly or via CSS to match one button.
@@ -52,10 +52,10 @@ export const PillToggle = () => {
           <button
             key={option.id}
             onClick={() => setActiveView(option.id)}
-            className={`${styles.pillButton} ${isActive ? styles.active : ''}`}
+            className={`${styles.optionButton} ${isActive ? styles.active : ''}`}
             style={{ flex: 1 }} // Ensure equal width
           >
-            <span className={styles.pillLabel}>
+            <span className={styles.label}>
               {option.label}
             </span>
           </button>

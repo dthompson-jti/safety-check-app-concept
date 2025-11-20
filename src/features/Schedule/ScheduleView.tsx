@@ -1,4 +1,4 @@
-// src/features/Schedule/ScheduleListView.tsx
+// src/features/Schedule/ScheduleView.tsx
 import { useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { AnimatePresence, motion, Transition } from 'framer-motion';
@@ -13,8 +13,7 @@ import {
 } from '../../data/atoms';
 import { SafetyCheck, ScheduleFilter } from '../../types';
 import { CheckCard } from './CheckCard';
-import { CheckListItem } from './CheckListItem';
-import { CheckSkeleton } from '../../components/CheckSkeleton';
+import { ScheduleSkeleton } from '../../components/ScheduleSkeleton';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
@@ -26,7 +25,7 @@ const listTransition: Transition = {
   ease: [0.16, 1, 0.3, 1],
 };
 
-interface ScheduleListViewProps {
+interface ScheduleViewProps {
   viewType: 'time' | 'route';
 }
 
@@ -63,17 +62,17 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
 };
 
 const groupChecksByRoute = (checks: SafetyCheck[]) => {
-    const actionable = checks.filter(c => !['complete', 'supplemental', 'missed', 'queued'].includes(c.status));
-    const groups: { title: string, checks: SafetyCheck[] }[] = [];
-    if (actionable.length > 0) {
-        groups.push({ title: 'Walking Order', checks: actionable });
-    }
-    return groups;
+  const actionable = checks.filter(c => !['complete', 'supplemental', 'missed', 'queued'].includes(c.status));
+  const groups: { title: string, checks: SafetyCheck[] }[] = [];
+  if (actionable.length > 0) {
+    groups.push({ title: 'Walking Order', checks: actionable });
+  }
+  return groups;
 };
 
-export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
+export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
-  const { scheduleViewMode, isSlowLoadEnabled } = useAtomValue(appConfigAtom);
+  const { isSlowLoadEnabled } = useAtomValue(appConfigAtom);
   const completingChecks = useAtomValue(completingChecksAtom);
   const [isLoading, setIsLoading] = useAtom(isScheduleLoadingAtom);
   const isRefreshing = useAtomValue(isScheduleRefreshingAtom);
@@ -87,7 +86,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
       return () => clearTimeout(timer);
     }
   }, [isLoading, setIsLoading, isSlowLoadEnabled]);
-  
+
   const handleClearFilter = () => {
     setIsRefreshing(true);
     setFilter('all');
@@ -102,7 +101,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
       return (
         <>
           {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
-            <CheckSkeleton key={index} variant={scheduleViewMode} />
+            <ScheduleSkeleton key={index} />
           ))}
         </>
       );
@@ -112,7 +111,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
       if (searchQuery) return <EmptyStateMessage title="No Results Found" message={`Your search for "${searchQuery}" did not return any results.`} />;
       if (isFilterActive) return <FilteredEmptyState filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />;
     }
-    
+
     const groups = viewType === 'time' ? groupChecksByTime(checks) : groupChecksByRoute(checks);
 
     return (
@@ -123,7 +122,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
               key={group.title}
               className={styles.headerWrapper}
               layout
-              transition={listTransition} 
+              transition={listTransition}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -132,9 +131,7 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
             </motion.div>,
             ...group.checks.map(check => {
               if (completingChecks.has(check.id)) return null;
-              return scheduleViewMode === 'card' 
-                ? <CheckCard key={check.id} check={check} transition={listTransition} />
-                : <CheckListItem key={check.id} check={check} transition={listTransition} />;
+              return <CheckCard key={check.id} check={check} transition={listTransition} />;
             })
           ])}
         </AnimatePresence>
@@ -142,11 +139,10 @@ export const ScheduleListView = ({ viewType }: ScheduleListViewProps) => {
       </>
     );
   };
-  
+
   return (
-    <div 
-      className={styles.scrollContainer} 
-      data-view-mode={scheduleViewMode}
+    <div
+      className={styles.scrollContainer}
       data-refreshing={isRefreshing}
     >
       <div style={{ height: 'var(--header-height)' }} />

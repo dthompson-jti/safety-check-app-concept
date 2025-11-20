@@ -1,4 +1,4 @@
-// src/features/Workflow/ProvisionNfcView.tsx
+// src/features/Workflow/NfcWriteView.tsx
 import { useEffect } from 'react';
 import { useSetAtom, useAtomValue, useAtom } from 'jotai';
 import { motion } from 'framer-motion';
@@ -20,12 +20,12 @@ import {
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
-import { NfcWritingSheet } from '../Overlays/NfcWritingSheet';
+import { NfcWriteSheet } from '../Overlays/NfcWriteSheet';
 import { NfcRoomListItem } from '../Overlays/NfcRoomListItem';
 import { ContextSwitcherCard } from '../Shell/ContextSwitcherCard';
-import styles from './ProvisionNfcView.module.css';
+import styles from './NfcWriteView.module.css';
 
-export const ProvisionNfcView = () => {
+export const NfcWriteView = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const setNfcWorkflowState = useSetAtom(nfcWorkflowStateAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
@@ -102,11 +102,11 @@ export const ProvisionNfcView = () => {
             )}
           />
         ) : (
-           <EmptyStateMessage title="No Rooms Found" message="Select a facility group and unit to see a list of rooms to provision." />
+          <EmptyStateMessage title="No Rooms Found" message="Select a facility group and unit to see a list of rooms to provision." />
         )}
       </main>
-      
-      <NfcWritingSheet />
+
+      <NfcWriteSheet />
     </motion.div>
   );
 };

@@ -1,14 +1,14 @@
-// src/features/Overlays/DeveloperOverlay.tsx
+// src/features/Overlays/DeveloperModal.tsx
 import { useAtom } from 'jotai';
-import { 
-  connectionStatusAtom, 
-  ConnectionStatus, 
+import {
+  connectionStatusAtom,
+  ConnectionStatus,
   appConfigAtom,
-  hardwareSimulationAtom 
+  hardwareSimulationAtom
 } from '../../data/atoms';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Switch } from '../../components/Switch';
-import styles from './DeveloperOverlay.module.css';
+import styles from './DeveloperModal.module.css';
 
 const connectionOptions: readonly { value: ConnectionStatus; label: string; icon: string }[] = [
   { value: 'online', label: 'Online', icon: 'cloud' },
@@ -21,7 +21,7 @@ const scanModeOptions = [
   { value: 'nfc', label: 'NFC', icon: 'nfc' },
 ] as const;
 
-export const DeveloperOverlay = () => {
+export const DeveloperModal = () => {
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
@@ -105,7 +105,7 @@ export const DeveloperOverlay = () => {
           onValueChange={(mode) => setAppConfig((c) => ({ ...c, scanMode: mode }))}
         />
       </div>
-      
+
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Feature Toggles</h3>
         <p className={styles.sectionHelper}>Enable or disable optional UI features.</p>
@@ -120,7 +120,7 @@ export const DeveloperOverlay = () => {
               onCheckedChange={handleCheckTypeChange}
             />
           </div>
-           <div className={styles.settingsItem}>
+          <div className={styles.settingsItem}>
             <label htmlFor="manual-confirm-switch" className={styles.itemLabel}>
               Manual confirmation
             </label>
@@ -130,7 +130,7 @@ export const DeveloperOverlay = () => {
               onCheckedChange={handleManualConfirmChange}
             />
           </div>
-           <div className={styles.settingsItem}>
+          <div className={styles.settingsItem}>
             <label htmlFor="mark-multiple-switch" className={styles.itemLabel}>
               Mark multiple
             </label>
@@ -140,7 +140,7 @@ export const DeveloperOverlay = () => {
               onCheckedChange={handleMarkMultipleChange}
             />
           </div>
-           <div className={styles.settingsItem}>
+          <div className={styles.settingsItem}>
             <label htmlFor="simple-submit-switch" className={styles.itemLabel}>
               Simple submit
             </label>

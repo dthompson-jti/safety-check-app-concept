@@ -1,4 +1,4 @@
-/* src/features/Overlays/SettingsOverlay.module.css */
+/* src/features/Overlays/SettingsModal.module.css */
 
 .settingsContainer {
   font-family: var(--font-family-sans);
@@ -31,7 +31,8 @@
   background-color: var(--surface-bg-primary);
   border-radius: var(--spacing-3);
   border: 1px solid var(--surface-border-secondary);
-  overflow: hidden; /* Ensures border radius clips children */
+  overflow: hidden;
+  /* Ensures border radius clips children */
 }
 
 /* Individual row in the settings list */
@@ -61,6 +62,7 @@
   .settingsItem:hover {
     background-color: var(--surface-bg-primary_hover);
   }
+
   .settingsItem.destructive:hover {
     background-color: var(--surface-bg-alert-subtle);
   }
@@ -74,7 +76,8 @@
 
 .itemLabel {
   font-weight: 500;
-  cursor: pointer; /* For associating with controls */
+  cursor: pointer;
+  /* For associating with controls */
 }
 
 .itemValue {

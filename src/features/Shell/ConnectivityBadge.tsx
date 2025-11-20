@@ -1,10 +1,10 @@
-// src/features/Header/ConnectionStatusIndicator.tsx
+// src/features/Shell/ConnectivityBadge.tsx
 import { useAtomValue } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import { connectionStatusAtom } from '../../data/atoms';
-import styles from './ConnectionStatusIndicator.module.css';
+import styles from './ConnectivityBadge.module.css';
 
-export const ConnectionStatusIndicator = () => {
+export const ConnectivityBadge = () => {
   const status = useAtomValue(connectionStatusAtom);
 
   if (status === 'online') {

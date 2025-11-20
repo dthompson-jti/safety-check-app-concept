@@ -1,4 +1,4 @@
-/* src/features/Overlays/DeveloperOverlay.module.css */
+/* src/features/Overlays/DeveloperModal.module.css */
 
 .container {
   padding: var(--spacing-4);
@@ -47,6 +47,7 @@
   padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--surface-border-secondary);
 }
+
 .settingsItem:last-child {
   border-bottom: none;
 }

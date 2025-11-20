@@ -1,4 +1,4 @@
-// src/features/Workflow/CheckFormView.tsx
+// src/features/Workflow/CheckEntryView.tsx
 import { useState, useMemo, useRef, useLayoutEffect, useEffect } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
@@ -19,9 +19,9 @@ import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAt
 import { Button } from '../../components/Button';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
-import styles from './CheckFormView.module.css';
+import styles from './CheckEntryView.module.css';
 
-type CheckFormViewProps = {
+type CheckEntryViewProps = {
   checkData: Extract<WorkflowState, { view: 'form' }>;
 };
 
@@ -39,7 +39,7 @@ const markMultipleOptions = [
   { value: 'Awake', label: 'Awake' },
 ];
 
-export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
+export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);

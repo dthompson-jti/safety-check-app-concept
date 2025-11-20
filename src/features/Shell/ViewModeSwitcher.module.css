@@ -1,6 +1,6 @@
-/* src/components/PillToggle.module.css */
+/* src/features/Shell/ViewModeSwitcher.module.css */
 
-.pillToggleContainer {
+.container {
   display: flex;
   align-items: center;
   position: relative;
@@ -11,7 +11,7 @@
   flex-shrink: 0;
 }
 
-.pillButton {
+.optionButton {
   background: none;
   border: none;
   cursor: pointer;
@@ -26,8 +26,8 @@
   transition: color 0.25s ease;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
-  margin:2px;
-  
+  margin: 2px;
+
   height: 44px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -38,12 +38,12 @@
   min-width: 5.5rem;
 }
 
-.pillButton.active {
+.optionButton.active {
   color: var(--control-fg-secondary);
   font-weight: 600;
 }
 
-.activePill {
+.activeIndicator {
   position: absolute;
   inset: 0;
   background-color: var(--surface-bg-primary);
@@ -52,7 +52,7 @@
   z-index: 1;
 }
 
-.pillLabel {
+.label {
   position: relative;
   z-index: 2;
   grid-column: 2;

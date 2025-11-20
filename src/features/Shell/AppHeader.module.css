@@ -1,4 +1,4 @@
-/* src/features/Shell/FloatingHeader.module.css */
+/* src/features/Shell/AppHeader.module.css */
 
 .header {
   width: 100%;
@@ -29,7 +29,7 @@
   pointer-events: none;
 }
 
-.centerContent > * {
+.centerContent>* {
   pointer-events: auto;
 }
 
@@ -49,5 +49,6 @@
   height: 52px;
   display: flex;
   align-items: center;
-  overflow: hidden; /* This is critical for the animations */
+  overflow: hidden;
+  /* This is critical for the animations */
 }

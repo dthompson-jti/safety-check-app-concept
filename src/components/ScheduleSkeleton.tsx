@@ -1,14 +1,9 @@
-// src/components/CheckSkeleton.tsx
-import styles from './CheckSkeleton.module.css';
+// src/components/ScheduleSkeleton.tsx
+import styles from './ScheduleSkeleton.module.css';
 
-interface CheckSkeletonProps {
-  variant: 'card' | 'list';
-}
-
-export const CheckSkeleton = ({ variant }: CheckSkeletonProps) => {
-  const wrapperClass = variant === 'card' ? styles.cardWrapper : styles.listWrapper;
+export const ScheduleSkeleton = () => {
   return (
-    <div className={wrapperClass}>
+    <div className={styles.cardWrapper}>
       <div className={styles.shimmer} />
       <div className={styles.indicator} />
       <div className={styles.mainContent}>

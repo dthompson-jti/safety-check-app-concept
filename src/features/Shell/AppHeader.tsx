@@ -1,4 +1,4 @@
-// src/features/Shell/FloatingHeader.tsx
+// src/features/Shell/AppHeader.tsx
 import { useLayoutEffect, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -6,14 +6,14 @@ import {
   appViewAtom,
   isManualCheckModalOpenAtom,
 } from '../../data/atoms';
-import { PillToggle } from './PillToggle';
+import { ViewModeSwitcher } from './ViewModeSwitcher';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
-import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
-import { StatusOverviewBar } from './StatusOverviewBar';
-import styles from './FloatingHeader.module.css';
+import { ConnectivityBadge } from './ConnectivityBadge';
+import { StatusBar } from './StatusBar';
+import styles from './AppHeader.module.css';
 
-export const FloatingHeader = () => {
+export const AppHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const setIsManualCheckOpen = useSetAtom(isManualCheckModalOpenAtom);
   const headerRef = useRef<HTMLElement>(null);
@@ -66,7 +66,7 @@ export const FloatingHeader = () => {
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.15 }}
             >
-              {isDashboard ? <PillToggle /> : <ConnectionStatusIndicator />}
+              {isDashboard ? <ViewModeSwitcher /> : <ConnectivityBadge />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -79,9 +79,9 @@ export const FloatingHeader = () => {
           </Tooltip>
         </div>
       </div>
-      
+
       <div className={styles.statusBar}>
-        <StatusOverviewBar key="status-bar" />
+        <StatusBar key="status-bar" />
       </div>
     </motion.header>
   );
