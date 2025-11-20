@@ -1,36 +1,23 @@
 // src/layouts/MainLayout.tsx
-import { useAtomValue } from 'jotai';
-import { motion } from 'framer-motion';
-import { AppView, appViewAtom } from '../data/atoms';
+import { motion, useTransform } from 'framer-motion';
 import { ScheduleListView } from '../features/Schedule/ScheduleListView';
+import { useGestureContext } from '../context/GestureContext';
 import styles from './MainLayout.module.css';
 
-const viewMap: Record<Extract<AppView, 'dashboardTime' | 'dashboardRoute'>, number> = {
-  dashboardTime: 0,
-  dashboardRoute: 1,
-};
-
-// ANIMATION POLISH: Explicit tween physics
-const viewTransition = {
-  type: 'tween',
-  duration: 0.4,
-  ease: [0.16, 1, 0.3, 1],
-} as const;
-
 export const MainLayout = () => {
-  const view = useAtomValue(appViewAtom);
+  // We still read the atom to know initial state if needed, 
+  // but the motion is now driven by the coordinator.
+  const { filmStripProgress } = useGestureContext();
 
-  const viewIndex =
-    view === 'dashboardTime' || view === 'sideMenu'
-      ? viewMap.dashboardTime
-      : viewMap.dashboardRoute;
+  // Map 0 -> 0% (Time)
+  // Map 1 -> -50% (Route)
+  const x = useTransform(filmStripProgress, [0, 1], ['0%', '-50%']);
 
   return (
     <div className={styles.contentWrapper}>
       <motion.div
         className={styles.filmStrip}
-        animate={{ x: `-${viewIndex * (100 / 2)}%` }}
-        transition={viewTransition}
+        style={{ x }}
       >
         <div className={styles.panel}>
           <main className={styles.mainContent}>

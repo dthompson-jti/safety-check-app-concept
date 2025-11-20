@@ -1,7 +1,8 @@
 // src/features/Shell/PillToggle.tsx
 import { useAtom } from 'jotai';
-import { motion } from 'framer-motion';
+import { motion, useTransform } from 'framer-motion';
 import { AppView, appViewAtom } from '../../data/atoms';
+import { useGestureContext } from '../../context/GestureContext';
 import styles from './PillToggle.module.css';
 
 const options: { id: AppView; label: string }[] = [
@@ -11,9 +12,40 @@ const options: { id: AppView; label: string }[] = [
 
 export const PillToggle = () => {
   const [activeView, setActiveView] = useAtom(appViewAtom);
+  const { filmStripProgress } = useGestureContext();
+
+  // Assuming 2 items of equal width.
+  // 0 -> 0% (Time)
+  // 1 -> 100% (Route)
+  // We need to move the pill by 100% of its own width.
+  const x = useTransform(filmStripProgress, [0, 1], ['0%', '100%']);
 
   return (
     <div className={styles.pillToggleContainer}>
+      {/* 
+        The active pill is now a sibling to the buttons, absolutely positioned.
+        We need to ensure the container has relative positioning (it does).
+        We also need to ensure the pill has the correct width (approx 50% minus padding).
+        
+        However, the current CSS puts the activePill INSIDE the button.
+        To support the sliding gesture, we should move it OUTSIDE the buttons
+        and position it absolutely within the container.
+      */}
+      <motion.div
+        className={styles.activePill}
+        style={{
+          x,
+          // We need to set the width explicitly or via CSS to match one button.
+          // Since buttons have min-width and padding, this is tricky without exact measurements.
+          // But let's try setting it to `calc(50% - 2px)` assuming 2px margin/padding.
+          width: 'calc(50% - 4px)',
+          height: 'calc(100% - 4px)',
+          top: '2px',
+          left: '2px',
+          position: 'absolute'
+        }}
+      />
+
       {options.map((option) => {
         const isActive = activeView === option.id;
         return (
@@ -21,22 +53,11 @@ export const PillToggle = () => {
             key={option.id}
             onClick={() => setActiveView(option.id)}
             className={`${styles.pillButton} ${isActive ? styles.active : ''}`}
+            style={{ flex: 1 }} // Ensure equal width
           >
-            {isActive && (
-              <motion.div
-                layoutId="active-pill"
-                className={styles.activePill}
-                transition={{ type: 'tween', ease: 'easeInOut', duration: 0.25 }}
-              />
-            )}
-            
-            <motion.span 
-              layout="position" 
-              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.2 }}
-              className={styles.pillLabel}
-            >
+            <span className={styles.pillLabel}>
               {option.label}
-            </motion.span>
+            </span>
           </button>
         );
       })}
