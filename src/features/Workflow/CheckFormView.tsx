@@ -45,23 +45,23 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const addToast = useSetAtom(addToastAtom);
   const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
   const setCompletingChecks = useSetAtom(completingChecksAtom);
-  
+
   // Draft State Atoms
   const drafts = useAtomValue(draftFormsAtom);
   const saveDraft = useSetAtom(saveDraftAtom);
   const clearDraft = useSetAtom(clearDraftAtom);
 
   const connectionStatus = useAtomValue(connectionStatusAtom);
-  const { 
-    isCheckTypeEnabled, 
-    manualConfirmationEnabled, 
-    markMultipleEnabled, 
-    simpleSubmitEnabled 
+  const {
+    isCheckTypeEnabled,
+    manualConfirmationEnabled,
+    markMultipleEnabled,
+    simpleSubmitEnabled
   } = useAtomValue(appConfigAtom);
-  
+
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useSound();
-  
+
   // Hook: Monitors the *Visual* Viewport to handle keyboard resize events correctly
   useVisualViewport();
 
@@ -83,7 +83,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   const [checkType, setCheckType] = useState<CheckTypeValue | ''>(
     (draft?.checkType as CheckTypeValue) || ''
   );
-  
+
   const [isAttested, setIsAttested] = useState(draft?.isAttested || false);
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
 
@@ -129,7 +129,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       const { scrollTop, scrollHeight, clientHeight } = contentElement;
       const isAtBottom = scrollHeight - scrollTop <= clientHeight + 1;
       const isScrollable = scrollHeight > clientHeight;
-      
+
       setShowScrollShadow(isScrollable && !isAtBottom);
     };
 
@@ -146,10 +146,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
   }, []);
 
   const handleBack = () => {
-    setWorkflowState({ view: 'none' });
-  };
-
-  const handleCancel = () => {
     setWorkflowState({ view: 'none' });
   };
 
@@ -203,9 +199,9 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
     triggerHaptic('success');
     playSound('success');
-    
+
     setWorkflowState({ view: 'none' });
-    
+
     const consolidatedNotes = Object.values(notes)
       .filter(note => note.trim() !== '')
       .join('\n---\n');
@@ -222,7 +218,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
         dispatch({ type: 'CHECK_SET_QUEUED', payload });
         return;
       }
-      
+
       // Simple submit skips animation delay for faster dev testing
       const PULSE_ANIMATION_DURATION = simpleSubmitEnabled ? 0 : 1200;
       const EXIT_ANIMATION_DURATION = simpleSubmitEnabled ? 0 : 400;
@@ -239,13 +235,13 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
       setTimeout(() => {
         dispatch({ type: 'CHECK_COMPLETE', payload });
-        
+
         setCompletingChecks((prev) => {
           const next = new Set(prev);
           next.delete(checkData.checkId);
           return next;
         });
-        
+
         setRecentlyCompletedCheckId(null);
       }, TOTAL_ANIMATION_DURATION);
 
@@ -263,7 +259,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       }
     }
   };
-  
+
   const headerTitle = 'Record Check';
 
   return (
@@ -306,7 +302,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
 
         {markMultipleEnabled && checkData.residents.length > 1 && (
           <div className={styles.markMultipleContainer}>
-             <SegmentedControl
+            <SegmentedControl
               id="mark-all-control"
               options={markMultipleOptions}
               value={currentMarkAllValue}
@@ -321,7 +317,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
               checkData.type === 'scheduled'
                 ? checkData.specialClassifications?.find(sc => sc.residentId === resident.id)
                 : undefined;
-            
+
             return (
               <ResidentCheckControl
                 key={resident.id}
@@ -335,7 +331,7 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
             );
           })}
         </div>
-        
+
         {isManualCheck && manualConfirmationEnabled && (
           <div className={styles.attestationContainer}>
             <input
@@ -354,9 +350,6 @@ export const CheckFormView = ({ checkData }: CheckFormViewProps) => {
       <footer className={styles.footer} ref={footerRef} data-scrolled={showScrollShadow}>
         <Button variant="primary" size="m" onClick={handleSave} disabled={!canSave}>
           Save
-        </Button>
-        <Button variant="secondary" size="m" onClick={handleCancel}>
-          Cancel
         </Button>
       </footer>
     </motion.div>
