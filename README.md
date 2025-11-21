@@ -42,8 +42,10 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:
     -   **Hardware Failure:** Simulate Camera or NFC reader failures.
     -   **Network Status:** Toggle between Online, Offline, and Syncing states.
-    -   **Workflow Accelerators:** Toggles for "Mark Multiple" (bulk status set), "Simple Submit" (skip animations), and "Manual Confirmation" visibility.
+    -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
+    -   **NFC Simulation Controls:** Interactive buttons within the NFC workflow to force specific outcomes (Success, Network Error, Tag Locked) for edge-case testing.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.
+-   **Manual Check Workflow:** A streamlined flow where selecting a room manually bypasses the scanner and navigates directly to the check entry form, respecting user intent.
 -   **Simulated Admin Tools & Offline Mode:** Complete UI simulations for NFC tag provisioning and offline data synchronization workflows.
 
 ## 4. Directory Structure
@@ -67,6 +69,7 @@ The project uses a **systematic CSS architecture** organized into layers to cont
     -   **Chrome (50):** App Header, Footer, and Offline Banner.
     -   **Navigation (100):** Side Menu and Backdrops.
     -   **Overlays (105):** Full-screen tools (Scanner, NFC Writer, Forms) that must cover everything.
+    -   **Sheets (110+):** Bottom sheet modals that must sit atop overlays.
 -   **Mobile-First Interaction States:** The application differentiates between touch and mouse-based interactions. `:active` provides immediate feedback for touch, while `:hover` is treated as a progressive enhancement for pointers.
 -   **Unified List Patterns:** The application uses a strict "Golden Row" pattern (`list.css`) for all selectable lists, ensuring consistent touch targets (56px) and full-width separators.
 

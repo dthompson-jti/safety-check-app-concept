@@ -29,30 +29,30 @@
 .toast-root {
   /* Re-enable pointer events for the toast itself. */
   pointer-events: auto;
-  
+
   /* Metrics Spec */
   width: auto;
   max-width: calc(100vw - 32px);
   padding: 16px;
   border-radius: 12px;
   gap: 16px;
-  
+
   display: flex;
   align-items: center;
   /* justify-content removed to allow natural flow with close button */
-  
+
   /* Typography */
   font-family: var(--font-family-sans);
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--surface-fg-secondary);
-  
+
   /* Depth */
   box-shadow: var(--surface-shadow-md);
-  
+
   /* Interaction */
   /* CRITICAL: touch-action: none is required for Radix Swipe to work on mobile */
-  touch-action: none; 
+  touch-action: none;
   user-select: none;
 }
 
@@ -75,15 +75,14 @@
   flex-shrink: 0;
   cursor: pointer;
   background: none;
-  color: currentColor; /* Inherit from variant text color */
-  opacity: 0.6;
+  color: var(--surface-fg-tertiary);
   transition: background-color 0.2s, opacity 0.2s;
-  margin-left: auto; /* Push to right if container expands */
+  margin-left: auto;
+  /* Push to right if container expands */
 }
 
 .toast-close-button:hover {
   background-color: rgba(0, 0, 0, 0.05);
-  opacity: 1;
 }
 
 .toast-close-button .material-symbols-rounded {
@@ -97,7 +96,8 @@
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
 }
-.toast-root[data-variant='neutral'] .material-symbols-rounded:first-child {
+
+.toast-root[data-variant='neutral'] .toast-icon {
   color: var(--surface-fg-secondary);
 }
 
@@ -106,9 +106,10 @@
   background-color: var(--surface-bg-success);
   border: 1px solid var(--surface-border-success);
 }
-.toast-root[data-variant='success'] .material-symbols-rounded:first-child {
+
+.toast-root[data-variant='success'] .toast-icon {
   color: var(--surface-fg-success-primary);
-  font-variation-settings: 'FILL' 1;
+  font-variation-settings: 'FILL' 0;
 }
 
 /* Alert / Error */
@@ -116,9 +117,10 @@
   background-color: var(--surface-bg-error-primary);
   border: 1px solid var(--surface-border-alert);
 }
-.toast-root[data-variant='alert'] .material-symbols-rounded:first-child {
+
+.toast-root[data-variant='alert'] .toast-icon {
   color: var(--surface-fg-alert-primary);
-  font-variation-settings: 'FILL' 1;
+  font-variation-settings: 'FILL' 0;
 }
 
 /* Warning */
@@ -126,9 +128,10 @@
   background-color: var(--surface-bg-warning-primary);
   border: 1px solid var(--surface-border-warning);
 }
-.toast-root[data-variant='warning'] .material-symbols-rounded:first-child {
+
+.toast-root[data-variant='warning'] .toast-icon {
   color: var(--surface-fg-warning-primary);
-  font-variation-settings: 'FILL' 1;
+  font-variation-settings: 'FILL' 0;
 }
 
 /* Info */
@@ -136,19 +139,22 @@
   background-color: var(--surface-bg-info);
   border: 1px solid var(--surface-border-info);
 }
-.toast-root[data-variant='info'] .material-symbols-rounded:first-child {
+
+.toast-root[data-variant='info'] .toast-icon {
   color: var(--surface-fg-info-primary);
-  font-variation-settings: 'FILL' 1;
+  font-variation-settings: 'FILL' 0;
 }
 
 /* Radix Swipe Transformations */
 .toast-root[data-swipe='move'] {
   transform: translateX(var(--radix-toast-swipe-move-x));
 }
+
 .toast-root[data-swipe='cancel'] {
   transform: translateX(0);
   transition: transform 200ms ease-out;
 }
+
 .toast-root[data-swipe='end'] {
   animation: fadeOut 100ms ease-out forwards;
 }

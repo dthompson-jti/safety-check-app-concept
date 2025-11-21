@@ -6,10 +6,8 @@ import * as ToastPrimitive from '@radix-ui/react-toast';
 // is mounted in the tree, the interaction model is consistent (Swipe Right to Dismiss).
 export const ToastContainer = () => {
   return (
-    <ToastPrimitive.Provider swipeDirection="right">
-      <ToastPrimitive.Viewport asChild>
-        <ol className="toast-viewport" />
-      </ToastPrimitive.Viewport>
-    </ToastPrimitive.Provider>
+    <ToastPrimitive.Viewport asChild>
+      <ol className="toast-viewport" />
+    </ToastPrimitive.Viewport>
   );
 };

@@ -42,7 +42,7 @@ export const ToastMessage = ({ id, message, icon, variant = 'neutral' }: ToastMe
         exit={{ scale: 0.95, opacity: 0, transition: { duration: 0.15, ease: 'easeOut' } }}
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       >
-        <span className="material-symbols-rounded">{icon}</span>
+        <span className="material-symbols-rounded toast-icon">{icon}</span>
         <ToastPrimitive.Description>{message}</ToastPrimitive.Description>
         <ToastPrimitive.Close className="toast-close-button" aria-label="Close">
           <span className="material-symbols-rounded">close</span>

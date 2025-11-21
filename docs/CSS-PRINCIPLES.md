@@ -26,7 +26,6 @@ Handling full-screen layouts on mobile browsers requires more than just `100vh`.
 -   **The Problem:** `100vh` refers to the *Layout Viewport*, which often includes the area *behind* the on-screen keyboard. When the keyboard opens, `100vh` elements are pushed up or covered, hiding critical actions.
 -   **The Solution:** We use a `useVisualViewport` hook to listen for resize events and set a `--visual-viewport-height` variable.
 -   **The Contract:** Any full-screen overlay (like `CheckFormView`) that contains input fields **must** set its height to `var(--visual-viewport-height, 100dvh)`. This ensures the bottom of the component is always visible, even when the keyboard is open.
--   **The Footer Padding Contract:** Scrollable containers must always include `padding-bottom: var(--footer-height)` (plus any safe area insets) to ensure the last item in the list is never hidden behind a fixed footer.
 
 #### 2. Diagnose, Don't Guess
 
@@ -64,6 +63,7 @@ To prevent visual bleeding during full-screen transitions, we adhere to a strict
 2.  **Chrome (50):** App Header, Footer, and Offline Banner.
 3.  **Navigation (100):** Side Menu and Backdrops.
 4.  **Overlays (105):** Full-screen tools (Scanner, NFC Writer, Forms) that must cover everything.
+5.  **Sheets (110+):** Bottom sheet modals (Vaul) that sit on top of full-screen overlays.
 
 #### Interaction State Philosophy (`:hover` vs. `:active`)
 
@@ -88,24 +88,13 @@ To support the "Intent-Based Gesture" system (Film Strip navigation):
 -   **The Rule:** Any scrollable container that exists within a gesture-controlled view must explicitly set `touch-action: pan-y`.
 -   **The Why:** This tells the browser to handle vertical scrolling natively but yield horizontal swipes to the application's JavaScript handlers. Without this, the browser may capture all touch events, breaking the navigation swipe.
 
-#### The Shared Menu System (`menu.css`)
+#### The Bottom Sheet Handle Contract
 
-To enforce the "Single Source of Truth" principle, we use a shared, global stylesheet (`.menu-popover`, `.menu-item`) for all list-based selection components (Dropdowns, Context Menus, Selects).
+When using `Vaul` drawers directly (bypassing the generic wrapper) for custom workflows:
 
-#### The Bottom Sheet Modal Contract for Mobile Actions
-
-For mobile-first contextual actions, use a "Bottom Sheet" modal pattern (via `vaul`) instead of centered modals. This preserves context and improves ergonomics.
-
-#### The Icon Badging Pattern for Visual Status
-
-Use a consistent pattern of prominent icons paired with semantic background colors to communicate status visually (e.g., warning triangle + yellow background for special resident classifications).
-
-#### The Sticky Stacking Context
-
-When using `position: sticky` for list headers (e.g., "Late", "Due Soon"):
-
--   **Rule:** The sticky element must have an opaque background color (usually `var(--surface-bg-secondary)` or `var(--surface-bg-tertiary)`) to prevent content from "bleeding" through it as it scrolls underneath.
--   **Rule:** It must utilize the `top: var(--header-height)` variable to stack perfectly beneath the global floating header.
+-   **The Rule:** You **must** manually implement the visual "handle" bar at the top of the sheet content.
+-   **The Spec:** 40px width, 4px height, `surface-border-primary` color, rounded full, centered in a container with padding.
+-   **The Why:** This provides the critical affordance that the sheet is swipeable/dismissible.
 
 #### The "Golden Row" List Pattern (`list.css`)
 

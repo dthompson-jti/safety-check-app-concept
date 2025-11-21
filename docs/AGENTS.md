@@ -20,17 +20,11 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   **Example Simulation (The Render Cycle):** *"I need to implement a countdown timer. A naive approach is to use `setInterval` inside the component. Hypothesis: With 50 items, this creates 50 active intervals, causing React thrashing. The correct architecture is to subscribe to the global `fastTickerAtom`."*
     *   **Example Simulation (The Notification Storm):** *"I need to alert on missed checks. A naive approach is to toast every time a check expires. Hypothesis: If the device wakes after 30 minutes, 50 checks expire at once, flooding the UI. The correct architecture is Tick-Based Aggregation: collect all expiries in a single tick and dispatch one summary toast."*
     *   **Example Simulation (Persistence Strategy):** *"I am adding a new user preference. Should this reset on reload? If no, I must use `atomWithStorage`. If yes, a standard `atom` is sufficient. I must clarify this distinction in the implementation."*
-    *   **Example Simulation (Stateful Animation):** *"I need to animate an item out of a sorted list. A naive approach is to change the status to 'complete'. Hypothesis: This will cause a layout jump. The correct architecture is to use a transient `'completing'` status to play the animation on a stable element before updating the data model."*
-    *   **Example Simulation (Modal Architecture):** *"I am implementing a mandatory post-login modal. The correct architecture is to *always* render the main `AppShell` structure and treat the modal as a true overlay controlled by its own state atom, decoupling setup from layout."*
-    *   **Example Simulation (Component Variable Contract):** *"I need to implement a floating footer. A naive approach is fixed padding. The correct architecture is for the footer to measure its own `offsetHeight` and set a CSS variable (`--form-footer-height`) on the root, allowing the content container to adjust its padding dynamically."*
+    *   **Example Simulation (The Environment-Agnostic Timer):** *"I need to store a timer ID. A naive approach is `NodeJS.Timeout`. Hypothesis: This will throw TS2503 in browser environments. The correct architecture is to use `ReturnType<typeof setTimeout>`."*
+    *   **Example Simulation (The Developer Override):** *"I am building a simulation flow (e.g., NFC). It has an auto-advance timer. I also need manual buttons for error testing. The correct architecture is to ensure manual interaction cancels the auto-timer immediately to prevent race conditions."*
     *   **Example Simulation (Sensory Cohesion):** *"I am adding a 'Save' action. A visual change is not enough. The correct architecture is to trigger both a haptic pulse (`useHaptics`) and an audio cue (`useAppSound`) to provide tangible confirmation, respecting the user's global configuration."*
     *   **Example Simulation (The Mobile Keyboard):** *"I am building a full-screen form. A naive approach is `height: 100vh`. Hypothesis: On mobile, the keyboard will slide up and cover the bottom 40% of the view, hiding the submit buttons. The correct architecture is to use the Visual Viewport API to determine the true visible height and set a CSS variable (`--visual-viewport-height`), ensuring the footer docks perfectly above the keyboard."*
-    *   **Example Simulation (Data Architecture):** *"I am updating the `FacilitySelectionModal`. The correct architecture is to establish a **single source of truth** by creating a dedicated `facilityData.ts` file that explicitly defines the hierarchy, rather than parsing mock resident strings."*
     *   **Example Simulation (Frame Painting / The "Barn Door" Effect):** *"I need to change an animation direction state right before closing a modal. A naive approach is `setDirection('left'); setIsOpen(false);`. Hypothesis: React batching will unmount the component before the direction update paints, causing the wrong exit animation. The correct architecture is to use a nested `requestAnimationFrame` to force a paint frame before triggering the unmount."*
-    *   **Example Simulation (The Resilient Draft Pattern):** *"I am building a complex form. A naive approach is to store state locally in the component. Hypothesis: If the user accidentally swipes back, their data is lost. The correct architecture is to sync form state to a global `draftAtom` or `atomWithStorage`, restoring it automatically when the component remounts."*
-    *   **Example Simulation (The Sticky Layout Contract):** *"I need a sticky header for a list. A naive approach is `top: 60px`. Hypothesis: If the app header changes height, the list header will be misaligned. The correct architecture is to use the `--header-height` variable set by the FloatingHeader component: `top: var(--header-height)`."*
-    *   **Example Simulation (Layout Projection & Thrashing):** *"I need to animate a list item. A naive approach is `layout`. Hypothesis: If the parent container transforms (like a side menu push), `layout` will trigger expensive width/height recalculations for every item, causing jitter. The correct architecture is `layout="position"`, which only animates x/y coordinates."*
-    *   **Example Simulation (The Persistent Chrome Contract):** *"I am showing a full-screen scanner. A naive approach is to unmount the Header and Footer. Hypothesis: Unmounting them changes the viewport height, causing the underlying list to jump. The correct architecture is to keep them mounted and use `z-index` to layer the scanner on top."*
 
 ## UI & Component Standards
 
@@ -45,13 +39,16 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 
 ### 3. Icons
 *   **Directive:** Use `Material Symbols Rounded`.
-*   **Style:** Filled icons should use `font-variation-settings: 'FILL' 1`.
+*   **Style:**
+    *   **Small / UI Icons (24px):** Filled (`font-variation-settings: 'FILL' 1`) for active/prominent states.
+    *   **Large / Hero Icons (48px+):** Outlined (`font-variation-settings: 'FILL' 0`) for Success/Error status screens to maintain visual balance.
 *   **Color:**
     *   Leading icons in lists: `var(--surface-fg-quaternary)`.
     *   Interactive icons: `var(--surface-fg-secondary)` (default) or `var(--surface-fg-primary)` (active).
 
 ### 4. Sheets & Drawers (Vaul)
 *   **Directive:** Use the standard overlay structure:
+    *   **Handle:** If using `Drawer.Root` directly (bypassing `BottomSheet` wrapper), you **must** manually implement the handle bar (`.handleContainer` + `.handle`) to ensure visual consistency.
     *   Header: Fixed height (60px), `sticky` or fixed positioning.
     *   Content: Scrollable area with `padding: 0` if containing a list (to allow edge-to-edge separators).
     *   Footer: Fixed/Sticky at bottom if containing actions.

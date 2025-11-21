@@ -44,12 +44,18 @@ export const NfcWriteSheet = () => {
     }
   };
 
-  // Developer Simulation Trigger
+  /**
+   * ARCHITECTURE NOTE: Developer Override Pattern
+   * This function intercepts the standard workflow to force specific outcomes
+   * for testing purposes. It explicitly transitions to 'writing' first to
+   * simulate the async nature of NFC, then resolves to the requested state.
+   */
   const handleDevAction = (action: 'success' | 'net-error' | 'locked-error') => {
     triggerHaptic('light');
     
-    // Transition to writing first for a split second to feel like an action,
-    // then resolve to the specific state.
+    // Transition to writing first for a split second to feel like an action.
+    // We use a functional update to access 'prev' state safely without casting,
+    // ensuring we preserve the room context.
     setWorkflow((prev) => {
       if (prev.status === 'ready' || prev.status === 'error') {
         return { 
@@ -91,19 +97,19 @@ export const NfcWriteSheet = () => {
     }, 500);
   };
 
-  // Simulation Logic
+  // Simulation Logic & Auto-Advance
   useEffect(() => {
-    // FIX: Use ReturnType<typeof setTimeout> to avoid NodeJS namespace dependency
+    // AGENT NOTE: Use ReturnType<typeof setTimeout> to prevent TS2503 (NodeJS namespace error)
     let timer: ReturnType<typeof setTimeout>;
 
-    // NOTE: Auto-advance removed for 'ready' state per requirements.
-    // User must use Developer Controls to proceed in this prototype.
+    // ARCHITECTURE NOTE: The 'ready' state intentionally DOES NOT auto-advance.
+    // In this prototype, we require the user to hit a Developer Control button
+    // to simulate the physical act of tapping the tag.
 
     if (workflow.status === 'writing') {
       timer = setTimeout(() => {
         // Simulation Outcome based on global setting
-        // This only runs if 'writing' was triggered by something OTHER than the Dev Actions above
-        // (which handle their own outcome). This block handles the generic "Retry" button case.
+        // This block handles the generic "Retry" button case or other non-dev triggers.
         const isSuccess = simulationMode === 'forceSuccess' || (simulationMode === 'random' && Math.random() > 0.2);
         
         if ('roomId' in workflow) {
@@ -165,7 +171,7 @@ export const NfcWriteSheet = () => {
         <Drawer.Overlay className={styles.overlay} />
         <Drawer.Content className={styles.contentWrapper}>
           <div className={styles.content}>
-            {/* Restored Handle */}
+            {/* VISUAL CONTRACT: Manual Handle Implementation for custom sheets */}
             <div className={styles.handleContainer}>
               <div className={styles.handle} />
             </div>
@@ -182,7 +188,7 @@ export const NfcWriteSheet = () => {
             <h3 className={styles.title}>{content.title}</h3>
             <p className={styles.description}>{content.desc}</p>
 
-            {/* Error Actions - UPDATED: Retry Left, Cancel Right */}
+            {/* Error Actions - Layout: Retry (Primary/Left), Cancel (Secondary/Right) */}
             {workflow.status === 'error' && (
               <div className={styles.buttonGroup}>
                 <Button 
