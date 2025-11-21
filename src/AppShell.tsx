@@ -112,6 +112,8 @@ const AppShellContent = () => {
   };
 
   // --- Intent-Based Gesture Logic ---
+  // This logic distinguishes between vertical scrolling and horizontal navigation swipes.
+  // It ensures native scrolling performance is preserved while enabling full-screen gestures.
 
   const handlePointerDown = (e: React.PointerEvent) => {
     if (workflowState.view !== 'none') return;
@@ -152,6 +154,7 @@ const AppShellContent = () => {
       const deltaY = Math.abs(e.clientY - startY.current);
       const DRAG_THRESHOLD = 10;
 
+      // Only capture if horizontal movement exceeds threshold AND is dominant (Intent Detection)
       if (deltaX > DRAG_THRESHOLD && deltaX > deltaY) {
         isDragging.current = true;
         (e.currentTarget as Element).setPointerCapture(e.pointerId);
@@ -208,7 +211,6 @@ const AppShellContent = () => {
   const mainViewX = useTransform(sideMenuProgress, [0, 1], [0, sideMenuWidth]);
   const sideMenuX = useTransform(sideMenuProgress, [0, 1], [-sideMenuWidth, 0]);
   const backdropOpacity = useTransform(sideMenuProgress, [0, 1], [0, 1]);
-  // FIX: Explicitly type 'v' as number to satisfy TypeScript
   const backdropPointerEvents = useTransform(sideMenuProgress, (v: number) => v > 0 ? 'auto' : 'none');
 
   return (

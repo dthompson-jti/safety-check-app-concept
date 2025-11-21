@@ -1,4 +1,3 @@
-// src/features/Workflow/useCompleteCheck.ts
 import { useSetAtom, useAtomValue } from 'jotai';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import {
@@ -43,18 +42,21 @@ export const useCompleteCheck = () => {
             return;
         }
 
+        // Animation timing constants
         const PULSE_ANIMATION_DURATION = 1200;
         const EXIT_ANIMATION_DURATION = 400;
 
         dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId } });
         setRecentlyCompletedCheckId(checkId);
 
+        // Trigger visual pulse state
         setTimeout(() => {
-            // FIX: Explicit typing for the Set updater
             setCompletingChecks((prev: Set<string>) => new Set(prev).add(checkId));
         }, PULSE_ANIMATION_DURATION);
 
         const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
+        
+        // Finalize completion and remove from list
         setTimeout(() => {
             dispatch({ type: 'CHECK_COMPLETE', payload });
 

@@ -70,12 +70,12 @@ To replicate native "Push" and "Pop" page transitions on the web (e.g., iOS Navi
 1.  **The Container:** Must be `position: relative` and `overflow: hidden`. This creates the "viewport" or "stage" for the sliding pages.
 2.  **The Pages:** Must be `position: absolute` with `inset: 0`. This allows the entering page and exiting page to exist simultaneously within the viewport without stacking vertically, preventing layout jumps during the transition.
 
-#### The Icon Alignment Contract (`ActionListItem`)
+#### The Touch Action Contract
 
-In lists where some items have icons and others do not (e.g., mixed selection lists):
+To support the "Intent-Based Gesture" system (Film Strip navigation):
 
--   **Rule:** Text labels must always align vertically with each other to reduce visual noise.
--   **Implementation:** Use a dedicated `leadingIconContainer` (or an `indent` prop) with a fixed width (e.g., `24px`) to reserve space on the left side of the item, even when the icon itself is absent.
+-   **The Rule:** Any scrollable container that exists within a gesture-controlled view must explicitly set `touch-action: pan-y`.
+-   **The Why:** This tells the browser to handle vertical scrolling natively but yield horizontal swipes to the application's JavaScript handlers. Without this, the browser may capture all touch events, breaking the navigation swipe.
 
 #### The Shared Menu System (`menu.css`)
 

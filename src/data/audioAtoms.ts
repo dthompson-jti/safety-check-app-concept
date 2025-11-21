@@ -11,4 +11,4 @@ export interface PlaySoundOptions {
 type PlaySoundFunction = (id: SoundId, options?: PlaySoundOptions) => void;
 
 // FIX: Pass the initial value directly to make it a writable primitive atom.
-export const playSoundDispatcherAtom = atom<PlaySoundFunction>(() => {});
+export const playSoundDispatcherAtom = atom<PlaySoundFunction | null>(null);

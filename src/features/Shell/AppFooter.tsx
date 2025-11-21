@@ -13,15 +13,23 @@ import {
 } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useAppSound } from '../../data/useAppSound'; // NEW
+import { useAppSound } from '../../data/useAppSound';
 import { Button } from '../../components/Button';
 import { useCompleteCheck } from '../Workflow/useCompleteCheck';
 import styles from './AppFooter.module.css';
 
+/**
+ * The main, persistent footer for the application.
+ * 
+ * Contracts Implemented:
+ * 1. Component Variable Contract: It measures its own height and sets `--footer-height`.
+ *    This ensures the scrolling content area always has the exact correct padding-bottom.
+ */
 export const AppFooter = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const appConfig = useAtomValue(appConfigAtom);
 
+  // State needed for Smart NFC Simulation
   const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
   const routeSortedChecks = useAtomValue(routeSortedChecksAtom);
@@ -29,7 +37,7 @@ export const AppFooter = () => {
 
   const footerRef = useRef<HTMLElement>(null);
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useAppSound(); // NEW
+  const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
   useLayoutEffect(() => {
@@ -54,11 +62,14 @@ export const AppFooter = () => {
     };
   }, [appConfig.scanMode]);
 
+  // Handler for standard QR Code mode (opens Camera View)
   const handleQrClick = () => {
     triggerHaptic('heavy');
     setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
   };
 
+  // Handler for NFC Simulation Shortcut
+  // Simulates an instant tag read of the top-most relevant check.
   const handleNfcClick = () => {
     const candidateList = appView === 'dashboardRoute' ? routeSortedChecks : timeSortedChecks;
     const targetCheck = candidateList.find(c =>

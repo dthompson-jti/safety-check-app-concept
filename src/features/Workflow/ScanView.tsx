@@ -17,7 +17,7 @@ import {
 import { mockResidents } from '../../data/mock/residentData';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useAppSound } from '../../data/useAppSound'; // NEW
+import { useAppSound } from '../../data/useAppSound';
 import { Button } from '../../components/Button';
 import { appConfigAtom } from '../../data/atoms';
 import { useCompleteCheck } from './useCompleteCheck';
@@ -44,7 +44,7 @@ export const ScanView = () => {
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useAppSound(); // NEW
+  const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
@@ -53,6 +53,7 @@ export const ScanView = () => {
   const lastScanned = useRef<string | null>(null);
   const lastScanTime = useRef<number>(0);
 
+  // Show pre-scan alerts if coming from a specific check intent (e.g. manual list)
   useEffect(() => {
     if (workflow.view === 'scanning') {
       setScanViewState('scanning');
@@ -88,6 +89,7 @@ export const ScanView = () => {
   const handleDecode = (result: string) => {
     if (scanViewState !== 'scanning') return;
 
+    // Debounce duplicate scans
     if (lastScanned.current === result && (Date.now() - lastScanTime.current < 2000)) {
       return;
     }

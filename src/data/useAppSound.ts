@@ -10,7 +10,7 @@ export const useAppSound = () => {
 
   const play = useCallback(
     (id: SoundId, options?: PlaySoundOptions) => {
-      if (!audioEnabled) return;
+      if (!audioEnabled || !playGlobal) return;
       playGlobal(id, options);
     },
     [audioEnabled, playGlobal]

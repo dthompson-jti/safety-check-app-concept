@@ -22,6 +22,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Animation:** Framer Motion
 -   **UI Primitives:** Radix UI
 -   **Bottom Sheet Modals:** Vaul
+-   **Audio Engine:** use-sound (Howler.js)
 
 ## 3. Prototype Features
 
@@ -33,8 +34,11 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **High-Craft Navigation Model:** The application uses a multi-pattern navigation system optimized for different hierarchies:
     -   **Push Layout (Side Menu):** The main navigation menu uses a simple "push" animation.
     -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted vs Route-Sorted) exist on a horizontal "film strip" with sliding panel animations.
+    -   **Intent-Based Gestures:** A sophisticated gesture engine distinguishes between vertical scrolling and horizontal navigation swipes, allowing full-screen gestures without blocking content interaction.
     -   **Drill-Down (Hierarchical Data):** Deeply nested selections (like Facility -> Unit) use a "Stack" metaphor where new views slide in from the right, maintaining a sticky header context.
--   **Multi-Sensory Feedback:** The application goes beyond visual cues to implement a tangible user experience. It combines **Haptic Feedback** (via `navigator.vibrate`) with **Synthesized Audio** (via Web Audio API) to provide confirmation for scans, saves, and errors.
+-   **Sensory Feedback System:** A decoupled, accessible feedback engine provides tangible confirmation for user actions.
+    -   **Haptics:** Granular vibration patterns (success, warning, selection) triggered via `useHaptics`.
+    -   **Audio:** Low-latency sound effects managed by a headless `SoundManager` and triggered via `useAppSound`. Audio can be toggled independently of haptics.
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:
     -   **Hardware Failure:** Simulate Camera or NFC reader failures.
     -   **Network Status:** Toggle between Online, Offline, and Syncing states.
@@ -47,7 +51,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **/src**: Contains the application entry point, root container, global styles, and global types.
 -   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality.
 -   **/src/components**: Contains only **truly generic and reusable** UI primitives that are application-agnostic.
--   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, etc.).
+-   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, contexts).
 -   **/src/styles**: Contains the global styling architecture, including design tokens, base styles, and component themes.
 
 **Import Rule:** Always use relative paths (`./`, `../`). This project does not use TypeScript path aliases.
@@ -62,8 +66,9 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 
 ## 6. State Management
 
-The project uses **Jotai** for its minimal, atomic state management model. State is divided into three logical tiers:
+The project uses **Jotai** for its minimal, atomic state management model. State is divided into four logical tiers:
 
 1.  **Persisted State (`src/data/atoms.ts`):** Uses `atomWithStorage` to handle data that must survive a reload (Session, Config, Preferences).
 2.  **App Data (`src/data/appDataAtoms.ts`):** Manages the core business logic (Safety Checks list).
 3.  **Temporal State (The Heartbeat):** A centralized `requestAnimationFrame` loop in `App.tsx` drives UI countdowns and business logic updates.
+4.  **Sensory State (Audio Dispatcher):** A writable atom (`playSoundDispatcherAtom`) acts as a bridge, allowing any component to trigger sounds without direct coupling to the audio engine.

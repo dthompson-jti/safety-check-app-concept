@@ -11,7 +11,7 @@ import {
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useAppSound } from '../../data/useAppSound'; // NEW
+import { useAppSound } from '../../data/useAppSound';
 import { useVisualViewport } from '../../data/useVisualViewport';
 import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAtoms';
 import { Button } from '../../components/Button';
@@ -63,7 +63,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   } = useAtomValue(appConfigAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useAppSound(); // NEW
+  const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
   useVisualViewport();
@@ -72,6 +72,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const contentRef = useRef<HTMLElement>(null);
   const [showScrollShadow, setShowScrollShadow] = useState(false);
 
+  // Initialize State: Prefer Draft Data, then fall back to initial
   const draft = checkData.type === 'scheduled' ? drafts[checkData.checkId] : undefined;
 
   const [statuses, setStatuses] = useState<Record<string, StatusValue | ''>>(() =>
@@ -92,6 +93,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
   const isSupplementalCheck = checkData.type === 'supplemental';
 
+  // Draft Logic: Track if we are unmounting due to success (don't save draft) or cancellation (save draft)
   const isSubmitted = useRef(false);
 
   useEffect(() => {
@@ -187,6 +189,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
   const handleSave = () => {
     if (!canSave) return;
+
     isSubmitted.current = true;
 
     if (checkData.type === 'scheduled') {
@@ -207,6 +210,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
         notes: consolidatedNotes,
       });
       setWorkflowState({ view: 'none' });
+
     } else if (checkData.type === 'supplemental') {
       dispatch({
         type: 'CHECK_SUPPLEMENTAL_ADD',
