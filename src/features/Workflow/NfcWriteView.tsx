@@ -95,7 +95,6 @@ export const NfcWriteView = () => {
             itemContent={(_index, room) => (
               <NfcRoomListItem
                 key={room.id}
-                roomId={room.id}
                 roomName={room.name}
                 onClick={() => handleSelectRoom(room.id, room.name)}
               />

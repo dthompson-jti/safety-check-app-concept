@@ -2,12 +2,11 @@
 import styles from './NfcRoomListItem.module.css';
 
 interface NfcRoomListItemProps {
-  roomId: string;
   roomName: string;
   onClick: () => void;
 }
 
-export const NfcRoomListItem = ({ roomId, roomName, onClick }: NfcRoomListItemProps) => {
+export const NfcRoomListItem = ({ roomName, onClick }: NfcRoomListItemProps) => {
   return (
     <button className={styles.listItem} onClick={onClick} type="button">
       <div className={styles.listItemContent}>

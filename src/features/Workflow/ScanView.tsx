@@ -76,7 +76,7 @@ export const ScanView = () => {
     }
   }, [workflow, allChecks]);
 
-  const failScan = useCallback((_message: string) => {
+  const failScan = useCallback(() => {
     // STRATEGY UPDATE: Removed redundant toast. 
     // The viewfinder's fail state overlay provides sufficient immediate feedback.
     triggerHaptic('error');
@@ -139,7 +139,7 @@ export const ScanView = () => {
           });
         }, 800);
       } else {
-        failScan('QR Code not recognized or check already complete.');
+        failScan();
       }
     }, 300);
   };
