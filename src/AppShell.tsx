@@ -28,8 +28,8 @@ import styles from './AppShell.module.css';
 
 const viewTransition = {
   type: 'tween',
-  duration: 0.4,
-  ease: [0.16, 1, 0.3, 1],
+  duration: 0.25,
+  ease: [0.25, 1, 0.5, 1],
 } as const;
 
 const AppShellContent = () => {
@@ -104,8 +104,6 @@ const AppShellContent = () => {
       document.title = 'Safety Check App';
     }
   }, [workflowState]);
-
-  const isChromeVisible = workflowState.view === 'none';
 
   const closeMenu = () => {
     setAppView('dashboardTime');
@@ -245,10 +243,10 @@ const AppShellContent = () => {
 
         <div ref={appChromeRef} className={styles.chromeContainer}>
           {connectionStatus !== 'online' && <OfflineBanner />}
-          {isChromeVisible && <AppHeader />}
+          <AppHeader />
         </div>
 
-        {isChromeVisible && <AppFooter />}
+        <AppFooter />
       </motion.div>
 
       <AnimatePresence>

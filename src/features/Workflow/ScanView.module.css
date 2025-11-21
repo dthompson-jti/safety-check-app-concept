@@ -18,11 +18,12 @@
 .scanView {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 105;
   background-color: var(--surface-bg-primary-solid);
   color: var(--surface-fg-white);
   display: flex;
   flex-direction: column;
+  will-change: transform;
 }
 
 .header {

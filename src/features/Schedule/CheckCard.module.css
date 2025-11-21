@@ -46,11 +46,11 @@
   animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Layout Variance based on Indicator Visibility --- */
-
 /* 
-   DEFINITIVE FIX: Default padding is symmetric (above). 
-   We only APPLY asymmetric left padding if the data attribute is explicitly 'true'.
+  Layout Stability Strategy:
+  The default state is symmetric padding. Asymmetric padding (for indicators)
+  is applied via data-attribute only when explicitly required. This prevents
+  layout shifts during hydration if the state is undefined.
 */
 .checkCard[data-indicators-visible='true'] {
   padding-left: var(--spacing-5);
@@ -168,7 +168,7 @@
 }
 
 /* 
-  UPDATED: Warning Icon Style
+  Warning Icon Style:
   - Uses primary foreground color (dark/high contrast)
   - Enforces solid fill via font-variation-settings
 */

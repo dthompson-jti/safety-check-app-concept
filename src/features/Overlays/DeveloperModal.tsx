@@ -45,8 +45,7 @@ export const DeveloperModal = () => {
     addToast({ message: 'Application data reset to defaults.', icon: 'delete' });
   };
 
-  // DEFINITIVE FIX: Added motion wrapper with slide-in animation
-  // to replicate the "Full Screen Modal" entrance pattern.
+  // Animation: Slide-in from right (x: 100% -> 0) to replicate native modal behavior.
   return (
     <motion.div 
       className={styles.container}
@@ -166,4 +165,4 @@ export const DeveloperModal = () => {
       </div>
     </motion.div>
   );
-}
+};

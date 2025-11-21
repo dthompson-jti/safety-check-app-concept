@@ -49,6 +49,7 @@ To ensure maximum readability and accessibility, all UI text should use sentence
 CSS should be written defensively to prevent elements from "jumping" as content or state changes.
 
 -   **The Contract:** When an element is only sometimes visible, its container must **always reserve the necessary space** for it.
+-   **The Default State Contract:** Components should default to their most stable, symmetric state in CSS. Modifiers (via data attributes) should only apply asymmetric changes. This prevents "Flash of Unstyled Content" (FOUC) or layout shifts during JS hydration.
 
 ---
 

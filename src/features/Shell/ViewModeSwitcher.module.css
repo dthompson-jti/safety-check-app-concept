@@ -8,7 +8,7 @@
   border: 1px solid var(--surface-border-secondary);
   border-radius: var(--radius-lg);
   
-  /* DEFINITIVE FIX: Enforce symmetric padding around the toggle group */
+  /* Enforce symmetric padding around the toggle group */
   padding: 4px;
   gap: 0; /* Ensure no gap affects the 50% calculation */
   
@@ -30,7 +30,7 @@
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
   
-  /* DEFINITIVE FIX: Remove margin to ensure 50% width calc is precise */
+  /* Remove margin to ensure 50% width calc is precise */
   margin: 0;
 
   height: 44px;
@@ -59,9 +59,8 @@
 
 .activeIndicator {
   /* 
-     Size and position are now handled in TSX via styles 
-     to ensure perfect synchronization with the transform.
-     We keep basic styling here.
+     Size and position are handled in TSX to ensure perfect 
+     synchronization with the gesture transform.
   */
   background-color: var(--surface-bg-primary);
   border-radius: var(--radius-sm);

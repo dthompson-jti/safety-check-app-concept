@@ -21,8 +21,8 @@ import styles from './ScheduleView.module.css';
 
 const listTransition: Transition = {
   type: 'tween',
-  duration: 0.4,
-  ease: [0.16, 1, 0.3, 1],
+  duration: 0.25,
+  ease: [0.25, 1, 0.5, 1],
 };
 
 interface ScheduleViewProps {

@@ -47,7 +47,7 @@ export const AppHeader = () => {
   };
 
   return (
-    <motion.header layout="position" className={styles.header} ref={headerRef}>
+    <header className={styles.header} ref={headerRef}>
       <div className={styles.headerContent}>
         <div className={styles.leftActions}>
           <Tooltip content="Open navigation">
@@ -83,6 +83,6 @@ export const AppHeader = () => {
       <div className={styles.statusBar}>
         <StatusBar key="status-bar" />
       </div>
-    </motion.header>
+    </header>
   );
 };

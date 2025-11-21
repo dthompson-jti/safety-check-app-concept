@@ -18,8 +18,8 @@ interface CheckCardProps {
 }
 
 const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
-  // UPDATED: Logic reverted to simple boolean check.
-  // If ANY classification exists for this resident, show the warning icon.
+  // Logic: If ANY classification exists for this resident, show the warning icon.
+  // This replaces the previous detailed text badges to reduce visual noise.
   const hasSpecialStatus = check.specialClassifications?.some(
     (sc) => sc.residentId === resident.id
   );

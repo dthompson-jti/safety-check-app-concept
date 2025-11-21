@@ -37,6 +37,8 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Intent-Based Gestures:** A sophisticated gesture engine distinguishes between vertical scrolling and horizontal navigation swipes, allowing full-screen gestures without blocking content interaction.
     -   **Drill-Down (Hierarchical Data):** Deeply nested selections (like Facility -> Unit) use a "Stack" metaphor where new views slide in from the right, maintaining a sticky header context.
 -   **Sensory Feedback System:** A decoupled, accessible feedback engine provides tangible confirmation for user actions.
+    -   **Context-Aware Notifications:** Alerts are filtered based on the user's active context (Facility/Unit) to reduce noise.
+    -   **Tick-Based Aggregation:** Simultaneous events (e.g., multiple checks expiring while the device was asleep) are grouped into single summaries to prevent notification fatigue.
     -   **Haptics:** Granular vibration patterns (success, warning, selection) triggered via `useHaptics`.
     -   **Audio:** Low-latency sound effects managed by a headless `SoundManager` and triggered via `useAppSound`. Audio can be toggled independently of haptics.
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:

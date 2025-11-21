@@ -22,13 +22,10 @@ export const ViewModeSwitcher = () => {
         className={styles.activeIndicator}
         style={{
           x,
-          // DEFINITIVE FIX: 
-          // The container has 4px padding.
-          // Available width is 100% (of content box).
-          // We want the pill to be half of the available width.
-          // The pill must start at 'left: 4px' (top/bottom 4px).
-          // Width is calc(50% - 4px) because 50% of the total box includes the padding,
-          // so we subtract the 4px padding to get the true half-content width.
+          // Layout Calculation:
+          // The pill width matches the flex-basis of the buttons (50% of container).
+          // We subtract 4px to account for the container's padding (4px), ensuring the
+          // pill sits perfectly flush with the text labels.
           width: 'calc(50% - 4px)',
           height: 'calc(100% - 8px)', // 100% height minus top(4) and bottom(4) padding
           top: '4px',

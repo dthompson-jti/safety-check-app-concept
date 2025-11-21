@@ -3,11 +3,12 @@
 .checkFormView {
   position: fixed;
   inset: 0;
-  z-index: 101;
+  z-index: 105;
   /* Above scan view */
   background-color: var(--surface-bg-secondary);
   display: flex;
   flex-direction: column;
+  will-change: transform;
 }
 
 .header {

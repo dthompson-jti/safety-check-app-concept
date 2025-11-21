@@ -17,8 +17,13 @@ import { getFacilityContextForLocation } from './mock/facilityUtils';
  * If a check's due date + base interval has passed, it marks the check as 'missed'
  * and triggers the regeneration of the next check in the series.
  * 
- * UPDATED: Now includes context-aware toast filtering and batching to prevent
- * "Toast Hurricanes" when waking the device or processing multiple expiries.
+ * Architecture Note:
+ * To prevent "Notification Storms" (e.g., waking a device after 30 mins), this hook
+ * implements Tick-Based Aggregation. All checks expiring in a single 1s tick are
+ * grouped into a single toast.
+ *
+ * It also enforces Context Awareness: Toasts are suppressed if the check belongs
+ * to a facility/unit the user is not currently viewing.
  */
 export const useCheckLifecycle = () => {
   const now = useAtomValue(slowTickerAtom);
