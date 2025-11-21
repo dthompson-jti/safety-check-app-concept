@@ -27,10 +27,19 @@
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
   overflow: hidden;
-  padding: 8px 16px 8px 20px;
-  border-radius: var(--radius-md);
+
+  /* Match CheckCard padding */
+  padding-top: var(--spacing-3);
+  padding-bottom: var(--spacing-3);
+  padding-right: var(--spacing-3);
+  padding-left: var(--spacing-5);
+  /* Assuming indicators are visible by default for skeleton */
+
+  border-radius: var(--radius-xl);
+  /* Match CheckCard radius */
   box-shadow: var(--surface-shadow-xs);
-  margin-bottom: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  /* Match CheckCard margin */
 }
 
 .indicator {

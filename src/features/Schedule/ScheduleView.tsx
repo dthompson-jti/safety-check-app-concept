@@ -100,6 +100,12 @@ export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
     if (showSkeletons) {
       return (
         <>
+          {/* Skeleton Header to match layout */}
+          <div className={styles.headerWrapper}>
+            <div className={styles.priorityGroupHeader} style={{ width: '100px', height: '1.5rem', backgroundColor: 'transparent', marginBottom: 'var(--spacing-2)' }}>
+              <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--surface-bg-tertiary)', borderRadius: 'var(--radius-sm)', opacity: 0.3 }} />
+            </div>
+          </div>
           {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
             <ScheduleSkeleton key={index} />
           ))}
