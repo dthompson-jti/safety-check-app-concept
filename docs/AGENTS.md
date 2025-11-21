@@ -31,3 +31,31 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   **Example Simulation (The Sticky Layout Contract):** *"I need a sticky header for a list. A naive approach is `top: 60px`. Hypothesis: If the app header changes height, the list header will be misaligned. The correct architecture is to use the `--header-height` variable set by the FloatingHeader component: `top: var(--header-height)`."*
     *   **Example Simulation (Layout Projection & Thrashing):** *"I need to animate a list item. A naive approach is `layout`. Hypothesis: If the parent container transforms (like a side menu push), `layout` will trigger expensive width/height recalculations for every item, causing jitter. The correct architecture is `layout="position"`, which only animates x/y coordinates."*
     *   **Example Simulation (The Persistent Chrome Contract):** *"I am showing a full-screen scanner. A naive approach is to unmount the Header and Footer. Hypothesis: Unmounting them changes the viewport height, causing the underlying list to jump. The correct architecture is to keep them mounted and use `z-index` to layer the scanner on top."*
+
+## UI & Component Standards
+
+### 1. List Items
+*   **Directive:** Do not create custom list item components (e.g., `MyFeatureListItem`, `RoomRow`).
+*   **Solution:** Always use the `ActionListItem` component.
+*   **Reasoning:** Enforces the "Golden Row" pattern (56px height, consistent padding, full-width separators) defined in `list.css`.
+
+### 2. Context Switching
+*   **Directive:** When displaying the Facility Group/Unit selector, use the `ContextSwitcherCard` component.
+*   **Reasoning:** Ensures consistency between the Side Menu and the NFC Provisioning workflow.
+
+### 3. Icons
+*   **Directive:** Use `Material Symbols Rounded`.
+*   **Style:** Filled icons should use `font-variation-settings: 'FILL' 1`.
+*   **Color:**
+    *   Leading icons in lists: `var(--surface-fg-quaternary)`.
+    *   Interactive icons: `var(--surface-fg-secondary)` (default) or `var(--surface-fg-primary)` (active).
+
+### 4. Sheets & Drawers (Vaul)
+*   **Directive:** Use the standard overlay structure:
+    *   Header: Fixed height (60px), `sticky` or fixed positioning.
+    *   Content: Scrollable area with `padding: 0` if containing a list (to allow edge-to-edge separators).
+    *   Footer: Fixed/Sticky at bottom if containing actions.
+
+## CSS Architecture
+*   **Directive:** Do not add new global CSS files without updating `src/styles/index.css` to include them in the correct `@layer`.
+*   **Directive:** Prefer CSS Modules (`*.module.css`) for feature-specific styles. Use Global CSS (`src/styles/*.css`) only for reusable design patterns (buttons, lists, inputs).

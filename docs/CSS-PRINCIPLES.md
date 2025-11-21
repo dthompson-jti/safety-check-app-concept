@@ -106,3 +106,15 @@ When using `position: sticky` for list headers (e.g., "Late", "Due Soon"):
 
 -   **Rule:** The sticky element must have an opaque background color (usually `var(--surface-bg-secondary)` or `var(--surface-bg-tertiary)`) to prevent content from "bleeding" through it as it scrolls underneath.
 -   **Rule:** It must utilize the `top: var(--header-height)` variable to stack perfectly beneath the global floating header.
+
+#### The "Golden Row" List Pattern (`list.css`)
+
+The application uses a standardized pattern for lists to ensure consistent height, touch targets, and separator logic across Sheets, Modals, and Menus.
+
+*   **`.list-item-root`**: The interactive container.
+    *   Handles the **border-bottom** to ensure separators span the full width of the container.
+    *   Enforces `min-height: 56px` for touch accessibility.
+*   **`.list-item-leading`**: A fixed-width (48px) container for icons, avatars, or checkboxes.
+    *   Ensures that text in `.list-item-content` aligns vertically across rows, even if one row has a wide icon and another has a narrow one.
+*   **`.list-item-content`**: The fluid container for text labels and trailing actions.
+    *   **Padding Logic**: If a list item has *no* leading icon, `.list-item-root` must have `data-has-leading="false"`. This triggers CSS to add left padding to `.list-item-content`, preventing text from hugging the screen edge.

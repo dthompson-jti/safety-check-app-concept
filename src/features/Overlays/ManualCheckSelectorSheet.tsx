@@ -28,6 +28,7 @@ export const ManualCheckSelectorSheet = () => {
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
+      // Reset search state after animation completes
       setTimeout(() => {
         setSearchQuery('');
         setIsGlobalSearch(false);
@@ -96,7 +97,6 @@ export const ManualCheckSelectorSheet = () => {
                         key={check.id}
                         label={check.residents[0]?.location || 'Unknown Room'}
                         subLabel={renderResidents(check.residents, check.specialClassifications)}
-                        // Icon removed per request to improve two-line layout
                         onClick={() => handleSelectCheck(check.id)}
                       />
                     ))}

@@ -6,12 +6,14 @@ interface ContextSwitcherCardProps {
   groupId: string | null;
   unitId: string | null;
   onClick: () => void;
-  variant?: 'default'; // 'compact' removed as we are unifying to default
 }
 
 /**
  * A reusable card component that displays the current operational
  * context (Group and Unit) and allows the user to change it.
+ * 
+ * Design: Flat, bordered card with stacked group/unit labels.
+ * Used in Side Menu and NFC Provisioning View.
  */
 export const ContextSwitcherCard = ({ 
   groupId, 
@@ -35,7 +37,6 @@ export const ContextSwitcherCard = ({
           <span className={styles.label}>Group</span>
           <span className={styles.value}>{groupDisplayName}</span>
         </div>
-        {/* Separator removed per request */}
         <div className={styles.stackItem}>
           <span className={styles.label}>Unit</span>
           <span className={styles.value}>{unitDisplayName}</span>

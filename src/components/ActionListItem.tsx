@@ -26,6 +26,10 @@ interface ActionListItemProps {
   showChevron?: boolean;
 }
 
+/**
+ * The unified list item component for the application.
+ * Uses the `list.css` layer for styling ("Golden Row" pattern).
+ */
 export const ActionListItem = ({
   label,
   subLabel,
@@ -40,27 +44,27 @@ export const ActionListItem = ({
   showChevron = true,
 }: ActionListItemProps) => {
   
-  // Determine Leading Content
+  // Logic: Determine Leading Content
+  // Priority: Custom Element > Icon > Implicit Checkmark (if selected)
   let renderedLeading = leadingElement;
   if (!renderedLeading && leadingIcon) {
     renderedLeading = (
       <span className="material-symbols-rounded">{leadingIcon}</span>
     );
   } else if (!renderedLeading && isSelected) {
-    // Implicit checkmark if selected and no other icon provided
     renderedLeading = (
       <span className="material-symbols-rounded">check</span>
     );
   }
 
-  // Determine Trailing Content
+  // Logic: Determine Trailing Content
+  // Priority: Custom Element > Icon > Implicit Chevron (if interactive)
   let renderedTrailing = trailingElement;
   if (!renderedTrailing && trailingIcon) {
     renderedTrailing = (
       <span className="material-symbols-rounded">{trailingIcon}</span>
     );
   } else if (!renderedTrailing && onClick && showChevron && !isSelected) {
-    // Default chevron for navigable items
     renderedTrailing = (
       <span className="material-symbols-rounded">chevron_right</span>
     );
@@ -72,6 +76,7 @@ export const ActionListItem = ({
       onClick={onClick}
       disabled={disabled}
       aria-selected={isSelected}
+      // CRITICAL: This attribute tells CSS whether to apply left padding to the content
       data-has-leading={!!renderedLeading || indent}
       type="button"
     >
