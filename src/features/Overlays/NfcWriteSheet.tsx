@@ -50,7 +50,16 @@ export const NfcWriteSheet = () => {
     
     // Transition to writing first for a split second to feel like an action,
     // then resolve to the specific state.
-    setWorkflow(prev => ({ ...prev, status: 'writing' } as any));
+    setWorkflow((prev) => {
+      if (prev.status === 'ready' || prev.status === 'error') {
+        return { 
+          status: 'writing', 
+          roomId: prev.roomId, 
+          roomName: prev.roomName 
+        };
+      }
+      return prev;
+    });
 
     setTimeout(() => {
       if (action === 'success') {
@@ -129,7 +138,7 @@ export const NfcWriteSheet = () => {
 
     return () => clearTimeout(timer);
 
-  }, [workflow.status, simulationMode, setWorkflow, setProvisionedIds, triggerHaptic, playSound]);
+  }, [workflow, simulationMode, setWorkflow, setProvisionedIds, triggerHaptic, playSound]);
 
   if (workflow.status === 'idle' || workflow.status === 'selecting') return null;
 
@@ -176,7 +185,17 @@ export const NfcWriteSheet = () => {
             {/* Error Actions - UPDATED: Retry Left, Cancel Right */}
             {workflow.status === 'error' && (
               <div className={styles.buttonGroup}>
-                <Button variant="primary" onClick={() => setWorkflow(prev => ({ ...prev, status: 'writing' } as any))} className={styles.actionButton}>Retry</Button>
+                <Button 
+                  variant="primary" 
+                  onClick={() => setWorkflow({ 
+                    status: 'writing', 
+                    roomId: workflow.roomId, 
+                    roomName: workflow.roomName 
+                  })} 
+                  className={styles.actionButton}
+                >
+                  Retry
+                </Button>
                 <Button variant="secondary" onClick={() => setIsOpen(false)} className={styles.actionButton}>Cancel</Button>
               </div>
             )}
