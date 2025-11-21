@@ -5,7 +5,7 @@ import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, SafetyCheckStatus } from '../types';
 import {
-  slowTickerAtom, // Use the slow ticker for status calculations
+  slowTickerAtom,
   historyFilterAtom,
   scheduleSearchQueryAtom,
   scheduleFilterAtom,
@@ -25,7 +25,6 @@ import { getFacilityContextForLocation } from './mock/facilityUtils';
 //                 Mock Data Store
 // =================================================================
 
-// Persist the base checks data so completed checks remain after reload.
 const baseChecksAtom = atomWithStorage<SafetyCheck[]>('sc_checks_v1', initialChecks);
 
 
@@ -60,14 +59,9 @@ export type AppAction =
   | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } }
   | { type: 'RESET_DATA' };
 
-/**
- * Lifecycle Logic: Regenerates the next check based on the previous one.
- */
 const generateNextCheck = (previousCheck: SafetyCheck): SafetyCheck => {
   const prevDueDate = new Date(previousCheck.dueDate);
   const intervalMs = previousCheck.baseInterval * 60 * 1000;
-  
-  // Next Due = Previous Due + Interval
   const nextDueDate = new Date(prevDueDate.getTime() + intervalMs);
 
   return {
@@ -76,7 +70,6 @@ const generateNextCheck = (previousCheck: SafetyCheck): SafetyCheck => {
     status: 'pending',
     dueDate: nextDueDate.toISOString(),
     generationId: previousCheck.generationId + 1,
-    // Clear historical data
     lastChecked: undefined,
     completionStatus: undefined,
     notes: undefined,
@@ -87,14 +80,13 @@ const appDataAtom = atom<AppData, [AppAction], void>(
   (get) => ({ checks: get(baseChecksAtom) }),
   (get, set, action) => {
     const currentChecks = get(baseChecksAtom);
-    
+
     if (action.type === 'RESET_DATA') {
-        set(baseChecksAtom, initialChecks);
-        // Clear related state
-        set(completingChecksAtom, new Set());
-        set(recentlyCompletedCheckIdAtom, null);
-        set(draftFormsAtom, {});
-        return;
+      set(baseChecksAtom, initialChecks);
+      set(completingChecksAtom, new Set());
+      set(recentlyCompletedCheckIdAtom, null);
+      set(draftFormsAtom, {});
+      return;
     }
 
     const nextState = produce({ checks: currentChecks }, (draft: Draft<AppData>) => {
@@ -109,29 +101,24 @@ const appDataAtom = atom<AppData, [AppAction], void>(
         case 'CHECK_COMPLETE': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
-            // 1. Mark current as complete
             check.status = 'complete';
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
 
-            // 2. Generate next check
             const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
         }
         case 'CHECK_MISSED': {
-            const check = draft.checks.find(c => c.id === action.payload.checkId);
-            if (check) {
-              // 1. Mark as missed
-              check.status = 'missed';
-              
-              // 2. Generate next check
-              const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
-              draft.checks.push(nextCheck as Draft<SafetyCheck>);
-            }
-            break;
+          const check = draft.checks.find(c => c.id === action.payload.checkId);
+          if (check) {
+            check.status = 'missed';
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
+            draft.checks.push(nextCheck as Draft<SafetyCheck>);
+          }
+          break;
         }
         case 'CHECK_SET_QUEUED': {
           const check = draft.checks.find(c => c.id === action.payload.checkId);
@@ -140,8 +127,6 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
-
-            // Offline Queue: We also generate the next one locally so work continues
             const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
@@ -164,7 +149,7 @@ const appDataAtom = atom<AppData, [AppAction], void>(
               id: `sup_${nanoid()}`,
               type: 'supplemental',
               residents: residentsInRoom,
-              status: 'complete', // Supplemental checks are created in 'complete' state
+              status: 'complete',
               dueDate: new Date().toISOString(),
               walkingOrderIndex: 999,
               lastChecked: new Date().toISOString(),
@@ -193,28 +178,16 @@ export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
 //                Derived, Read-Only Atoms for UI
 // =================================================================
 
-/**
- * This atom is the "Brain" of the schedule list.
- * It derives the current status (Pending, Due Soon, Late) based on the current time.
- * 
- * OPTIMIZATION:
- * It subscribes to `slowTickerAtom` (approx. 1s update) instead of the fast ticker.
- * This drastically reduces the frequency of full list re-calculations/re-sorts
- * while maintaining "good enough" precision for status changes.
- */
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const { checks } = get(appDataAtom);
-  // We subscribe to the slow ticker to trigger periodic status updates
   const timeNow = get(slowTickerAtom);
   const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
 
   return checks.map(check => {
-    // Stable statuses don't need recalculation
     if (['complete', 'completing', 'queued', 'missed'].includes(check.status)) {
       return check;
     }
 
-    // Supplemental checks don't have due dates in the same way, but they are usually complete.
     if (check.type === 'supplemental') return check;
 
     const dueTime = new Date(check.dueDate).getTime();
@@ -228,9 +201,6 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
       newStatus = 'pending';
     }
 
-    // Referential Equality Check:
-    // If the status hasn't changed, return the *original object reference*.
-    // This allows downstream memoized components to skip re-renders.
     if (check.status === newStatus) {
       return check;
     }
@@ -248,8 +218,6 @@ const contextFilteredChecksAtom = atom((get) => {
     return [];
   }
 
-  // Filter out completed, missed, and supplemental checks for the main schedule view
-  // This effectively "Archives" the missed checks from the user's To-Do list.
   const incompleteChecks = allChecks.filter(c =>
     c.status !== 'complete' &&
     c.status !== 'missed' &&
@@ -267,8 +235,6 @@ const contextFilteredChecksAtom = atom((get) => {
 
 const searchFilteredChecksAtom = atom((get) => {
   const allChecks = get(contextFilteredChecksAtom);
-  // NOTE: We access the query atom directly here. 
-  // Jotai handles the dependency graph automatically.
   const query = get(scheduleSearchQueryAtom).toLowerCase().trim();
 
   if (!query) {
@@ -298,31 +264,24 @@ const scheduleFilteredChecksAtom = atom((get) => {
   return checks.filter(check => check.status === filterKey);
 });
 
-const statusOrder: Record<SafetyCheckStatus, number> = {
-  late: 0,
-  'due-soon': 1,
-  pending: 2,
-  completing: 2,
-  queued: 3,
-  missed: 4,
-  complete: 5,
-};
-
 export const timeSortedChecksAtom = atom((get) => {
   const checks = get(scheduleFilteredChecksAtom);
   const sorted = [...checks];
-  sorted.sort((a, b) => {
-    const statusDiff = statusOrder[a.status] - statusOrder[b.status];
-    if (statusDiff !== 0) return statusDiff;
-    return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-  });
+  
+  // DEFINITIVE FIX: Sort strictly by Due Date (ascending).
+  // We explicitly DO NOT sort by status here. This ensures that when a check's status
+  // changes from 'late' to 'completing', its position in the list remains locked
+  // based on its timestamp, preventing it from jumping to the bottom.
+  sorted.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  
   return sorted;
 });
 
 export const routeSortedChecksAtom = atom((get) => {
   const checks = get(scheduleFilteredChecksAtom);
-  const actionable = checks.filter(c => !['complete', 'queued'].includes(c.status) && c.type !== 'supplemental');
-  const nonActionable = checks.filter(c => ['complete', 'queued'].includes(c.status) || c.type === 'supplemental');
+  // Keep 'completing' items in the actionable list so they don't jump sections
+  const actionable = checks.filter(c => !['complete', 'queued', 'missed'].includes(c.status) && c.type !== 'supplemental');
+  const nonActionable = checks.filter(c => ['complete', 'queued', 'missed'].includes(c.status) || c.type === 'supplemental');
 
   actionable.sort((a, b) => a.walkingOrderIndex - b.walkingOrderIndex);
   nonActionable.sort((a, b) => {
@@ -354,9 +313,7 @@ export const queuedChecksCountAtom = atom((get) => {
   return checks.filter(c => c.status === 'queued').length;
 });
 
-// =================================================================
-//           Derived Atoms for Manual Selection View
-// =================================================================
+// ... (Manual Search and History atoms remain unchanged below)
 const filterChecksByQuery = (checks: SafetyCheck[], query: string) => {
   if (!query) return checks;
   const lowerCaseQuery = query.toLowerCase();
@@ -402,13 +359,8 @@ export const manualSelectionResultsAtom = atom((get) => {
     return get(globalManualSearchResultsAtom).results;
   }
 
-  return []; // Return empty if contextual search fails and global isn't active
+  return [];
 });
-
-
-// =================================================================
-//                Derived Atoms for History View
-// =================================================================
 
 const baseHistoricalChecksAtom = atom((get) => {
   const { checks } = get(appDataAtom);

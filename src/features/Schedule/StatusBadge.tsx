@@ -14,12 +14,12 @@ const getStatusConfig = (status: SafetyCheckStatus) => {
       return { label: 'Late', icon: 'notifications' };
     case 'due-soon':
       return { label: 'Due Soon', icon: 'schedule' };
-    case 'missed':
-      return { label: 'Missed', icon: 'error' };
-    case 'complete':
-      return { label: 'Complete', icon: 'check_circle' };
     case 'completing':
-      return { label: 'Completing', icon: 'pending' };
+      return { label: 'Completed', icon: 'check_circle' };
+    case 'complete':
+      return { label: 'Completed', icon: 'check_circle' };
+    case 'missed':
+      return { label: 'Missed', icon: 'history' };
     case 'queued':
       return { label: 'Queued', icon: 'cloud_off' };
     default:

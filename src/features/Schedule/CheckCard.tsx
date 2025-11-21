@@ -73,7 +73,8 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
       transition={transition}
       animate={{ x: 0, height: 'auto', opacity: 1 }}
       initial={{ opacity: 0 }}
-      exit={{ height: 0, opacity: 0, overflow: 'hidden', marginBottom: 0 }}
+      // UPDATED EXIT ANIMATION: Slide right (x: 100%) + Collapse height
+      exit={{ x: '100%', height: 0, opacity: 0, overflow: 'hidden', marginBottom: 0 }}
       className={cardClassName}
       data-status={check.status}
       // Data attribute controls padding logic in CSS
