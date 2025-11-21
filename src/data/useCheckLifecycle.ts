@@ -1,9 +1,14 @@
 // src/data/useCheckLifecycle.ts
 import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { slowTickerAtom } from './atoms';
+import { 
+  slowTickerAtom, 
+  selectedFacilityGroupAtom, 
+  selectedFacilityUnitAtom 
+} from './atoms';
 import { safetyChecksAtom, dispatchActionAtom } from './appDataAtoms';
 import { addToastAtom } from './toastAtoms';
+import { getFacilityContextForLocation } from './mock/facilityUtils';
 
 /**
  * The Lifecycle Engine.
@@ -11,20 +16,24 @@ import { addToastAtom } from './toastAtoms';
  * This hook subscribes to the "Slow Ticker" (1s) and monitors active checks.
  * If a check's due date + base interval has passed, it marks the check as 'missed'
  * and triggers the regeneration of the next check in the series.
+ * 
+ * UPDATED: Now includes context-aware toast filtering and batching to prevent
+ * "Toast Hurricanes" when waking the device or processing multiple expiries.
  */
 export const useCheckLifecycle = () => {
   const now = useAtomValue(slowTickerAtom);
-  // We read all checks, but the logic only acts on actionable ones.
   const checks = useAtomValue(safetyChecksAtom);
+  
+  // Context awareness
+  const currentGroupId = useAtomValue(selectedFacilityGroupAtom);
+  const currentUnitId = useAtomValue(selectedFacilityUnitAtom);
+
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
 
   useEffect(() => {
-    // 1. Filter for potential missed checks
-    // Logic: If current time > due time + interval, it is missed.
-    // Note: checks atom already calculates status 'late', but 'missed' 
-    // involves archival, so we handle it here explicitly.
-    
+    const missedChecksInThisTick: string[] = [];
+
     checks.forEach(check => {
       // Ignore checks that are already in a terminal state or supplemental
       if (['complete', 'missed', 'queued', 'completing'].includes(check.status) || check.type === 'supplemental') {
@@ -36,15 +45,32 @@ export const useCheckLifecycle = () => {
       const missedThreshold = dueDate + intervalMs;
 
       if (now >= missedThreshold) {
-        // 2. Dispatch Action
+        // 1. Dispatch Action (Update State)
         dispatch({ type: 'CHECK_MISSED', payload: { checkId: check.id } });
         
-        // 3. Notify User
-        addToast({
-            message: `Check for ${check.residents[0]?.location} was missed.`,
-            icon: 'history'
-        });
+        // 2. Context Filter for Notifications
+        // We only notify if the check belongs to the user's currently active view.
+        if (check.residents[0]?.location) {
+           const context = getFacilityContextForLocation(check.residents[0].location);
+           if (context && context.groupId === currentGroupId && context.unitId === currentUnitId) {
+             missedChecksInThisTick.push(check.residents[0].location);
+           }
+        }
       }
     });
-  }, [now, checks, dispatch, addToast]);
+
+    // 3. Batch Notifications
+    if (missedChecksInThisTick.length === 1) {
+       addToast({
+            message: `Check for ${missedChecksInThisTick[0]} was missed.`,
+            icon: 'history'
+        });
+    } else if (missedChecksInThisTick.length > 1) {
+        addToast({
+            message: `${missedChecksInThisTick.length} checks were missed.`,
+            icon: 'history'
+        });
+    }
+
+  }, [now, checks, dispatch, addToast, currentGroupId, currentUnitId]);
 };

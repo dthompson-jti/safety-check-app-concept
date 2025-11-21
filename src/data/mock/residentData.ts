@@ -26,10 +26,25 @@ export const mockResidents: Resident[] = [
   { id: 'jdc_a6_4', name: 'Emily White', location: 'A6-604' },
   { id: 'jdc_a6_5', name: 'Ryan Scott', location: 'A6-604' },
 
-  // --- Unit: B-Wing ---
+  // --- Unit: B-Wing (Standard) ---
   { id: 'jdc_b1_1', name: 'Olivia Jones', location: 'B1-101' },
   { id: 'jdc_b1_2', name: 'Noah Brown', location: 'B1-102' },
   { id: 'jdc_b2_1', name: 'Ava Johnson', location: 'B2-201' },
+
+  // --- Unit: B-Wing (Stress Test Subjects) ---
+  // These 12 residents enable the "Toast Hurricane" and "Scroll Performance" stress tests.
+  { id: 'res_stress_b_0', name: 'Subject 01', location: 'B1-Stress-01' },
+  { id: 'res_stress_b_1', name: 'Subject 02', location: 'B1-Stress-02' },
+  { id: 'res_stress_b_2', name: 'Subject 03', location: 'B1-Stress-03' },
+  { id: 'res_stress_b_3', name: 'Subject 04', location: 'B1-Stress-04' },
+  { id: 'res_stress_b_4', name: 'Subject 05', location: 'B1-Stress-05' },
+  { id: 'res_stress_b_5', name: 'Subject 06', location: 'B1-Stress-06' },
+  { id: 'res_stress_b_6', name: 'Subject 07', location: 'B1-Stress-07' },
+  { id: 'res_stress_b_7', name: 'Subject 08', location: 'B1-Stress-08' },
+  { id: 'res_stress_b_8', name: 'Subject 09', location: 'B1-Stress-09' },
+  { id: 'res_stress_b_9', name: 'Subject 10', location: 'B1-Stress-10' },
+  { id: 'res_stress_b_10', name: 'Subject 11', location: 'B1-Stress-11' },
+  { id: 'res_stress_b_11', name: 'Subject 12', location: 'B1-Stress-12' },
   
   // --- Unit: C-Wing ---
   { id: 'jdc_c1_1', name: 'Mason Davis', location: 'C1-101' },

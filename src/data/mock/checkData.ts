@@ -1,5 +1,5 @@
 // src/data/mock/checkData.ts
-import { SafetyCheck } from '../../types';
+import { SafetyCheck, Resident } from '../../types';
 import { mockResidents } from './residentData';
 
 // Helper to group residents by their location for check creation
@@ -23,9 +23,9 @@ export const initialChecks: SafetyCheck[] = (() => {
     return {
       id: `chk_${location.toLowerCase().replace(/[\s']/g, '_')}`,
       type: 'scheduled',
-      residents: residentsByLocation[location],
+      residents: residentsByLocation[location] || [],
       status: 'pending',
-      dueDate: inNMinutes(walkingIndex * 2), // Stagger due dates
+      dueDate: inNMinutes(walkingIndex * 2),
       walkingOrderIndex: walkingIndex++,
       specialClassifications,
       generationId: 1,
@@ -33,7 +33,7 @@ export const initialChecks: SafetyCheck[] = (() => {
     } as SafetyCheck;
   };
 
-  return [
+  const standardChecks = [
     // JDC - A-Wing
     createCheck("A1-101"),
     createCheck("A1-102"),
@@ -52,10 +52,12 @@ export const initialChecks: SafetyCheck[] = (() => {
       { type: 'SR', details: 'Both residents on suicide watch.', residentId: 'jdc_a6_5' }
     ]),
 
-    // JDC - B-Wing & C-Wing
+    // JDC - B-Wing (Standard)
     createCheck("B1-101"),
     createCheck("B1-102"),
     createCheck("B2-201"),
+
+    // JDC - C-Wing
     createCheck("C1-101"),
     createCheck("C1-102"),
 
@@ -106,31 +108,75 @@ export const initialChecks: SafetyCheck[] = (() => {
     createCheck("UN-One"),
     createCheck("Tycho Station Command"),
     createCheck("Ceres Station Docks"),
+  ];
 
-    // Add some completed checks for history view
+  // --- B-WING STRESS TEST DATA GENERATOR ---
+  // Group 1 (6 checks): Sequential Misses (5s apart) -> Tests individual toasts.
+  // Group 2 (6 checks): Simultaneous Misses (0s apart) -> Tests aggregation logic.
+  
+  const bWingStressChecks: SafetyCheck[] = Array.from({ length: 12 }).map((_, i) => {
+    const isGroup2 = i >= 6;
+    
+    const startDelay = isGroup2 ? 70 : 10; // Group 1 starts in 10s, Group 2 in 70s
+    
+    // CRITICAL CHANGE: 
+    // Group 1 staggers by 5s. 
+    // Group 2 has NO stagger (all 0), forcing them to occur in the same "Tick".
+    const stagger = isGroup2 ? 0 : (i % 6) * 5; 
+    
+    const secondsUntilMissed = startDelay + stagger;
+    const dueTimeMs = now.getTime() + (secondsUntilMissed * 1000) - (DEFAULT_INTERVAL * 60 * 1000);
+
+    const locationName = `B1-Stress-${String(i + 1).padStart(2, '0')}`;
+    
+    // Find the actual resident object to ensure ID matching
+    const residents = residentsByLocation[locationName];
+    const finalResidents = residents || [{
+        id: `res_stress_b_${i}`,
+        name: `Subject ${i + 1}`,
+        location: locationName
+    } as Resident];
+
+    return {
+      id: `chk_stress_b_${i}`,
+      type: 'scheduled',
+      residents: finalResidents,
+      status: 'late', // Already technically late relative to due date
+      dueDate: new Date(dueTimeMs).toISOString(),
+      walkingOrderIndex: 50 + i, 
+      specialClassifications: [],
+      generationId: 1,
+      baseInterval: DEFAULT_INTERVAL,
+    } as SafetyCheck;
+  });
+
+  // Add some completed checks for history view
+  const historyChecks = [
     { 
       id: 'chk_completed_1', 
       type: 'scheduled', 
       residents: [mockResidents[0]], 
       status: 'complete', 
       dueDate: inNMinutes(-30), 
-      walkingOrderIndex: walkingIndex++, 
+      walkingOrderIndex: 900, 
       lastChecked: inNMinutes(-32), 
       completionStatus: 'All good',
       generationId: 1,
       baseInterval: DEFAULT_INTERVAL
-    },
+    } as SafetyCheck,
     { 
       id: 'chk_completed_2', 
       type: 'scheduled', 
       residents: [mockResidents[1]], 
       status: 'complete', 
       dueDate: inNMinutes(-60), 
-      walkingOrderIndex: walkingIndex++, 
+      walkingOrderIndex: 901, 
       lastChecked: inNMinutes(-61), 
       completionStatus: 'Assisted',
       generationId: 1,
       baseInterval: DEFAULT_INTERVAL
-    },
+    } as SafetyCheck,
   ];
+
+  return [...standardChecks, ...bWingStressChecks, ...historyChecks];
 })();

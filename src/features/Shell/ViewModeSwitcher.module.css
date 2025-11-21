@@ -1,3 +1,5 @@
+/* src/features/Shell/ViewModeSwitcher.module.css */
+
 .container {
   display: flex;
   align-items: center;
@@ -5,7 +7,11 @@
   background-color: var(--surface-bg-tertiary);
   border: 1px solid var(--surface-border-secondary);
   border-radius: var(--radius-lg);
-  padding: 2px;
+  
+  /* DEFINITIVE FIX: Enforce symmetric padding around the toggle group */
+  padding: 4px;
+  gap: 0; /* Ensure no gap affects the 50% calculation */
+  
   flex-shrink: 0;
 }
 
@@ -13,8 +19,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  /* TIGHTER LAYOUT: Horizontal padding is reduced. */
-  padding: 0 var(--spacing-2);
+  padding: 0; /* Let flex centering handle text placement */
   font-family: var(--font-family-sans);
   font-size: 14px;
   font-weight: 500;
@@ -24,7 +29,9 @@
   transition: color 0.25s ease;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
-  margin: 2px;
+  
+  /* DEFINITIVE FIX: Remove margin to ensure 50% width calc is precise */
+  margin: 0;
 
   height: 44px;
   display: grid;
@@ -32,7 +39,6 @@
   align-items: center;
   gap: var(--spacing-1);
 
-  /* TIGHTER LAYOUT: Min-width is reduced significantly. */
   min-width: 5.5rem;
 }
 
@@ -52,9 +58,11 @@
 }
 
 .activeIndicator {
-  width: calc(100% - 4px);
-  height: calc(100% - 4px);
-  margin: 2px;
+  /* 
+     Size and position are now handled in TSX via styles 
+     to ensure perfect synchronization with the transform.
+     We keep basic styling here.
+  */
   background-color: var(--surface-bg-primary);
   border-radius: var(--radius-sm);
   box-shadow: var(--surface-shadow-pill);

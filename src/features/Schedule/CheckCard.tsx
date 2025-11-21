@@ -17,25 +17,18 @@ interface CheckCardProps {
   transition: Transition; // Accept the shared transition object
 }
 
-const getClassificationBadge = (type: string): string => {
-  const normalized = type.toLowerCase();
-  if (normalized.includes('high risk')) return 'MSR';
-  if (normalized.includes('suicide')) return 'SR';
-  if (normalized.includes('watch')) return 'SW';
-  // Fallback: First two chars uppercase
-  return type.substring(0, 2).toUpperCase();
-};
-
 const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
-  const classification = check.specialClassifications?.find(
+  // UPDATED: Logic reverted to simple boolean check.
+  // If ANY classification exists for this resident, show the warning icon.
+  const hasSpecialStatus = check.specialClassifications?.some(
     (sc) => sc.residentId === resident.id
   );
 
   return (
     <li className={styles.residentListItem}>
-      {classification && (
-        <span className={styles.classificationBadge}>
-          {getClassificationBadge(classification.type)}
+      {hasSpecialStatus && (
+        <span className={`material-symbols-rounded ${styles.warningIcon}`}>
+          warning
         </span>
       )}
       {resident.name}
@@ -56,8 +49,6 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const handleCardClick = () => {
     if (isActionable) {
-      // Manually initiating a check from the UI sets the method to 'manual'.
-      // This is the flag that triggers the attestation requirement on the form.
       setWorkflowState({
         view: 'form',
         type: 'scheduled',
@@ -80,13 +71,12 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
     <motion.div
       layout
       transition={transition}
-      // Padding updated via CSS class, margin handled in CSS now too
       animate={{ x: 0, height: 'auto', opacity: 1 }}
       initial={{ opacity: 0 }}
       exit={{ height: 0, opacity: 0, overflow: 'hidden', marginBottom: 0 }}
       className={cardClassName}
       data-status={check.status}
-      // New: Data attribute to control CSS padding and indicator visibility
+      // Data attribute controls padding logic in CSS
       data-indicators-visible={showStatusIndicators}
       onClick={handleCardClick}
       aria-disabled={!isActionable}

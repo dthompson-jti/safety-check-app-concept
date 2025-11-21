@@ -1,5 +1,6 @@
 // src/features/Overlays/SettingsModal.tsx
 import { useAtom, useSetAtom } from 'jotai';
+import { motion } from 'framer-motion';
 import { appConfigAtom, sessionAtom } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
@@ -24,8 +25,16 @@ export const SettingsModal = () => {
     setSession({ isAuthenticated: false, userName: null });
   };
 
+  // DEFINITIVE FIX: Added motion wrapper with slide-in animation
+  // to replicate the "Full Screen Modal" entrance pattern.
   return (
-    <div className={styles.settingsContainer}>
+    <motion.div 
+      className={styles.settingsContainer}
+      initial={{ x: '100%' }}
+      animate={{ x: 0 }}
+      exit={{ x: '100%' }}
+      transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+    >
       <div className={styles.settingsSection}>
         <h3 className={styles.sectionTitle}>PREFERENCES</h3>
         <div className={styles.settingsGroup}>
@@ -63,6 +72,6 @@ export const SettingsModal = () => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

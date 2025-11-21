@@ -1,5 +1,6 @@
 // src/features/Overlays/DeveloperModal.tsx
 import { useAtom, useSetAtom } from 'jotai';
+import { motion } from 'framer-motion';
 import {
   connectionStatusAtom,
   ConnectionStatus,
@@ -44,8 +45,16 @@ export const DeveloperModal = () => {
     addToast({ message: 'Application data reset to defaults.', icon: 'delete' });
   };
 
+  // DEFINITIVE FIX: Added motion wrapper with slide-in animation
+  // to replicate the "Full Screen Modal" entrance pattern.
   return (
-    <div className={styles.container}>
+    <motion.div 
+      className={styles.container}
+      initial={{ x: '100%' }}
+      animate={{ x: 0 }}
+      exit={{ x: '100%' }}
+      transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+    >
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Connectivity</h3>
         <IconToggleGroup
@@ -155,6 +164,6 @@ export const DeveloperModal = () => {
            Reset Application Data
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
-};
+}
