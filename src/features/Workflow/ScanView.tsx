@@ -76,15 +76,16 @@ export const ScanView = () => {
     }
   }, [workflow, allChecks]);
 
-  const failScan = useCallback((message: string) => {
-    addToast({ message, icon: 'error' });
+  const failScan = useCallback((_message: string) => {
+    // STRATEGY UPDATE: Removed redundant toast. 
+    // The viewfinder's fail state overlay provides sufficient immediate feedback.
     triggerHaptic('error');
     playSound('error');
     setScanViewState('fail');
     setTimeout(() => {
       setScanViewState('scanning');
     }, 1500);
-  }, [addToast, triggerHaptic, playSound]);
+  }, [triggerHaptic, playSound]);
 
   const handleDecode = (result: string) => {
     if (scanViewState !== 'scanning') return;
@@ -119,7 +120,7 @@ export const ScanView = () => {
             statuses: defaultStatuses,
             notes: '',
             onSuccess: () => {
-              addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle' });
+              addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle', variant: 'success' });
               setWorkflow({ view: 'none' });
             }
           });
@@ -171,7 +172,7 @@ export const ScanView = () => {
       if (anyIncomplete) {
         handleDecode(anyIncomplete.id);
       } else {
-        addToast({ message: 'No incomplete checks found to simulate.', icon: 'info' });
+        addToast({ message: 'No incomplete checks found to simulate.', icon: 'info', variant: 'neutral' });
       }
     }
   };

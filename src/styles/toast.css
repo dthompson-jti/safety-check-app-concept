@@ -4,15 +4,12 @@
   position: fixed;
 
   /* 
-    This positioning is determined by a CSS variable contract. The AppFooter
-    component measures its own height and sets `--footer-height` on the root.
-    This allows the toast viewport to position itself dynamically and robustly,
-    adapting to any changes in the footer's size.
+    Dynamic Positioning Contract:
+    Floats above the footer (if present) + standard spacing.
   */
-  bottom: calc(var(--footer-height, 16px) + 16px);
-
-  left: 16px;
-  right: 16px;
+  bottom: calc(var(--footer-height, 0px) + var(--spacing-4));
+  left: 0;
+  right: 0;
 
   display: flex;
   flex-direction: column;
@@ -32,70 +29,126 @@
 .toast-root {
   /* Re-enable pointer events for the toast itself. */
   pointer-events: auto;
-  max-width: 500px;
-  width: 100%;
-
+  
+  /* Metrics Spec */
+  width: auto;
+  max-width: calc(100vw - 32px);
+  padding: 16px;
+  border-radius: 12px;
+  gap: 16px;
+  
   display: flex;
   align-items: center;
-  gap: var(--spacing-3);
-  background-color: var(--primitives-grey-900);
-  color: var(--surface-fg-white);
-  padding: var(--spacing-3) var(--spacing-4);
-  border-radius: var(--spacing-2);
-  box-shadow: var(--surface-shadow-lg);
-  font-size: 0.9em;
+  /* justify-content removed to allow natural flow with close button */
+  
+  /* Typography */
+  font-family: var(--font-family-sans);
+  font-size: 0.9rem;
   font-weight: 500;
-  border: 1px solid var(--primitives-grey-800);
-  /* This is critical for swipe-to-dismiss gestures to work on mobile. */
-  touch-action: pan-y;
+  color: var(--surface-fg-secondary);
+  
+  /* Depth */
+  box-shadow: var(--surface-shadow-md);
+  
+  /* Interaction */
+  /* CRITICAL: touch-action: none is required for Radix Swipe to work on mobile */
+  touch-action: none; 
+  user-select: none;
 }
 
 .toast-root .material-symbols-rounded {
   font-size: 20px;
-  color: var(--surface-fg-on-solid-faint);
+  flex-shrink: 0;
 }
 
-/* 
-  DEFINITIVE FIX: All keyframe animations and data-state animation triggers
-  have been REMOVED. Framer Motion is now the sole driver of enter/exit animations.
-  Only the interactive swipe transform styles remain, which are controlled by Radix.
-*/
-.toast-root[data-swipe='move'] {
-  transform: translateX(var(--radix-toast-swipe-move-x));
-}
+/* --- Close Button --- */
 
-.toast-root[data-swipe='cancel'] {
-  transform: translateX(0);
-  transition: transform 200ms ease-out;
-}
-
-/*
-  This rule uses a hard reset to guarantee the close button's appearance,
-  preventing inheritance from global button styles and ensuring consistency.
-*/
 .toast-close-button {
   all: unset;
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: var(--radius-md);
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
   flex-shrink: 0;
   cursor: pointer;
   background: none;
-  color: var(--control-fg-on-solid);
-  border: 1px solid transparent;
-  transition: background-color 0.2s, border-color 0.2s;
-  margin-left: auto;
+  color: currentColor; /* Inherit from variant text color */
+  opacity: 0.6;
+  transition: background-color 0.2s, opacity 0.2s;
+  margin-left: auto; /* Push to right if container expands */
 }
 
 .toast-close-button:hover {
-  background-color: var(--control-bg-on-solid-hover);
+  background-color: rgba(0, 0, 0, 0.05);
+  opacity: 1;
 }
 
 .toast-close-button .material-symbols-rounded {
   font-size: 18px;
-  color: var(--surface-fg-secondary_on_brand);
+}
+
+/* --- Semantic Variants --- */
+
+/* Neutral (Default) */
+.toast-root[data-variant='neutral'] {
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-secondary);
+}
+.toast-root[data-variant='neutral'] .material-symbols-rounded:first-child {
+  color: var(--surface-fg-secondary);
+}
+
+/* Success */
+.toast-root[data-variant='success'] {
+  background-color: var(--surface-bg-success);
+  border: 1px solid var(--surface-border-success);
+}
+.toast-root[data-variant='success'] .material-symbols-rounded:first-child {
+  color: var(--surface-fg-success-primary);
+  font-variation-settings: 'FILL' 1;
+}
+
+/* Alert / Error */
+.toast-root[data-variant='alert'] {
+  background-color: var(--surface-bg-error-primary);
+  border: 1px solid var(--surface-border-alert);
+}
+.toast-root[data-variant='alert'] .material-symbols-rounded:first-child {
+  color: var(--surface-fg-alert-primary);
+  font-variation-settings: 'FILL' 1;
+}
+
+/* Warning */
+.toast-root[data-variant='warning'] {
+  background-color: var(--surface-bg-warning-primary);
+  border: 1px solid var(--surface-border-warning);
+}
+.toast-root[data-variant='warning'] .material-symbols-rounded:first-child {
+  color: var(--surface-fg-warning-primary);
+  font-variation-settings: 'FILL' 1;
+}
+
+/* Info */
+.toast-root[data-variant='info'] {
+  background-color: var(--surface-bg-info);
+  border: 1px solid var(--surface-border-info);
+}
+.toast-root[data-variant='info'] .material-symbols-rounded:first-child {
+  color: var(--surface-fg-info-primary);
+  font-variation-settings: 'FILL' 1;
+}
+
+/* Radix Swipe Transformations */
+.toast-root[data-swipe='move'] {
+  transform: translateX(var(--radix-toast-swipe-move-x));
+}
+.toast-root[data-swipe='cancel'] {
+  transform: translateX(0);
+  transition: transform 200ms ease-out;
+}
+.toast-root[data-swipe='end'] {
+  animation: fadeOut 100ms ease-out forwards;
 }

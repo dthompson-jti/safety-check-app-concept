@@ -2,19 +2,22 @@
 import { atom } from 'jotai';
 import { nanoid } from 'nanoid';
 
+export type ToastVariant = 'neutral' | 'success' | 'alert' | 'info' | 'warning';
+
 export interface Toast {
   id: string;
   message: string;
   icon: string;
+  variant: ToastVariant;
 }
 
 export const toastsAtom = atom<Toast[]>([]);
 
 export const addToastAtom = atom(
   null,
-  (get, set, { message, icon }: { message: string; icon: string }) => {
+  (get, set, { message, icon, variant = 'neutral' }: { message: string; icon: string; variant?: ToastVariant }) => {
     const currentToasts = get(toastsAtom);
-    const newToast = { id: nanoid(), message, icon };
+    const newToast: Toast = { id: nanoid(), message, icon, variant };
 
     // FIX: This logic specifically handles the double-invocation of effects in React 18's
     // Strict Mode (used in development) and prevents duplicate failure messages. 

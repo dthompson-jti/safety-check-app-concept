@@ -68,12 +68,14 @@ export const useCheckLifecycle = () => {
     if (missedChecksInThisTick.length === 1) {
        addToast({
             message: `Check for ${missedChecksInThisTick[0]} was missed.`,
-            icon: 'history'
+            icon: 'history',
+            variant: 'warning' // Changed from 'alert' to 'warning' per requirements
         });
     } else if (missedChecksInThisTick.length > 1) {
         addToast({
             message: `${missedChecksInThisTick.length} checks were missed.`,
-            icon: 'history'
+            icon: 'history',
+            variant: 'warning' // Changed from 'alert' to 'warning' per requirements
         });
     }
 

@@ -13,6 +13,7 @@ import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useAppSound } from '../../data/useAppSound';
 import { useVisualViewport } from '../../data/useVisualViewport';
+import { useScrollToFocused } from '../../data/useScrollToFocused';
 import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAtoms';
 import { Button } from '../../components/Button';
 import { SegmentedControl } from '../../components/SegmentedControl';
@@ -66,11 +67,18 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
+  // Layout Stability: Sync height with visual viewport
   useVisualViewport();
-
+  
   const footerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLElement>(null);
   const [showScrollShadow, setShowScrollShadow] = useState(false);
+
+  // Layout Stability: Ensure focused inputs are not hidden by the sticky footer
+  useScrollToFocused({ 
+    containerRef: contentRef, 
+    footerOffsetVar: '--form-footer-height' 
+  });
 
   // Initialize State: Prefer Draft Data, then fall back to initial
   const draft = checkData.type === 'scheduled' ? drafts[checkData.checkId] : undefined;
@@ -223,7 +231,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       });
       setWorkflowState({ view: 'none' });
       if (connectionStatus !== 'offline') {
-        addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt' });
+        addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt', variant: 'success' });
       }
     }
   };
@@ -233,6 +241,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   return (
     <motion.div
       className={styles.checkFormView}
+      // Viewport Contract: Bind height to visual viewport
       style={{ height: 'var(--visual-viewport-height, 100dvh)' }}
       initial={{ x: '100%' }}
       animate={{ x: 0 }}

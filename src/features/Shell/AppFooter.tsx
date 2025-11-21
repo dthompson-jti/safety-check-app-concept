@@ -91,7 +91,7 @@ export const AppFooter = () => {
           statuses: defaultStatuses,
           notes: '',
           onSuccess: () => {
-            addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle' });
+            addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle', variant: 'success' });
           }
         });
         return;
@@ -108,7 +108,7 @@ export const AppFooter = () => {
       });
     } else {
       triggerHaptic('warning');
-      addToast({ message: 'No incomplete checks found in current list.', icon: 'info' });
+      addToast({ message: 'No incomplete checks found in current list.', icon: 'info', variant: 'neutral' });
     }
   };
 

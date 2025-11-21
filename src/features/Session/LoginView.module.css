@@ -1,20 +1,47 @@
 /* src/features/Session/LoginView.module.css */
-.loginViewWrapper {
+
+/* 
+  The Viewport Stack Strategy:
+  Instead of a centered card that gets clipped, we use a flex column that 
+  fills the exact visible area (visual viewport).
+*/
+.viewportStack {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* Fallback for browsers without visualViewport API */
+  height: 100vh;
+  /* The Contract: Bind to the visual viewport height */
+  height: var(--visual-viewport-height, 100dvh);
   background-color: var(--surface-bg-secondary);
   font-family: var(--font-family-sans);
+  overflow: hidden; /* Prevent body scroll */
 }
 
-.mainContent {
+/* 
+  The Scrollable Stage:
+  This area grows to fill available space and handles the scrolling.
+  This is the container we attach useScrollToFocused to.
+*/
+.scrollableContent {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Center content vertically when there is space (Keyboard Closed) */
+  justify-content: center; 
+  /* Ensure min-height allows scrolling when content is larger than viewport */
+  min-height: 0; 
 }
+
+/* 
+  When the keyboard is open, the viewport height shrinks. 
+  If it shrinks too much, justify-content: center might cut off the top.
+  We use a pseudo-element spacer strategy or margin-auto if needed, 
+  but standard flow usually works best for forms.
+*/
 
 .loginFormCard {
   background-color: var(--surface-bg-primary);
@@ -27,12 +54,31 @@
   flex-direction: column;
   gap: var(--spacing-6);
   text-align: center;
+  
+  /* Ensure the card doesn't get squashed */
+  flex-shrink: 0; 
+  margin: auto 0; /* Centers vertically if space allows, scrolls if not */
 }
 
 .appTitle {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
+  transition: opacity 0.2s, height 0.2s;
+}
+
+/* 
+  High-Craft Polish:
+  If the viewport is very short (e.g. Landscape or Keyboard Open on small phone),
+  hide the large logo/title to prioritize the input fields.
+*/
+@media (max-height: 450px) {
+  .appTitle {
+    display: none;
+  }
+  .loginFormCard {
+    padding: var(--spacing-4); /* Reduce padding to save space */
+  }
 }
 
 .appTitle h3 {
@@ -91,10 +137,8 @@
   padding: 0 var(--spacing-1);
 }
 
-/* UPDATED: High-Craft Error Banner */
 .formError {
   background-color: var(--surface-bg-error-primary);
-  /* White background */
   color: var(--surface-fg-alert-primary);
   font-size: 0.9rem;
   font-weight: 500;
@@ -102,10 +146,8 @@
   border-radius: var(--radius-md);
   text-align: left;
   border: 1px solid var(--surface-border-alert);
-  /* Red border */
   box-shadow: var(--surface-shadow-md);
   margin-bottom: var(--spacing-2);
-
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
@@ -116,14 +158,13 @@
   flex-shrink: 0;
 }
 
-/* Footer Styles */
 .pageFooter {
   width: 100%;
   text-align: center;
-  padding: var(--spacing-4) 0 var(--spacing-2);
+  padding: var(--spacing-4) 0 var(--spacing-4);
   color: var(--surface-fg-tertiary);
   font-size: 0.8rem;
-  flex-shrink: 0;
+  flex-shrink: 0; /* Never shrink the footer text */
 }
 
 .pageFooter p {
@@ -150,52 +191,12 @@
 }
 
 /* Modal Styles */
-.modalBodyLayout {
-  text-align: left;
-}
-
-.modalTextContent {
-  flex-grow: 1;
-}
-
-.modalTextContent h3 {
-  margin-top: 0;
-  margin-bottom: var(--spacing-2);
-  font-size: 1.25rem;
-  color: var(--surface-fg-primary);
-}
-
-.modalTextContent p {
-  margin-top: 0;
-  margin-bottom: var(--spacing-4);
-  color: var(--surface-fg-secondary);
-  line-height: 1.6;
-}
-
-.infoNote {
-  padding: var(--spacing-3);
-  border-radius: var(--spacing-2);
-}
-
-.infoNote h4 {
-  margin-top: 0;
-  margin-bottom: var(--spacing-2);
-  color: var(--surface-fg-primary);
-  font-size: 0.9rem;
-}
-
-.infoNote ul {
-  margin: 0;
-  padding-left: var(--spacing-5);
-  color: var(--surface-fg-secondary);
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.infoNote ul li {
-  margin-bottom: var(--spacing-1);
-}
-
-.infoNote ul li:last-child {
-  margin-bottom: 0;
-}
+.modalBodyLayout { text-align: left; }
+.modalTextContent { flex-grow: 1; }
+.modalTextContent h3 { margin-top: 0; margin-bottom: var(--spacing-2); font-size: 1.25rem; color: var(--surface-fg-primary); }
+.modalTextContent p { margin-top: 0; margin-bottom: var(--spacing-4); color: var(--surface-fg-secondary); line-height: 1.6; }
+.infoNote { padding: var(--spacing-3); border-radius: var(--spacing-2); }
+.infoNote h4 { margin-top: 0; margin-bottom: var(--spacing-2); color: var(--surface-fg-primary); font-size: 0.9rem; }
+.infoNote ul { margin: 0; padding-left: var(--spacing-5); color: var(--surface-fg-secondary); font-size: 0.9rem; line-height: 1.6; }
+.infoNote ul li { margin-bottom: var(--spacing-1); }
+.infoNote ul li:last-child { margin-bottom: 0; }

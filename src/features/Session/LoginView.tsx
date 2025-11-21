@@ -1,11 +1,13 @@
 // src/features/Session/LoginView.tsx
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { sessionAtom } from '../../data/atoms';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { Modal } from '../../components/Modal';
+import { useVisualViewport } from '../../data/useVisualViewport';
+import { useScrollToFocused } from '../../data/useScrollToFocused';
 import styles from './LoginView.module.css';
 
 export const LoginView = () => {
@@ -18,15 +20,22 @@ export const LoginView = () => {
   const [isAttempted, setIsAttempted] = useState(false);
   const setSession = useSetAtom(sessionAtom);
 
+  // Layout Stability Hooks
+  useVisualViewport();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  useScrollToFocused({ 
+    containerRef: scrollContainerRef,
+    // No sticky footer in LoginView, so no offset variable needed.
+    offset: 20 
+  });
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsAttempted(true);
-    // ARCHITECTURE: Always clear previous errors on a new submission attempt.
     setUsernameError('');
     setPasswordError('');
     setFormError('');
 
-    // STAGE 1: Client-side validation for simple, common errors (e.g., empty fields).
     let hasError = false;
     if (username.trim() === '') {
       setUsernameError('Username is required.');
@@ -38,12 +47,9 @@ export const LoginView = () => {
     }
     if (hasError) return;
 
-    // STAGE 2: Credential validation.
     if (username.trim() === 'test' && password.trim() === 'test') {
-      // On success, authenticate the user.
       setSession({ isAuthenticated: true, userName: username.trim() });
     } else {
-      // SECURITY BEST PRACTICE: Generic error message.
       setFormError('Incorrect username or password.');
     }
   };
@@ -52,7 +58,6 @@ export const LoginView = () => {
     setSession({ isAuthenticated: true, userName: 'Dev Shortcut' });
   };
 
-  // Reset errors when user starts typing to provide immediate feedback loop
   const handleUsernameChange = (val: string) => {
     setUsername(val);
     if (usernameError) setUsernameError('');
@@ -74,13 +79,13 @@ export const LoginView = () => {
     <>
       <motion.div
         key="login-view"
-        className={styles.loginViewWrapper}
+        className={styles.viewportStack}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <main className={styles.mainContent}>
+        <div className={styles.scrollableContent} ref={scrollContainerRef}>
           <div className={styles.loginFormCard}>
             <div className={styles.appTitle}>
               <span
@@ -137,16 +142,16 @@ export const LoginView = () => {
               </div>
             </form>
           </div>
-        </main>
 
-        <footer className={styles.pageFooter}>
-          <p>&copy; Journal Technologies 2025.</p>
-          <p>
-            <a href="#privacy">Privacy Policy</a>
-            <span className={styles.footerSeparator}>&middot;</span>
-            <a href="#terms">Terms of Use</a>
-          </p>
-        </footer>
+          <footer className={styles.pageFooter}>
+            <p>&copy; Journal Technologies 2025.</p>
+            <p>
+              <a href="#privacy">Privacy Policy</a>
+              <span className={styles.footerSeparator}>&middot;</span>
+              <a href="#terms">Terms of Use</a>
+            </p>
+          </footer>
+        </div>
       </motion.div>
 
       <Modal

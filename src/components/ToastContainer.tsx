@@ -1,10 +1,15 @@
 // src/components/ToastContainer.tsx
 import * as ToastPrimitive from '@radix-ui/react-toast';
 
-// DEFINITIVE FIX: This component is now a simple, stateless wrapper for the Radix Viewport.
-// The list of toasts is rendered and managed in App.tsx.
+// ARCHITECTURE UPDATE: We wrap the Viewport in the Provider here to strictly enforce
+// the swipeDirection configuration. This ensures that regardless of where ToastContainer
+// is mounted in the tree, the interaction model is consistent (Swipe Right to Dismiss).
 export const ToastContainer = () => {
-  return <ToastPrimitive.Viewport asChild>
-    <ol className="toast-viewport" />
-  </ToastPrimitive.Viewport>;
+  return (
+    <ToastPrimitive.Provider swipeDirection="right">
+      <ToastPrimitive.Viewport asChild>
+        <ol className="toast-viewport" />
+      </ToastPrimitive.Viewport>
+    </ToastPrimitive.Provider>
+  );
 };

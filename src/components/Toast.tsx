@@ -2,27 +2,28 @@
 import * as ToastPrimitive from '@radix-ui/react-toast';
 import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { removeToastAtom } from '../data/toastAtoms';
+import { removeToastAtom, ToastVariant } from '../data/toastAtoms';
 
-interface ToastMessageProps {
+export interface ToastMessageProps {
   id: string;
   message: string;
   icon: string;
+  variant?: ToastVariant;
 }
 
 /**
  * A self-contained, animated toast instance. It wraps Radix's Root component
  * with Framer Motion to handle animations, adhering to the project's canonical
- * 'tween' animation principle for a consistent, high-craft feel.
+ * 'spring' animation principle for a consistent, high-craft feel.
  */
-export const ToastMessage = ({ id, message, icon }: ToastMessageProps) => {
+export const ToastMessage = ({ id, message, icon, variant = 'neutral' }: ToastMessageProps) => {
   const removeToast = useSetAtom(removeToastAtom);
 
   return (
     <ToastPrimitive.Root
       asChild
       forceMount // Let AnimatePresence control mounting
-      duration={5000}
+      duration={4000}
       onOpenChange={(open) => {
         if (!open) {
           // This handles both timed and swipe dismissals
@@ -31,12 +32,15 @@ export const ToastMessage = ({ id, message, icon }: ToastMessageProps) => {
       }}
     >
       <motion.li
-        layout
+        // FIX: Removed `layout` prop.
+        // Framer Motion's layout projection interferes with Radix's CSS transform-based 
+        // swipe gestures. Removing it ensures the toast tracks the finger 1:1 during swipe.
         className="toast-root"
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ x: '110%', opacity: 0, transition: { duration: 0.25 } }}
-        transition={{ type: 'tween', duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        data-variant={variant}
+        initial={{ y: -20, scale: 0.95, opacity: 0 }}
+        animate={{ y: 0, scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0, transition: { duration: 0.15, ease: 'easeOut' } }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       >
         <span className="material-symbols-rounded">{icon}</span>
         <ToastPrimitive.Description>{message}</ToastPrimitive.Description>

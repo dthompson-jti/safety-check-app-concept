@@ -42,7 +42,7 @@ export const DeveloperModal = () => {
   const handleResetData = () => {
     triggerHaptic('warning');
     dispatch({ type: 'RESET_DATA' });
-    addToast({ message: 'Application data reset to defaults.', icon: 'delete' });
+    addToast({ message: 'Application data reset to defaults.', icon: 'delete', variant: 'neutral' });
   };
 
   // Animation: Slide-in from right (x: 100% -> 0) to replicate native modal behavior.
