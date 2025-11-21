@@ -1,5 +1,3 @@
-/* src/features/Shell/ViewModeSwitcher.module.css */
-
 .container {
   display: flex;
   align-items: center;
@@ -43,13 +41,23 @@
   font-weight: 600;
 }
 
-.activeIndicator {
+.pillWrapper {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.activeIndicator {
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  margin: 2px;
   background-color: var(--surface-bg-primary);
   border-radius: var(--radius-sm);
   box-shadow: var(--surface-shadow-pill);
-  z-index: 1;
 }
 
 .label {
