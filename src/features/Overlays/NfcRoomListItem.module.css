@@ -1,0 +1,65 @@
+/* src/features/Overlays/NfcRoomListItem.module.css */
+
+.listItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-3);
+  
+  /* Card Spec */
+  background-color: var(--surface-bg-secondary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-lg);
+  margin-bottom: 4px; /* Gap */
+  
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  min-height: 56px; /* Touch Target Spec */
+}
+
+@media (hover: hover) {
+  .listItem:hover {
+    background-color: var(--surface-bg-primary_hover);
+    border-color: var(--control-border-tertiary-hover);
+  }
+}
+
+.listItem:active {
+  background-color: var(--surface-bg-primary_pressed);
+  transform: scale(0.99);
+}
+
+.listItemContent {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--surface-bg-tertiary);
+  color: var(--surface-fg-tertiary);
+  flex-shrink: 0;
+}
+
+.listItemTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  color: var(--surface-fg-quaternary);
+  font-size: 20px;
+}

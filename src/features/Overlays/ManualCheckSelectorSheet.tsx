@@ -1,116 +1,105 @@
 // src/features/Overlays/ManualCheckSelectorSheet.tsx
-import { useEffect } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
-import { Virtuoso } from 'react-virtuoso';
+import { Drawer } from 'vaul';
 import {
-  manualSelectionResultsAtom,
-  contextualManualSearchResultsAtom,
-  globalManualSearchResultsAtom,
-} from '../../data/appDataAtoms';
-import {
-  workflowStateAtom,
   isManualCheckModalOpenAtom,
   manualSearchQueryAtom,
+  workflowStateAtom,
   isGlobalSearchActiveAtom,
 } from '../../data/atoms';
-import { BottomSheet } from '../../components/BottomSheet';
+import {
+  manualSelectionResultsAtom,
+  globalManualSearchResultsAtom
+} from '../../data/appDataAtoms';
 import { SearchInput } from '../../components/SearchInput';
-import { EmptyStateMessage } from '../../components/EmptyStateMessage';
+import { CheckCard } from '../Schedule/CheckCard';
 import { Button } from '../../components/Button';
-import { ManualCheckListItem } from './ManualCheckListItem';
-import { SafetyCheck } from '../../types';
-import { useHaptics } from '../../data/useHaptics';
 import styles from './ManualCheckSelectorSheet.module.css';
 
 export const ManualCheckSelectorSheet = () => {
   const [isOpen, setIsOpen] = useAtom(isManualCheckModalOpenAtom);
   const [searchQuery, setSearchQuery] = useAtom(manualSearchQueryAtom);
-  const [isGlobalSearchActive, setIsGlobalSearchActive] = useAtom(isGlobalSearchActiveAtom);
+  const [isGlobalSearch, setIsGlobalSearch] = useAtom(isGlobalSearchActiveAtom);
+  
+  const results = useAtomValue(manualSelectionResultsAtom);
+  const globalResults = useAtomValue(globalManualSearchResultsAtom);
+  const setWorkflowState = useSetAtom(workflowStateAtom);
 
-  const setWorkflow = useSetAtom(workflowStateAtom);
-  const { trigger: triggerHaptic } = useHaptics();
-
-  const filteredChecks = useAtomValue(manualSelectionResultsAtom);
-  const contextualResults = useAtomValue(contextualManualSearchResultsAtom);
-  const { count: globalResultsCount } = useAtomValue(globalManualSearchResultsAtom);
-
-  useEffect(() => {
-    if (!isOpen) {
-      const timer = setTimeout(() => {
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setTimeout(() => {
         setSearchQuery('');
-        setIsGlobalSearchActive(false);
+        setIsGlobalSearch(false);
       }, 300);
-      return () => clearTimeout(timer);
     }
-  }, [isOpen, setSearchQuery, setIsGlobalSearchActive]);
-
-  const handleSelectCheck = (check: SafetyCheck) => {
-    triggerHaptic('selection');
-    setWorkflow({
-      view: 'form',
-      type: 'scheduled',
-      method: 'manual',
-      checkId: check.id,
-      roomName: check.residents[0].location,
-      residents: check.residents,
-      specialClassifications: check.specialClassifications,
-    });
-    setIsOpen(false);
   };
 
-  const showProgressiveDiscovery =
-    searchQuery &&
-    contextualResults.length === 0 &&
-    globalResultsCount > 0 &&
-    !isGlobalSearchActive;
+  const handleSelectCheck = (checkId: string) => {
+    setIsOpen(false);
+    setTimeout(() => {
+      setWorkflowState({
+        view: 'scanning',
+        isManualSelectionOpen: false,
+        targetCheckId: checkId
+      });
+    }, 300);
+  };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add manual check">
-      <div className={styles.contentWrapper}>
-        <div className={styles.searchContainer}>
-          <SearchInput
-            variant="standalone"
-            placeholder="Search by room or name..."
-            value={searchQuery}
-            onChange={setSearchQuery}
-            autoFocus
-          />
-        </div>
-        <div className={styles.listContainer}>
-          {filteredChecks.length === 0 && searchQuery ? (
-            <EmptyStateMessage
-              title={
-                showProgressiveDiscovery
-                  ? `No results for "${searchQuery}" in this unit`
-                  : 'No Results Found'
-              }
-              action={
-                showProgressiveDiscovery ? (
-                  <Button
-                    variant="tertiary"
-                    onClick={() => { triggerHaptic('light'); setIsGlobalSearchActive(true); }}
-                  >
-                    <span className="material-symbols-rounded">search</span>
-                    Show {globalResultsCount} result{globalResultsCount > 1 ? 's' : ''} in all other units
-                  </Button>
-                ) : undefined
-              }
-            />
-          ) : (
-            <Virtuoso
-              data={filteredChecks}
-              itemContent={(_index, check) => (
-                <ManualCheckListItem
-                  onClick={() => handleSelectCheck(check)}
-                  title={check.residents[0].location}
-                  residents={check.residents}
-                  specialClassifications={check.specialClassifications}
-                />
-              )}
-            />
-          )}
-        </div>
-      </div>
-    </BottomSheet>
+    <Drawer.Root open={isOpen} onOpenChange={handleOpenChange}>
+      <Drawer.Portal>
+        <Drawer.Overlay className={styles.overlay} />
+        <Drawer.Content className={styles.contentWrapper}>
+          <div className={styles.content}>
+            <div className={styles.sheetHeader}>
+              <h3 className={styles.sheetTitle}>Select Room</h3>
+              <Button variant="tertiary" size="s" iconOnly onClick={() => setIsOpen(false)}>
+                <span className="material-symbols-rounded">close</span>
+              </Button>
+            </div>
+
+            <div className={styles.searchContainer}>
+              <SearchInput 
+                placeholder="Search room or resident..." 
+                value={searchQuery} 
+                onChange={setSearchQuery} 
+                variant="standalone"
+              />
+            </div>
+
+            <div className={styles.listContainer}>
+              <div className={styles.listContent}>
+                {results.length > 0 ? (
+                  <>
+                    {searchQuery && <div className={styles.sectionHeader}>Matching Results</div>}
+                    {results.map(check => (
+                      <div key={check.id} onClick={() => handleSelectCheck(check.id)}>
+                        {/* Read-only wrapper disables internal card clicks so the sheet handler works */}
+                        <div className={styles.readOnlyCard}>
+                          <CheckCard check={check} transition={{ duration: 0 }} />
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 0', textAlign: 'center', color: 'var(--surface-fg-tertiary)' }}>
+                      <span className="material-symbols-rounded" style={{ fontSize: '48px', marginBottom: '8px', opacity: 0.5 }}>search_off</span>
+                      <p>No rooms found.</p>
+                      {!isGlobalSearch && searchQuery && (
+                         <div style={{ marginTop: '16px' }}>
+                            <Button variant="secondary" size="s" onClick={() => setIsGlobalSearch(true)}>
+                               Search All Facilities ({globalResults.count})
+                            </Button>
+                         </div>
+                      )}
+                   </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </Drawer.Content>
+      </Drawer.Portal>
+    </Drawer.Root>
   );
 };

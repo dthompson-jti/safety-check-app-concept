@@ -1,22 +1,93 @@
 /* src/features/Overlays/ManualCheckSelectorSheet.module.css */
 
-.contentWrapper {
-  display: flex;
-  flex-direction: column;
-  height: 65vh;
-  max-height: 700px;
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 100;
 }
 
-.searchContainer {
-  padding: var(--spacing-4);
+.contentWrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
+.content {
+  background-color: var(--surface-bg-secondary);
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  height: 85vh;
+  max-height: 96vh;
+  outline: none;
+  position: relative;
+}
+
+/* Header Spec: 60px, Tertiary BG */
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-4);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  background-color: var(--surface-bg-tertiary);
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
   flex-shrink: 0;
-  border-top: 1px solid var(--surface-border-secondary);
-  margin: 0 calc(-1 * var(--spacing-4));
-  padding-top: var(--spacing-4);
+  height: 60px;
+}
+
+.sheetTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+/* Sticky Controls Spec */
+.searchContainer {
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-secondary);
+  border-bottom: 1px solid var(--surface-border-secondary);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
 }
 
 .listContainer {
   flex-grow: 1;
-  min-height: 0;
-  border-top: 1px solid var(--surface-border-secondary);
+  overflow-y: auto;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  padding-left: calc(var(--spacing-4) + 2px);
+  padding-right: calc(var(--spacing-4) + 2px);
+}
+
+.listContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Card Gap */
+  padding-bottom: calc(var(--spacing-6) + env(safe-area-inset-bottom));
+}
+
+.sectionHeader {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--surface-fg-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
+  padding-left: var(--spacing-1);
+}
+
+.readOnlyCard {
+  pointer-events: none; /* Critical for interaction override */
 }

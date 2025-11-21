@@ -1,174 +1,142 @@
 // src/features/Overlays/NfcWriteSheet.tsx
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { Drawer } from 'vaul';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
 import {
   nfcWorkflowStateAtom,
   provisionedRoomIdsAtom,
-  NfcError,
+  nfcSimulationAtom
 } from '../../data/nfcAtoms';
-import { useHaptics } from '../../data/useHaptics';
 import { Button } from '../../components/Button';
+import { useHaptics } from '../../data/useHaptics';
+import { useAppSound } from '../../data/useAppSound';
 import styles from './NfcWriteSheet.module.css';
 
-const iconVariants: Variants = {
-  hidden: { scale: 0.5, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: { type: 'spring', stiffness: 400, damping: 15 },
-  },
-};
-
-const errorMessages: Record<NfcError['code'], string> = {
-  WRITE_FAILED: 'A network error prevented writing the tag.',
-  TAG_LOCKED: 'This tag is locked and cannot be overwritten.',
-};
-
-type SimulationOutcome = 'success' | 'write_fail' | 'tag_locked';
-
-const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
-  <motion.div
-    initial="hidden"
-    animate="visible"
-    exit="hidden"
-    variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-    transition={{ duration: 0.2 }}
-    className={styles.animationContainer}
-  >
-    {children}
-  </motion.div>
-);
-
 export const NfcWriteSheet = () => {
-  const [workflowState, setWorkflowState] = useAtom(nfcWorkflowStateAtom);
+  const [workflow, setWorkflow] = useAtom(nfcWorkflowStateAtom);
   const setProvisionedIds = useSetAtom(provisionedRoomIdsAtom);
+  const [simulationMode] = useAtom(nfcSimulationAtom);
+  
   const { trigger: triggerHaptic } = useHaptics();
-  // Stores the selected simulation outcome from the 'ready' sheet's dev tools.
-  const simulationOutcomeRef = useRef<SimulationOutcome>('success');
+  const { play: playSound } = useAppSound();
 
-  const isOpen = workflowState.status !== 'idle' && workflowState.status !== 'selecting';
-  const context = 'roomId' in workflowState ? workflowState : null;
+  const [isOpen, setIsOpen] = useState(false);
 
+  // Sync Atom State with Sheet Visibility
   useEffect(() => {
-    // This effect runs the final step of the simulation after the 'writing' state begins.
-    if (workflowState.status === 'writing' && context) {
-      const writeTimer = setTimeout(() => {
-        const outcome = simulationOutcomeRef.current;
-        if (outcome === 'success') {
-          setWorkflowState({ status: 'success', roomId: context.roomId, roomName: context.roomName });
-        } else if (outcome === 'write_fail') {
-          setWorkflowState({
-            status: 'error', roomId: context.roomId, roomName: context.roomName,
-            error: { code: 'WRITE_FAILED', message: errorMessages.WRITE_FAILED },
-          });
-        } else {
-          setWorkflowState({
-            status: 'error', roomId: context.roomId, roomName: context.roomName,
-            error: { code: 'TAG_LOCKED', message: errorMessages.TAG_LOCKED },
-          });
-        }
-      }, 1500); // This delay simulates the actual time it takes to write a tag.
-      return () => clearTimeout(writeTimer);
+    if (workflow.status !== 'idle' && workflow.status !== 'selecting') {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
     }
+  }, [workflow.status]);
 
-    if (workflowState.status === 'success') {
-      triggerHaptic('success');
-      setProvisionedIds((currentIds: Set<string>) => new Set([...currentIds, workflowState.roomId]));
-      const timer = setTimeout(() => setWorkflowState({ status: 'selecting' }), 2000);
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      // Reset to selecting mode if closed manually
+      setTimeout(() => {
+        if (workflow.status !== 'idle') {
+          setWorkflow({ status: 'idle' }); // Or selecting
+        }
+      }, 300);
+    }
+  };
+
+  // Simulation Logic
+  useEffect(() => {
+    if (workflow.status === 'ready') {
+      // Auto-start writing for prototype feel
+      const timer = setTimeout(() => {
+         setWorkflow({ ...workflow, status: 'writing' });
+      }, 1500); // Give user a moment to see "Ready"
       return () => clearTimeout(timer);
     }
-    if (workflowState.status === 'error') {
-      triggerHaptic('error');
+
+    if (workflow.status === 'writing') {
+      const timer = setTimeout(() => {
+        // Simulation Outcome
+        const isSuccess = simulationMode === 'forceSuccess' || (simulationMode === 'random' && Math.random() > 0.2);
+        
+        if (isSuccess) {
+          setWorkflow({ ...workflow, status: 'success' });
+          setProvisionedIds(prev => new Set(prev).add(workflow.roomId));
+          triggerHaptic('success');
+          playSound('success');
+        } else {
+          setWorkflow({ 
+            ...workflow, 
+            status: 'error', 
+            error: { code: 'WRITE_FAILED', message: 'Tag connection lost' } 
+          });
+          triggerHaptic('error');
+          playSound('error');
+        }
+      }, 2000); // Write duration
+      return () => clearTimeout(timer);
     }
-  }, [workflowState, setWorkflowState, setProvisionedIds, triggerHaptic, context]);
-
-  const handleRetry = () => {
-    if (context) {
-      // Retrying will re-use the last selected simulation outcome.
-      setWorkflowState({ status: 'writing', roomId: context.roomId, roomName: context.roomName });
+    
+    if (workflow.status === 'success') {
+       // Auto close on success
+       const timer = setTimeout(() => {
+          setIsOpen(false);
+          setWorkflow({ status: 'idle' }); // Return to list
+       }, 1500);
+       return () => clearTimeout(timer);
     }
-  };
 
-  const handleCancel = () => {
-    setWorkflowState({ status: 'selecting' });
-  };
+  }, [workflow, simulationMode, setWorkflow, setProvisionedIds, triggerHaptic, playSound]);
 
-  // This handler, called from the dev tools, sets the desired simulation outcome
-  // and then transitions the state machine to the 'writing' phase.
-  const handleDevSimulate = (outcome: SimulationOutcome) => {
-    if (!context || workflowState.status !== 'ready') return;
-    simulationOutcomeRef.current = outcome;
-    setWorkflowState({ status: 'writing', roomId: context.roomId, roomName: context.roomName });
-  };
+  if (workflow.status === 'idle' || workflow.status === 'selecting') return null;
 
-  const renderContent = () => {
-    if (!context) return null;
-    switch (workflowState.status) {
+  const getStatusContent = () => {
+    switch (workflow.status) {
       case 'ready':
-        return (
-          <ContentWrapper>
-            <motion.span variants={iconVariants} className={`material-symbols-rounded ${styles.largeIcon}`}>contactless</motion.span>
-            <h2>Ready to Write</h2>
-            <p>Hold device near NFC tag for '{context.roomName}'</p>
-          </ContentWrapper>
-        );
+        return { icon: 'nfc', title: 'Ready to Write', desc: `Hold device near tag to provision ${workflow.roomName}.` };
       case 'writing':
-        return (
-          <ContentWrapper>
-            <motion.span variants={iconVariants} className={`material-symbols-rounded ${styles.spinner}`}>nfc</motion.span>
-            <p>Writing tag for '{context.roomName}'...</p>
-          </ContentWrapper>
-        );
+        return { icon: 'nfc', title: 'Writing...', desc: 'Keep device steady.' };
       case 'success':
-        return (
-          <ContentWrapper>
-            <motion.span variants={iconVariants} className={`material-symbols-rounded ${styles.success}`}>check_circle</motion.span>
-            <h2>Tag Written Successfully</h2>
-            <p>The tag for '{context.roomName}' is now synced.</p>
-          </ContentWrapper>
-        );
+        return { icon: 'check_circle', title: 'Success', desc: 'Tag provisioned successfully.' };
       case 'error':
-        return (
-          <ContentWrapper>
-            <motion.span variants={iconVariants} className={`material-symbols-rounded ${styles.error}`}>error</motion.span>
-            <h2>Write Failed</h2>
-            <p>{workflowState.error.message}</p>
-            <div className={styles.buttonRow}>
-              <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
-              <Button variant="primary" onClick={handleRetry}>Retry</Button>
-            </div>
-          </ContentWrapper>
-        );
+        return { icon: 'error', title: 'Write Failed', desc: workflow.error.message };
       default:
-        return null;
+        return { icon: 'nfc', title: '', desc: '' };
     }
   };
+
+  const content = getStatusContent();
 
   return (
-    <Drawer.Root open={isOpen} onClose={handleCancel}>
+    <Drawer.Root open={isOpen} onOpenChange={handleOpenChange} dismissible={workflow.status !== 'writing'}>
       <Drawer.Portal>
         <Drawer.Overlay className={styles.overlay} />
-        <Drawer.Content className={styles.sheetContent}>
-          <div className={styles.handleContainer}>
-            <div className={styles.handle} />
-          </div>
-          <AnimatePresence mode="wait">
-            {renderContent()}
-          </AnimatePresence>
-          {/* The dev tools are only shown on the 'ready' screen, allowing the developer
-              to choose the outcome before the simulation starts. */}
-          {workflowState.status === 'ready' && (
-            <div className={styles.devFooter}>
-              <p>DEV TOOLS</p>
-              <div className={styles.devButtons}>
-                <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('success')}>Simulate Success</Button>
-                <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('write_fail')}>Simulate Write Fail</Button>
-                <Button size="xs" variant="tertiary" onClick={() => handleDevSimulate('tag_locked')}>Simulate Tag Locked</Button>
-              </div>
+        <Drawer.Content className={styles.contentWrapper}>
+          <div className={styles.content}>
+            <div className={styles.iconContainer}>
+              <span 
+                className={`material-symbols-rounded ${styles.nfcIcon}`} 
+                data-state={workflow.status}
+              >
+                {content.icon}
+              </span>
             </div>
-          )}
+            
+            <h3 className={styles.title}>{content.title}</h3>
+            <p className={styles.description}>{content.desc}</p>
+
+            {workflow.status === 'error' && (
+              <div className={styles.buttonGroup}>
+                <Button variant="secondary" onClick={() => setIsOpen(false)} className={styles.cancelButton}>Cancel</Button>
+                <Button variant="primary" onClick={() => setWorkflow({ ...workflow, status: 'writing' })}>Retry</Button>
+              </div>
+            )}
+            
+            {workflow.status === 'ready' && (
+               <div className={styles.buttonGroup}>
+                  <Button variant="secondary" onClick={() => setIsOpen(false)} className={styles.cancelButton}>Cancel</Button>
+               </div>
+            )}
+          </div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>

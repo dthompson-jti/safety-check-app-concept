@@ -73,7 +73,6 @@ export const NfcWriteView = () => {
     >
       <header className={styles.header}>
         <h3>Write NFC tags</h3>
-        {/* BUTTON: Tertiary variant for the close action */}
         <Button variant="tertiary" size="m" iconOnly onClick={handleClose} aria-label="Close">
           <span className="material-symbols-rounded">close</span>
         </Button>
@@ -84,6 +83,7 @@ export const NfcWriteView = () => {
           groupId={modalGroupId}
           unitId={modalUnitId}
           onClick={() => setIsContextModalOpen(true)}
+          variant="compact" // Use the new compact variant
         />
         <SearchInput variant="standalone" placeholder="Search for a room..." value={searchQuery} onChange={setSearchQuery} />
       </div>

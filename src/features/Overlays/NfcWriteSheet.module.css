@@ -1,138 +1,102 @@
 /* src/features/Overlays/NfcWriteSheet.module.css */
 
+/* Overlay Backdrop */
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(10, 12, 18, 0.75);
-  z-index: 102;
-  /* Higher z-index than the main view's content */
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 110; /* Higher than the NFC View (105) */
 }
 
-.sheetContent {
+/* Content Wrapper */
+.contentWrapper {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 103;
+  z-index: 111;
   display: flex;
   flex-direction: column;
-  background-color: var(--surface-bg-primary);
-  border-top-left-radius: var(--radius-2xl);
-  border-top-right-radius: var(--radius-2xl);
   outline: none;
-  padding: 0 var(--spacing-4);
-  max-height: 90vh;
-  box-shadow: var(--surface-shadow-lg);
-  border-top: 1px solid var(--surface-border-secondary);
-  --vaul-transition-duration: 400ms;
-  --vaul-easing: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.handleContainer {
-  display: flex;
-  justify-content: center;
-  padding: var(--spacing-4) 0;
-  flex-shrink: 0;
-}
-
-.handle {
-  width: 40px;
-  height: 4px;
-  border-radius: var(--radius-full);
-  background-color: var(--surface-border-primary);
-}
-
-.animationContainer {
+.content {
+  background-color: var(--surface-bg-secondary);
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
+  padding: var(--spacing-6) var(--spacing-4) var(--spacing-8);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-8) var(--spacing-4);
   text-align: center;
-  min-height: 250px;
+  gap: var(--spacing-4);
+  position: relative;
+  
+  /* Safe area for home indicator */
+  padding-bottom: calc(var(--spacing-8) + env(safe-area-inset-bottom));
 }
 
-.animationContainer h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--surface-fg-primary);
+.iconContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--surface-bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-2);
 }
 
-.animationContainer p {
-  margin: 0;
-  color: var(--surface-fg-secondary);
-  font-size: 1rem;
-  line-height: 1.5;
-  max-width: 30ch;
-}
-
-.animationContainer .material-symbols-rounded {
+.nfcIcon {
   font-size: 48px;
+  color: var(--surface-fg-primary);
+  font-variation-settings: 'FILL' 0;
+}
+
+/* Animation for writing state */
+.nfcIcon[data-state='writing'] {
+  animation: pulse-nfc 1.5s infinite;
+  color: var(--surface-fg-info-primary);
+}
+
+.nfcIcon[data-state='success'] {
+  color: var(--surface-fg-success-primary);
   font-variation-settings: 'FILL' 1;
 }
 
-/* DEFINITIVE FIX: Style for the new, larger icon */
-.largeIcon {
-  font-size: 64px !important;
-  color: var(--surface-fg-secondary);
-}
-
-
-.animationContainer .spinner {
-  animation: spin 1.2s linear infinite;
-  color: var(--surface-fg-theme-primary);
-}
-
-.animationContainer .success {
-  color: var(--surface-fg-success-primary);
-}
-
-.animationContainer .error {
+.nfcIcon[data-state='error'] {
   color: var(--surface-fg-alert-primary);
+  font-variation-settings: 'FILL' 1;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--surface-fg-primary);
+  margin: 0;
 }
 
-.buttonRow {
+.description {
+  font-size: 1rem;
+  color: var(--surface-fg-secondary);
+  margin: 0;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.buttonGroup {
   display: flex;
-  gap: var(--spacing-2);
-  margin-top: var(--spacing-4);
+  gap: var(--spacing-3);
   width: 100%;
+  margin-top: var(--spacing-4);
 }
 
-.buttonRow>button {
+.cancelButton {
   flex: 1;
 }
 
-/* Dev Tools */
-.devFooter {
-  border-top: 1px solid var(--surface-border-secondary);
-  padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
-  margin: var(--spacing-4) calc(-1 * var(--spacing-4)) 0;
-  background-color: var(--surface-bg-secondary);
-}
-
-.devFooter p {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--surface-fg-secondary);
-  letter-spacing: 0.05em;
-  text-align: center;
-  margin: 0 0 var(--spacing-2);
-}
-
-.devButtons {
-  display: flex;
-  justify-content: center;
-  gap: var(--spacing-2);
+@keyframes pulse-nfc {
+  0% { opacity: 0.5; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.5; transform: scale(0.95); }
 }

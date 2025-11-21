@@ -13,16 +13,22 @@
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
   box-shadow: var(--surface-shadow-xs);
-  /* --- FIX: Set the base color for all child elements, including the icon --- */
   color: var(--surface-fg-tertiary);
   transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s, color 0.2s;
+}
+
+/* --- COMPACT VARIANT --- */
+.contextCard[data-variant='compact'] {
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-bg-secondary); /* Slightly darker to sit on tertiary/white backgrounds */
+  min-height: 48px;
 }
 
 @media (hover: hover) {
   .contextCard:hover {
     background-color: var(--surface-bg-primary_hover);
     border-color: var(--control-border-tertiary-hover);
-    /* --- FIX: Update the color on hover, which the icon will inherit --- */
     color: var(--surface-fg-secondary);
   }
 }
@@ -34,10 +40,18 @@
   box-shadow: none;
 }
 
+/* Default Stacked Layout */
 .contextInfo {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2px;
+}
+
+/* Compact Horizontal Layout */
+.contextCard[data-variant='compact'] .contextInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .contextLabel {
@@ -47,13 +61,30 @@
   letter-spacing: 0.05em;
 }
 
+/* Hide labels in compact mode to save space, or keep them very subtle */
+.contextCard[data-variant='compact'] .contextLabel {
+  display: none;
+}
+
 .contextValue {
   font-size: 1rem;
   font-weight: 600;
   color: var(--surface-fg-primary);
 }
 
+.contextCard[data-variant='compact'] .contextValue {
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+/* Combine values visually in compact mode via ::after if needed, 
+   but here we just stack them tightly without labels */
+
 .contextCard .material-symbols-rounded {
   font-size: 24px;
-  /* The color is now inherited from the parent .contextCard button */
+  flex-shrink: 0;
+}
+
+.contextCard[data-variant='compact'] .material-symbols-rounded {
+  font-size: 20px;
 }
