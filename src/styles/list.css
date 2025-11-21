@@ -1,0 +1,145 @@
+/* src/styles/list.css */
+
+/* 
+  The "Golden Row" List Pattern.
+  Designed for high-density, high-craft lists in sheets and menus.
+*/
+
+.list-group {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg-primary);
+}
+
+.list-item-root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 56px; /* Touch target standard */
+  padding: 0; 
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  outline: none;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Active State */
+.list-item-root:active:not(:disabled) {
+  background-color: var(--surface-bg-primary_pressed);
+}
+
+/* Disabled State */
+.list-item-root:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 
+  Leading Section (Icon, Checkbox, Avatar) 
+  Fixed width to ensure vertical alignment of text across rows.
+*/
+.list-item-leading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px; /* 16px padding + 24px icon + 8px gap approx */
+  flex-shrink: 0;
+  color: var(--surface-fg-secondary);
+}
+
+.list-item-leading .material-symbols-rounded {
+  font-size: 24px;
+}
+
+/* 
+  Content Body
+  Wraps Text + Trailing. 
+  Contains the bottom border separator (Inset Divider Pattern).
+*/
+.list-item-content {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  /* Standard Padding for the content block */
+  padding-right: var(--spacing-4);
+  padding-top: var(--spacing-3);
+  padding-bottom: var(--spacing-3);
+  
+  min-height: 56px;
+  border-bottom: 1px solid var(--surface-border-secondary);
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+
+/* 
+  Padding Logic for No Leading Icon:
+  If there is no leading icon, the content block must provide the left padding 
+  so text doesn't hit the screen edge.
+*/
+.list-item-root[data-has-leading="false"] .list-item-content {
+  padding-left: var(--spacing-4);
+}
+
+/* Remove border from the last item in a group */
+.list-item-root:last-child .list-item-content {
+  border-bottom: none;
+}
+
+.list-item-text-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* For truncation */
+}
+
+/* Typography */
+.list-item-label {
+  font-family: var(--font-family-sans);
+  font-size: 1rem;
+  font-weight: 600; /* Semibold */
+  color: var(--surface-fg-primary);
+  line-height: 1.4;
+}
+
+.list-item-sublabel {
+  font-family: var(--font-family-sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--surface-fg-secondary);
+  line-height: 1.4;
+  margin-top: 2px;
+  
+  /* Truncation */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Trailing Section */
+.list-item-trailing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--surface-fg-tertiary);
+}
+
+.list-item-trailing .material-symbols-rounded {
+  font-size: 24px;
+}
+
+/* Selected State overrides */
+.list-item-root[aria-selected="true"] .list-item-label {
+  color: var(--surface-fg-theme-primary);
+}
+
+.list-item-root[aria-selected="true"] .list-item-leading,
+.list-item-root[aria-selected="true"] .list-item-trailing {
+  color: var(--surface-fg-theme-primary);
+}

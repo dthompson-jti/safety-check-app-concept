@@ -1,85 +1,98 @@
 // src/components/ActionListItem.tsx
 import { ReactNode } from 'react';
-import styles from './ActionListItem.module.css';
 
 interface ActionListItemProps {
-  /** Primary text label */
-  label?: string;
-  /** Secondary text label */
-  subLabel?: string;
-  /** Click handler */
-  onClick: () => void;
-  /** If true, displays a standard chevron_right on the right side */
-  showChevron?: boolean;
-  /** Custom icon to display on the right side (replaces chevron) */
-  trailingIcon?: string;
-  /** Icon to display on the left side (e.g., 'check') */
+  /** Primary text */
+  label: string;
+  /** Secondary text or complex content (like resident list) */
+  subLabel?: ReactNode;
+  /** Material Symbol name for the left icon */
   leadingIcon?: string;
-  /** 
-   * If true, reserves fixed width space on the left. 
-   * Use this to align text with other items that have leadingIcons.
-   */
-  indent?: boolean;
-  /** 
-   * If true, applies selected-state styling (colors/weight) to the leadingIcon.
-   * Does not affect the background of the item itself.
-   */
+  /** Custom element for the left side (overrides leadingIcon) */
+  leadingElement?: ReactNode;
+  /** Material Symbol name for the right icon (defaults to chevron_right if onClick present) */
+  trailingIcon?: string;
+  /** Custom element for the right side */
+  trailingElement?: ReactNode;
+  /** Whether the item is currently selected (adds visual cue) */
   isSelected?: boolean;
-  /** Optional custom content to render in the main area instead of label/subLabel */
-  children?: ReactNode;
+  /** Disables interaction */
+  disabled?: boolean;
+  /** Click handler */
+  onClick?: () => void;
+  /** Indent content if no leading icon is present? Default: false */
+  indent?: boolean;
+  /** Show chevron automatically if onClick is present? Default: true */
+  showChevron?: boolean;
 }
 
-/**
- * A flexible list item component used for menus, navigation, and selection lists.
- * Supports leading/trailing icons, text labels, and custom children.
- * Enforces a consistent height and tap target size for touch devices.
- */
 export const ActionListItem = ({
   label,
   subLabel,
-  onClick,
-  showChevron = false,
-  trailingIcon,
   leadingIcon,
+  leadingElement,
+  trailingIcon,
+  trailingElement,
+  isSelected,
+  disabled,
+  onClick,
   indent = false,
-  isSelected = false,
-  children,
+  showChevron = true,
 }: ActionListItemProps) => {
+  
+  // Determine Leading Content
+  let renderedLeading = leadingElement;
+  if (!renderedLeading && leadingIcon) {
+    renderedLeading = (
+      <span className="material-symbols-rounded">{leadingIcon}</span>
+    );
+  } else if (!renderedLeading && isSelected) {
+    // Implicit checkmark if selected and no other icon provided
+    renderedLeading = (
+      <span className="material-symbols-rounded">check</span>
+    );
+  }
+
+  // Determine Trailing Content
+  let renderedTrailing = trailingElement;
+  if (!renderedTrailing && trailingIcon) {
+    renderedTrailing = (
+      <span className="material-symbols-rounded">{trailingIcon}</span>
+    );
+  } else if (!renderedTrailing && onClick && showChevron && !isSelected) {
+    // Default chevron for navigable items
+    renderedTrailing = (
+      <span className="material-symbols-rounded">chevron_right</span>
+    );
+  }
+
   return (
-    <button className={styles.item} onClick={onClick}>
-      
-      {/* Leading Area: Icon or Indentation spacer */}
-      {(leadingIcon || indent) && (
-        <div className={styles.leadingIconContainer}>
-          {leadingIcon && (
-            <span 
-              className={`material-symbols-rounded ${styles.leadingIcon}`}
-              data-selected={isSelected}
-            >
-              {leadingIcon}
-            </span>
-          )}
+    <button
+      className="list-item-root"
+      onClick={onClick}
+      disabled={disabled}
+      aria-selected={isSelected}
+      data-has-leading={!!renderedLeading || indent}
+      type="button"
+    >
+      {(renderedLeading || indent) && (
+        <div className="list-item-leading">
+          {renderedLeading}
         </div>
       )}
 
-      {/* Content Area: Standard labels or custom children */}
-      {children ? (
-        <div className={styles.content} style={{ width: '100%' }}>
-          {children}
+      <div className="list-item-content">
+        <div className="list-item-text-group">
+          <span className="list-item-label">{label}</span>
+          {subLabel && <span className="list-item-sublabel">{subLabel}</span>}
         </div>
-      ) : (
-        <div className={styles.content}>
-          <span className={styles.label}>{label}</span>
-          {subLabel && <span className={styles.subLabel}>{subLabel}</span>}
-        </div>
-      )}
-      
-      {/* Trailing Area: Chevron or custom icon */}
-      {!children && (showChevron || trailingIcon) && (
-        <span className={`material-symbols-rounded ${styles.trailingIcon}`}>
-          {trailingIcon || 'chevron_right'}
-        </span>
-      )}
+
+        {renderedTrailing && (
+          <div className="list-item-trailing">
+            {renderedTrailing}
+          </div>
+        )}
+      </div>
     </button>
   );
 };

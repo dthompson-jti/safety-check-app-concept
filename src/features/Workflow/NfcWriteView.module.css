@@ -47,8 +47,12 @@
   flex-grow: 1;
   min-height: 0;
   overflow-y: auto;
-  /* Consistent list padding */
-  padding: var(--spacing-3) var(--spacing-4);
+  /* 
+    UPDATE: Removed top/bottom padding to allow the list items 
+    to sit flush edge-to-edge, consistent with the new list pattern. 
+    The items themselves handle internal spacing.
+  */
+  padding: 0;
   background-color: var(--surface-bg-primary);
   
   /* Safe area for scrolling */

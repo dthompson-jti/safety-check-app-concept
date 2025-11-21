@@ -33,6 +33,7 @@
 @import url('./tabs.css') layer(components);
 @import url('./toggles.css') layer(components);
 @import url('./appearance.css') layer(components);
+@import url('./list.css') layer(components); /* Added new list pattern */
 
 /* Layer 5: Utility Classes */
 @import url('./animations.css') layer(utilities);

@@ -5,86 +5,71 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3);
   cursor: pointer;
   text-align: left;
   border-radius: var(--radius-lg);
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  font-family: var(--font-family-sans);
+  position: relative;
+  overflow: hidden;
+  
+  /* Default Style */
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
-  box-shadow: var(--surface-shadow-xs);
+  padding: var(--spacing-3);
+}
+
+.stackedContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  flex-grow: 1;
+}
+
+.stackItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--surface-fg-tertiary);
-  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s, color 0.2s;
+  letter-spacing: 0.02em;
+  /* Uppercase removed per request */
 }
 
-/* --- COMPACT VARIANT --- */
-.contextCard[data-variant='compact'] {
-  padding: var(--spacing-2) var(--spacing-3);
-  border-radius: var(--radius-md);
-  background-color: var(--surface-bg-secondary); /* Slightly darker to sit on tertiary/white backgrounds */
-  min-height: 48px;
+.value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
 }
 
+.actionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--surface-fg-tertiary);
+  padding-left: var(--spacing-3);
+}
+
+.actionIcon .material-symbols-rounded {
+  font-size: 24px;
+}
+
+/* --- INTERACTION --- */
 @media (hover: hover) {
   .contextCard:hover {
     background-color: var(--surface-bg-primary_hover);
     border-color: var(--control-border-tertiary-hover);
+  }
+  .contextCard:hover .actionIcon {
     color: var(--surface-fg-secondary);
   }
 }
 
 .contextCard:active {
   background-color: var(--surface-bg-primary_pressed);
-  border-color: var(--control-border-tertiary-hover);
-  transform: translateY(1px);
-  box-shadow: none;
-}
-
-/* Default Stacked Layout */
-.contextInfo {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px;
-}
-
-/* Compact Horizontal Layout */
-.contextCard[data-variant='compact'] .contextInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.contextLabel {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--surface-fg-tertiary);
-  letter-spacing: 0.05em;
-}
-
-/* Hide labels in compact mode to save space, or keep them very subtle */
-.contextCard[data-variant='compact'] .contextLabel {
-  display: none;
-}
-
-.contextValue {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--surface-fg-primary);
-}
-
-.contextCard[data-variant='compact'] .contextValue {
-  font-size: 0.9rem;
-  line-height: 1.2;
-}
-
-/* Combine values visually in compact mode via ::after if needed, 
-   but here we just stack them tightly without labels */
-
-.contextCard .material-symbols-rounded {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.contextCard[data-variant='compact'] .material-symbols-rounded {
-  font-size: 20px;
+  transform: scale(0.99);
 }

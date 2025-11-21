@@ -106,13 +106,10 @@
 .footer {
   flex-shrink: 0;
   padding: var(--spacing-4);
-  /* Remove sticky positioning to allow natural flow with flex-grow spacer */
   background-color: var(--surface-bg-secondary);
   display: flex;
   flex-direction: column;
 }
-
-/* .footerSpacer removed as .separator handles the spacing now */
 
 .userProfileCard {
   display: flex;
@@ -126,9 +123,9 @@
   border-radius: var(--radius-lg);
   background-color: var(--surface-bg-primary);
   border: 1px solid var(--surface-border-secondary);
-  box-shadow: var(--surface-shadow-xs);
+  /* REMOVED SHADOW */
   color: var(--surface-fg-tertiary);
-  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
 @media (hover: hover) {
@@ -143,7 +140,6 @@
   background-color: var(--surface-bg-primary_pressed);
   border-color: var(--control-border-tertiary-hover);
   transform: translateY(1px);
-  box-shadow: none;
 }
 
 .userInfo {

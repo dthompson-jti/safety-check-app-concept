@@ -6,7 +6,7 @@ interface ContextSwitcherCardProps {
   groupId: string | null;
   unitId: string | null;
   onClick: () => void;
-  variant?: 'default' | 'compact';
+  variant?: 'default'; // 'compact' removed as we are unifying to default
 }
 
 /**
@@ -17,28 +17,34 @@ export const ContextSwitcherCard = ({
   groupId, 
   unitId, 
   onClick, 
-  variant = 'default' 
 }: ContextSwitcherCardProps) => {
   const group = facilityData.find(g => g.id === groupId);
   const unit = group?.units.find(u => u.id === unitId);
 
-  const groupDisplayName = group?.name || '—';
-  const unitDisplayName = unit?.name || '—';
+  const groupDisplayName = group?.name || 'Select Group';
+  const unitDisplayName = unit?.name || 'Select Unit';
 
   return (
     <button 
       className={styles.contextCard} 
       onClick={onClick}
-      data-variant={variant}
+      type="button"
     >
-      <div className={styles.contextInfo}>
-        {variant === 'default' && <span className={styles.contextLabel}>Group</span>}
-        <span className={styles.contextValue}>{groupDisplayName}</span>
-        
-        {variant === 'default' && <span className={styles.contextLabel}>Unit</span>}
-        <span className={styles.contextValue}>{unitDisplayName}</span>
+      <div className={styles.stackedContainer}>
+        <div className={styles.stackItem}>
+          <span className={styles.label}>Group</span>
+          <span className={styles.value}>{groupDisplayName}</span>
+        </div>
+        {/* Separator removed per request */}
+        <div className={styles.stackItem}>
+          <span className={styles.label}>Unit</span>
+          <span className={styles.value}>{unitDisplayName}</span>
+        </div>
       </div>
-      <span className="material-symbols-rounded">swap_horiz</span>
+      
+      <div className={styles.actionIcon}>
+        <span className="material-symbols-rounded">swap_horiz</span>
+      </div>
     </button>
   );
 };

@@ -12,7 +12,7 @@ import {
   globalManualSearchResultsAtom
 } from '../../data/appDataAtoms';
 import { SearchInput } from '../../components/SearchInput';
-import { CheckCard } from '../Schedule/CheckCard';
+import { ActionListItem } from '../../components/ActionListItem';
 import { Button } from '../../components/Button';
 import styles from './ManualCheckSelectorSheet.module.css';
 
@@ -46,6 +46,24 @@ export const ManualCheckSelectorSheet = () => {
     }, 300);
   };
 
+  // Helper to format residents for the subLabel
+  const renderResidents = (residents: { name: string; id: string }[], specialClassifications?: { residentId: string }[]) => {
+    const classifiedIds = new Set(specialClassifications?.map(sc => sc.residentId));
+    
+    return (
+      <span style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
+        {residents.map((r, i) => (
+          <span key={r.id} style={{ display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>
+             {classifiedIds.has(r.id) && (
+               <span className="material-symbols-rounded" style={{ fontSize: '14px', marginRight: '2px', fontVariationSettings: "'FILL' 1", color: 'var(--surface-fg-primary)' }}>warning</span>
+             )}
+             {r.name}{i < residents.length - 1 ? ',' : ''}
+          </span>
+        ))}
+      </span>
+    );
+  };
+
   return (
     <Drawer.Root open={isOpen} onOpenChange={handleOpenChange}>
       <Drawer.Portal>
@@ -74,12 +92,13 @@ export const ManualCheckSelectorSheet = () => {
                   <>
                     {searchQuery && <div className={styles.sectionHeader}>Matching Results</div>}
                     {results.map(check => (
-                      <div key={check.id} onClick={() => handleSelectCheck(check.id)}>
-                        {/* Read-only wrapper disables internal card clicks so the sheet handler works */}
-                        <div className={styles.readOnlyCard}>
-                          <CheckCard check={check} transition={{ duration: 0 }} />
-                        </div>
-                      </div>
+                      <ActionListItem
+                        key={check.id}
+                        // FIX: SafetyCheck does not have roomName property; use resident location.
+                        label={check.residents[0]?.location || 'Unknown Room'}
+                        subLabel={renderResidents(check.residents, check.specialClassifications)}
+                        onClick={() => handleSelectCheck(check.id)}
+                      />
                     ))}
                   </>
                 ) : (

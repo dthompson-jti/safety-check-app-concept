@@ -20,8 +20,8 @@ import {
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
+import { ActionListItem } from '../../components/ActionListItem';
 import { NfcWriteSheet } from '../Overlays/NfcWriteSheet';
-import { NfcRoomListItem } from '../Overlays/NfcRoomListItem';
 import { ContextSwitcherCard } from '../Shell/ContextSwitcherCard';
 import styles from './NfcWriteView.module.css';
 
@@ -65,7 +65,6 @@ export const NfcWriteView = () => {
   return (
     <motion.div
       className={styles.viewContainer}
-      // PHYSICS: Slide Up (Tool/Sheet)
       initial={{ y: '100%' }}
       animate={{ y: 0 }}
       exit={{ y: '100%' }}
@@ -79,11 +78,11 @@ export const NfcWriteView = () => {
       </header>
 
       <div className={styles.controlsHeader}>
+        {/* Updated: Uses default variant (no variant prop) for consistency */}
         <ContextSwitcherCard
           groupId={modalGroupId}
           unitId={modalUnitId}
           onClick={() => setIsContextModalOpen(true)}
-          variant="compact" // Use the new compact variant
         />
         <SearchInput variant="standalone" placeholder="Search for a room..." value={searchQuery} onChange={setSearchQuery} />
       </div>
@@ -93,9 +92,10 @@ export const NfcWriteView = () => {
           <Virtuoso
             data={filteredRooms}
             itemContent={(_index, room) => (
-              <NfcRoomListItem
+              <ActionListItem
                 key={room.id}
-                roomName={room.name}
+                label={room.name}
+                leadingIcon="meeting_room"
                 onClick={() => handleSelectRoom(room.id, room.name)}
               />
             )}

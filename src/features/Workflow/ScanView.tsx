@@ -272,6 +272,7 @@ export const ScanView = () => {
       <footer className={styles.footer}>
         <p className={styles.subtlePrompt}>Can't scan?</p>
         <Button variant="on-solid" size="m" onClick={handleOpenManualSelection}>
+          <span className="material-symbols-rounded">touch_app</span>
           Select manually
         </Button>
         <div className={styles.devControlsContainer}>
