@@ -147,6 +147,7 @@ export const FacilitySelectionModal = () => {
                   <ActionListItem
                     key={group.id}
                     label={group.name}
+                    leadingIcon="domain"
                     onClick={() => handleGroupSelect(group.id)}
                     showChevron
                   />
@@ -177,9 +178,8 @@ export const FacilitySelectionModal = () => {
                       key={unit.id}
                       label={unit.name}
                       onClick={() => handleUnitSelect(unit.id)}
-                      leadingIcon={isSelected ? 'check' : undefined}
+                      leadingIcon={isSelected ? 'check' : 'view_module'}
                       isSelected={isSelected}
-                      indent={true} 
                     />
                   );
                 })}

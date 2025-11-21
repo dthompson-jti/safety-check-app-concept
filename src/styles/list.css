@@ -26,6 +26,12 @@
   outline: none;
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
+  
+  /* 
+    UPDATED: Full-width separator logic.
+    The border sits on the root element to span edge-to-edge.
+  */
+  border-bottom: 1px solid var(--surface-border-secondary);
 }
 
 /* Active State */
@@ -39,6 +45,11 @@
   cursor: not-allowed;
 }
 
+/* Remove border from the last item in a group */
+.list-item-root:last-child {
+  border-bottom: none;
+}
+
 /* 
   Leading Section (Icon, Checkbox, Avatar) 
   Fixed width to ensure vertical alignment of text across rows.
@@ -49,7 +60,7 @@
   justify-content: center;
   width: 48px; /* 16px padding + 24px icon + 8px gap approx */
   flex-shrink: 0;
-  color: var(--surface-fg-secondary);
+  color: var(--surface-fg-quaternary);
 }
 
 .list-item-leading .material-symbols-rounded {
@@ -59,7 +70,6 @@
 /* 
   Content Body
   Wraps Text + Trailing. 
-  Contains the bottom border separator (Inset Divider Pattern).
 */
 .list-item-content {
   flex-grow: 1;
@@ -73,7 +83,7 @@
   padding-bottom: var(--spacing-3);
   
   min-height: 56px;
-  border-bottom: 1px solid var(--surface-border-secondary);
+  /* Border removed from here to allow full-width on root */
   gap: var(--spacing-3);
   min-width: 0;
 }
@@ -85,11 +95,6 @@
 */
 .list-item-root[data-has-leading="false"] .list-item-content {
   padding-left: var(--spacing-4);
-}
-
-/* Remove border from the last item in a group */
-.list-item-root:last-child .list-item-content {
-  border-bottom: none;
 }
 
 .list-item-text-group {

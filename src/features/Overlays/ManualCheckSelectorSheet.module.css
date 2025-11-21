@@ -64,16 +64,16 @@
 .listContainer {
   flex-grow: 1;
   overflow-y: auto;
-  padding: var(--spacing-3) var(--spacing-4);
+  /* UPDATED: Remove padding to allow edge-to-edge list items */
+  padding: 0;
   background-color: var(--surface-bg-primary);
-  padding-left: calc(var(--spacing-4) + 2px);
-  padding-right: calc(var(--spacing-4) + 2px);
 }
 
 .listContent {
   display: flex;
   flex-direction: column;
-  gap: 4px; /* Card Gap */
+  /* UPDATED: Remove gap to allow continuous borders */
+  gap: 0;
   padding-bottom: calc(var(--spacing-6) + env(safe-area-inset-bottom));
 }
 
@@ -85,9 +85,9 @@
   letter-spacing: 0.05em;
   margin-top: var(--spacing-4);
   margin-bottom: var(--spacing-2);
-  padding-left: var(--spacing-1);
+  padding-left: var(--spacing-4); /* Re-add left padding for header text */
 }
 
 .readOnlyCard {
-  pointer-events: none; /* Critical for interaction override */
+  pointer-events: none;
 }

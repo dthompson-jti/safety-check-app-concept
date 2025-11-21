@@ -169,7 +169,7 @@ const AppShellContent = () => {
     (e.currentTarget as Element).releasePointerCapture(e.pointerId);
 
     const deltaX = e.clientX - startX.current;
-    const SWIPE_THRESHOLD = 50; 
+    const SWIPE_THRESHOLD = 50;
     const PROGRESS_THRESHOLD = 0.4;
 
     if (appView === 'sideMenu') {

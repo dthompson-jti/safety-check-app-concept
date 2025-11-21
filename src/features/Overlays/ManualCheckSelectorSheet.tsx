@@ -94,9 +94,9 @@ export const ManualCheckSelectorSheet = () => {
                     {results.map(check => (
                       <ActionListItem
                         key={check.id}
-                        // FIX: SafetyCheck does not have roomName property; use resident location.
                         label={check.residents[0]?.location || 'Unknown Room'}
                         subLabel={renderResidents(check.residents, check.specialClassifications)}
+                        // Icon removed per request to improve two-line layout
                         onClick={() => handleSelectCheck(check.id)}
                       />
                     ))}
