@@ -143,7 +143,7 @@ export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
             })
           ])}
         </AnimatePresence>
-        <div style={{ height: '128px' }} />
+        <div style={{ height: 'calc(var(--footer-height, 96px) + var(--spacing-4))' }} />
       </>
     );
   };
