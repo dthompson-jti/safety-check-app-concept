@@ -14,11 +14,11 @@ import {
 import { facilityData } from '../../data/mock/facilityData';
 import { FullScreenModal } from '../../components/FullScreenModal';
 import { ActionListItem } from '../../components/ActionListItem';
+import { useHaptics } from '../../data/useHaptics';
 import styles from './FacilitySelectionModal.module.css';
 
 type Step = 'group' | 'unit';
 
-// Internal Stack Physics (Step 1 -> Step 2)
 const contentVariants = {
   enter: (direction: number) => ({
     x: direction === 0 ? 0 : (direction > 0 ? '100%' : '-100%'),
@@ -35,7 +35,6 @@ const contentVariants = {
 };
 
 export const FacilitySelectionModal = () => {
-  // Global State
   const [isContextRequired, setIsContextRequired] = useAtom(isContextSelectionRequiredAtom);
   const [isModalOpen, setIsModalOpen] = useAtom(isContextSelectionModalOpenAtom);
   const [selectedGroup, setSelectedGroup] = useAtom(selectedFacilityGroupAtom);
@@ -43,31 +42,27 @@ export const FacilitySelectionModal = () => {
   const logout = useSetAtom(logoutAtom);
   const setAppView = useSetAtom(appViewAtom);
   const setIsScheduleLoading = useSetAtom(isScheduleLoadingAtom);
+  const { trigger: triggerHaptic } = useHaptics();
 
-  // Local Navigation State
   const [step, setStep] = useState<Step>('group');
   const [direction, setDirection] = useState(0);
   const [tempGroupId, setTempGroupId] = useState<string | null>(selectedGroup);
   
-  // Explicitly control exit direction for the parent modal to handle "Back" vs "Success" flows
   const [modalExitDirection, setModalExitDirection] = useState<'right' | 'left'>('right');
 
   const isOpen = isContextRequired || isModalOpen;
 
-  // Reset state when opening
   useEffect(() => {
     if (isOpen) {
       setStep('group');
       setDirection(0);
       setTempGroupId(selectedGroup);
-      setModalExitDirection('right'); // Default to "Back" behavior
+      setModalExitDirection('right');
     }
   }, [isOpen, selectedGroup]); 
 
   const handleCloseOrLogout = () => {
-    // Ensure we exit to the Right (Backwards)
     setModalExitDirection('right');
-    
     if (isContextRequired) {
       logout();
     } else {
@@ -76,20 +71,21 @@ export const FacilitySelectionModal = () => {
   };
 
   const handleGroupSelect = (groupId: string) => {
+    triggerHaptic('selection');
     setTempGroupId(groupId);
-    setDirection(1); // Slide Forward
+    setDirection(1);
     setStep('unit');
   };
 
   const handleBackToGroups = () => {
-    setDirection(-1); // Slide Backward
+    setDirection(-1);
     setStep('group');
   };
 
   const handleUnitSelect = (unitId: string) => {
+    triggerHaptic('selection');
     if (!tempGroupId) return;
     
-    // 1. Set direction first (Exit Left for Progress/Success)
     setModalExitDirection('left');
 
     if (tempGroupId !== selectedGroup || unitId !== selectedUnit) {
@@ -105,9 +101,6 @@ export const FacilitySelectionModal = () => {
       setIsContextRequired(false);
     }
     
-    // 2. The Double-RAF Pattern
-    // This ensures the 'modalExitDirection' state change paints to the DOM
-    // BEFORE we trigger the unmount via setIsModalOpen(false), preventing the "barn door" effect.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setIsModalOpen(false);
@@ -171,7 +164,6 @@ export const FacilitySelectionModal = () => {
               exit="exit"
               transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
             >
-              {/* Step 2: Keep sticky banner for context */}
               <div className={styles.contextBanner}>
                 <span className="material-symbols-rounded" style={{ fontSize: 20 }}>domain</span>
                 {currentGroup?.name}

@@ -22,8 +22,8 @@ import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsModal } from './features/Overlays/SettingsModal';
 import { DeveloperModal } from './features/Overlays/DeveloperModal';
 import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
-import { GestureProvider } from './context/GestureProvider';
-import { useGestureContext } from './context/GestureContext';
+import { GestureProvider } from './data/GestureProvider';
+import { useGestureContext } from './data/GestureContext';
 import styles from './AppShell.module.css';
 
 const viewTransition = {
@@ -48,8 +48,8 @@ const AppShellContent = () => {
   const { filmStripProgress, sideMenuProgress } = useGestureContext();
   const isDragging = useRef(false);
   const startX = useRef(0);
+  const startY = useRef(0);
 
-  // We track the "base" progress for the film strip (0 or 1) to add the drag delta to it.
   const initialFilmStripProgress = useRef(0);
 
   useEffect(() => {
@@ -58,7 +58,6 @@ const AppShellContent = () => {
     }
   }, []);
 
-  // Sync motion values with atom state when not dragging
   useEffect(() => {
     if (isDragging.current) return;
 
@@ -112,26 +111,23 @@ const AppShellContent = () => {
     setAppView('dashboardTime');
   };
 
-  // --- Gesture Logic ---
+  // --- Intent-Based Gesture Logic ---
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Only enable gestures if we are in the main "none" workflow view
     if (workflowState.view !== 'none') return;
 
-    // Just track the start position, don't capture yet
     startX.current = e.clientX;
+    startY.current = e.clientY;
     initialFilmStripProgress.current = filmStripProgress.get();
-    isDragging.current = false; // Reset dragging state
+    isDragging.current = false;
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    // If we are already dragging, continue logic
     if (isDragging.current) {
       const deltaX = e.clientX - startX.current;
       const viewportWidth = window.innerWidth;
       const deltaProgress = deltaX / viewportWidth;
 
-      // Scenario 1: Handling Side Menu Drag
       if (appView === 'sideMenu') {
         const newProgress = Math.max(0, Math.min(1, 1 + (deltaX / sideMenuWidth)));
         sideMenuProgress.set(newProgress);
@@ -144,7 +140,6 @@ const AppShellContent = () => {
         return;
       }
 
-      // Scenario 2: Handling Film Strip Drag
       if (sideMenuProgress.get() === 0) {
         const newProgress = Math.max(0, Math.min(1, initialFilmStripProgress.current - deltaProgress));
         filmStripProgress.set(newProgress);
@@ -152,10 +147,12 @@ const AppShellContent = () => {
       return;
     }
 
-    // If not dragging yet, check threshold
     if (e.buttons > 0 || e.pointerType === 'touch') {
       const deltaX = Math.abs(e.clientX - startX.current);
-      if (deltaX > 10) {
+      const deltaY = Math.abs(e.clientY - startY.current);
+      const DRAG_THRESHOLD = 10;
+
+      if (deltaX > DRAG_THRESHOLD && deltaX > deltaY) {
         isDragging.current = true;
         (e.currentTarget as Element).setPointerCapture(e.pointerId);
       }
@@ -163,56 +160,42 @@ const AppShellContent = () => {
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isDragging.current) {
-      // It was a tap (or very small drag), let click events propagate
-      return;
-    }
+    if (!isDragging.current) return;
 
     isDragging.current = false;
     (e.currentTarget as Element).releasePointerCapture(e.pointerId);
 
     const deltaX = e.clientX - startX.current;
+    const SWIPE_THRESHOLD = 50; 
+    const PROGRESS_THRESHOLD = 0.4;
 
-    // Thresholds
-    const SWIPE_THRESHOLD = 50; // px
-    const PROGRESS_THRESHOLD = 0.4; // 40%
-
-    // 1. Side Menu Logic
     if (appView === 'sideMenu') {
-      // Closing
       if (deltaX < -SWIPE_THRESHOLD || sideMenuProgress.get() < (1 - PROGRESS_THRESHOLD)) {
         setAppView('dashboardTime');
       } else {
-        // Snap back to open
         animate(sideMenuProgress, 1, viewTransition);
       }
       return;
     }
 
     if (appView === 'dashboardTime' && deltaX > SWIPE_THRESHOLD) {
-      // Opening Side Menu
       if (deltaX > sideMenuWidth * PROGRESS_THRESHOLD) {
         setAppView('sideMenu');
       } else {
-        // Snap back to closed
         animate(sideMenuProgress, 0, viewTransition);
       }
       return;
     }
 
-    // 2. Film Strip Logic
     if (sideMenuProgress.get() === 0) {
       const currentProgress = filmStripProgress.get();
-
       if (appView === 'dashboardTime') {
-        // Trying to go to Route (drag left, positive progress)
         if (currentProgress > PROGRESS_THRESHOLD) {
           setAppView('dashboardRoute');
         } else {
           animate(filmStripProgress, 0, viewTransition);
         }
       } else if (appView === 'dashboardRoute') {
-        // Trying to go to Time (drag right, negative progress)
         if (currentProgress < (1 - PROGRESS_THRESHOLD)) {
           setAppView('dashboardTime');
         } else {
@@ -222,11 +205,11 @@ const AppShellContent = () => {
     }
   };
 
-  // Derived transforms for layout
   const mainViewX = useTransform(sideMenuProgress, [0, 1], [0, sideMenuWidth]);
   const sideMenuX = useTransform(sideMenuProgress, [0, 1], [-sideMenuWidth, 0]);
   const backdropOpacity = useTransform(sideMenuProgress, [0, 1], [0, 1]);
-  const backdropPointerEvents = useTransform(sideMenuProgress, (v) => v > 0 ? 'auto' : 'none');
+  // FIX: Explicitly type 'v' as number to satisfy TypeScript
+  const backdropPointerEvents = useTransform(sideMenuProgress, (v: number) => v > 0 ? 'auto' : 'none');
 
   return (
     <div
@@ -272,7 +255,6 @@ const AppShellContent = () => {
         {workflowState.view === 'provisioning' && <NfcWriteView />}
       </AnimatePresence>
 
-      {/* Modals and Overlays */}
       <ManualCheckSelectorSheet />
       <FacilitySelectionModal />
 

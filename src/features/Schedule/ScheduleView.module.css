@@ -7,6 +7,8 @@
   box-sizing: border-box;
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
+  /* CRITICAL: Allow browser to handle vertical scrolling natively */
+  touch-action: pan-y;
 }
 
 .scrollContainer[data-refreshing='true'] > * {
@@ -26,10 +28,8 @@
   color: var(--surface-fg-secondary);
   letter-spacing: 0.05em;
   position: sticky;
-  /* The Component Variable Contract: Stacks below AppHeader */
   top: var(--header-height);
   padding-top: 16px;
-  /* Match container padding context */
   margin-left: calc(-1 * var(--spacing-4));
   margin-right: calc(-1 * var(--spacing-4));
   padding-left: var(--spacing-4);

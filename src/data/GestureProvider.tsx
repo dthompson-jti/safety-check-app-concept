@@ -1,3 +1,4 @@
+// src/data/GestureProvider.tsx
 import { useMotionValue } from 'framer-motion';
 import { GestureContext } from './GestureContext';
 

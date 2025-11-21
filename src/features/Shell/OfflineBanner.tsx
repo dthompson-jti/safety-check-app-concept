@@ -4,6 +4,8 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import { connectionStatusAtom, offlineTimestampAtom } from '../../data/atoms';
 import { queuedChecksCountAtom, dispatchActionAtom } from '../../data/appDataAtoms';
+import { useHaptics } from '../../data/useHaptics';
+import { useAppSound } from '../../data/useAppSound';
 import styles from './OfflineBanner.module.css';
 
 const formatDuration = (ms: number): string => {
@@ -18,11 +20,22 @@ export const OfflineBanner = () => {
   const offlineTimestamp = useAtomValue(offlineTimestampAtom);
   const queuedCount = useAtomValue(queuedChecksCountAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
+  const { trigger: triggerHaptic } = useHaptics();
+  const { play: playSound } = useAppSound();
   
   const [duration, setDuration] = useState('0:00');
   const bannerRef = useRef<HTMLDivElement>(null);
 
-  // Timer Logic
+  // Audio/Haptic Feedback on State Change
+  useEffect(() => {
+    if (status === 'offline') {
+      triggerHaptic('warning');
+      playSound('error', { volume: 0.4 });
+    } else if (status === 'online' && offlineTimestamp) {
+       // Sync complete (transition back to online handled in handleSync mostly, but this catches external updates)
+    }
+  }, [status, offlineTimestamp, triggerHaptic, playSound]);
+
   useEffect(() => {
     if (status !== 'offline' || !offlineTimestamp) {
       setDuration('0:00');
@@ -35,14 +48,12 @@ export const OfflineBanner = () => {
       setDuration(formatDuration(diff));
     };
 
-    // Update immediately, then every second
     updateTimer();
     const intervalId = setInterval(updateTimer, 1000);
 
     return () => clearInterval(intervalId);
   }, [status, offlineTimestamp]);
 
-  // Component Variable Contract: Measure height
   useEffect(() => {
     const updateHeight = () => {
       if (bannerRef.current) {
@@ -71,9 +82,11 @@ export const OfflineBanner = () => {
 
   const handleSync = () => {
     setStatus('syncing');
-    // Simulate Sync Process
+    triggerHaptic('medium');
     setTimeout(() => {
       dispatch({ type: 'SYNC_QUEUED_CHECKS', payload: { syncTime: new Date().toISOString() } });
+      triggerHaptic('success');
+      playSound('success', { volume: 0.5 });
       setStatus('online');
     }, 2000);
   };

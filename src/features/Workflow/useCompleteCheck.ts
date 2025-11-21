@@ -1,14 +1,13 @@
+// src/features/Workflow/useCompleteCheck.ts
 import { useSetAtom, useAtomValue } from 'jotai';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import {
     connectionStatusAtom,
     recentlyCompletedCheckIdAtom,
     completingChecksAtom,
-    // appConfigAtom
 } from '../../data/atoms';
-// import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useSound } from '../../data/useSound';
+import { useAppSound } from '../../data/useAppSound'; 
 
 type CompleteCheckOptions = {
     checkId: string;
@@ -19,15 +18,13 @@ type CompleteCheckOptions = {
 
 export const useCompleteCheck = () => {
     const dispatch = useSetAtom(dispatchActionAtom);
-    // const addToast = useSetAtom(addToastAtom); // Unused for now as we rely on caller or other feedback
     const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
     const setCompletingChecks = useSetAtom(completingChecksAtom);
 
     const connectionStatus = useAtomValue(connectionStatusAtom);
-    // const { simpleSubmitEnabled } = useAtomValue(appConfigAtom); // Unused as animation is always enabled now
 
     const { trigger: triggerHaptic } = useHaptics();
-    const { play: playSound } = useSound();
+    const { play: playSound } = useAppSound(); 
 
     const completeCheck = ({ checkId, statuses, notes, onSuccess }: CompleteCheckOptions) => {
         triggerHaptic('success');
@@ -46,7 +43,6 @@ export const useCompleteCheck = () => {
             return;
         }
 
-        // Simple submit still shows animation per user request
         const PULSE_ANIMATION_DURATION = 1200;
         const EXIT_ANIMATION_DURATION = 400;
 
@@ -54,14 +50,15 @@ export const useCompleteCheck = () => {
         setRecentlyCompletedCheckId(checkId);
 
         setTimeout(() => {
-            setCompletingChecks((prev) => new Set(prev).add(checkId));
+            // FIX: Explicit typing for the Set updater
+            setCompletingChecks((prev: Set<string>) => new Set(prev).add(checkId));
         }, PULSE_ANIMATION_DURATION);
 
         const TOTAL_ANIMATION_DURATION = PULSE_ANIMATION_DURATION + EXIT_ANIMATION_DURATION;
         setTimeout(() => {
             dispatch({ type: 'CHECK_COMPLETE', payload });
 
-            setCompletingChecks((prev) => {
+            setCompletingChecks((prev: Set<string>) => {
                 const next = new Set(prev);
                 next.delete(checkId);
                 return next;

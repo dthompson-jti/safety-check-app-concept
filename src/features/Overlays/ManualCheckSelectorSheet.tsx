@@ -19,6 +19,7 @@ import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { Button } from '../../components/Button';
 import { ManualCheckListItem } from './ManualCheckListItem';
 import { SafetyCheck } from '../../types';
+import { useHaptics } from '../../data/useHaptics';
 import styles from './ManualCheckSelectorSheet.module.css';
 
 export const ManualCheckSelectorSheet = () => {
@@ -27,15 +28,14 @@ export const ManualCheckSelectorSheet = () => {
   const [isGlobalSearchActive, setIsGlobalSearchActive] = useAtom(isGlobalSearchActiveAtom);
 
   const setWorkflow = useSetAtom(workflowStateAtom);
+  const { trigger: triggerHaptic } = useHaptics();
 
   const filteredChecks = useAtomValue(manualSelectionResultsAtom);
   const contextualResults = useAtomValue(contextualManualSearchResultsAtom);
   const { count: globalResultsCount } = useAtomValue(globalManualSearchResultsAtom);
 
-  // Effect to reset search state when modal closes
   useEffect(() => {
     if (!isOpen) {
-      // Delay reset to allow animation to finish
       const timer = setTimeout(() => {
         setSearchQuery('');
         setIsGlobalSearchActive(false);
@@ -45,6 +45,7 @@ export const ManualCheckSelectorSheet = () => {
   }, [isOpen, setSearchQuery, setIsGlobalSearchActive]);
 
   const handleSelectCheck = (check: SafetyCheck) => {
+    triggerHaptic('selection');
     setWorkflow({
       view: 'form',
       type: 'scheduled',
@@ -87,7 +88,7 @@ export const ManualCheckSelectorSheet = () => {
                 showProgressiveDiscovery ? (
                   <Button
                     variant="tertiary"
-                    onClick={() => setIsGlobalSearchActive(true)}
+                    onClick={() => { triggerHaptic('light'); setIsGlobalSearchActive(true); }}
                   >
                     <span className="material-symbols-rounded">search</span>
                     Show {globalResultsCount} result{globalResultsCount > 1 ? 's' : ''} in all other units

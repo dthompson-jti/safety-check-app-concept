@@ -11,7 +11,7 @@ import {
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useSound } from '../../data/useSound';
+import { useAppSound } from '../../data/useAppSound'; // NEW
 import { useVisualViewport } from '../../data/useVisualViewport';
 import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAtoms';
 import { Button } from '../../components/Button';
@@ -51,7 +51,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
 
-  // Draft State Atoms
   const drafts = useAtomValue(draftFormsAtom);
   const saveDraft = useSetAtom(saveDraftAtom);
   const clearDraft = useSetAtom(clearDraftAtom);
@@ -64,17 +63,15 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   } = useAtomValue(appConfigAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useSound();
+  const { play: playSound } = useAppSound(); // NEW
   const { completeCheck } = useCompleteCheck();
 
-  // Hook: Monitors the *Visual* Viewport to handle keyboard resize events correctly
   useVisualViewport();
 
   const footerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLElement>(null);
   const [showScrollShadow, setShowScrollShadow] = useState(false);
 
-  // Initialize State: Prefer Draft Data, then fall back to initial
   const draft = checkData.type === 'scheduled' ? drafts[checkData.checkId] : undefined;
 
   const [statuses, setStatuses] = useState<Record<string, StatusValue | ''>>(() =>
@@ -95,12 +92,8 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
   const isSupplementalCheck = checkData.type === 'supplemental';
 
-  // Draft Logic: Flag to track if we are unmounting due to success (don't save draft) or cancellation/back (save draft)
   const isSubmitted = useRef(false);
 
-  // Architecture: Resilient Form State
-  // If the form is unmounting and wasn't submitted, save the user's work to a global atom.
-  // This ensures data persists if the user accidentally navigates away or hits back.
   useEffect(() => {
     return () => {
       if (!isSubmitted.current && checkData.type === 'scheduled') {
@@ -165,7 +158,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     setNotes((prev) => ({ ...prev, [residentId]: value }));
   };
 
-  // Mark Multiple Logic
   const handleApplyAll = (status: string) => {
     if (!status) return;
     const newStatuses = { ...statuses };
@@ -175,10 +167,8 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     setStatuses(newStatuses);
   };
 
-  // Derive the current "All set to" value for the segmented control
   const currentMarkAllValue = useMemo(() => {
     const uniqueValues = new Set(Object.values(statuses));
-    // If there's only one unique value and it's not empty string, return it.
     if (uniqueValues.size === 1) {
       const val = uniqueValues.values().next().value;
       if (val) return val;
@@ -197,11 +187,8 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
   const handleSave = () => {
     if (!canSave) return;
-
-    // Mark as submitted to prevent draft saving on unmount
     isSubmitted.current = true;
 
-    // Clean up any previous draft for this check
     if (checkData.type === 'scheduled') {
       clearDraft(checkData.checkId);
     }
@@ -214,19 +201,13 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       .join('\n---\n');
 
     if (checkData.type === 'scheduled') {
-      // Use the new hook for scheduled checks
       completeCheck({
         checkId: checkData.checkId,
         statuses: statuses as Record<string, string>,
         notes: consolidatedNotes,
       });
-
-      // Close immediately to show the list animation
       setWorkflowState({ view: 'none' });
-
     } else if (checkData.type === 'supplemental') {
-      // Supplemental checks logic remains here for now as it's slightly different (ADD vs COMPLETE)
-      // Or we could extend the hook, but for now let's keep it simple.
       dispatch({
         type: 'CHECK_SUPPLEMENTAL_ADD',
         payload: {
@@ -248,8 +229,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   return (
     <motion.div
       className={styles.checkFormView}
-      // The Variable Contract: Using visual-viewport height ensures the footer 
-      // remains perfectly docked above the keyboard on all devices.
       style={{ height: 'var(--visual-viewport-height, 100dvh)' }}
       initial={{ x: '100%' }}
       animate={{ x: 0 }}

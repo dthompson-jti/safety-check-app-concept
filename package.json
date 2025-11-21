@@ -36,6 +36,7 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-virtuoso": "^4.7.11",
+    "use-sound": "^4.0.1",
     "vaul": "^1.1.2"
   },
   "devDependencies": {

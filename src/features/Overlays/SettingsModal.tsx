@@ -1,19 +1,26 @@
 // src/features/Overlays/SettingsModal.tsx
 import { useAtom, useSetAtom } from 'jotai';
 import { appConfigAtom, sessionAtom } from '../../data/atoms';
+import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
 import styles from './SettingsModal.module.css';
 
 export const SettingsModal = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const setSession = useSetAtom(sessionAtom);
+  const { trigger: triggerHaptic } = useHaptics();
 
   const handleHapticsChange = (checked: boolean) => {
+    triggerHaptic('light');
     setAppConfig(currentConfig => ({ ...currentConfig, hapticsEnabled: checked }));
   };
 
+  const handleAudioChange = (checked: boolean) => {
+    triggerHaptic('light');
+    setAppConfig(currentConfig => ({ ...currentConfig, audioEnabled: checked }));
+  };
+
   const handleLogout = () => {
-    // Resets the session state, effectively logging the user out.
     setSession({ isAuthenticated: false, userName: null });
   };
 
@@ -32,10 +39,19 @@ export const SettingsModal = () => {
               onCheckedChange={handleHapticsChange}
             />
           </div>
+          <div className={styles.settingsItem}>
+            <label htmlFor="audio-switch" className={styles.itemLabel}>
+              Audio Feedback
+            </label>
+            <Switch
+              id="audio-switch"
+              checked={appConfig.audioEnabled}
+              onCheckedChange={handleAudioChange}
+            />
+          </div>
         </div>
       </div>
 
-      {/* NEW: Account section with Logout button */}
       <div className={styles.settingsSection}>
         <h3 className={styles.sectionTitle}>ACCOUNT</h3>
         <div className={styles.settingsGroup}>

@@ -17,7 +17,7 @@ import {
 import { mockResidents } from '../../data/mock/residentData';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useSound } from '../../data/useSound';
+import { useAppSound } from '../../data/useAppSound'; // NEW
 import { Button } from '../../components/Button';
 import { appConfigAtom } from '../../data/atoms';
 import { useCompleteCheck } from './useCompleteCheck';
@@ -44,13 +44,12 @@ export const ScanView = () => {
   const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useSound();
+  const { play: playSound } = useAppSound(); // NEW
   const { completeCheck } = useCompleteCheck();
 
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
 
-  // Refs for duplicate scan prevention
   const lastScanned = useRef<string | null>(null);
   const lastScanTime = useRef<number>(0);
 
@@ -89,7 +88,6 @@ export const ScanView = () => {
   const handleDecode = (result: string) => {
     if (scanViewState !== 'scanning') return;
 
-    // Prevent duplicate scans
     if (lastScanned.current === result && (Date.now() - lastScanTime.current < 2000)) {
       return;
     }
@@ -99,8 +97,6 @@ export const ScanView = () => {
     setScanViewState('processing');
 
     setTimeout(() => {
-      // In a real app, we'd parse "room:{id}" but here we assume the QR code IS the check ID for simplicity in some cases,
-      // or we handle the "room:" prefix if present.
       const checkId = result.startsWith('room:') ? result.split(':')[1] : result;
 
       const check = allChecks.find(c => c.id === checkId && c.status !== 'complete' && c.status !== 'missed');
@@ -110,9 +106,7 @@ export const ScanView = () => {
         playSound('success');
         setScanViewState('success');
 
-        // NEW: Simple Submit Logic
         if (appConfig.simpleSubmitEnabled) {
-          // Auto-complete the check
           const defaultStatuses = check.residents.reduce((acc, resident) => {
             acc[resident.id] = 'Awake';
             return acc;
@@ -229,72 +223,68 @@ export const ScanView = () => {
   };
 
   return (
-    <>
-      <motion.div
-        className={styles.scanView}
-        // Physics-Semantic Contract: Slide Up (y) -> Close (X) button
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <header className={styles.header}>
-          <h3>Scan Room QR Code</h3>
-          {/* BUTTON: On-Solid variant for visibility on dark background */}
-          <Button variant="on-solid" size="m" iconOnly onClick={handleClose} aria-label="Close scanner">
-            <span className="material-symbols-rounded">close</span>
-          </Button>
-        </header>
+    <motion.div
+      className={styles.scanView}
+      initial={{ y: '100%' }}
+      animate={{ y: 0 }}
+      exit={{ y: '100%' }}
+      transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <header className={styles.header}>
+        <h3>Scan Room QR Code</h3>
+        <Button variant="on-solid" size="m" iconOnly onClick={handleClose} aria-label="Close scanner">
+          <span className="material-symbols-rounded">close</span>
+        </Button>
+      </header>
 
-        <AnimatePresence>
-          {preScanAlert && (
-            <motion.div
-              className={styles.preScanAlert}
-              initial={{ y: '-100%', opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: '-100%', opacity: 0 }}
-              transition={{ type: 'tween', ease: 'easeInOut', duration: 0.35 }}
-            >
-              <span className="material-symbols-rounded">warning</span>
-              <p>
-                <span>{preScanAlert.residentName}</span>
-                <span className={styles.alertSeparator}>|</span>
-                <span>{preScanAlert.classificationType}</span>
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <AnimatePresence>
+        {preScanAlert && (
+          <motion.div
+            className={styles.preScanAlert}
+            initial={{ y: '-100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '-100%', opacity: 0 }}
+            transition={{ type: 'tween', ease: 'easeInOut', duration: 0.35 }}
+          >
+            <span className="material-symbols-rounded">warning</span>
+            <p>
+              <span>{preScanAlert.residentName}</span>
+              <span className={styles.alertSeparator}>|</span>
+              <span>{preScanAlert.classificationType}</span>
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        <main className={styles.cameraContainer}>
-          <div className={styles.viewfinder} data-scan-state={scanViewState}>
-            {renderViewfinderContent()}
+      <main className={styles.cameraContainer}>
+        <div className={styles.viewfinder} data-scan-state={scanViewState}>
+          {renderViewfinderContent()}
+        </div>
+        <p className={styles.helperText}>
+          {simulation.cameraFails
+            ? "Camera hardware is not responding."
+            : "Point your camera at the room's QR code"}
+        </p>
+      </main>
+      <footer className={styles.footer}>
+        <p className={styles.subtlePrompt}>Can't scan?</p>
+        <Button variant="on-solid" size="m" onClick={handleOpenManualSelection}>
+          Select manually
+        </Button>
+        <div className={styles.devControlsContainer}>
+          <p className={styles.devControlsHeader}>Dev controls</p>
+          <div className={styles.devControls}>
+            <Button variant="on-solid" size="s" onClick={handleSimulateSuccess} disabled={simulation.cameraFails}>
+              <span className="material-symbols-rounded">check_circle</span>
+              Simulate success
+            </Button>
+            <Button variant="on-solid" size="s" onClick={handleSimulateFail} disabled={simulation.cameraFails}>
+              <span className="material-symbols-rounded">error</span>
+              Simulate fail
+            </Button>
           </div>
-          <p className={styles.helperText}>
-            {simulation.cameraFails
-              ? "Camera hardware is not responding."
-              : "Point your camera at the room's QR code"}
-          </p>
-        </main>
-        <footer className={styles.footer}>
-          <p className={styles.subtlePrompt}>Can't scan?</p>
-          <Button variant="on-solid" size="m" onClick={handleOpenManualSelection}>
-            Select manually
-          </Button>
-          <div className={styles.devControlsContainer}>
-            <p className={styles.devControlsHeader}>Dev controls</p>
-            <div className={styles.devControls}>
-              <Button variant="on-solid" size="s" onClick={handleSimulateSuccess} disabled={simulation.cameraFails}>
-                <span className="material-symbols-rounded">check_circle</span>
-                Simulate success
-              </Button>
-              <Button variant="on-solid" size="s" onClick={handleSimulateFail} disabled={simulation.cameraFails}>
-                <span className="material-symbols-rounded">error</span>
-                Simulate fail
-              </Button>
-            </div>
-          </div>
-        </footer>
-      </motion.div>
-    </>
+        </div>
+      </footer>
+    </motion.div>
   );
 };
