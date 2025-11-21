@@ -5,7 +5,8 @@ import { Drawer } from 'vaul';
 import {
   nfcWorkflowStateAtom,
   provisionedRoomIdsAtom,
-  nfcSimulationAtom
+  nfcSimulationAtom,
+  NfcError
 } from '../../data/nfcAtoms';
 import { Button } from '../../components/Button';
 import { useHaptics } from '../../data/useHaptics';
@@ -37,68 +38,111 @@ export const NfcWriteSheet = () => {
       // Reset to selecting mode if closed manually
       setTimeout(() => {
         if (workflow.status !== 'idle') {
-          setWorkflow({ status: 'idle' }); // Or selecting
+          setWorkflow({ status: 'idle' });
         }
       }, 300);
     }
   };
 
+  // Developer Simulation Trigger
+  const handleDevAction = (action: 'success' | 'net-error' | 'locked-error') => {
+    triggerHaptic('light');
+    
+    // Transition to writing first for a split second to feel like an action,
+    // then resolve to the specific state.
+    setWorkflow(prev => ({ ...prev, status: 'writing' } as any));
+
+    setTimeout(() => {
+      if (action === 'success') {
+        if ('roomId' in workflow) {
+           // We need the IDs from the current workflow state
+           const { roomId, roomName } = workflow as { roomId: string, roomName: string };
+           setWorkflow({ status: 'success', roomId, roomName });
+           setProvisionedIds(prev => new Set(prev).add(roomId));
+           triggerHaptic('success');
+           playSound('success');
+        }
+      } else if (action === 'net-error') {
+        if ('roomId' in workflow) {
+           const { roomId, roomName } = workflow as { roomId: string, roomName: string };
+           const error: NfcError = { code: 'WRITE_FAILED', message: 'Network connection lost' };
+           setWorkflow({ status: 'error', roomId, roomName, error });
+           triggerHaptic('error');
+           playSound('error');
+        }
+      } else if (action === 'locked-error') {
+        if ('roomId' in workflow) {
+           const { roomId, roomName } = workflow as { roomId: string, roomName: string };
+           const error: NfcError = { code: 'TAG_LOCKED', message: 'Tag is write-locked' };
+           setWorkflow({ status: 'error', roomId, roomName, error });
+           triggerHaptic('error');
+           playSound('error');
+        }
+      }
+    }, 500);
+  };
+
   // Simulation Logic
   useEffect(() => {
-    if (workflow.status === 'ready') {
-      // Auto-start writing for prototype feel
-      const timer = setTimeout(() => {
-         setWorkflow({ ...workflow, status: 'writing' });
-      }, 1500); // Give user a moment to see "Ready"
-      return () => clearTimeout(timer);
-    }
+    // FIX: Use ReturnType<typeof setTimeout> to avoid NodeJS namespace dependency
+    let timer: ReturnType<typeof setTimeout>;
+
+    // NOTE: Auto-advance removed for 'ready' state per requirements.
+    // User must use Developer Controls to proceed in this prototype.
 
     if (workflow.status === 'writing') {
-      const timer = setTimeout(() => {
-        // Simulation Outcome
+      timer = setTimeout(() => {
+        // Simulation Outcome based on global setting
+        // This only runs if 'writing' was triggered by something OTHER than the Dev Actions above
+        // (which handle their own outcome). This block handles the generic "Retry" button case.
         const isSuccess = simulationMode === 'forceSuccess' || (simulationMode === 'random' && Math.random() > 0.2);
         
-        if (isSuccess) {
-          setWorkflow({ ...workflow, status: 'success' });
-          setProvisionedIds(prev => new Set(prev).add(workflow.roomId));
-          triggerHaptic('success');
-          playSound('success');
-        } else {
-          setWorkflow({ 
-            ...workflow, 
-            status: 'error', 
-            error: { code: 'WRITE_FAILED', message: 'Tag connection lost' } 
-          });
-          triggerHaptic('error');
-          playSound('error');
+        if ('roomId' in workflow) {
+            const { roomId, roomName } = workflow as { roomId: string, roomName: string };
+            
+            if (isSuccess) {
+              setWorkflow({ status: 'success', roomId, roomName });
+              setProvisionedIds(prev => new Set(prev).add(roomId));
+              triggerHaptic('success');
+              playSound('success');
+            } else {
+              setWorkflow({ 
+                status: 'error', 
+                roomId,
+                roomName,
+                error: { code: 'WRITE_FAILED', message: 'Tag connection lost' } 
+              });
+              triggerHaptic('error');
+              playSound('error');
+            }
         }
-      }, 2000); // Write duration
-      return () => clearTimeout(timer);
+      }, 2000);
     }
     
     if (workflow.status === 'success') {
        // Auto close on success
-       const timer = setTimeout(() => {
+       timer = setTimeout(() => {
           setIsOpen(false);
-          setWorkflow({ status: 'idle' }); // Return to list
+          setWorkflow({ status: 'idle' }); 
        }, 1500);
-       return () => clearTimeout(timer);
     }
 
-  }, [workflow, simulationMode, setWorkflow, setProvisionedIds, triggerHaptic, playSound]);
+    return () => clearTimeout(timer);
+
+  }, [workflow.status, simulationMode, setWorkflow, setProvisionedIds, triggerHaptic, playSound]);
 
   if (workflow.status === 'idle' || workflow.status === 'selecting') return null;
 
   const getStatusContent = () => {
     switch (workflow.status) {
       case 'ready':
-        return { icon: 'nfc', title: 'Ready to Write', desc: `Hold device near tag to provision ${workflow.roomName}.` };
+        return { icon: 'nfc', title: 'Ready to Write', desc: `Hold device near tag to provision ${'roomName' in workflow ? workflow.roomName : 'room'}.` };
       case 'writing':
         return { icon: 'nfc', title: 'Writing...', desc: 'Keep device steady.' };
       case 'success':
         return { icon: 'check_circle', title: 'Success', desc: 'Tag provisioned successfully.' };
       case 'error':
-        return { icon: 'error', title: 'Write Failed', desc: workflow.error.message };
+        return { icon: 'error', title: 'Write Failed', desc: 'error' in workflow ? workflow.error.message : 'Unknown error' };
       default:
         return { icon: 'nfc', title: '', desc: '' };
     }
@@ -112,6 +156,11 @@ export const NfcWriteSheet = () => {
         <Drawer.Overlay className={styles.overlay} />
         <Drawer.Content className={styles.contentWrapper}>
           <div className={styles.content}>
+            {/* Restored Handle */}
+            <div className={styles.handleContainer}>
+              <div className={styles.handle} />
+            </div>
+
             <div className={styles.iconContainer}>
               <span 
                 className={`material-symbols-rounded ${styles.nfcIcon}`} 
@@ -124,17 +173,31 @@ export const NfcWriteSheet = () => {
             <h3 className={styles.title}>{content.title}</h3>
             <p className={styles.description}>{content.desc}</p>
 
+            {/* Error Actions - UPDATED: Retry Left, Cancel Right */}
             {workflow.status === 'error' && (
               <div className={styles.buttonGroup}>
-                <Button variant="secondary" onClick={() => setIsOpen(false)} className={styles.cancelButton}>Cancel</Button>
-                <Button variant="primary" onClick={() => setWorkflow({ ...workflow, status: 'writing' })}>Retry</Button>
+                <Button variant="primary" onClick={() => setWorkflow(prev => ({ ...prev, status: 'writing' } as any))} className={styles.actionButton}>Retry</Button>
+                <Button variant="secondary" onClick={() => setIsOpen(false)} className={styles.actionButton}>Cancel</Button>
               </div>
             )}
             
+            {/* Ready Actions */}
             {workflow.status === 'ready' && (
                <div className={styles.buttonGroup}>
                   <Button variant="secondary" onClick={() => setIsOpen(false)} className={styles.cancelButton}>Cancel</Button>
                </div>
+            )}
+
+            {/* Developer Tools - Only visible in Ready state */}
+            {workflow.status === 'ready' && (
+              <div className={styles.devToolsContainer}>
+                <span className={styles.devToolsLabel}>Developer Controls</span>
+                <div className={styles.devButtons}>
+                  <Button variant="tertiary" size="s" onClick={() => handleDevAction('success')}>Success</Button>
+                  <Button variant="tertiary" size="s" onClick={() => handleDevAction('net-error')}>Net Error</Button>
+                  <Button variant="tertiary" size="s" onClick={() => handleDevAction('locked-error')}>Locked</Button>
+                </div>
+              </div>
             )}
           </div>
         </Drawer.Content>

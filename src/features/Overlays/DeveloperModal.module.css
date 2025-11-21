@@ -5,6 +5,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-6);
+  /* Ensure scrolling if content is tall */
+  padding-bottom: calc(var(--spacing-8) + env(safe-area-inset-bottom));
 }
 
 .settingSection {
@@ -21,13 +23,6 @@
   letter-spacing: 0.05em;
   padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--surface-border-secondary);
-}
-
-.sectionHelper {
-  margin: 0;
-  color: var(--surface-fg-secondary);
-  line-height: 1.5;
-  font-size: 0.9em;
 }
 
 .settingsGroup {
@@ -61,4 +56,71 @@
   opacity: 0.5;
   pointer-events: none;
   transition: opacity 0.2s ease;
+}
+
+/* Toast Playground Grid */
+.toastGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-3);
+}
+
+/* Mobile-first: 1 column. Tablet+: 2 columns */
+@media (min-width: 600px) {
+  .toastGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.toastCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.toastTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Variant Styling for Triggers */
+.toastTrigger[data-variant='success'] {
+  background-color: var(--surface-bg-success-secondary);
+  color: var(--surface-fg-success-primary);
+}
+
+.toastTrigger[data-variant='warning'] {
+  background-color: var(--surface-bg-warning-secondary);
+  color: var(--surface-fg-warning-primary);
+}
+
+.toastTrigger[data-variant='alert'] {
+  background-color: var(--surface-bg-error-secondary);
+  color: var(--surface-fg-alert-primary);
+}
+
+.toastTrigger[data-variant='neutral'] {
+  background-color: var(--surface-bg-secondary);
+  color: var(--surface-fg-primary);
+  border-color: var(--surface-border-secondary);
+}
+
+.toastLogic {
+  font-size: 0.75rem;
+  color: var(--surface-fg-tertiary);
+  line-height: 1.4;
 }

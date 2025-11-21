@@ -3,7 +3,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(10, 12, 18, 0.75);
   z-index: 100;
 }
 
@@ -20,8 +20,8 @@
 
 .content {
   background-color: var(--surface-bg-secondary);
-  border-top-left-radius: var(--radius-xl);
-  border-top-right-radius: var(--radius-xl);
+  border-top-left-radius: var(--radius-2xl);
+  border-top-right-radius: var(--radius-2xl);
   display: flex;
   flex-direction: column;
   height: 85vh;
@@ -30,18 +30,33 @@
   position: relative;
 }
 
-/* Header Spec: 60px, Tertiary BG */
+/* Handle (Restored) */
+.handleContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-4) 0;
+  background-color: var(--surface-bg-secondary); /* Match content bg */
+  border-top-left-radius: var(--radius-2xl);
+  border-top-right-radius: var(--radius-2xl);
+  flex-shrink: 0;
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-border-primary);
+}
+
+/* Header Spec: 60px, Tertiary BG - Adjusted to sit below handle */
 .sheetHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing-4);
+  padding: 0 var(--spacing-4) var(--spacing-3);
   border-bottom: 1px solid var(--surface-border-secondary);
-  background-color: var(--surface-bg-tertiary);
-  border-top-left-radius: var(--radius-xl);
-  border-top-right-radius: var(--radius-xl);
+  background-color: var(--surface-bg-secondary); /* Changed to secondary to blend with handle area */
   flex-shrink: 0;
-  height: 60px;
 }
 
 .sheetTitle {
@@ -59,12 +74,12 @@
   flex-shrink: 0;
   position: sticky;
   top: 0;
+  z-index: 10;
 }
 
 .listContainer {
   flex-grow: 1;
   overflow-y: auto;
-  /* UPDATED: Remove padding to allow edge-to-edge list items */
   padding: 0;
   background-color: var(--surface-bg-primary);
 }
@@ -72,7 +87,6 @@
 .listContent {
   display: flex;
   flex-direction: column;
-  /* UPDATED: Remove gap to allow continuous borders */
   gap: 0;
   padding-bottom: calc(var(--spacing-6) + env(safe-area-inset-bottom));
 }
@@ -85,7 +99,7 @@
   letter-spacing: 0.05em;
   margin-top: var(--spacing-4);
   margin-bottom: var(--spacing-2);
-  padding-left: var(--spacing-4); /* Re-add left padding for header text */
+  padding-left: var(--spacing-4);
 }
 
 .readOnlyCard {

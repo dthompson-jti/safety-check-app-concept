@@ -31,17 +31,29 @@
   gap: var(--spacing-2);
 }
 
+/* UPDATED: Neutral Chip Styling per Figma */
 .manualLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--surface-fg-warning-primary);
-  background-color: var(--surface-bg-warning-secondary);
-  padding: 1px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;    /* Medium */
+  color: var(--surface-fg-tertiary);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: 6px;
+  
   margin-left: var(--spacing-2);
-  display: inline-block;
   vertical-align: middle;
+  white-space: nowrap;
+}
+
+.manualLabel .material-symbols-rounded {
+  font-size: 16px;
+  color: var(--surface-fg-tertiary);
 }
 
 .formContent {
@@ -64,6 +76,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  gap: var(--spacing-2); /* Ensure wrapping handles chip gracefully */
 }
 
 .infoNote {

@@ -260,7 +260,13 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       <main className={styles.formContent} ref={contentRef}>
         <h2 className={styles.roomHeader}>
           {checkData.roomName}
-          {isManualCheck && <span className={styles.manualLabel}>Manual</span>}
+          {/* UPDATED: Neutral Chip with Icon */}
+          {isManualCheck && (
+            <span className={styles.manualLabel}>
+              <span className="material-symbols-rounded">menu_book</span>
+              Manual Check
+            </span>
+          )}
         </h2>
 
         {isSupplementalCheck && (

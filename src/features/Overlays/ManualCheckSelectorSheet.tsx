@@ -11,6 +11,7 @@ import {
   manualSelectionResultsAtom,
   globalManualSearchResultsAtom
 } from '../../data/appDataAtoms';
+import { SafetyCheck } from '../../types';
 import { SearchInput } from '../../components/SearchInput';
 import { ActionListItem } from '../../components/ActionListItem';
 import { Button } from '../../components/Button';
@@ -28,7 +29,6 @@ export const ManualCheckSelectorSheet = () => {
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
-      // Reset search state after animation completes
       setTimeout(() => {
         setSearchQuery('');
         setIsGlobalSearch(false);
@@ -36,18 +36,23 @@ export const ManualCheckSelectorSheet = () => {
     }
   };
 
-  const handleSelectCheck = (checkId: string) => {
+  const handleSelectCheck = (check: SafetyCheck) => {
     setIsOpen(false);
+    
+    // Delay transition slightly to allow sheet to close smoothly
     setTimeout(() => {
       setWorkflowState({
-        view: 'scanning',
-        isManualSelectionOpen: false,
-        targetCheckId: checkId
+        view: 'form',
+        type: 'scheduled',
+        method: 'manual',
+        checkId: check.id,
+        roomName: check.residents[0]?.location || 'Unknown Room',
+        residents: check.residents,
+        specialClassifications: check.specialClassifications,
       });
     }, 300);
   };
 
-  // Helper to format residents for the subLabel
   const renderResidents = (residents: { name: string; id: string }[], specialClassifications?: { residentId: string }[]) => {
     const classifiedIds = new Set(specialClassifications?.map(sc => sc.residentId));
     
@@ -71,8 +76,13 @@ export const ManualCheckSelectorSheet = () => {
         <Drawer.Overlay className={styles.overlay} />
         <Drawer.Content className={styles.contentWrapper}>
           <div className={styles.content}>
+            {/* Restored Handle */}
+            <div className={styles.handleContainer}>
+              <div className={styles.handle} />
+            </div>
+
             <div className={styles.sheetHeader}>
-              <h3 className={styles.sheetTitle}>Select Room</h3>
+              <h3 className={styles.sheetTitle}>Add Manual Check</h3>
               <Button variant="tertiary" size="s" iconOnly onClick={() => setIsOpen(false)}>
                 <span className="material-symbols-rounded">close</span>
               </Button>
@@ -97,7 +107,7 @@ export const ManualCheckSelectorSheet = () => {
                         key={check.id}
                         label={check.residents[0]?.location || 'Unknown Room'}
                         subLabel={renderResidents(check.residents, check.specialClassifications)}
-                        onClick={() => handleSelectCheck(check.id)}
+                        onClick={() => handleSelectCheck(check)}
                       />
                     ))}
                   </>
