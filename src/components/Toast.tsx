@@ -23,7 +23,7 @@ export const ToastMessage = ({ id, message, icon, variant = 'neutral' }: ToastMe
     <ToastPrimitive.Root
       asChild
       forceMount // Let AnimatePresence control mounting
-      duration={4000}
+      duration={['alert', 'warning'].includes(variant) ? Infinity : 4000}
       onOpenChange={(open) => {
         if (!open) {
           // This handles both timed and swipe dismissals
