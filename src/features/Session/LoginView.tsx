@@ -90,7 +90,7 @@ export const LoginView = () => {
               >
                 shield
               </span>
-              <h3>eSupervision Mobile</h3>
+              <h3>eProbation Mobile</h3>
             </div>
             <form onSubmit={handleLogin} className={styles.formFields} noValidate>
               

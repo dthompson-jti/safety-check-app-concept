@@ -14,6 +14,7 @@ interface IconToggleGroupProps<T extends string> {
   value: T;
   onValueChange: (value: T) => void;
   id?: string;
+  fullWidth?: boolean;
 }
 
 export const IconToggleGroup = <T extends string>({
@@ -21,6 +22,7 @@ export const IconToggleGroup = <T extends string>({
   value,
   onValueChange,
   id,
+  fullWidth = false,
 }: IconToggleGroupProps<T>) => {
   const handleValueChange = (newValue: T) => {
     if (newValue) { // Radix onValueChange can be empty if all are deselected
@@ -32,6 +34,7 @@ export const IconToggleGroup = <T extends string>({
     <ToggleGroup.Root
       type="single"
       className="toggle-group"
+      style={fullWidth ? { width: '100%', display: 'flex' } : undefined}
       value={value}
       onValueChange={handleValueChange}
       aria-label={id}

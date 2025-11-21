@@ -26,6 +26,8 @@ import { GestureProvider } from './data/GestureProvider';
 import { useGestureContext } from './data/GestureContext';
 import styles from './AppShell.module.css';
 
+// High-Performance Transition Configuration
+// Uses a faster duration (0.25s) and a punchier easing curve for a native feel.
 const viewTransition = {
   type: 'tween',
   duration: 0.25,
@@ -243,9 +245,18 @@ const AppShellContent = () => {
 
         <div ref={appChromeRef} className={styles.chromeContainer}>
           {connectionStatus !== 'online' && <OfflineBanner />}
+          {/* 
+            Layout Stability:
+            The AppHeader is always rendered. Overlays (ScanView, etc.) will cover it via z-index.
+            This prevents the layout viewport from changing size and causing content jumps.
+          */}
           <AppHeader />
         </div>
 
+        {/* 
+            Layout Stability:
+            The AppFooter is always rendered to maintain consistent padding for the main content.
+        */}
         <AppFooter />
       </motion.div>
 

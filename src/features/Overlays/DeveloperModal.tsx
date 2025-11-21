@@ -47,25 +47,85 @@ export const DeveloperModal = () => {
 
   // Animation: Slide-in from right (x: 100% -> 0) to replicate native modal behavior.
   return (
-    <motion.div 
+    <motion.div
       className={styles.container}
       initial={{ x: '100%' }}
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
       transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
     >
+      {/* 1. Workflow Section */}
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Connectivity</h3>
+        <h3 className={styles.sectionHeader}>Workflow</h3>
+        <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem}>
+            <label htmlFor="simple-submit-switch" className={styles.itemLabel}>Simple submit</label>
+            <Switch
+              id="simple-submit-switch"
+              checked={appConfig.simpleSubmitEnabled}
+              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, simpleSubmitEnabled: c })))}
+            />
+          </div>
+
+          {/* Dependent Options - Disabled when Simple Submit is ON */}
+          <div className={appConfig.simpleSubmitEnabled ? styles.disabledGroup : ''}>
+            <div className={styles.settingsItem}>
+              <label htmlFor="manual-confirm-switch" className={styles.itemLabel}>Manual confirmation</label>
+              <Switch
+                id="manual-confirm-switch"
+                checked={appConfig.manualConfirmationEnabled}
+                onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, manualConfirmationEnabled: c })))}
+              />
+            </div>
+            <div className={styles.settingsItem}>
+              <label htmlFor="mark-multiple-switch" className={styles.itemLabel}>Mark multiple</label>
+              <Switch
+                id="mark-multiple-switch"
+                checked={appConfig.markMultipleEnabled}
+                onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, markMultipleEnabled: c })))}
+              />
+            </div>
+            <div className={styles.settingsItem}>
+              <label htmlFor="check-type-switch" className={styles.itemLabel}>Show check type</label>
+              <Switch
+                id="check-type-switch"
+                checked={appConfig.isCheckTypeEnabled}
+                onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, isCheckTypeEnabled: c })))}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Scan Settings */}
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>Scan Settings</h3>
         <IconToggleGroup
-          options={connectionOptions}
-          value={connectionStatus}
-          onValueChange={(val) => { triggerHaptic('selection'); setConnectionStatus(val); }}
-          id="connection-status-toggle"
+          id="scan-mode-toggle"
+          options={scanModeOptions}
+          value={appConfig.scanMode}
+          onValueChange={(mode) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, scanMode: mode })); }}
         />
       </div>
 
+      {/* 3. App Style */}
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Hardware Simulation</h3>
+        <h3 className={styles.sectionHeader}>App Style</h3>
+        <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem}>
+            <label htmlFor="status-indicators-switch" className={styles.itemLabel}>Show status indicators</label>
+            <Switch
+              id="status-indicators-switch"
+              checked={appConfig.showStatusIndicators}
+              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, showStatusIndicators: c })))}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Simulation */}
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>Simulation</h3>
         <div className={styles.settingsGroup}>
           <div className={styles.settingsItem}>
             <label htmlFor="camera-fail-switch" className={styles.itemLabel}>Force Camera Failure</label>
@@ -76,76 +136,6 @@ export const DeveloperModal = () => {
             />
           </div>
           <div className={styles.settingsItem}>
-            <label htmlFor="nfc-fail-switch" className={styles.itemLabel}>Force NFC Reader Failure</label>
-            <Switch
-              id="nfc-fail-switch"
-              checked={simulation.nfcFails}
-              onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcFails: checked })))}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Device settings</h3>
-        <IconToggleGroup
-          id="scan-mode-toggle"
-          options={scanModeOptions}
-          value={appConfig.scanMode}
-          onValueChange={(mode) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, scanMode: mode })); }}
-        />
-      </div>
-
-      <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Feature Toggles</h3>
-        <div className={styles.settingsGroup}>
-          <div className={styles.settingsItem}>
-            <label htmlFor="status-indicators-switch" className={styles.itemLabel}>Show status indicators</label>
-            <Switch
-              id="status-indicators-switch"
-              checked={appConfig.showStatusIndicators}
-              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, showStatusIndicators: c })))}
-            />
-          </div>
-          <div className={styles.settingsItem}>
-            <label htmlFor="check-type-switch" className={styles.itemLabel}>Show check type</label>
-            <Switch
-              id="check-type-switch"
-              checked={appConfig.isCheckTypeEnabled}
-              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, isCheckTypeEnabled: c })))}
-            />
-          </div>
-          <div className={styles.settingsItem}>
-            <label htmlFor="manual-confirm-switch" className={styles.itemLabel}>Manual confirmation</label>
-            <Switch
-              id="manual-confirm-switch"
-              checked={appConfig.manualConfirmationEnabled}
-              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, manualConfirmationEnabled: c })))}
-            />
-          </div>
-          <div className={styles.settingsItem}>
-            <label htmlFor="mark-multiple-switch" className={styles.itemLabel}>Mark multiple</label>
-            <Switch
-              id="mark-multiple-switch"
-              checked={appConfig.markMultipleEnabled}
-              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, markMultipleEnabled: c })))}
-            />
-          </div>
-          <div className={styles.settingsItem}>
-            <label htmlFor="simple-submit-switch" className={styles.itemLabel}>Simple submit</label>
-            <Switch
-              id="simple-submit-switch"
-              checked={appConfig.simpleSubmitEnabled}
-              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, simpleSubmitEnabled: c })))}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Performance</h3>
-        <div className={styles.settingsGroup}>
-          <div className={styles.settingsItem}>
             <label htmlFor="slow-load-switch" className={styles.itemLabel}>Simulate slow loading</label>
             <Switch
               id="slow-load-switch"
@@ -154,13 +144,24 @@ export const DeveloperModal = () => {
             />
           </div>
         </div>
+
+        <div style={{ marginTop: 'var(--spacing-2)' }}>
+          <IconToggleGroup
+            options={connectionOptions}
+            value={connectionStatus}
+            onValueChange={(val) => { triggerHaptic('selection'); setConnectionStatus(val); }}
+            id="connection-status-toggle"
+            fullWidth
+          />
+        </div>
       </div>
 
+      {/* 5. Data Management */}
       <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Danger Zone</h3>
+        <h3 className={styles.sectionHeader}>Data Management</h3>
         <Button variant="secondary" onClick={handleResetData}>
-           <span className="material-symbols-rounded">restart_alt</span>
-           Reset Application Data
+          <span className="material-symbols-rounded">restart_alt</span>
+          Reset Application Data
         </Button>
       </div>
     </motion.div>

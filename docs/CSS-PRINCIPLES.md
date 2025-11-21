@@ -50,10 +50,20 @@ CSS should be written defensively to prevent elements from "jumping" as content 
 
 -   **The Contract:** When an element is only sometimes visible, its container must **always reserve the necessary space** for it.
 -   **The Default State Contract:** Components should default to their most stable, symmetric state in CSS. Modifiers (via data attributes) should only apply asymmetric changes. This prevents "Flash of Unstyled Content" (FOUC) or layout shifts during JS hydration.
+-   **The Persistent Chrome Contract:** Structural elements like Headers and Footers should generally remain mounted. Conditional rendering of these elements changes the layout viewport size, causing underlying content to jump. Use Z-index layering to hide them if necessary.
 
 ---
 
 ### Key Architectural Patterns
+
+#### The Z-Index Layering Contract
+
+To prevent visual bleeding during full-screen transitions, we adhere to a strict Z-index hierarchy:
+
+1.  **Content (1):** Standard scrolling views.
+2.  **Chrome (50):** App Header, Footer, and Offline Banner.
+3.  **Navigation (100):** Side Menu and Backdrops.
+4.  **Overlays (105):** Full-screen tools (Scanner, NFC Writer, Forms) that must cover everything.
 
 #### Interaction State Philosophy (`:hover` vs. `:active`)
 

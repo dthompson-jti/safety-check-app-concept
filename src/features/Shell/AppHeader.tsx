@@ -20,10 +20,9 @@ export const AppHeader = () => {
 
   const isDashboard = appView === 'dashboardTime' || appView === 'dashboardRoute';
 
-  // DEFINITIVE FIX: Implement the Component Variable Contract.
-  // This measures the header's actual height and sets a CSS variable, providing
-  // a robust way for other components (like the sticky list headers) to position
-  // themselves relative to it.
+  // Component Variable Contract:
+  // Measures the header's actual height and sets a CSS variable.
+  // This allows sticky headers in the list to position themselves perfectly.
   useLayoutEffect(() => {
     const updateHeight = () => {
       if (headerRef.current) {
@@ -46,6 +45,8 @@ export const AppHeader = () => {
     setAppView(appView === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
+  // Note: `layout` prop is intentionally omitted to prevent layout thrashing 
+  // during parent container transforms (e.g., side menu open/close).
   return (
     <header className={styles.header} ref={headerRef}>
       <div className={styles.headerContent}>

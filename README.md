@@ -35,10 +35,8 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Push Layout (Side Menu):** The main navigation menu uses a simple "push" animation.
     -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted vs Route-Sorted) exist on a horizontal "film strip" with sliding panel animations.
     -   **Intent-Based Gestures:** A sophisticated gesture engine distinguishes between vertical scrolling and horizontal navigation swipes, allowing full-screen gestures without blocking content interaction.
-    -   **Drill-Down (Hierarchical Data):** Deeply nested selections (like Facility -> Unit) use a "Stack" metaphor where new views slide in from the right, maintaining a sticky header context.
+    -   **Persistent Chrome:** The application header and footer remain stable during view transitions, preventing layout shifts.
 -   **Sensory Feedback System:** A decoupled, accessible feedback engine provides tangible confirmation for user actions.
-    -   **Context-Aware Notifications:** Alerts are filtered based on the user's active context (Facility/Unit) to reduce noise.
-    -   **Tick-Based Aggregation:** Simultaneous events (e.g., multiple checks expiring while the device was asleep) are grouped into single summaries to prevent notification fatigue.
     -   **Haptics:** Granular vibration patterns (success, warning, selection) triggered via `useHaptics`.
     -   **Audio:** Low-latency sound effects managed by a headless `SoundManager` and triggered via `useAppSound`. Audio can be toggled independently of haptics.
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:
@@ -64,6 +62,11 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 
 -   **Design Tokens:** A three-tiered token system (`primitives.css`, `utility.css`, `semantics.css`).
 -   **Layered Cascade:** The global style cascade is managed in `src/styles/index.css` using CSS `@import ... layer()`.
+-   **Z-Index Layering Strategy:** A strict hierarchy is enforced to prevent visual bleeding during transitions:
+    -   **Content (1):** Standard scrolling views.
+    -   **Chrome (50):** App Header, Footer, and Offline Banner.
+    -   **Navigation (100):** Side Menu and Backdrops.
+    -   **Overlays (105):** Full-screen tools (Scanner, NFC Writer, Forms) that must cover everything.
 -   **Mobile-First Interaction States:** The application differentiates between touch and mouse-based interactions. `:active` provides immediate feedback for touch, while `:hover` is treated as a progressive enhancement for pointers.
 
 ## 6. State Management

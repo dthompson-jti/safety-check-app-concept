@@ -56,3 +56,9 @@
   font-weight: 500;
   cursor: pointer;
 }
+
+.disabledGroup {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
