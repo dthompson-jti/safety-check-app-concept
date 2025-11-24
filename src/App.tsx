@@ -35,6 +35,11 @@ function App() {
 
   useCheckLifecycle();
 
+  // Version Log to verify deployment
+  useEffect(() => {
+    console.log('eProbation Prototype v1.2 - Layout Stabilized');
+  }, []);
+
   useEffect(() => {
     const animate = () => {
       const now = Date.now();

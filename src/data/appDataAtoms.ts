@@ -1,6 +1,6 @@
 // src/data/appDataAtoms.ts
 import { atom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
+import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 import { produce, Draft } from 'immer';
 import { nanoid } from 'nanoid';
 import { SafetyCheck, SafetyCheckStatus } from '../types';
@@ -22,10 +22,26 @@ import { mockResidents } from './mock/residentData';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
 
 // =================================================================
-//                 Mock Data Store
+//                 Mock Data Store & Safe Storage
 // =================================================================
 
-const baseChecksAtom = atomWithStorage<SafetyCheck[]>('sc_checks_v1', initialChecks);
+// Custom storage wrapper that handles QuotaExceededError gracefully.
+// If localStorage is full, it clears the key to prevent the app from crashing.
+const safeStorage = createJSONStorage<SafetyCheck[]>(() => ({
+  getItem: (key) => localStorage.getItem(key),
+  setItem: (key, value) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.error('CRITICAL: Storage quota exceeded. Resetting checks data to prevent crash.');
+      // Emergency Cleanup: Remove the bloated key to allow the app to function
+      localStorage.removeItem(key);
+    }
+  },
+  removeItem: (key) => localStorage.removeItem(key),
+}));
+
+const baseChecksAtom = atomWithStorage<SafetyCheck[]>('sc_checks_v1', initialChecks, safeStorage);
 
 
 // =================================================================
@@ -74,6 +90,34 @@ const generateNextCheck = (previousCheck: SafetyCheck): SafetyCheck => {
     completionStatus: undefined,
     notes: undefined,
   };
+};
+
+// =================================================================
+//                 Storage Safeguards
+// =================================================================
+
+const MAX_STORED_CHECKS = 500;
+
+const pruneOldChecks = (draft: Draft<AppData>) => {
+  if (draft.checks.length <= MAX_STORED_CHECKS) return;
+
+  // Identify removable checks (completed/missed/supplemental) starting from the oldest.
+  // We preserve all actionable checks (pending, due-soon, late, completing, queued).
+  const removableIndices: number[] = [];
+
+  for (let i = 0; i < draft.checks.length; i++) {
+    const check = draft.checks[i];
+    if (['complete', 'missed', 'supplemental'].includes(check.status)) {
+      removableIndices.push(i);
+    }
+    // Stop once we've identified enough to get back under the limit
+    if (draft.checks.length - removableIndices.length <= MAX_STORED_CHECKS) break;
+  }
+
+  // Remove them in reverse order to maintain index validity during splice
+  for (let i = removableIndices.length - 1; i >= 0; i--) {
+    draft.checks.splice(removableIndices[i], 1);
+  }
 };
 
 const appDataAtom = atom<AppData, [AppAction], void>(
@@ -164,6 +208,9 @@ const appDataAtom = atom<AppData, [AppAction], void>(
           break;
         }
       }
+
+      // Enforce storage limits after any mutation
+      pruneOldChecks(draft);
     });
     set(baseChecksAtom, nextState.checks);
   }
@@ -267,13 +314,13 @@ const scheduleFilteredChecksAtom = atom((get) => {
 export const timeSortedChecksAtom = atom((get) => {
   const checks = get(scheduleFilteredChecksAtom);
   const sorted = [...checks];
-  
+
   // DEFINITIVE FIX: Sort strictly by Due Date (ascending).
   // We explicitly DO NOT sort by status here. This ensures that when a check's status
   // changes from 'late' to 'completing', its position in the list remains locked
   // based on its timestamp, preventing it from jumping to the bottom.
   sorted.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
-  
+
   return sorted;
 });
 
