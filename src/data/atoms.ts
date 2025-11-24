@@ -8,6 +8,7 @@ import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification } from '
 // =================================================================
 
 export const fastTickerAtom = atom<number>(Date.now());
+export const throttledTickerAtom = atom<number>(Date.now()); // 10fps (For Text Timers)
 export const slowTickerAtom = atom<number>(Date.now());
 
 // =================================================================

@@ -9,9 +9,15 @@
   padding-right: var(--spacing-4);
   /* CRITICAL: Allow browser to handle vertical scrolling natively */
   touch-action: pan-y;
+
+  /* CRITICAL FIX: Prevent Infinite Layout Loop */
+  /* Reserves space for the scrollbar to prevent viewport width changes */
+  /* when content grows/shrinks. This stops OfflineBanner from resizing */
+  /* in a loop due to text wrapping. */
+  scrollbar-gutter: stable;
 }
 
-.scrollContainer[data-refreshing='true'] > * {
+.scrollContainer[data-refreshing='true']>* {
   opacity: 0.5;
   pointer-events: none;
 }
@@ -34,7 +40,7 @@
   margin-right: calc(-1 * var(--spacing-4));
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
-  
+
   background-color: var(--surface-bg-secondary);
   z-index: 5;
   transition: opacity 0.2s ease-in-out;

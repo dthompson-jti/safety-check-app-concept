@@ -6,11 +6,11 @@
   /* Ensure it sits above other content */
   position: relative;
   z-index: 60;
-  
+
   padding: var(--spacing-3) var(--spacing-4);
   background-color: var(--surface-bg-secondary-solid);
   border-bottom: 1px solid var(--surface-border-secondary);
-  
+
   font-family: var(--font-family-sans);
   color: var(--surface-fg-on-solid-faint);
   box-shadow: var(--surface-shadow-sm);
@@ -39,6 +39,9 @@
   flex-direction: column;
   flex-grow: 1;
   gap: 2px;
+  /* FIX: Prevent text wrapping from causing layout thrashing */
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Row 1: Status - Now WHITE (on-solid) */
@@ -46,14 +49,20 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--surface-fg-on-solid);
-  font-variant-numeric: tabular-nums; /* Prevent jitter */
+  font-variant-numeric: tabular-nums;
+  /* Prevent jitter */
   line-height: 1.2;
+  /* FIX: Ensure single line stability */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Row 2: Queue Info - Already White */
 .queueText {
   font-size: 0.85rem;
-  color: var(--surface-fg-on-solid); /* High contrast white */
+  color: var(--surface-fg-on-solid);
+  /* High contrast white */
   line-height: 1.2;
 }
 
@@ -63,7 +72,7 @@
   border: none;
   padding: var(--spacing-2);
   margin-left: var(--spacing-3);
-  
+
   font-family: var(--font-family-sans);
   font-weight: 600;
   font-size: 0.9rem;
@@ -86,6 +95,11 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
 }
