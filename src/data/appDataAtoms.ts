@@ -22,26 +22,78 @@ import { mockResidents } from './mock/residentData';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
 
 // =================================================================
-//                 Mock Data Store & Safe Storage
+//                 Smart Storage with Debounce & Pruning
 // =================================================================
 
-// Custom storage wrapper that handles QuotaExceededError gracefully.
-// If localStorage is full, it clears the key to prevent the app from crashing.
+const STORAGE_KEY = 'sc_checks_v1';
+
+// Debounce Utility to prevent UI freezing on write
+const debounce = (fn: (key: string, value: string) => void, ms: number) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (key: string, value: string) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(key, value), ms);
+  };
+};
+
+// Emergency Pruning Logic
+const attemptPruneAndSave = (key: string, value: string, attempt = 1) => {
+  try {
+    const data = JSON.parse(value) as SafetyCheck[];
+
+    // Strategy: Remove 'complete' and 'supplemental' checks, oldest first.
+    const pruneCount = 50 * attempt; // Aggressively increase prune count
+
+    let prunedCount = 0;
+    const prunedData = data.filter((check) => {
+      // Always keep actionable items
+      if (['pending', 'due-soon', 'late', 'completing', 'queued'].includes(check.status)) {
+        return true;
+      }
+      // Remove historical items if we haven't met the quota
+      if (prunedCount < pruneCount) {
+        prunedCount++;
+        return false;
+      }
+      return true;
+    });
+
+    // If we couldn't prune anything, we are in trouble.
+    if (prunedData.length === data.length) {
+      console.error('CRITICAL: Storage full and cannot prune actionable data.');
+      return;
+    }
+
+    console.warn(`Storage quota exceeded. Auto-pruned ${prunedCount} old records.`);
+
+    // Try saving again
+    localStorage.setItem(key, JSON.stringify(prunedData));
+
+  } catch (e) {
+    console.error('Failed to parse or prune data during emergency save.', e);
+  }
+};
+
+const debouncedSetItem = debounce((key: string, value: string) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    // Check if it's a QuotaExceededError
+    if (error instanceof DOMException && (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
+      attemptPruneAndSave(key, value);
+    } else {
+      console.error('Storage Error:', error);
+    }
+  }
+}, 1000); // 1 second delay
+
 const safeStorage = createJSONStorage<SafetyCheck[]>(() => ({
   getItem: (key) => localStorage.getItem(key),
-  setItem: (key, value) => {
-    try {
-      localStorage.setItem(key, value);
-    } catch (error) {
-      console.error('CRITICAL: Storage quota exceeded. Resetting checks data to prevent crash.', error);
-      // Emergency Cleanup: Remove the bloated key to allow the app to function
-      localStorage.removeItem(key);
-    }
-  },
+  setItem: (key, value) => debouncedSetItem(key, value),
   removeItem: (key) => localStorage.removeItem(key),
 }));
 
-const baseChecksAtom = atomWithStorage<SafetyCheck[]>('sc_checks_v1', initialChecks, safeStorage);
+const baseChecksAtom = atomWithStorage<SafetyCheck[]>(STORAGE_KEY, initialChecks, safeStorage);
 
 
 // =================================================================
@@ -90,34 +142,6 @@ const generateNextCheck = (previousCheck: SafetyCheck): SafetyCheck => {
     completionStatus: undefined,
     notes: undefined,
   };
-};
-
-// =================================================================
-//                 Storage Safeguards
-// =================================================================
-
-const MAX_STORED_CHECKS = 500;
-
-const pruneOldChecks = (draft: Draft<AppData>) => {
-  if (draft.checks.length <= MAX_STORED_CHECKS) return;
-
-  // Identify removable checks (completed/missed/supplemental) starting from the oldest.
-  // We preserve all actionable checks (pending, due-soon, late, completing, queued).
-  const removableIndices: number[] = [];
-
-  for (let i = 0; i < draft.checks.length; i++) {
-    const check = draft.checks[i];
-    if (['complete', 'missed', 'supplemental'].includes(check.status)) {
-      removableIndices.push(i);
-    }
-    // Stop once we've identified enough to get back under the limit
-    if (draft.checks.length - removableIndices.length <= MAX_STORED_CHECKS) break;
-  }
-
-  // Remove them in reverse order to maintain index validity during splice
-  for (let i = removableIndices.length - 1; i >= 0; i--) {
-    draft.checks.splice(removableIndices[i], 1);
-  }
 };
 
 const appDataAtom = atom<AppData, [AppAction], void>(
@@ -209,8 +233,8 @@ const appDataAtom = atom<AppData, [AppAction], void>(
         }
       }
 
-      // Enforce storage limits after any mutation
-      pruneOldChecks(draft);
+      // Note: We removed the aggressive eager pruning here because the 
+      // storage layer now handles it intelligently on write failure.
     });
     set(baseChecksAtom, nextState.checks);
   }
@@ -230,7 +254,11 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const timeNow = get(slowTickerAtom);
   const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
 
-  return checks.map(check => {
+  let hasChanges = false;
+
+  // Optimization: Map creates a new array, but we only want to return a new
+  // reference if a status actually changed.
+  const updatedChecks = checks.map(check => {
     if (['complete', 'completing', 'queued', 'missed'].includes(check.status)) {
       return check;
     }
@@ -252,8 +280,13 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
       return check;
     }
 
+    hasChanges = true;
     return { ...check, status: newStatus };
   });
+
+  // MEMORY FIX: Return the original array if no items changed.
+  // This prevents downstream consumers (like filtered lists) from re-calculating.
+  return hasChanges ? updatedChecks : checks;
 });
 
 const contextFilteredChecksAtom = atom((get) => {

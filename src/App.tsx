@@ -1,4 +1,3 @@
-// src/App.tsx
 import { useEffect, useRef } from 'react';
 import { useAtomValue, useAtom } from 'jotai';
 import { AnimatePresence } from 'framer-motion';
@@ -20,6 +19,9 @@ import { ToastMessage } from './components/Toast';
 import { SoundManager } from './features/Shell/SoundManager';
 import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
 
+// 24fps = approx 41.6ms
+const CINEMATIC_FRAME_MS = 41;
+
 function App() {
   const session = useAtomValue(sessionAtom);
   const toasts = useAtomValue(toastsAtom);
@@ -32,20 +34,24 @@ function App() {
   const requestRef = useRef<number | null>(null);
   const lastSlowTickRef = useRef<number>(Date.now());
   const lastThrottledTickRef = useRef<number>(Date.now());
+  const lastFastTickRef = useRef<number>(0);
 
   useCheckLifecycle();
 
   // Version Log to verify deployment
   useEffect(() => {
-    console.log('eProbation Prototype v1.2 - Layout Stabilized');
+    console.log('eProbation Prototype v1.3 - Performance Optimized');
   }, []);
 
   useEffect(() => {
     const animate = () => {
       const now = Date.now();
 
-      // 1. 60fps Ticker (Animations only)
-      setFastTicker(now);
+      // 1. 24fps Ticker (Cinematic / Animations)
+      if (now - lastFastTickRef.current >= CINEMATIC_FRAME_MS) {
+        setFastTicker(now);
+        lastFastTickRef.current = now;
+      }
 
       // 2. 10fps Ticker (Text Timers - Fixes React Thrashing)
       if (now - lastThrottledTickRef.current >= 100) {
