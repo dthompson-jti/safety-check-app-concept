@@ -37,8 +37,11 @@ const contentVariants = {
 export const FacilitySelectionModal = () => {
   const [isContextRequired, setIsContextRequired] = useAtom(isContextSelectionRequiredAtom);
   const [isModalOpen, setIsModalOpen] = useAtom(isContextSelectionModalOpenAtom);
+  
+  // We track global state but selection is stateless in this view until confirmed
   const [selectedGroup, setSelectedGroup] = useAtom(selectedFacilityGroupAtom);
   const [selectedUnit, setSelectedUnit] = useAtom(selectedFacilityUnitAtom);
+  
   const logout = useSetAtom(logoutAtom);
   const setAppView = useSetAtom(appViewAtom);
   const setIsScheduleLoading = useSetAtom(isScheduleLoadingAtom);
@@ -46,6 +49,8 @@ export const FacilitySelectionModal = () => {
 
   const [step, setStep] = useState<Step>('group');
   const [direction, setDirection] = useState(0);
+  
+  // Temporary state for the multi-step flow
   const [tempGroupId, setTempGroupId] = useState<string | null>(selectedGroup);
   
   const [modalExitDirection, setModalExitDirection] = useState<'right' | 'left'>('right');
@@ -61,7 +66,15 @@ export const FacilitySelectionModal = () => {
     }
   }, [isOpen, selectedGroup]); 
 
-  const handleCloseOrLogout = () => {
+  const handleLeftAction = () => {
+    if (step === 'unit') {
+      // Back to Group Selection
+      setDirection(-1);
+      setStep('group');
+      return;
+    }
+
+    // Closing/Exiting from Root
     setModalExitDirection('right');
     if (isContextRequired) {
       logout();
@@ -77,30 +90,30 @@ export const FacilitySelectionModal = () => {
     setStep('unit');
   };
 
-  const handleBackToGroups = () => {
-    setDirection(-1);
-    setStep('group');
-  };
-
   const handleUnitSelect = (unitId: string) => {
     triggerHaptic('selection');
     if (!tempGroupId) return;
     
     setModalExitDirection('left');
 
+    // Trigger loading if context changed
     if (tempGroupId !== selectedGroup || unitId !== selectedUnit) {
       setIsScheduleLoading(true);
     }
     
+    // Commit Selection
     setSelectedGroup(tempGroupId);
     setSelectedUnit(unitId);
 
     if (!isContextRequired) {
+      // Switching context usually resets view preference or goes to dashboard
       setAppView('dashboardTime');
     } else {
+      // Login flow complete
       setIsContextRequired(false);
     }
     
+    // Close modal after state updates
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setIsModalOpen(false);
@@ -111,20 +124,25 @@ export const FacilitySelectionModal = () => {
   const currentGroup = facilityData.find(g => g.id === tempGroupId);
   const units = currentGroup?.units || [];
 
+  // Icon Logic: 
+  // Unit Step -> Always Back
+  // Group Step + Login Flow -> Back (Logout)
+  // Group Step + Switch Flow -> Close
   const getLeftIcon = () => {
     if (step === 'unit') return 'arrow_back';
-    return isContextRequired ? 'logout' : 'arrow_back';
+    return isContextRequired ? 'arrow_back' : 'close';
   };
 
-  const handleLeftAction = step === 'group' ? handleCloseOrLogout : handleBackToGroups;
-
-  const modalTitle = isContextRequired ? "Sign In" : "Select Facility";
+  const getTitle = () => {
+    if (step === 'group') return 'Select Facility';
+    return 'Select Unit';
+  };
 
   return (
     <FullScreenModal 
       isOpen={isOpen} 
       onClose={handleLeftAction} 
-      title={modalTitle}
+      title={getTitle()}
       leftIcon={getLeftIcon()}
       transitionType="slide-horizontal"
       exitDirection={modalExitDirection}
@@ -172,14 +190,13 @@ export const FacilitySelectionModal = () => {
 
               <div className={styles.listContainer}>
                 {units.map((unit) => {
-                  const isSelected = selectedGroup === tempGroupId && selectedUnit === unit.id;
                   return (
                     <ActionListItem
                       key={unit.id}
                       label={unit.name}
                       onClick={() => handleUnitSelect(unit.id)}
-                      leadingIcon={isSelected ? 'check' : 'view_module'}
-                      isSelected={isSelected}
+                      // Stateless selection: No checkmark, pure navigation
+                      showChevron
                     />
                   );
                 })}

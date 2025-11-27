@@ -78,7 +78,6 @@ export const NfcWriteView = () => {
       </header>
 
       <div className={styles.controlsHeader}>
-        {/* Updated: Uses default variant (no variant prop) for consistency */}
         <ContextSwitcherCard
           groupId={modalGroupId}
           unitId={modalUnitId}
@@ -95,7 +94,7 @@ export const NfcWriteView = () => {
               <ActionListItem
                 key={room.id}
                 label={room.name}
-                leadingIcon="meeting_room"
+                // Leading Icon removed for cleaner list view
                 onClick={() => handleSelectRoom(room.id, room.name)}
               />
             )}

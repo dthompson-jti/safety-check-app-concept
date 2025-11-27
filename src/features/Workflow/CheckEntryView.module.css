@@ -31,7 +31,7 @@
   gap: var(--spacing-2);
 }
 
-/* UPDATED: Neutral Chip Styling per Figma */
+/* UPDATED: Info/Blue Semantic Tokens */
 .manualLabel {
   display: inline-flex;
   align-items: center;
@@ -41,11 +41,13 @@
   
   font-size: 0.875rem; /* 14px */
   font-weight: 500;    /* Medium */
-  color: var(--surface-fg-tertiary);
-  background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
-  border-radius: 6px;
   
+  /* Semantic Update: Info */
+  color: var(--surface-fg-info-primary);
+  background-color: var(--surface-bg-info);
+  border: 1px solid var(--surface-border-info);
+  
+  border-radius: 6px;
   margin-left: var(--spacing-2);
   vertical-align: middle;
   white-space: nowrap;
@@ -53,7 +55,7 @@
 
 .manualLabel .material-symbols-rounded {
   font-size: 16px;
-  color: var(--surface-fg-tertiary);
+  color: var(--surface-fg-info-primary);
 }
 
 .formContent {

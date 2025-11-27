@@ -33,7 +33,7 @@ const safeStorage = createJSONStorage<SafetyCheck[]>(() => ({
     try {
       localStorage.setItem(key, value);
     } catch (error) {
-      console.error('CRITICAL: Storage quota exceeded. Resetting checks data to prevent crash.');
+      console.error('CRITICAL: Storage quota exceeded. Resetting checks data to prevent crash.', error);
       // Emergency Cleanup: Remove the bloated key to allow the app to function
       localStorage.removeItem(key);
     }

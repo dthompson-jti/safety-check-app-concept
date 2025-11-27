@@ -62,16 +62,6 @@
   .settingsItem:hover {
     background-color: var(--surface-bg-primary_hover);
   }
-
-  .settingsItem.destructive:hover {
-    background-color: var(--surface-bg-alert-subtle);
-  }
-}
-
-.settingsItem.destructive {
-  color: var(--surface-fg-alert-primary);
-  justify-content: center;
-  font-weight: 600;
 }
 
 .itemLabel {
@@ -95,4 +85,12 @@
 
 .itemValue .material-symbols-rounded {
   font-size: 20px;
+}
+
+/* Logout Button specific style to match width of groups */
+.logoutButton {
+  width: 100%;
+  justify-content: center;
+  /* Ensure no overflow clipping from parent containers */
+  margin-top: var(--spacing-1);
 }

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { appConfigAtom, sessionAtom } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
+import { Button } from '../../components/Button';
 import styles from './SettingsModal.module.css';
 
 export const SettingsModal = () => {
@@ -62,14 +63,19 @@ export const SettingsModal = () => {
 
       <div className={styles.settingsSection}>
         <h3 className={styles.sectionTitle}>Account</h3>
-        <div className={styles.settingsGroup}>
-          <button
-            className={`${styles.settingsItem} ${styles.destructive}`}
-            onClick={handleLogout}
-          >
-            Log Out
-          </button>
-        </div>
+        {/* 
+          Updated: Using the standard Button component with 'secondary' variant.
+          We removed the .settingsGroup wrapper here to prevent the button's 
+          border/focus-ring from being cropped by overflow:hidden, and to 
+          ensure the button's own border is fully visible.
+        */}
+        <Button 
+          variant="secondary" 
+          onClick={handleLogout} 
+          className={styles.logoutButton}
+        >
+          Log Out
+        </Button>
       </div>
     </motion.div>
   );

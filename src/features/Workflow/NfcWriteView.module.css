@@ -49,10 +49,13 @@
   overflow-y: auto;
   /* 
     UPDATE: Removed top/bottom padding to allow the list items 
-    to sit flush edge-to-edge, consistent with the new list pattern. 
-    The items themselves handle internal spacing.
+    to sit flush edge-to-edge.
+    UPDATE: Removed gap to ensure borders defined in ActionListItem stack correctly.
   */
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0; 
   background-color: var(--surface-bg-primary);
   
   /* Safe area for scrolling */

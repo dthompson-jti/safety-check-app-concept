@@ -21,7 +21,9 @@
 }
 
 .content {
-  background-color: var(--surface-bg-secondary);
+  /* Updated to Primary BG for better elevation contrast */
+  background-color: var(--surface-bg-primary);
+  
   border-top-left-radius: var(--radius-2xl);
   border-top-right-radius: var(--radius-2xl);
   padding: 0 var(--spacing-4) var(--spacing-8);

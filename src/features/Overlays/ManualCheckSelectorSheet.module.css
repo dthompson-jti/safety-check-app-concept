@@ -87,6 +87,11 @@
 .listContent {
   display: flex;
   flex-direction: column;
+  /* 
+     UPDATE: Set gap to 0. 
+     This allows the border-bottom on ActionListItem (.list-item-root)
+     to act as the separator without double spacing.
+  */
   gap: 0;
   padding-bottom: calc(var(--spacing-6) + env(safe-area-inset-bottom));
 }
