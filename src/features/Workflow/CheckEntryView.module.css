@@ -48,7 +48,7 @@
   border: 1px solid var(--surface-border-info);
   
   border-radius: 6px;
-  margin-left: var(--spacing-2);
+  /* Removed margin-left: var(--spacing-2); handled by flex gap in wrapper */
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -79,6 +79,15 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--spacing-2); /* Ensure wrapping handles chip gracefully */
+}
+
+/* NEW: Wrapper for badges in the header */
+.badgeWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: var(--spacing-2);
+  vertical-align: middle;
 }
 
 .infoNote {

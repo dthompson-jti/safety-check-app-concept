@@ -1,29 +1,38 @@
 // src/components/Toast.tsx
+import { useEffect, useRef } from 'react';
 import * as ToastPrimitive from '@radix-ui/react-toast';
 import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { removeToastAtom, ToastVariant } from '../data/toastAtoms';
-
-export interface ToastMessageProps {
-  id: string;
-  message: string;
-  icon: string;
-  variant?: ToastVariant;
-}
+import { removeToastAtom, Toast } from '../data/toastAtoms';
 
 /**
  * A self-contained, animated toast instance. It wraps Radix's Root component
  * with Framer Motion to handle animations, adhering to the project's canonical
  * 'spring' animation principle for a consistent, high-craft feel.
  */
-export const ToastMessage = ({ id, message, icon, variant = 'neutral' }: ToastMessageProps) => {
+export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp }: Toast) => {
   const removeToast = useSetAtom(removeToastAtom);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // Auto-dismiss logic that respects updates (timestamp)
+  useEffect(() => {
+    // Only set a timer for non-persistent variants
+    if (!['alert', 'warning'].includes(variant)) {
+      timerRef.current = setTimeout(() => {
+        removeToast(id);
+      }, 4000);
+    }
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [id, timestamp, variant, removeToast]);
 
   return (
     <ToastPrimitive.Root
       asChild
       forceMount // Let AnimatePresence control mounting
-      duration={['alert', 'warning'].includes(variant) ? Infinity : 4000}
+      duration={Infinity} // We handle timing manually via useEffect to support updates
       onOpenChange={(open) => {
         if (!open) {
           // This handles both timed and swipe dismissals

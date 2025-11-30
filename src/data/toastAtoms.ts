@@ -6,6 +6,8 @@ export type ToastVariant = 'neutral' | 'success' | 'alert' | 'info' | 'warning';
 
 export interface Toast {
   id: string;
+  stableId?: string; // Optional ID for aggregation/deduplication
+  timestamp: number; // Used to reset timer on updates
   message: string;
   icon: string;
   variant: ToastVariant;
@@ -15,17 +17,43 @@ export const toastsAtom = atom<Toast[]>([]);
 
 export const addToastAtom = atom(
   null,
-  (get, set, { message, icon, variant = 'neutral' }: { message: string; icon: string; variant?: ToastVariant }) => {
+  (get, set, { message, icon, variant = 'neutral', stableId }: { message: string; icon: string; variant?: ToastVariant, stableId?: string }) => {
     const currentToasts = get(toastsAtom);
-    const newToast: Toast = { id: nanoid(), message, icon, variant };
+    const now = Date.now();
 
-    // FIX: This logic specifically handles the double-invocation of effects in React 18's
-    // Strict Mode (used in development) and prevents duplicate failure messages. 
-    // If the exact same toast message is sent twice in rapid succession, we replace 
-    // the first instance with the second. Because the `id` (and therefore the React `key`)
-    // changes, the toast's entry animation and timer are correctly re-triggered
-    // without showing a duplicate toast.
-    if (currentToasts.length > 0 && currentToasts[currentToasts.length - 1].message === message) {
+    // Strategy 1: Stable ID Aggregation
+    // If a stableId is provided, we look for an existing toast with that ID.
+    // If found, we update it in place (message, icon, variant, timestamp).
+    // This allows the UI to update the text/timer without unmounting the component.
+    if (stableId) {
+      const existingIndex = currentToasts.findIndex(t => t.stableId === stableId);
+      if (existingIndex !== -1) {
+        const updatedToasts = [...currentToasts];
+        updatedToasts[existingIndex] = {
+          ...updatedToasts[existingIndex],
+          message,
+          icon,
+          variant,
+          timestamp: now // Reset timer
+        };
+        set(toastsAtom, updatedToasts);
+        return;
+      }
+    }
+
+    // Strategy 2: Strict Mode Deduplication (Legacy)
+    // Prevents double-invocation effects in React 18 Strict Mode from showing duplicates.
+    // Only applies if no stableId was provided.
+    const newToast: Toast = { 
+      id: nanoid(), 
+      stableId, 
+      timestamp: now, 
+      message, 
+      icon, 
+      variant 
+    };
+
+    if (currentToasts.length > 0 && currentToasts[currentToasts.length - 1].message === message && !stableId) {
         const updatedToasts = [...currentToasts.slice(0, -1), newToast];
         set(toastsAtom, updatedToasts);
     } else {

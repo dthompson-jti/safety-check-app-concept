@@ -1,5 +1,5 @@
 // src/features/Overlays/DeveloperModal.tsx
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import {
   connectionStatusAtom,
@@ -8,7 +8,7 @@ import {
   hardwareSimulationAtom
 } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
-import { addToastAtom, ToastVariant } from '../../data/toastAtoms';
+import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Switch } from '../../components/Switch';
@@ -32,6 +32,7 @@ interface ToastDefinition {
   icon: string;
   variant: ToastVariant;
   logic: string;
+  stableId?: string;
 }
 
 const toastDefinitions: ToastDefinition[] = [
@@ -39,7 +40,7 @@ const toastDefinitions: ToastDefinition[] = [
   { label: 'Simple Submit', message: 'Check completed (Simple)', icon: 'check_circle', variant: 'success', logic: 'Simple Submit enabled.' },
   { label: 'Supplemental', message: 'Supplemental check saved', icon: 'task_alt', variant: 'success', logic: 'Unscheduled check added.' },
   { label: 'Sync Complete', message: 'Data synced', icon: 'cloud_done', variant: 'success', logic: 'Reconnection after offline.' },
-  { label: 'Missed Check', message: 'Check missed', icon: 'history', variant: 'warning', logic: 'Ticker passes due + interval.' },
+  { label: 'Missed Check', message: 'Check for Room 101 missed', icon: 'history', variant: 'warning', logic: 'Ticker passes due + interval.', stableId: 'lifecycle-missed-check' },
   { label: 'Hardware Error', message: 'Camera/NFC failed', icon: 'error', variant: 'alert', logic: 'Hardware simulation active.' },
   { label: 'Neutral Info', message: 'No incomplete checks', icon: 'info', variant: 'neutral', logic: 'Action on empty list.' },
 ];
@@ -50,6 +51,8 @@ export const DeveloperModal = () => {
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
+  // UPDATED: Need access to active toasts to calculate the increment
+  const activeToasts = useAtomValue(toastsAtom);
   const { trigger: triggerHaptic } = useHaptics();
 
   const handleSwitch = (setter: (val: boolean) => void) => (checked: boolean) => {
@@ -65,7 +68,34 @@ export const DeveloperModal = () => {
 
   const handleToastTrigger = (def: ToastDefinition) => {
     triggerHaptic('medium');
-    addToast({ message: def.message, icon: def.icon, variant: def.variant });
+
+    let message = def.message;
+
+    // UPDATED: Logic to simulate accumulating missed checks
+    if (def.stableId === 'lifecycle-missed-check') {
+      const existingToast = activeToasts.find(t => t.stableId === def.stableId);
+      
+      if (existingToast) {
+        let count = 1;
+        // Try to parse existing counter: "2 checks missed"
+        const match = existingToast.message.match(/^(\d+)\s+checks\s+missed/i);
+        
+        if (match) {
+          count = parseInt(match[1], 10);
+        }
+        
+        // Increment count
+        count++;
+        message = `${count} checks missed`;
+      }
+    }
+
+    addToast({ 
+      message: message, 
+      icon: def.icon, 
+      variant: def.variant,
+      stableId: def.stableId 
+    });
   };
 
   return (
@@ -95,6 +125,15 @@ export const DeveloperModal = () => {
               id="simple-submit-switch"
               checked={appConfig.simpleSubmitEnabled}
               onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, simpleSubmitEnabled: c })))}
+            />
+          </div>
+          
+          <div className={styles.settingsItem}>
+            <label htmlFor="missed-toasts-switch" className={styles.itemLabel}>Missed check toasts</label>
+            <Switch
+              id="missed-toasts-switch"
+              checked={appConfig.missedCheckToastsEnabled}
+              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, missedCheckToastsEnabled: c })))}
             />
           </div>
 

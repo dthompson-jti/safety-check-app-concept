@@ -66,7 +66,8 @@ const formatTime = (due: Date, nowTime: number): string => {
  * - Uses 24fps ticker (via fastTicker) only for critical last-minute items.
  */
 export const useCountdown = (dueTime: Date, status: SafetyCheckStatus): string => {
-  const isActionable = status === 'pending' || status === 'due-soon' || status === 'late';
+  // UPDATED: Added 'early' to the list of statuses that show a timer
+  const isActionable = status === 'early' || status === 'pending' || status === 'due-soon' || status === 'late';
 
   // 1. Determine Urgency
   const nowForCalc = Date.now();

@@ -47,7 +47,7 @@ const attemptPruneAndSave = (key: string, value: string, attempt = 1) => {
     let prunedCount = 0;
     const prunedData = data.filter((check) => {
       // Always keep actionable items
-      if (['pending', 'due-soon', 'late', 'completing', 'queued'].includes(check.status)) {
+      if (['early', 'pending', 'due-soon', 'late', 'completing', 'queued'].includes(check.status)) {
         return true;
       }
       // Remove historical items if we haven't met the quota
@@ -121,21 +121,24 @@ type SupplementalCheckPayload = {
 export type AppAction =
   | { type: 'CHECK_SET_COMPLETING'; payload: { checkId: string } }
   | { type: 'CHECK_COMPLETE'; payload: CheckCompletePayload }
-  | { type: 'CHECK_MISSED'; payload: { checkId: string } }
+  | { type: 'CHECK_MISSED'; payload: { checkId: string; missedTime: string } }
   | { type: 'CHECK_SUPPLEMENTAL_ADD'; payload: SupplementalCheckPayload }
   | { type: 'CHECK_SET_QUEUED'; payload: CheckCompletePayload }
   | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } }
   | { type: 'RESET_DATA' };
 
-const generateNextCheck = (previousCheck: SafetyCheck): SafetyCheck => {
-  const prevDueDate = new Date(previousCheck.dueDate);
+// UPDATED: Logic to support "Fresh Start" rollover.
+// The next check is calculated from the 'originTime' (completion time or missed time),
+// not the previous scheduled due date.
+const generateNextCheck = (previousCheck: SafetyCheck, originTime: string): SafetyCheck => {
+  const originDate = new Date(originTime);
   const intervalMs = previousCheck.baseInterval * 60 * 1000;
-  const nextDueDate = new Date(prevDueDate.getTime() + intervalMs);
+  const nextDueDate = new Date(originDate.getTime() + intervalMs);
 
   return {
     ...previousCheck,
     id: `chk_${nanoid()}`,
-    status: 'pending',
+    status: 'early', // New checks start in the early window
     dueDate: nextDueDate.toISOString(),
     generationId: previousCheck.generationId + 1,
     lastChecked: undefined,
@@ -174,7 +177,8 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
 
-            const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
+            // Anchor: Completion Time
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.completionTime);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
@@ -183,7 +187,8 @@ const appDataAtom = atom<AppData, [AppAction], void>(
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
             check.status = 'missed';
-            const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
+            // Anchor: Missed Time (passed from lifecycle hook)
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.missedTime);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
@@ -195,7 +200,9 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
-            const nextCheck = generateNextCheck(check as unknown as SafetyCheck);
+            
+            // Anchor: Completion Time (even if queued)
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.completionTime);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
@@ -232,9 +239,6 @@ const appDataAtom = atom<AppData, [AppAction], void>(
           break;
         }
       }
-
-      // Note: We removed the aggressive eager pruning here because the 
-      // storage layer now handles it intelligently on write failure.
     });
     set(baseChecksAtom, nextState.checks);
   }
@@ -252,28 +256,42 @@ export const dispatchActionAtom = atom(null, (_get, set, action: AppAction) => {
 export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
   const { checks } = get(appDataAtom);
   const timeNow = get(slowTickerAtom);
-  const threeMinutesFromNow = timeNow + 3 * 60 * 1000;
 
   let hasChanges = false;
 
-  // Optimization: Map creates a new array, but we only want to return a new
-  // reference if a status actually changed.
   const updatedChecks = checks.map(check => {
+    // Skip terminal states
     if (['complete', 'completing', 'queued', 'missed'].includes(check.status)) {
       return check;
     }
 
     if (check.type === 'supplemental') return check;
 
+    // --- WINDOW LOGIC ---
+    // Anchor: Due Date - Interval
+    // Early: 0-7m
+    // Pending: 7-13m
+    // Due Soon: 13-15m
+    // Late: 15-22m
+    
+    const intervalMs = check.baseInterval * 60 * 1000;
     const dueTime = new Date(check.dueDate).getTime();
+    const windowStartTime = dueTime - intervalMs;
+    const elapsedMs = timeNow - windowStartTime;
+    const elapsedMinutes = elapsedMs / (60 * 1000);
 
     let newStatus: SafetyCheckStatus = 'pending';
-    if (dueTime < timeNow) {
-      newStatus = 'late';
-    } else if (dueTime < threeMinutesFromNow) {
+
+    if (elapsedMinutes < 7) {
+      newStatus = 'early';
+    } else if (elapsedMinutes < 13) {
+      newStatus = 'pending';
+    } else if (elapsedMinutes < 15) {
       newStatus = 'due-soon';
     } else {
-      newStatus = 'pending';
+      newStatus = 'late';
+      // Note: "Missed" (>22m) is handled by the Lifecycle Hook, not here.
+      // This derived atom only updates UI status for active checks.
     }
 
     if (check.status === newStatus) {
@@ -284,8 +302,6 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
     return { ...check, status: newStatus };
   });
 
-  // MEMORY FIX: Return the original array if no items changed.
-  // This prevents downstream consumers (like filtered lists) from re-calculating.
   return hasChanges ? updatedChecks : checks;
 });
 
@@ -348,10 +364,7 @@ export const timeSortedChecksAtom = atom((get) => {
   const checks = get(scheduleFilteredChecksAtom);
   const sorted = [...checks];
 
-  // DEFINITIVE FIX: Sort strictly by Due Date (ascending).
-  // We explicitly DO NOT sort by status here. This ensures that when a check's status
-  // changes from 'late' to 'completing', its position in the list remains locked
-  // based on its timestamp, preventing it from jumping to the bottom.
+  // Sort strictly by Due Date (ascending).
   sorted.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
   return sorted;
@@ -381,6 +394,9 @@ export const statusCountsAtom = atom((get) => {
       case 'late': counts.late++; break;
       case 'due-soon': counts.dueSoon++; break;
       case 'pending': counts.pending++; break;
+      // Early checks are counted as pending for the status bar summary? 
+      // Or ignored? Let's count them as pending for now to avoid confusion.
+      case 'early': counts.pending++; break; 
       case 'complete': counts.completed++; break;
       case 'queued': counts.queued++; break;
     }
@@ -444,7 +460,7 @@ export const manualSelectionResultsAtom = atom((get) => {
 
 const baseHistoricalChecksAtom = atom((get) => {
   const { checks } = get(appDataAtom);
-  return checks.filter(c => c.status !== 'pending' && c.status !== 'due-soon' && c.status !== 'completing');
+  return checks.filter(c => c.status !== 'pending' && c.status !== 'early' && c.status !== 'due-soon' && c.status !== 'completing');
 });
 
 export const historyCountsAtom = atom((get) => {

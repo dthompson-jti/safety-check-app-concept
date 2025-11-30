@@ -28,16 +28,20 @@
   border-color: var(--primitives-yellow-200);
 }
 
-/* Variant: Due Soon */
-.badge[data-status='due-soon'] {
+/* Variant: Info Group (Due Soon, Early, Supplemental) */
+.badge[data-status='due-soon'],
+.badge[data-status='early'],
+.badge[data-status='supplemental'] {
   background: var(--surface-bg-info);
   color: var(--surface-fg-info-primary);
   border-color: var(--primitives-blue-200);
 }
 
-/* Variant: Completed / Supplemental */
+/* Variant: Early Specific (Optional opacity override if desired, removed for consistency with Info) */
+/* .badge[data-status='early'] { opacity: 0.8; } */
+
+/* Variant: Completed */
 .badge[data-status='complete'],
-.badge[data-status='supplemental'],
 .badge[data-status='completing'] {
   background: var(--surface-bg-success);
   color: var(--surface-fg-success-primary);

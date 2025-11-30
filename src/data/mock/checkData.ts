@@ -19,13 +19,13 @@ export const initialChecks: SafetyCheck[] = (() => {
   const DEFAULT_INTERVAL = 15; // Minutes
 
   // Helper to create checks from the table data for consistency.
-  const createCheck = (location: string, specialClassifications: { type: string, details: string, residentId: string }[] = []) => {
+  const createCheck = (location: string, offsetMinutes: number = 0, specialClassifications: { type: string, details: string, residentId: string }[] = []) => {
     return {
       id: `chk_${location.toLowerCase().replace(/[\s']/g, '_')}`,
       type: 'scheduled',
       residents: residentsByLocation[location] || [],
-      status: 'pending',
-      dueDate: inNMinutes(walkingIndex * 2),
+      status: 'pending', // Will be recalculated by atoms based on dueDate
+      dueDate: inNMinutes(offsetMinutes),
       walkingOrderIndex: walkingIndex++,
       specialClassifications,
       generationId: 1,
@@ -33,81 +33,99 @@ export const initialChecks: SafetyCheck[] = (() => {
     } as SafetyCheck;
   };
 
+  // --- STANDARD CHECKS ---
+  // We distribute these across the timeline to demonstrate all states:
+  // Early (0-7m into cycle -> Due in 8-15m)
+  // Pending (7-13m into cycle -> Due in 2-8m)
+  // Due Soon (13-15m into cycle -> Due in 0-2m)
+  // Late (15-22m into cycle -> Due 0-7m ago)
+  
+  // Note: Due Date = End of 15m cycle.
+  // Example: If cycle started 14 mins ago, we are in "Due Soon". Due Date is in 1 min.
+  
   const standardChecks = [
-    // JDC - A-Wing
-    createCheck("A1-101"),
-    createCheck("A1-102"),
-    createCheck("A2-205"),
-    createCheck("A2-206"),
-    createCheck("A3-301", [{ type: 'CS', details: 'Separation from J. Miller', residentId: 'jdc_a3_1' }]),
-    createCheck("A3-302"),
-    createCheck("A4-410"),
-    createCheck("A4-411"),
-    createCheck("A5-502", [{ type: 'MW', details: 'Asthmatic, check inhaler', residentId: 'jdc_a5_1' }]),
-    createCheck("A5-503"),
-    createCheck("A6-601", [{ type: 'SR', details: 'Active watch, 15-min checks', residentId: 'jdc_a6_1' }]),
-    createCheck("A6-602"),
-    createCheck("A6-604", [
+    // --- LATE GROUP (Due 2-5 mins ago) ---
+    createCheck("A1-101", -2),
+    createCheck("A1-102", -5),
+    
+    // --- DUE SOON GROUP (Due in 1-2 mins) ---
+    createCheck("A2-205", 1),
+    createCheck("A2-206", 2),
+    
+    // --- PENDING GROUP (Due in 5-10 mins) ---
+    createCheck("A3-301", 5, [{ type: 'CS', details: 'Separation from J. Miller', residentId: 'jdc_a3_1' }]),
+    createCheck("A3-302", 8),
+    createCheck("A4-410", 10),
+    
+    // --- EARLY GROUP (Due in 13-15 mins) ---
+    createCheck("A4-411", 13),
+    createCheck("A5-502", 14, [{ type: 'MW', details: 'Asthmatic, check inhaler', residentId: 'jdc_a5_1' }]),
+    createCheck("A5-503", 15),
+    
+    // --- FUTURE / STANDARD (Due later) ---
+    createCheck("A6-601", 20, [{ type: 'SR', details: 'Active watch, 15-min checks', residentId: 'jdc_a6_1' }]),
+    createCheck("A6-602", 25),
+    createCheck("A6-604", 30, [
       { type: 'SR', details: 'Both residents on suicide watch.', residentId: 'jdc_a6_4' },
       { type: 'SR', details: 'Both residents on suicide watch.', residentId: 'jdc_a6_5' }
     ]),
 
     // JDC - B-Wing (Standard)
-    createCheck("B1-101"),
-    createCheck("B1-102"),
-    createCheck("B2-201"),
+    createCheck("B1-101", 35),
+    createCheck("B1-102", 40),
+    createCheck("B2-201", 45),
 
     // JDC - C-Wing
-    createCheck("C1-101"),
-    createCheck("C1-102"),
+    createCheck("C1-101", 50),
+    createCheck("C1-102", 55),
 
     // Sci-Fi - Star Wars
-    createCheck("Death Star Detention Block"),
-    createCheck("Emperor's Throne Room", [
+    createCheck("Death Star Detention Block", 60),
+    createCheck("Emperor's Throne Room", 65, [
       { type: 'SW', details: "High-risk Sith Lords. Approach with caution.", residentId: 'sw_palp' },
       { type: 'SW', details: "High-risk Sith Lords. Approach with caution.", residentId: 'sw_vader' }
     ]),
-    createCheck("Millennium Falcon"),
-    createCheck("Mos Eisley Cantina"),
-    createCheck("Tatooine Homestead"),
-    createCheck("Dagobah"),
-    createCheck("Bespin"),
-    createCheck("Jabba's Palace"),
+    createCheck("Millennium Falcon", 70),
+    createCheck("Mos Eisley Cantina", 75),
+    createCheck("Tatooine Homestead", 80),
+    createCheck("Dagobah", 85),
+    createCheck("Bespin", 90),
+    createCheck("Jabba's Palace", 95),
 
     // Sci-Fi - Harry Potter
-    createCheck("Gryffindor Tower"),
-    createCheck("Headmaster's Office", [{ type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'hp_dumbledore' }]),
-    createCheck("Hufflepuff Common Room"),
-    createCheck("Potions Classroom"),
-    createCheck("The Great Hall"),
-    createCheck("Room of Requirement"),
-    createCheck("Slytherin Dungeon"),
-    createCheck("Ministry of Magic", [{ type: 'MA', details: 'Requires MoM authorization.', residentId: 'hp_umbridge' }]),
+    createCheck("Gryffindor Tower", 100),
+    createCheck("Headmaster's Office", 105, [{ type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'hp_dumbledore' }]),
+    createCheck("Hufflepuff Common Room", 110),
+    createCheck("Potions Classroom", 115),
+    createCheck("The Great Hall", 120),
+    createCheck("Room of Requirement", 125),
+    createCheck("Slytherin Dungeon", 130),
+    createCheck("Ministry of Magic", 135, [{ type: 'MA', details: 'Requires MoM authorization.', residentId: 'hp_umbridge' }]),
 
     // Sci-Fi - Terminator
-    createCheck("Cyberdyne Annex"),
-    createCheck("Future Resistance Bunker", [{ type: 'MA', details: 'Leadership check-in required.', residentId: 't_john' }]),
-    createCheck("Skynet Command Center", [{ type: 'SW', details: 'Hostile cybernetic organism.', residentId: 't_t800_m101' }]),
-    createCheck("Pescadero State Hospital"),
-    createCheck("Tech-Noir Nightclub"),
-    createCheck("Cyberdyne Systems HQ"),
+    createCheck("Cyberdyne Annex", 140),
+    createCheck("Future Resistance Bunker", 145, [{ type: 'MA', details: 'Leadership check-in required.', residentId: 't_john' }]),
+    createCheck("Skynet Command Center", 150, [{ type: 'SW', details: 'Hostile cybernetic organism.', residentId: 't_t800_m101' }]),
+    createCheck("Pescadero State Hospital", 155),
+    createCheck("Tech-Noir Nightclub", 160),
+    createCheck("Cyberdyne Systems HQ", 165),
 
     // Sci-Fi - Alien
-    createCheck("LV-426 Medlab", [{ type: 'SW', details: 'Xenomorph detected. High alert.', residentId: 'al_ripley' }]),
-    createCheck("Nostromo Galley"),
-    createCheck("Nostromo Cockpit"),
-    createCheck("LV-426 Operations Center"),
-    createCheck("LV-426 Ventilation Shafts"),
-    createCheck("Nostromo Hypersleep Chamber", [{ type: 'SW', details: 'Synthetic. Behavioral monitoring.', residentId: 'al_ash' }]),
-    createCheck("USCSS Prometheus Bridge"),
+    createCheck("LV-426 Medlab", 170, [{ type: 'SW', details: 'Xenomorph detected. High alert.', residentId: 'al_ripley' }]),
+    createCheck("Nostromo Galley", 175),
+    createCheck("Nostromo Cockpit", 180),
+    createCheck("LV-426 Operations Center", 185),
+    createCheck("LV-426 Ventilation Shafts", 190),
+    createCheck("Nostromo Hypersleep Chamber", 195, [{ type: 'SW', details: 'Synthetic. Behavioral monitoring.', residentId: 'al_ash' }]),
+    createCheck("USCSS Prometheus Bridge", 200),
 
     // Sci-Fi - The Expanse
-    createCheck("Rocinante Cockpit"),
-    createCheck("Rocinante Engineering"),
-    createCheck("Rocinante Galley"),
-    createCheck("UN-One"),
-    createCheck("Tycho Station Command"),
-    createCheck("Ceres Station Docks"),
+    createCheck("Rocinante Cockpit", 205),
+    createCheck("Rocinante Engineering", 210),
+    createCheck("Rocinante Galley", 215),
+    createCheck("UN-One", 220),
+    createCheck("Tycho Station Command", 225),
+    createCheck("Ceres Station Docks", 230),
   ];
 
   // --- B-WING STRESS TEST DATA GENERATOR ---
@@ -117,15 +135,17 @@ export const initialChecks: SafetyCheck[] = (() => {
   const bWingStressChecks: SafetyCheck[] = Array.from({ length: 12 }).map((_, i) => {
     const isGroup2 = i >= 6;
     
-    const startDelay = isGroup2 ? 70 : 10; // Group 1 starts in 10s, Group 2 in 70s
+    // We want these to become MISSED shortly.
+    // Missed Threshold = Due Date + 7m.
+    // So if we want it to miss in 10s, Due Date must be (Now - 7m + 10s).
     
-    // CRITICAL CHANGE: 
-    // Group 1 staggers by 5s. 
-    // Group 2 has NO stagger (all 0), forcing them to occur in the same "Tick".
+    const startDelay = isGroup2 ? 70 : 10; // Group 1 starts in 10s, Group 2 in 70s
     const stagger = isGroup2 ? 0 : (i % 6) * 5; 
     
     const secondsUntilMissed = startDelay + stagger;
-    const dueTimeMs = now.getTime() + (secondsUntilMissed * 1000) - (DEFAULT_INTERVAL * 60 * 1000);
+    
+    // Due Date = Now - 7m (buffer) + secondsUntilMissed
+    const dueTimeMs = now.getTime() - (7 * 60 * 1000) + (secondsUntilMissed * 1000);
 
     const locationName = `B1-Stress-${String(i + 1).padStart(2, '0')}`;
     

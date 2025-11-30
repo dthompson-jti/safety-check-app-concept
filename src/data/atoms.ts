@@ -144,6 +144,7 @@ interface AppConfig {
   markMultipleEnabled: boolean;
   simpleSubmitEnabled: boolean;
   showStatusIndicators: boolean;
+  missedCheckToastsEnabled: boolean; // NEW: Developer toggle for missed check toasts
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
@@ -156,6 +157,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   markMultipleEnabled: false,
   simpleSubmitEnabled: false,
   showStatusIndicators: false,
+  missedCheckToastsEnabled: true, // Default to true
 });
 
 // =================================================================

@@ -8,7 +8,7 @@ import {
   connectionStatusAtom,
   appConfigAtom,
 } from '../../data/atoms';
-import { dispatchActionAtom } from '../../data/appDataAtoms';
+import { dispatchActionAtom, safetyChecksAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useAppSound } from '../../data/useAppSound';
@@ -19,6 +19,7 @@ import { Button } from '../../components/Button';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
 import { useCompleteCheck } from './useCompleteCheck';
+import { StatusBadge } from '../Schedule/StatusBadge'; // UPDATED: Import StatusBadge
 import styles from './CheckEntryView.module.css';
 
 type CheckEntryViewProps = {
@@ -55,6 +56,9 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const drafts = useAtomValue(draftFormsAtom);
   const saveDraft = useSetAtom(saveDraftAtom);
   const clearDraft = useSetAtom(clearDraftAtom);
+  
+  // UPDATED: Need access to all checks to find status of current check
+  const allChecks = useAtomValue(safetyChecksAtom);
 
   const connectionStatus = useAtomValue(connectionStatusAtom);
   const {
@@ -100,6 +104,14 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const [isAttested, setIsAttested] = useState(draft?.isAttested || false);
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
   const isSupplementalCheck = checkData.type === 'supplemental';
+
+  // UPDATED: Derive the current check status to display the correct badge
+  const currentCheckStatus = useMemo(() => {
+    if (isSupplementalCheck) return 'complete'; // Placeholder status for supplemental, handled by type prop
+    const check = allChecks.find(c => c.id === (checkData as any).checkId);
+    return check?.status || 'pending';
+  }, [allChecks, checkData, isSupplementalCheck]);
+
 
   // Draft Logic: Track if we are unmounting due to success (don't save draft) or cancellation (save draft)
   const isSubmitted = useRef(false);
@@ -260,13 +272,25 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       <main className={styles.formContent} ref={contentRef}>
         <h2 className={styles.roomHeader}>
           {checkData.roomName}
-          {/* UPDATED: Neutral Chip with Icon */}
-          {isManualCheck && (
-            <span className={styles.manualLabel}>
-              <span className="material-symbols-rounded">menu_book</span>
-              Manual Check
-            </span>
-          )}
+          
+          {/* UPDATED: Wrapper for badges to ensure alignment */}
+          <div className={styles.badgeWrapper}>
+            {/* 1. Manual Check Badge */}
+            {isManualCheck && (
+              <span className={styles.manualLabel}>
+                <span className="material-symbols-rounded">menu_book</span>
+                Manual Check
+              </span>
+            )}
+
+            {/* 2. Status Badge (Early or Supplemental) */}
+            {(currentCheckStatus === 'early' || isSupplementalCheck) && (
+              <StatusBadge 
+                status={currentCheckStatus} 
+                type={isSupplementalCheck ? 'supplemental' : 'scheduled'} 
+              />
+            )}
+          </div>
         </h2>
 
         {isSupplementalCheck && (

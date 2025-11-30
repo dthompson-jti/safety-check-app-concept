@@ -1,10 +1,11 @@
 // src/types.ts
 
 export type SafetyCheckStatus =
-  | 'pending'
-  | 'due-soon'
-  | 'late'
-  | 'missed'
+  | 'early'      // 0-7m
+  | 'pending'    // 7-13m
+  | 'due-soon'   // 13-15m
+  | 'late'       // 15-22m
+  | 'missed'     // 22m+
   | 'completing'
   | 'complete'
   | 'queued';
@@ -40,7 +41,7 @@ export interface SafetyCheck {
 
   // Lifecycle Fields
   generationId: number; // 1, 2, 3... The iteration count for this room
-  baseInterval: number; // Minutes between checks
+  baseInterval: number; // Minutes between checks (e.g., 15)
 }
 
 export type ScheduleFilter = 'all' | 'late' | 'due-soon' | 'queued';

@@ -4,10 +4,11 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { 
   slowTickerAtom, 
   selectedFacilityGroupAtom, 
-  selectedFacilityUnitAtom 
+  selectedFacilityUnitAtom,
+  appConfigAtom
 } from './atoms';
 import { safetyChecksAtom, dispatchActionAtom } from './appDataAtoms';
-import { addToastAtom } from './toastAtoms';
+import { addToastAtom, toastsAtom } from './toastAtoms';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
 
 /**
@@ -16,18 +17,12 @@ import { getFacilityContextForLocation } from './mock/facilityUtils';
  * This hook subscribes to the "Slow Ticker" (1s) and monitors active checks.
  * If a check's due date + base interval has passed, it marks the check as 'missed'
  * and triggers the regeneration of the next check in the series.
- * 
- * Architecture Note:
- * To prevent "Notification Storms" (e.g., waking a device after 30 mins), this hook
- * implements Tick-Based Aggregation. All checks expiring in a single 1s tick are
- * grouped into a single toast.
- *
- * It also enforces Context Awareness: Toasts are suppressed if the check belongs
- * to a facility/unit the user is not currently viewing.
  */
 export const useCheckLifecycle = () => {
   const now = useAtomValue(slowTickerAtom);
   const checks = useAtomValue(safetyChecksAtom);
+  const { missedCheckToastsEnabled } = useAtomValue(appConfigAtom);
+  const activeToasts = useAtomValue(toastsAtom);
   
   // Context awareness
   const currentGroupId = useAtomValue(selectedFacilityGroupAtom);
@@ -46,15 +41,21 @@ export const useCheckLifecycle = () => {
       }
 
       const dueDate = new Date(check.dueDate).getTime();
-      const intervalMs = check.baseInterval * 60 * 1000;
-      const missedThreshold = dueDate + intervalMs;
+      
+      // Missed Threshold: Due Date + 7 minutes (fixed buffer)
+      const missedThreshold = dueDate + (7 * 60 * 1000);
 
       if (now >= missedThreshold) {
         // 1. Dispatch Action (Update State)
-        dispatch({ type: 'CHECK_MISSED', payload: { checkId: check.id } });
+        dispatch({ 
+            type: 'CHECK_MISSED', 
+            payload: { 
+                checkId: check.id,
+                missedTime: new Date(now).toISOString()
+            } 
+        });
         
         // 2. Context Filter for Notifications
-        // We only notify if the check belongs to the user's currently active view.
         if (check.residents[0]?.location) {
            const context = getFacilityContextForLocation(check.residents[0].location);
            if (context && context.groupId === currentGroupId && context.unitId === currentUnitId) {
@@ -64,20 +65,47 @@ export const useCheckLifecycle = () => {
       }
     });
 
-    // 3. Batch Notifications
-    if (missedChecksInThisTick.length === 1) {
-       addToast({
-            message: `Check for ${missedChecksInThisTick[0]} was missed.`,
-            icon: 'history',
-            variant: 'warning' // Changed from 'alert' to 'warning' per requirements
-        });
-    } else if (missedChecksInThisTick.length > 1) {
-        addToast({
-            message: `${missedChecksInThisTick.length} checks were missed.`,
-            icon: 'history',
-            variant: 'warning' // Changed from 'alert' to 'warning' per requirements
-        });
+    // 3. Batch Notifications with Counter Logic
+    if (missedChecksInThisTick.length > 0 && missedCheckToastsEnabled) {
+      const stableId = 'lifecycle-missed-check';
+      
+      // Check if we already have a missed check toast visible
+      const existingToast = activeToasts.find(t => t.stableId === stableId);
+      
+      let totalCount = missedChecksInThisTick.length;
+
+      if (existingToast) {
+        // UPDATED: Robust Regex to catch "2 checks missed", "10 checks missed", etc.
+        // We use case-insensitive flag 'i' and allow flexible whitespace.
+        const countMatch = existingToast.message.match(/^(\d+)\s+checks\s+missed/i);
+        
+        if (countMatch) {
+          // If we found a number (e.g. "2"), parse it and add the new batch.
+          totalCount += parseInt(countMatch[1], 10);
+        } else {
+          // Fallback: If the message exists but isn't in the "X checks missed" format
+          // (e.g. "Check for Room 101 was missed"), it represents exactly 1 previous miss.
+          totalCount += 1;
+        }
+      }
+
+      let message = '';
+      
+      // If the total count is 1 (and it's a fresh toast), show specific details.
+      // Otherwise, show the aggregate counter.
+      if (totalCount === 1) {
+        message = `Check for ${missedChecksInThisTick[0]} was missed`;
+      } else {
+        message = `${totalCount} checks missed`;
+      }
+
+      addToast({
+        message,
+        icon: 'history',
+        variant: 'warning',
+        stableId
+      });
     }
 
-  }, [now, checks, dispatch, addToast, currentGroupId, currentUnitId]);
+  }, [now, checks, dispatch, addToast, currentGroupId, currentUnitId, missedCheckToastsEnabled, activeToasts]);
 };
