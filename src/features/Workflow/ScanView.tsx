@@ -6,13 +6,11 @@ import { Scanner } from '@yudiel/react-qr-scanner';
 import {
   workflowStateAtom,
   isManualCheckModalOpenAtom,
-  appViewAtom,
   hardwareSimulationAtom,
 } from '../../data/atoms';
 import {
   safetyChecksAtom,
-  timeSortedChecksAtom,
-  routeSortedChecksAtom
+  timeSortedChecksAtom
 } from '../../data/appDataAtoms';
 import { mockResidents } from '../../data/mock/residentData';
 import { addToastAtom } from '../../data/toastAtoms';
@@ -35,9 +33,7 @@ export const ScanView = () => {
   const allChecks = useAtomValue(safetyChecksAtom);
   const appConfig = useAtomValue(appConfigAtom);
 
-  const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
-  const routeSortedChecks = useAtomValue(routeSortedChecksAtom);
   const simulation = useAtomValue(hardwareSimulationAtom);
 
   const addToast = useSetAtom(addToastAtom);
@@ -160,8 +156,8 @@ export const ScanView = () => {
       handleDecode(workflow.targetCheckId);
       return;
     }
-    const candidateList = appView === 'dashboardRoute' ? routeSortedChecks : timeSortedChecks;
-    const actionableCandidate = candidateList.find(c =>
+    // Always use timeSortedChecks since we only have one view now
+    const actionableCandidate = timeSortedChecks.find(c =>
       c.status !== 'complete' && c.status !== 'missed' && c.type !== 'supplemental'
     );
 

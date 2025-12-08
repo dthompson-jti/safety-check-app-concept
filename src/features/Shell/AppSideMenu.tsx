@@ -36,8 +36,7 @@ export const AppSideMenu = () => {
   return (
     <aside className={styles.sideMenu}>
       <header className={styles.header}>
-        <h1 className={styles.title}>eProbation</h1>
-        <h2 className={styles.subtitle}>Safety Check</h2>
+        <h1 className={styles.title}>Safeguard</h1>
         <div className={styles.headerSeparator} />
       </header>
 
@@ -48,7 +47,7 @@ export const AppSideMenu = () => {
           onClick={() => setIsContextModalOpen(true)}
         />
         <div className={styles.separator} />
-        
+
         <MenuItem icon="nfc" label="Write NFC tags" onClick={() => setWorkflowState({ view: 'provisioning' })} />
         <MenuItem icon="code" label="Developer tools" onClick={() => setIsDevToolsOpen(true)} />
       </main>

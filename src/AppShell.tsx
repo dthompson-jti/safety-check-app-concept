@@ -69,12 +69,8 @@ const AppShellContent = () => {
       animate(sideMenuProgress, 0, viewTransition);
     }
 
-    if (appView === 'dashboardRoute') {
-      animate(filmStripProgress, 1, viewTransition);
-    } else if (appView === 'dashboardTime' || appView === 'sideMenu') {
-      animate(filmStripProgress, 0, viewTransition);
-    }
-  }, [appView, filmStripProgress, sideMenuProgress]);
+    // No filmstrip progress needed since we only have one view
+  }, [appView, sideMenuProgress]);
 
 
   useLayoutEffect(() => {
@@ -190,22 +186,7 @@ const AppShellContent = () => {
       return;
     }
 
-    if (sideMenuProgress.get() === 0) {
-      const currentProgress = filmStripProgress.get();
-      if (appView === 'dashboardTime') {
-        if (currentProgress > PROGRESS_THRESHOLD) {
-          setAppView('dashboardRoute');
-        } else {
-          animate(filmStripProgress, 0, viewTransition);
-        }
-      } else if (appView === 'dashboardRoute') {
-        if (currentProgress < (1 - PROGRESS_THRESHOLD)) {
-          setAppView('dashboardTime');
-        } else {
-          animate(filmStripProgress, 1, viewTransition);
-        }
-      }
-    }
+    // No filmstrip navigation since we only have dashboardTime view
   };
 
   const mainViewX = useTransform(sideMenuProgress, [0, 1], [0, sideMenuWidth]);

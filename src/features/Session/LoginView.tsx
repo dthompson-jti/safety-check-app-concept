@@ -23,10 +23,10 @@ export const LoginView = () => {
   // Layout Stability Hooks
   useVisualViewport();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  useScrollToFocused({ 
+  useScrollToFocused({
     containerRef: scrollContainerRef,
     // No sticky footer in LoginView, so no offset variable needed.
-    offset: 20 
+    offset: 20
   });
 
   const handleLogin = (e: React.FormEvent) => {
@@ -55,7 +55,7 @@ export const LoginView = () => {
   };
 
   const handleShortcutLogin = () => {
-    setSession({ isAuthenticated: true, userName: 'Dev Shortcut' });
+    setSession({ isAuthenticated: true, userName: 'Jane Doe' });
   };
 
   const handleUsernameChange = (val: string) => {
@@ -95,10 +95,10 @@ export const LoginView = () => {
               >
                 shield
               </span>
-              <h3>eProbation Mobile</h3>
+              <h3>Safeguard</h3>
             </div>
             <form onSubmit={handleLogin} className={styles.formFields} noValidate>
-              
+
               <motion.div
                 animate={isAttempted && formError ? shakeAnimation : {}}
                 onAnimationComplete={() => setIsAttempted(false)}
@@ -184,7 +184,7 @@ export const LoginView = () => {
           </div>
         </Modal.Content>
         <Modal.Footer>
-          <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <Button variant="secondary" onClick={() => setIsHelpModalOpen(false)} style={{ width: '100%' }}>
               Close
             </Button>

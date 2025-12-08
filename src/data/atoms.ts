@@ -15,7 +15,7 @@ export const slowTickerAtom = atom<number>(Date.now());
 //                         App State
 // =================================================================
 
-export type AppView = 'sideMenu' | 'dashboardTime' | 'dashboardRoute';
+export type AppView = 'sideMenu' | 'dashboardTime';
 export const appViewAtom = atomWithStorage<AppView>('sc_view', 'dashboardTime');
 
 // =================================================================

@@ -4,12 +4,10 @@ import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import {
   workflowStateAtom,
-  appConfigAtom,
-  appViewAtom
+  appConfigAtom
 } from '../../data/atoms';
 import {
-  timeSortedChecksAtom,
-  routeSortedChecksAtom
+  timeSortedChecksAtom
 } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
@@ -30,9 +28,7 @@ export const AppFooter = () => {
   const appConfig = useAtomValue(appConfigAtom);
 
   // State needed for Smart NFC Simulation
-  const appView = useAtomValue(appViewAtom);
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
-  const routeSortedChecks = useAtomValue(routeSortedChecksAtom);
   const addToast = useSetAtom(addToastAtom);
 
   const footerRef = useRef<HTMLElement>(null);
@@ -71,8 +67,8 @@ export const AppFooter = () => {
   // Handler for NFC Simulation Shortcut
   // Simulates an instant tag read of the top-most relevant check.
   const handleNfcClick = () => {
-    const candidateList = appView === 'dashboardRoute' ? routeSortedChecks : timeSortedChecks;
-    const targetCheck = candidateList.find(c =>
+    // Always use timeSortedChecks since we only have one view now
+    const targetCheck = timeSortedChecks.find(c =>
       c.status !== 'complete' && c.status !== 'missed' && c.type !== 'supplemental'
     );
 

@@ -1,24 +1,16 @@
 // src/features/Shell/AppHeader.tsx
 import { useLayoutEffect, useRef } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
-import { AnimatePresence, motion } from 'framer-motion';
-import {
-  appViewAtom,
-  isManualCheckModalOpenAtom,
-} from '../../data/atoms';
-import { ViewModeSwitcher } from './ViewModeSwitcher';
+import { useAtom } from 'jotai';
+import { appViewAtom } from '../../data/atoms';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
-import { ConnectivityBadge } from './ConnectivityBadge';
 import { StatusBar } from './StatusBar';
+import { UserAvatar } from '../../components/UserAvatar';
 import styles from './AppHeader.module.css';
 
 export const AppHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
-  const setIsManualCheckOpen = useSetAtom(isManualCheckModalOpenAtom);
   const headerRef = useRef<HTMLElement>(null);
-
-  const isDashboard = appView === 'dashboardTime' || appView === 'dashboardRoute';
 
   // Component Variable Contract:
   // Measures the header's actual height and sets a CSS variable.
@@ -45,8 +37,6 @@ export const AppHeader = () => {
     setAppView(appView === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
-  // Note: `layout` prop is intentionally omitted to prevent layout thrashing 
-  // during parent container transforms (e.g., side menu open/close).
   return (
     <header className={styles.header} ref={headerRef}>
       <div className={styles.headerContent}>
@@ -59,30 +49,12 @@ export const AppHeader = () => {
         </div>
 
         <div className={styles.centerContent}>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={isDashboard ? 'pill-toggle' : 'status-indicator'}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
-            >
-              {isDashboard ? <ViewModeSwitcher /> : <ConnectivityBadge />}
-            </motion.div>
-          </AnimatePresence>
+          <StatusBar />
         </div>
 
         <div className={styles.rightActions}>
-          <Tooltip content="Add manual check">
-            <Button variant="tertiary" size="m" iconOnly onClick={() => setIsManualCheckOpen(true)}>
-              <span className="material-symbols-rounded">add</span>
-            </Button>
-          </Tooltip>
+          <UserAvatar />
         </div>
-      </div>
-
-      <div className={styles.statusBar}>
-        <StatusBar key="status-bar" />
       </div>
     </header>
   );

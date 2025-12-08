@@ -4,10 +4,9 @@ import { useAtom } from 'jotai';
 import { appViewAtom, AppView } from './atoms';
 
 // DEFINITIVE FIX: A type guard to safely check if a string is a valid AppView.
-// This is updated to remove 'history' and 'settings' which are no longer main views.
 const isAppView = (view: string | null): view is AppView => {
   if (!view) return false;
-  return ['sideMenu', 'dashboardTime', 'dashboardRoute'].includes(view);
+  return ['sideMenu', 'dashboardTime'].includes(view);
 }
 
 /**

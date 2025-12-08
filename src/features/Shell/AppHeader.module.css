@@ -15,40 +15,35 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   height: 60px;
-  /* Horizontal padding must match .overviewBar & .searchBarContainer for alignment */
   padding: 8px 12px;
   position: relative;
 }
 
+.leftActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
 .centerContent {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  /* Allow flex item to shrink below content size */
 }
 
-.centerContent>* {
-  pointer-events: auto;
-}
-
-/* DEFINITIVE FIX: Use identical fixed-width containers for left/right actions */
-.leftActions,
 .rightActions {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
-}
-
-.statusBar {
-  position: relative;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  /* This is critical for the animations */
 }
