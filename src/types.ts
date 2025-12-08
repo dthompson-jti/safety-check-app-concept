@@ -2,10 +2,11 @@
 
 export type SafetyCheckStatus =
   | 'early'      // 0-7m
-  | 'pending'    // 7-13m
-  | 'due-soon'   // 13-15m
-  | 'late'       // 15-22m
-  | 'missed'     // 22m+
+  | 'pending'    // 7-11m (Hidden from header counts)
+  | 'due-soon'   // 11-13m
+  | 'due'        // 13-15m
+  | 'late'       // 15m+
+  | 'missed'     // Lifecycle hook triggers this on timeout
   | 'completing'
   | 'complete'
   | 'queued';
@@ -32,7 +33,7 @@ export interface SafetyCheck {
   dueDate: string; // ISO Date String
   walkingOrderIndex: number;
   specialClassifications?: SpecialClassification[];
-  
+
   // Optional fields for completed/historical checks
   lastChecked?: string; // ISO Date String
   completionStatus?: string;

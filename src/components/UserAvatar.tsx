@@ -1,7 +1,7 @@
 // src/components/UserAvatar.tsx
 import { useAtomValue } from 'jotai';
 import { sessionAtom } from '../data/atoms';
-import { Tooltip } from './Tooltip';
+import { Popover } from './Popover';
 import styles from './UserAvatar.module.css';
 
 export const UserAvatar = () => {
@@ -18,11 +18,21 @@ export const UserAvatar = () => {
     const initials = getInitials(session.userName);
     const fullName = session.userName || 'Unknown User';
 
+    const avatarElement = (
+        <div className={styles.avatar} aria-label={`User: ${fullName}`}>
+            {initials}
+        </div>
+    );
+
+    const popoverContent = (
+        <div className={styles.popoverContent}>
+            {fullName}
+        </div>
+    );
+
     return (
-        <Tooltip content={fullName} side="bottom" delay={200}>
-            <div className={styles.avatar} aria-label={`User: ${fullName}`}>
-                {initials}
-            </div>
-        </Tooltip>
+        <Popover trigger={avatarElement}>
+            {popoverContent}
+        </Popover>
     );
 };

@@ -25,7 +25,7 @@ type CheckEntryViewProps = {
   checkData: Extract<WorkflowState, { view: 'form' }>;
 };
 
-type StatusValue = 'Awake' | 'Sleeping' | 'Refused';
+type StatusValue = 'Awake' | 'Sleeping' | 'Refused' | 'Out';
 type SecurityCheckTypeValue = 'Locked down' | 'Random';
 
 const securityCheckTypeOptions = [
@@ -55,7 +55,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const drafts = useAtomValue(draftFormsAtom);
   const saveDraft = useSetAtom(saveDraftAtom);
   const clearDraft = useSetAtom(clearDraftAtom);
-  
+
   // Need access to all checks to find status of current check
   const allChecks = useAtomValue(safetyChecksAtom);
 
@@ -72,15 +72,15 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
   // Layout Stability: Sync height with visual viewport
   useVisualViewport();
-  
+
   const footerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLElement>(null);
   const [showScrollShadow, setShowScrollShadow] = useState(false);
 
   // Layout Stability: Ensure focused inputs are not hidden by the sticky footer
-  useScrollToFocused({ 
-    containerRef: contentRef, 
-    footerOffsetVar: '--form-footer-height' 
+  useScrollToFocused({
+    containerRef: contentRef,
+    footerOffsetVar: '--form-footer-height'
   });
 
   // Initialize State: Prefer Draft Data, then fall back to initial
@@ -101,7 +101,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const [incidentType, setIncidentType] = useState<string>('');
 
   const [isAttested, setIsAttested] = useState(draft?.isAttested || false);
-  
+
   // Determine Flags
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
   const isSupplementalCheck = checkData.type === 'supplemental';
@@ -109,8 +109,12 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   // Determine Status for Badge
   const currentCheckStatus = useMemo(() => {
     if (isSupplementalCheck) return 'supplemental';
-    const check = allChecks.find(c => c.id === (checkData as any).checkId);
-    return check?.status || 'pending';
+    // Type guard: checkData.type === 'scheduled' guarantees checkId exists
+    if (checkData.type === 'scheduled') {
+      const check = allChecks.find(c => c.id === checkData.checkId);
+      return check?.status || 'pending';
+    }
+    return 'pending';
   }, [allChecks, checkData, isSupplementalCheck]);
 
 
@@ -273,7 +277,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       <main className={styles.formContent} ref={contentRef}>
         <h2 className={styles.roomHeader}>
           {checkData.roomName}
-          
+
           <div className={styles.badgeWrapper}>
             {/* 1. Manual Check Badge (No Icon) */}
             {isManualCheck && (
@@ -291,7 +295,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
             {/* 3. Early Badge (No Icon) - Only if not supplemental */}
             {!isSupplementalCheck && currentCheckStatus === 'early' && (
-              <span className={styles.statusLabel} data-variant="info">
+              <span className={styles.statusLabel} data-variant="grey">
                 Early
               </span>
             )}

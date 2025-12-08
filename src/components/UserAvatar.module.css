@@ -28,3 +28,11 @@
 .avatar:active {
     transform: scale(0.98);
 }
+
+/* Popover content - primary solid bg, white text */
+.popoverContent {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+}

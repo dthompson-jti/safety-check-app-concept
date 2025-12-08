@@ -145,6 +145,7 @@ interface AppConfig {
   simpleSubmitEnabled: boolean;
   showStatusIndicators: boolean;
   missedCheckToastsEnabled: boolean; // NEW: Developer toggle for missed check toasts
+  residentStatusSet: 'set-2' | 'set-3' | 'set-4'; // PRD-02: Configurable resident status options
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
@@ -158,6 +159,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   simpleSubmitEnabled: false,
   showStatusIndicators: false,
   missedCheckToastsEnabled: true, // Default to true
+  residentStatusSet: 'set-3', // PRD-02: Default to 3 options (Awake, Sleeping, Refused)
 });
 
 // =================================================================

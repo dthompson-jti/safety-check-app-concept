@@ -1,18 +1,34 @@
 // src/features/Workflow/ResidentCheckControl.tsx
 import { useRef } from 'react';
+import { useAtomValue } from 'jotai';
 // DEFINITIVE FIX: Import SpecialClassification type for decoupled props.
 import { Resident, SpecialClassification } from '../../types';
+import { appConfigAtom } from '../../data/atoms';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { useAutosizeTextArea } from '../../data/useAutosizeTextArea';
 import styles from './ResidentCheckControl.module.css';
 
-const statusOptions = [
+// PRD-02: Define all status option sets
+const statusOptionsSet2 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+] as const;
+
+const statusOptionsSet3 = [
   { value: 'Refused', label: 'Refused' },
   { value: 'Sleeping', label: 'Sleeping' },
   { value: 'Awake', label: 'Awake' },
 ] as const;
 
-type StatusValue = typeof statusOptions[number]['value'];
+const statusOptionsSet4 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+] as const;
+
+// Union type of all possible status values
+type StatusValue = 'Awake' | 'Sleeping' | 'Refused' | 'Out';
 
 interface ResidentCheckControlProps {
   resident: Resident;
@@ -38,8 +54,29 @@ export const ResidentCheckControl = ({
   const isClassified = !!classification;
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  // PRD-02: Read config to determine which status options to show
+  const { residentStatusSet } = useAtomValue(appConfigAtom);
+
   // Auto-sizing logic for the textarea.
   useAutosizeTextArea(textAreaRef.current, notes);
+
+  // PRD-02: Select appropriate options based on config
+  let statusOptions: readonly { value: string; label: string }[];
+  let layout: 'row' | 'grid' = 'row';
+
+  switch (residentStatusSet) {
+    case 'set-2':
+      statusOptions = statusOptionsSet2;
+      break;
+    case 'set-4':
+      statusOptions = statusOptionsSet4;
+      layout = 'grid'; // PRD-02: 4 options use 2x2 grid
+      break;
+    case 'set-3':
+    default:
+      statusOptions = statusOptionsSet3;
+      break;
+  }
 
   return (
     <div className={styles.container} data-classified={isClassified}>
@@ -70,7 +107,8 @@ export const ResidentCheckControl = ({
           id={`status-group-${resident.id}`}
           options={statusOptions}
           value={status}
-          onValueChange={(val) => onStatusChange(resident.id, val)}
+          onValueChange={(val) => onStatusChange(resident.id, val as StatusValue)}
+          layout={layout}
         />
       </div>
 

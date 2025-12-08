@@ -13,6 +13,8 @@ const getStatusConfig = (status: SafetyCheckStatus): { label: string; icon: stri
   switch (status) {
     case 'late':
       return { label: 'Late', icon: 'notifications' };
+    case 'due':
+      return { label: 'Due', icon: 'schedule' };
     case 'due-soon':
       return { label: 'Due Soon', icon: 'schedule' };
     case 'early':

@@ -74,27 +74,27 @@ export const DeveloperModal = () => {
     // UPDATED: Logic to simulate accumulating missed checks
     if (def.stableId === 'lifecycle-missed-check') {
       const existingToast = activeToasts.find(t => t.stableId === def.stableId);
-      
+
       if (existingToast) {
         let count = 1;
         // Try to parse existing counter: "2 checks missed"
         const match = existingToast.message.match(/^(\d+)\s+checks\s+missed/i);
-        
+
         if (match) {
           count = parseInt(match[1], 10);
         }
-        
+
         // Increment count
         count++;
         message = `${count} checks missed`;
       }
     }
 
-    addToast({ 
-      message: message, 
-      icon: def.icon, 
+    addToast({
+      message: message,
+      icon: def.icon,
       variant: def.variant,
-      stableId: def.stableId 
+      stableId: def.stableId
     });
   };
 
@@ -127,13 +127,29 @@ export const DeveloperModal = () => {
               onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, simpleSubmitEnabled: c })))}
             />
           </div>
-          
+
           <div className={styles.settingsItem}>
             <label htmlFor="missed-toasts-switch" className={styles.itemLabel}>Missed check toasts</label>
             <Switch
               id="missed-toasts-switch"
               checked={appConfig.missedCheckToastsEnabled}
               onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, missedCheckToastsEnabled: c })))}
+            />
+          </div>
+
+          {/* PRD-02: Resident Status Set Toggle */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Resident status options</label>
+            <IconToggleGroup
+              id="resident-status-set-toggle"
+              options={[
+                { value: 'set-2', label: '2 Options', icon: 'looks_two' },
+                { value: 'set-3', label: '3 Options', icon: 'looks_3' },
+                { value: 'set-4', label: '4 Options', icon: 'looks_4' },
+              ]}
+              value={appConfig.residentStatusSet}
+              onValueChange={(val) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, residentStatusSet: val })); }}
+              fullWidth
             />
           </div>
 
@@ -231,8 +247,8 @@ export const DeveloperModal = () => {
         <div className={styles.toastGrid}>
           {toastDefinitions.map((def, index) => (
             <div key={index} className={styles.toastCard}>
-              <button 
-                className={styles.toastTrigger} 
+              <button
+                className={styles.toastTrigger}
                 data-variant={def.variant}
                 onClick={() => handleToastTrigger(def)}
               >

@@ -1,60 +1,62 @@
 /* src/features/Shell/StatusBar.module.css */
+/* PRD-02: Status bar pills - no backgrounds, just colored text */
 
 .statusBar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 0 12px;
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-1) var(--spacing-2);
 }
 
 .contentContainer {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  justify-content: space-around;
-  min-width: 0;
+    display: flex;
+    gap: var(--spacing-3);
 }
 
 .statusPill {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--spacing-1);
-  padding: 10px 14px 10px 8px;
-  border-radius: var(--radius-md);
-  position: relative;
-  overflow: visible;
-  text-align: center;
-  flex-shrink: 0;
-  background: none;
-  border: 1px solid transparent;
-  transition: background-color 0.2s, border-color 0.2s;
-  cursor: default;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1);
+    font-size: 1rem;
+    /* Bumped up from 0.875rem */
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    /* No background - just colored text */
+    background: transparent;
 }
 
-.count {
-  font-size: 1.2rem;
-  font-weight: 600;
-  line-height: 1.2;
-  transition: color 0.2s ease-in-out;
+/* Active state feedback - per css-principles.md */
+.statusPill:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+/* Status-specific colors - foreground only */
+.statusPill[data-status="late"] {
+    color: var(--surface-fg-warning-primary);
+}
+
+.statusPill[data-status="due-soon"],
+.statusPill[data-status="due"] {
+    color: var(--surface-fg-info-primary);
 }
 
 .icon {
-  font-size: 20px;
-  transition: color 0.2s ease-in-out;
+    font-size: 1.25rem;
+    /* Bumped up from 1rem */
 }
 
-.statusPill[data-status='late'] .count,
-.statusPill[data-status='late'] .icon {
-  color: var(--surface-fg-warning-primary) !important;
+.count {
+    min-width: 1.25rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
-.statusPill[data-status='due-soon'] .count,
-.statusPill[data-status='due-soon'] .icon {
-  color: var(--surface-fg-info-primary) !important;
-}
-
-.statusPill[data-status='queued'] .count,
-.statusPill[data-status='queued'] .icon {
-  color: var(--surface-fg-tertiary) !important;
+/* Popover content - simple sentence-like text */
+.popoverContent {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: 0.875rem;
+    line-height: 1.5;
 }

@@ -3,7 +3,7 @@ import React from 'react';
 import { useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { statusCountsAtom } from '../../data/appDataAtoms';
-import { Tooltip } from '../../components/Tooltip';
+import { Popover } from '../../components/Popover';
 import type { ScheduleFilter } from '../../types';
 import styles from './StatusBar.module.css';
 
@@ -14,33 +14,52 @@ interface StatusPillProps {
   count: number;
   icon: string;
   status: StatusType;
-  tooltipContent: React.ReactNode;
+  tooltipContent?: React.ReactNode;
 }
 
 const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, tooltipContent }) => {
-  return (
-    <Tooltip content={tooltipContent} side="bottom" delay={200}>
-      <div
-        className={styles.statusPill}
-        data-status={status}
-        data-active="false"
-      >
-        <span className={`material-symbols-rounded ${styles.icon}`}>{icon}</span>
-        <span className={styles.count}>{count}</span>
-      </div>
-    </Tooltip>
+  const pill = (
+    <div
+      className={styles.statusPill}
+      data-status={status}
+      data-active="false"
+    >
+      <span className={`material-symbols-rounded ${styles.icon}`}>{icon}</span>
+      <span className={styles.count}>{count}</span>
+    </div>
   );
+
+  // If tooltipContent is provided, wrap in Popover for touch-friendly interaction
+  if (tooltipContent) {
+    return (
+      <Popover trigger={pill}>
+        {tooltipContent}
+      </Popover>
+    );
+  }
+
+  return pill;
 };
 
 
 export const StatusBar = () => {
   const counts = useAtomValue(statusCountsAtom);
 
-  const lateTooltip = "Late: Checks past their 15-minute max window";
+  // PRD-02: Blue Pill shows aggregated Due + Due Soon
+  const aggregatedDueCount = counts.due + counts.dueSoon;
+
+  // Simplified natural language - reads like a sentence
+  const lateTooltip = (
+    <div className={styles.popoverContent}>
+      <span>{counts.late} Late</span>
+    </div>
+  );
+
+  // PRD-02: Tapping Blue Pill shows breakdown - reads like sentences
   const dueTooltip = (
-    <div style={{ textAlign: 'left' }}>
-      <div>Due now: Checks within the deadline window</div>
-      <div>Due soon: Approaching within 2 minutes</div>
+    <div className={styles.popoverContent}>
+      <div>{counts.due} Due Now</div>
+      <div>{counts.dueSoon} Due Soon</div>
     </div>
   );
 
@@ -54,7 +73,8 @@ export const StatusBar = () => {
     >
       <div className={styles.contentContainer}>
         <StatusPill count={counts.late} icon="notifications" status="late" tooltipContent={lateTooltip} />
-        <StatusPill count={counts.dueSoon} icon="schedule" status="due-soon" tooltipContent={dueTooltip} />
+        {/* PRD-02: Blue Pill shows aggregated count with breakdown popover */}
+        <StatusPill count={aggregatedDueCount} icon="schedule" status="due-soon" tooltipContent={dueTooltip} />
         {/* Queued items are handled by OfflineBanner now */}
       </div>
     </motion.div>

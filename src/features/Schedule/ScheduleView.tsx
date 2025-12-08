@@ -38,21 +38,34 @@ const filterLabelMap: Record<Exclude<ScheduleFilter, 'all'>, string> = {
 };
 
 const groupChecksByTime = (checks: SafetyCheck[]) => {
-  const groups: Record<string, SafetyCheck[]> = { Late: [], 'Due Soon': [], Upcoming: [] };
-  const now = new Date().getTime();
-  const threeMinutesFromNow = now + 3 * 60 * 1000;
+  // PRD-02: Group by status - Late, Due, Due Soon, Upcoming (early/pending)
+  const groups: Record<string, SafetyCheck[]> = {
+    Late: [],
+    Due: [],
+    'Due Soon': [],
+    Upcoming: []
+  };
 
   checks.forEach(check => {
-    if (['complete', 'supplemental', 'missed', 'queued'].includes(check.status)) {
+    if (['complete', 'supplemental', 'missed', 'queued', 'completing'].includes(check.status)) {
       return;
     }
-    const dueTime = new Date(check.dueDate).getTime();
-    if (dueTime < now) {
-      groups.Late.push(check);
-    } else if (dueTime < threeMinutesFromNow) {
-      groups['Due Soon'].push(check);
-    } else {
-      groups.Upcoming.push(check);
+
+    switch (check.status) {
+      case 'late':
+        groups.Late.push(check);
+        break;
+      case 'due':
+        groups.Due.push(check);
+        break;
+      case 'due-soon':
+        groups['Due Soon'].push(check);
+        break;
+      case 'early':
+      case 'pending':
+      default:
+        groups.Upcoming.push(check);
+        break;
     }
   });
 

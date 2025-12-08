@@ -51,7 +51,8 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-2); /* Ensure wrapping handles chip gracefully */
+  gap: var(--spacing-2);
+  /* Ensure wrapping handles chip gracefully */
 }
 
 /* Wrapper to hold multiple badges horizontally */
@@ -68,23 +69,32 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 24px; /* Slightly compact */
+  height: 24px;
+  /* Slightly compact */
   padding: 0 8px;
-  
-  font-size: 0.75rem; /* 12px */
+
+  font-size: 0.75rem;
+  /* 12px */
   font-weight: 600;
-  text-transform: uppercase;
+  /* Removed text-transform: uppercase per user feedback */
   letter-spacing: 0.02em;
-  
+
   border-radius: 4px;
   white-space: nowrap;
 }
 
-/* VARIANT: Info (Blue) - Used for Manual, Early, Supplemental */
+/* VARIANT: Info (Blue) - Used for Manual, Supplemental, Due, Due Soon */
 .statusLabel[data-variant='info'] {
   color: var(--surface-fg-info-primary);
   background-color: var(--surface-bg-info);
   border: 1px solid var(--surface-border-info);
+}
+
+/* VARIANT: Grey - Used for Early (faint, less prominent) */
+.statusLabel[data-variant='grey'] {
+  color: var(--surface-fg-tertiary);
+  background-color: var(--primitives-grey-30);
+  border: 1px solid var(--primitives-grey-200);
 }
 
 .infoNote {

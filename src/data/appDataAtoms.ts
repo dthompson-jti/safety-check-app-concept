@@ -17,7 +17,7 @@ import {
   recentlyCompletedCheckIdAtom
 } from './atoms';
 import { draftFormsAtom } from './formAtoms';
-import { initialChecks } from './mock/checkData';
+import { initialChecks, generateInitialChecks } from './mock/checkData';
 import { mockResidents } from './mock/residentData';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
 
@@ -47,7 +47,7 @@ const attemptPruneAndSave = (key: string, value: string, attempt = 1) => {
     let prunedCount = 0;
     const prunedData = data.filter((check) => {
       // Always keep actionable items
-      if (['early', 'pending', 'due-soon', 'late', 'completing', 'queued'].includes(check.status)) {
+      if (['early', 'pending', 'due-soon', 'due', 'late', 'completing', 'queued'].includes(check.status)) {
         return true;
       }
       // Remove historical items if we haven't met the quota
@@ -153,7 +153,8 @@ const appDataAtom = atom<AppData, [AppAction], void>(
     const currentChecks = get(baseChecksAtom);
 
     if (action.type === 'RESET_DATA') {
-      set(baseChecksAtom, initialChecks);
+      // Use factory function to generate fresh timestamps
+      set(baseChecksAtom, generateInitialChecks());
       set(completingChecksAtom, new Set());
       set(recentlyCompletedCheckIdAtom, null);
       set(draftFormsAtom, {});
@@ -200,7 +201,7 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
-            
+
             // Anchor: Completion Time (even if queued)
             const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.completionTime);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
@@ -267,13 +268,14 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
 
     if (check.type === 'supplemental') return check;
 
-    // --- WINDOW LOGIC ---
+    // --- WINDOW LOGIC (PRD-02) ---
     // Anchor: Due Date - Interval
     // Early: 0-7m
-    // Pending: 7-13m
-    // Due Soon: 13-15m
-    // Late: 15-22m
-    
+    // Pending: 7-11m (Hidden from header counts)
+    // Due Soon: 11-13m
+    // Due: 13-15m
+    // Late: 15m+
+
     const intervalMs = check.baseInterval * 60 * 1000;
     const dueTime = new Date(check.dueDate).getTime();
     const windowStartTime = dueTime - intervalMs;
@@ -284,13 +286,15 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
 
     if (elapsedMinutes < 7) {
       newStatus = 'early';
-    } else if (elapsedMinutes < 13) {
+    } else if (elapsedMinutes < 11) {
       newStatus = 'pending';
-    } else if (elapsedMinutes < 15) {
+    } else if (elapsedMinutes < 13) {
       newStatus = 'due-soon';
+    } else if (elapsedMinutes < 15) {
+      newStatus = 'due';
     } else {
       newStatus = 'late';
-      // Note: "Missed" (>22m) is handled by the Lifecycle Hook, not here.
+      // Note: "Missed" is handled by the Lifecycle Hook, not here.
       // This derived atom only updates UI status for active checks.
     }
 
@@ -386,17 +390,18 @@ export const routeSortedChecksAtom = atom((get) => {
   return [...actionable, ...nonActionable];
 });
 
+// PRD-02: Header shows aggregated 'due' (due + due-soon) and 'late'
+// 'early' and 'pending' are hidden from header counts
 export const statusCountsAtom = atom((get) => {
   const checks = get(searchFilteredChecksAtom);
-  const counts = { late: 0, dueSoon: 0, pending: 0, completed: 0, queued: 0 };
+  const counts = { late: 0, due: 0, dueSoon: 0, pending: 0, completed: 0, queued: 0 };
   for (const check of checks) {
     switch (check.status) {
       case 'late': counts.late++; break;
+      case 'due': counts.due++; break;
       case 'due-soon': counts.dueSoon++; break;
       case 'pending': counts.pending++; break;
-      // Early checks are counted as pending for the status bar summary? 
-      // Or ignored? Let's count them as pending for now to avoid confusion.
-      case 'early': counts.pending++; break; 
+      case 'early': counts.pending++; break; // Early counted internally, hidden from header
       case 'complete': counts.completed++; break;
       case 'queued': counts.queued++; break;
     }
@@ -460,7 +465,8 @@ export const manualSelectionResultsAtom = atom((get) => {
 
 const baseHistoricalChecksAtom = atom((get) => {
   const { checks } = get(appDataAtom);
-  return checks.filter(c => c.status !== 'pending' && c.status !== 'early' && c.status !== 'due-soon' && c.status !== 'completing');
+  // PRD-02: Exclude 'due' from historical as it's still active
+  return checks.filter(c => c.status !== 'pending' && c.status !== 'early' && c.status !== 'due-soon' && c.status !== 'due' && c.status !== 'completing');
 });
 
 export const historyCountsAtom = atom((get) => {

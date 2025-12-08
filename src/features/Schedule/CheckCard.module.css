@@ -88,6 +88,7 @@
   animation: pulse-overlay-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.checkCard[data-status='due'],
 .checkCard[data-status='due-soon'] {
   --status-animation-name: card-flash-glow-due-soon;
 }
@@ -128,6 +129,7 @@
   width: 2px;
 }
 
+.statusIndicator[data-status='due'],
 .statusIndicator[data-status='due-soon'] {
   width: 3px;
 }
@@ -140,6 +142,7 @@
   background-color: var(--surface-fg-warning-primary);
 }
 
+.statusIndicator[data-status='due'],
 .statusIndicator[data-status='due-soon'] {
   background-color: var(--surface-fg-info-primary);
 }
@@ -219,6 +222,7 @@
 }
 
 .checkCard[data-status='late'] .timeDisplay,
+.checkCard[data-status='due'] .timeDisplay,
 .checkCard[data-status='due-soon'] .timeDisplay {
   font-weight: 600;
 }
@@ -227,6 +231,7 @@
   color: var(--surface-fg-warning-primary);
 }
 
+.checkCard[data-status='due'] .timeDisplay,
 .checkCard[data-status='due-soon'] .timeDisplay {
   color: var(--surface-fg-info-primary);
 }

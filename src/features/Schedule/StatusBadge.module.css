@@ -17,7 +17,8 @@
 }
 
 .badgeIcon {
-  font-size: 14px !important; /* Override base icon size */
+  font-size: 14px !important;
+  /* Override base icon size */
   font-variation-settings: 'opsz' 14;
 }
 
@@ -28,17 +29,21 @@
   border-color: var(--primitives-yellow-200);
 }
 
-/* Variant: Info Group (Due Soon, Early, Supplemental) */
+/* Variant: Info Group (Due, Due Soon, Supplemental) */
+.badge[data-status='due'],
 .badge[data-status='due-soon'],
-.badge[data-status='early'],
 .badge[data-status='supplemental'] {
   background: var(--surface-bg-info);
   color: var(--surface-fg-info-primary);
   border-color: var(--primitives-blue-200);
 }
 
-/* Variant: Early Specific (Optional opacity override if desired, removed for consistency with Info) */
-/* .badge[data-status='early'] { opacity: 0.8; } */
+/* Variant: Early (Faint Grey - less prominent) */
+.badge[data-status='early'] {
+  background: var(--primitives-grey-30);
+  color: var(--surface-fg-tertiary);
+  border-color: var(--primitives-grey-200);
+}
 
 /* Variant: Completed */
 .badge[data-status='complete'],

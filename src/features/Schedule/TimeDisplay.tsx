@@ -30,8 +30,8 @@ const SlowTimer = ({ dueTime }: { dueTime: Date }) => {
  * This prevents the entire list from re-rendering at 60fps.
  */
 export const TimeDisplay = memo(({ dueTime, status }: TimeDisplayProps) => {
-    // UPDATED: Added 'early' to the list of statuses that show a timer
-    const isActionable = status === 'early' || status === 'pending' || status === 'due-soon' || status === 'late';
+    // UPDATED: Added 'due' to the list of statuses that show a timer
+    const isActionable = status === 'early' || status === 'pending' || status === 'due-soon' || status === 'due' || status === 'late';
 
     if (!isActionable) {
         if (status === 'missed') return <span>Missed</span>;
@@ -39,7 +39,7 @@ export const TimeDisplay = memo(({ dueTime, status }: TimeDisplayProps) => {
     }
 
     // Optimization: Only use 10fps timer for items < 3 minutes out
-    const isUrgent = status === 'due-soon' || status === 'late';
+    const isUrgent = status === 'due-soon' || status === 'due' || status === 'late';
 
     return isUrgent ? <FastTimer dueTime={dueTime} /> : <SlowTimer dueTime={dueTime} />;
 });
