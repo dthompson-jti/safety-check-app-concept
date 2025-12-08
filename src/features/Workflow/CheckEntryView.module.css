@@ -31,33 +31,6 @@
   gap: var(--spacing-2);
 }
 
-/* UPDATED: Info/Blue Semantic Tokens */
-.manualLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 28px;
-  padding: 0 10px;
-  
-  font-size: 0.875rem; /* 14px */
-  font-weight: 500;    /* Medium */
-  
-  /* Semantic Update: Info */
-  color: var(--surface-fg-info-primary);
-  background-color: var(--surface-bg-info);
-  border: 1px solid var(--surface-border-info);
-  
-  border-radius: 6px;
-  /* Removed margin-left: var(--spacing-2); handled by flex gap in wrapper */
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.manualLabel .material-symbols-rounded {
-  font-size: 16px;
-  color: var(--surface-fg-info-primary);
-}
-
 .formContent {
   flex: 1;
   overflow-y: auto;
@@ -81,13 +54,37 @@
   gap: var(--spacing-2); /* Ensure wrapping handles chip gracefully */
 }
 
-/* NEW: Wrapper for badges in the header */
+/* Wrapper to hold multiple badges horizontally */
 .badgeWrapper {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
   margin-left: var(--spacing-2);
   vertical-align: middle;
+}
+
+/* SHARED BADGE STYLE - Cohesive Look */
+.statusLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px; /* Slightly compact */
+  padding: 0 8px;
+  
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* VARIANT: Info (Blue) - Used for Manual, Early, Supplemental */
+.statusLabel[data-variant='info'] {
+  color: var(--surface-fg-info-primary);
+  background-color: var(--surface-bg-info);
+  border: 1px solid var(--surface-border-info);
 }
 
 .infoNote {

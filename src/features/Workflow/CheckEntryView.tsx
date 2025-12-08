@@ -19,7 +19,6 @@ import { Button } from '../../components/Button';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
 import { useCompleteCheck } from './useCompleteCheck';
-import { StatusBadge } from '../Schedule/StatusBadge'; // UPDATED: Import StatusBadge
 import styles from './CheckEntryView.module.css';
 
 type CheckEntryViewProps = {
@@ -57,7 +56,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const saveDraft = useSetAtom(saveDraftAtom);
   const clearDraft = useSetAtom(clearDraftAtom);
   
-  // UPDATED: Need access to all checks to find status of current check
+  // Need access to all checks to find status of current check
   const allChecks = useAtomValue(safetyChecksAtom);
 
   const connectionStatus = useAtomValue(connectionStatusAtom);
@@ -102,12 +101,14 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const [incidentType, setIncidentType] = useState<string>('');
 
   const [isAttested, setIsAttested] = useState(draft?.isAttested || false);
+  
+  // Determine Flags
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
   const isSupplementalCheck = checkData.type === 'supplemental';
 
-  // UPDATED: Derive the current check status to display the correct badge
+  // Determine Status for Badge
   const currentCheckStatus = useMemo(() => {
-    if (isSupplementalCheck) return 'complete'; // Placeholder status for supplemental, handled by type prop
+    if (isSupplementalCheck) return 'supplemental';
     const check = allChecks.find(c => c.id === (checkData as any).checkId);
     return check?.status || 'pending';
   }, [allChecks, checkData, isSupplementalCheck]);
@@ -273,22 +274,26 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
         <h2 className={styles.roomHeader}>
           {checkData.roomName}
           
-          {/* UPDATED: Wrapper for badges to ensure alignment */}
           <div className={styles.badgeWrapper}>
-            {/* 1. Manual Check Badge */}
+            {/* 1. Manual Check Badge (No Icon) */}
             {isManualCheck && (
-              <span className={styles.manualLabel}>
-                <span className="material-symbols-rounded">menu_book</span>
-                Manual Check
+              <span className={styles.statusLabel} data-variant="info">
+                Manual
               </span>
             )}
 
-            {/* 2. Status Badge (Early or Supplemental) */}
-            {(currentCheckStatus === 'early' || isSupplementalCheck) && (
-              <StatusBadge 
-                status={currentCheckStatus} 
-                type={isSupplementalCheck ? 'supplemental' : 'scheduled'} 
-              />
+            {/* 2. Supplemental Badge (No Icon) */}
+            {isSupplementalCheck && (
+              <span className={styles.statusLabel} data-variant="info">
+                Supplemental
+              </span>
+            )}
+
+            {/* 3. Early Badge (No Icon) - Only if not supplemental */}
+            {!isSupplementalCheck && currentCheckStatus === 'early' && (
+              <span className={styles.statusLabel} data-variant="info">
+                Early
+              </span>
             )}
           </div>
         </h2>

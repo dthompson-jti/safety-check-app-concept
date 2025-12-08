@@ -41,11 +41,12 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type }) => {
 
   // Determine label and effective status for styling
   let label = config.label;
-  let effectiveStatus = status;
+  // FIX: Explicitly type as string to allow 'supplemental' and avoid narrowing conflicts
+  let effectiveStatus: string = status;
 
   if (type === 'supplemental') {
     label = 'Supplemental';
-    effectiveStatus = 'supplemental' as SafetyCheckStatus; // Cast to satisfy type, or just string
+    effectiveStatus = 'supplemental';
   }
 
   return (
