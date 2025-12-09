@@ -17,14 +17,14 @@ User-configurable time display format for Check Cards: Relative (countdown), Abs
 | Mode | Display | Style |
 |------|---------|-------|
 | **Relative** (Default) | `14m 32s` | Bold, Status Color |
-| **Absolute** | `10:42:05 AM` | Bold, Status Color, 1fps |
-| **Dual** | Top: `10:42 AM` (Gray) / Bottom: `14m 32s` (Color) | Stacked |
+| **Absolute** | `10:42 AM` | Bold, Status Color, 1fps |
+| **Dual** | Top: `10:42 AM` (Dimmed) / Bottom: `14m 32s` (Color) | Stacked, same size/weight |
 
 ### Wireframe (Dual Mode)
 ```
 +-------------------------------------------------------+
 | A2-205                                          [Due] |
-|                                              10:42 AM | <- 12px, Gray
+|                                              10:42 AM | <- 14px, Medium, Dimmed
 | Sofia Petrova                                   51.3s | <- 14px, Bold, Color
 +-------------------------------------------------------+
 ```
@@ -54,9 +54,10 @@ Time Display
   flex-shrink: 0;
 }
 .dualSecondary {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--surface-fg-tertiary);
+  font-size: 14px;
+  font-weight: 500;
+  /* Inherit color/tokens, apply opacity */
+  opacity: 0.7;
 }
 ```
 

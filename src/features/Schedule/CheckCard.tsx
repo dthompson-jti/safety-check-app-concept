@@ -37,20 +37,19 @@ const ResidentListItem = ({ resident, check }: { resident: Resident; check: Safe
   );
 };
 
-// PRD-006: Helper to format absolute time
-const formatAbsoluteTime = (date: Date, includeSeconds: boolean): string => {
+// PRD-006: Helper to format absolute time (No seconds, per user request)
+const formatAbsoluteTime = (date: Date): string => {
   const options: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
-    ...(includeSeconds && { second: '2-digit' }),
   };
   return date.toLocaleTimeString(undefined, options);
 };
 
 // PRD-006: Sub-component for absolute time display (subscribes to 1fps ticker)
-const AbsoluteTimeDisplay = ({ dueTime, includeSeconds }: { dueTime: Date; includeSeconds: boolean }) => {
+const AbsoluteTimeDisplay = ({ dueTime }: { dueTime: Date }) => {
   useAtomValue(slowTickerAtom); // Re-render at 1fps
-  return <>{formatAbsoluteTime(dueTime, includeSeconds)}</>;
+  return <>{formatAbsoluteTime(dueTime)}</>;
 };
 
 export const CheckCard = ({ check, transition }: CheckCardProps) => {
@@ -90,12 +89,12 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
     switch (timeDisplayMode) {
       case 'absolute':
-        return <AbsoluteTimeDisplay dueTime={dueDate} includeSeconds={true} />;
+        return <AbsoluteTimeDisplay dueTime={dueDate} />;
       case 'dual':
         return (
           <>
             <span className={styles.dualSecondary}>
-              <AbsoluteTimeDisplay dueTime={dueDate} includeSeconds={false} />
+              <AbsoluteTimeDisplay dueTime={dueDate} />
             </span>
             <span>{relativeTime}</span>
           </>
