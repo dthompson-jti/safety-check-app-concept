@@ -243,7 +243,7 @@
 /* PRD-006: Secondary time style for Dual mode (absolute time on top) */
 .dualSecondary {
   font-size: 14px;
-  font-weight:500;
+  font-weight:400;
   /* Inherit color from .timeDisplay so it uses the same semantic status tokens */
   margin-bottom: 2px;
 }
