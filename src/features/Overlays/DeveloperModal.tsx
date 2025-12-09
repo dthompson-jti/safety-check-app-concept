@@ -37,7 +37,7 @@ interface ToastDefinition {
 
 const toastDefinitions: ToastDefinition[] = [
   { label: 'Scan Success', message: 'Check completed', icon: 'check_circle', variant: 'success', logic: 'Valid QR scan processed.' },
-  { label: 'Simple Submit', message: 'Check completed (Simple)', icon: 'check_circle', variant: 'success', logic: 'Simple Submit enabled.' },
+  { label: 'Simple Submit', message: 'Check completed', icon: 'check_circle', variant: 'success', logic: 'Simple Submit enabled.' },
   { label: 'Supplemental', message: 'Supplemental check saved', icon: 'task_alt', variant: 'success', logic: 'Unscheduled check added.' },
   { label: 'Sync Complete', message: 'Data synced', icon: 'cloud_done', variant: 'success', logic: 'Reconnection after offline.' },
   { label: 'Missed Check', message: 'Check for Room 101 missed', icon: 'history', variant: 'warning', logic: 'Ticker passes due + interval.', stableId: 'lifecycle-missed-check' },

@@ -87,7 +87,7 @@ export const AppFooter = () => {
           statuses: defaultStatuses,
           notes: '',
           onSuccess: () => {
-            addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle', variant: 'success' });
+            addToast({ message: 'Check completed', icon: 'check_circle', variant: 'success' });
           }
         });
         return;

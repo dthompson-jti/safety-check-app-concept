@@ -41,11 +41,24 @@ const incidentTypeOptions = [
   { value: 'Other', label: 'Other' },
 ];
 
-const markMultipleOptions = [
+// PRD-02: Define all mark multiple option sets (mirroring ResidentCheckControl)
+const markMultipleOptionsSet2 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+] as const;
+
+const markMultipleOptionsSet3 = [
   { value: 'Refused', label: 'Refused' },
   { value: 'Sleeping', label: 'Sleeping' },
   { value: 'Awake', label: 'Awake' },
-];
+] as const;
+
+const markMultipleOptionsSet4 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+] as const;
 
 export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
@@ -64,11 +77,30 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     isCheckTypeEnabled,
     manualConfirmationEnabled,
     markMultipleEnabled,
+    residentStatusSet, // PRD-02: Add for dynamic mark multiple options
   } = useAtomValue(appConfigAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
+
+  // PRD-02: Select appropriate mark multiple options based on config
+  let markMultipleOptions: readonly { value: string; label: string }[];
+  let markMultipleLayout: 'row' | 'grid' = 'row';
+
+  switch (residentStatusSet) {
+    case 'set-2':
+      markMultipleOptions = markMultipleOptionsSet2;
+      break;
+    case 'set-4':
+      markMultipleOptions = markMultipleOptionsSet4;
+      markMultipleLayout = 'grid';
+      break;
+    case 'set-3':
+    default:
+      markMultipleOptions = markMultipleOptionsSet3;
+      break;
+  }
 
   // Layout Stability: Sync height with visual viewport
   useVisualViewport();
@@ -338,6 +370,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
               options={markMultipleOptions}
               value={currentMarkAllValue}
               onValueChange={handleApplyAll}
+              layout={markMultipleLayout}
             />
           </div>
         )}

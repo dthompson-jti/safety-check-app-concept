@@ -116,7 +116,7 @@ export const ScanView = () => {
             statuses: defaultStatuses,
             notes: '',
             onSuccess: () => {
-              addToast({ message: 'Check completed (Simple Submit)', icon: 'check_circle', variant: 'success' });
+              addToast({ message: 'Check completed', icon: 'check_circle', variant: 'success' });
               setWorkflow({ view: 'none' });
             }
           });
