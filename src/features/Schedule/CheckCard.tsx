@@ -6,7 +6,8 @@ import { SafetyCheck, Resident } from '../../types';
 import {
   workflowStateAtom,
   recentlyCompletedCheckIdAtom,
-  appConfigAtom
+  appConfigAtom,
+  slowTickerAtom
 } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
 import { StatusBadge } from './StatusBadge';
@@ -36,10 +37,26 @@ const ResidentListItem = ({ resident, check }: { resident: Resident; check: Safe
   );
 };
 
+// PRD-006: Helper to format absolute time
+const formatAbsoluteTime = (date: Date, includeSeconds: boolean): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+    ...(includeSeconds && { second: '2-digit' }),
+  };
+  return date.toLocaleTimeString(undefined, options);
+};
+
+// PRD-006: Sub-component for absolute time display (subscribes to 1fps ticker)
+const AbsoluteTimeDisplay = ({ dueTime, includeSeconds }: { dueTime: Date; includeSeconds: boolean }) => {
+  useAtomValue(slowTickerAtom); // Re-render at 1fps
+  return <>{formatAbsoluteTime(dueTime, includeSeconds)}</>;
+};
+
 export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const { showStatusIndicators } = useAtomValue(appConfigAtom);
+  const { showStatusIndicators, timeDisplayMode } = useAtomValue(appConfigAtom);
 
   const isPulsing = recentlyCompletedCheckId === check.id;
 
@@ -66,6 +83,28 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const showIndicator = !['complete', 'supplemental', 'missed', 'completing', 'queued'].includes(check.status);
   const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
+
+  // PRD-006: Render time based on mode
+  const renderTimeDisplay = () => {
+    if (!isActionable) return null;
+
+    switch (timeDisplayMode) {
+      case 'absolute':
+        return <AbsoluteTimeDisplay dueTime={dueDate} includeSeconds={true} />;
+      case 'dual':
+        return (
+          <>
+            <span className={styles.dualSecondary}>
+              <AbsoluteTimeDisplay dueTime={dueDate} includeSeconds={false} />
+            </span>
+            <span>{relativeTime}</span>
+          </>
+        );
+      case 'relative':
+      default:
+        return relativeTime;
+    }
+  };
 
   return (
     <motion.div
@@ -98,7 +137,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
               <ResidentListItem key={resident.id} resident={resident} check={check} />
             ))}
           </ul>
-          <div className={styles.timeDisplay}>{isActionable ? relativeTime : ''}</div>
+          <div className={styles.timeDisplay}>{renderTimeDisplay()}</div>
         </div>
       </div>
     </motion.div>

@@ -4,7 +4,8 @@ import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import {
   workflowStateAtom,
-  appConfigAtom
+  appConfigAtom,
+  hardwareSimulationAtom
 } from '../../data/atoms';
 import {
   timeSortedChecksAtom
@@ -29,6 +30,7 @@ export const AppFooter = () => {
 
   // State needed for Smart NFC Simulation
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
+  const simulation = useAtomValue(hardwareSimulationAtom);
   const addToast = useSetAtom(addToastAtom);
 
   const footerRef = useRef<HTMLElement>(null);
@@ -67,6 +69,18 @@ export const AppFooter = () => {
   // Handler for NFC Simulation Shortcut
   // Simulates an instant tag read of the top-most relevant check.
   const handleNfcClick = () => {
+    // Check if NFC failure simulation is active
+    if (simulation.nfcFails) {
+      triggerHaptic('error');
+      playSound('error');
+      addToast({
+        message: 'Tag not read.\nHold phone steady against the tag.',
+        icon: 'wifi_tethering_error',
+        variant: 'alert'
+      });
+      return;
+    }
+
     // Always use timeSortedChecks since we only have one view now
     const targetCheck = timeSortedChecks.find(c =>
       c.status !== 'complete' && c.status !== 'missed' && c.type !== 'supplemental'

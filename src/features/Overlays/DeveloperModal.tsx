@@ -36,13 +36,11 @@ interface ToastDefinition {
 }
 
 const toastDefinitions: ToastDefinition[] = [
-  { label: 'Scan Success', message: 'Check completed', icon: 'check_circle', variant: 'success', logic: 'Valid QR scan processed.' },
-  { label: 'Simple Submit', message: 'Check completed', icon: 'check_circle', variant: 'success', logic: 'Simple Submit enabled.' },
-  { label: 'Supplemental', message: 'Supplemental check saved', icon: 'task_alt', variant: 'success', logic: 'Unscheduled check added.' },
   { label: 'Sync Complete', message: 'Data synced', icon: 'cloud_done', variant: 'success', logic: 'Reconnection after offline.' },
   { label: 'Missed Check', message: 'Check for Room 101 missed', icon: 'history', variant: 'warning', logic: 'Ticker passes due + interval.', stableId: 'lifecycle-missed-check' },
-  { label: 'Hardware Error', message: 'Camera/NFC failed', icon: 'error', variant: 'alert', logic: 'Hardware simulation active.' },
   { label: 'Neutral Info', message: 'No incomplete checks', icon: 'info', variant: 'neutral', logic: 'Action on empty list.' },
+  { label: 'Camera Error', message: 'Camera not responding.\nTry restarting your device.', icon: 'no_photography', variant: 'alert', logic: 'Simulated camera failure.' },
+  { label: 'NFC Error', message: 'Tag not read.\nHold phone steady against the tag.', icon: 'wifi_tethering_error', variant: 'alert', logic: 'Simulated NFC read failure.' },
 ];
 
 export const DeveloperModal = () => {
@@ -221,6 +219,14 @@ export const DeveloperModal = () => {
             />
           </div>
           <div className={styles.settingsItem}>
+            <label htmlFor="nfc-fail-switch" className={styles.itemLabel}>Force NFC Failure</label>
+            <Switch
+              id="nfc-fail-switch"
+              checked={simulation.nfcFails}
+              onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcFails: checked })))}
+            />
+          </div>
+          <div className={styles.settingsItem}>
             <label htmlFor="slow-load-switch" className={styles.itemLabel}>Simulate slow loading</label>
             <Switch
               id="slow-load-switch"
@@ -246,17 +252,14 @@ export const DeveloperModal = () => {
         <h3 className={styles.sectionHeader}>Toast Playground</h3>
         <div className={styles.toastGrid}>
           {toastDefinitions.map((def, index) => (
-            <div key={index} className={styles.toastCard}>
-              <button
-                className={styles.toastTrigger}
-                data-variant={def.variant}
-                onClick={() => handleToastTrigger(def)}
-              >
-                <span className="material-symbols-rounded">{def.icon}</span>
-                {def.label}
-              </button>
-              <span className={styles.toastLogic}>{def.logic}</span>
-            </div>
+            <Button
+              key={index}
+              variant="secondary"
+              onClick={() => handleToastTrigger(def)}
+            >
+              <span className="material-symbols-rounded">{def.icon}</span>
+              {def.label}
+            </Button>
           ))}
         </div>
       </div>

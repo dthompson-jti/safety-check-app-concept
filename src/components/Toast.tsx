@@ -13,7 +13,7 @@ import { removeToastAtom, Toast } from '../data/toastAtoms';
 export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp }: Toast) => {
   const removeToast = useSetAtom(removeToastAtom);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   // Auto-dismiss logic that respects updates (timestamp)
   useEffect(() => {
     // Only set a timer for non-persistent variants
@@ -52,7 +52,7 @@ export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       >
         <span className="material-symbols-rounded toast-icon">{icon}</span>
-        <ToastPrimitive.Description>{message}</ToastPrimitive.Description>
+        <ToastPrimitive.Description className="toast-description">{message}</ToastPrimitive.Description>
         <ToastPrimitive.Close className="toast-close-button" aria-label="Close">
           <span className="material-symbols-rounded">close</span>
         </ToastPrimitive.Close>

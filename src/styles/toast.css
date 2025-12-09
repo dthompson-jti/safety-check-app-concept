@@ -61,6 +61,12 @@
   flex-shrink: 0;
 }
 
+.toast-description {
+  white-space: pre-line;
+  /* Support \n for multi-line error messages */
+  margin: 0;
+}
+
 /* --- Close Button --- */
 
 .toast-close-button {

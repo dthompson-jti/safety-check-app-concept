@@ -4,8 +4,16 @@ import { motion } from 'framer-motion';
 import { appConfigAtom, sessionAtom } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
+import { SegmentedControl } from '../../components/SegmentedControl';
 import { Button } from '../../components/Button';
 import styles from './SettingsModal.module.css';
+
+// PRD-006: Time Display options
+const timeDisplayOptions = [
+  { value: 'relative', label: 'Relative' },
+  { value: 'absolute', label: 'Absolute' },
+  { value: 'dual', label: 'Dual' },
+] as const;
 
 export const SettingsModal = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
@@ -20,6 +28,12 @@ export const SettingsModal = () => {
   const handleAudioChange = (checked: boolean) => {
     triggerHaptic('light');
     setAppConfig(currentConfig => ({ ...currentConfig, audioEnabled: checked }));
+  };
+
+  // PRD-006: Time Display mode handler
+  const handleTimeDisplayChange = (value: 'relative' | 'absolute' | 'dual') => {
+    triggerHaptic('selection');
+    setAppConfig(currentConfig => ({ ...currentConfig, timeDisplayMode: value }));
   };
 
   const handleLogout = () => {
@@ -58,6 +72,16 @@ export const SettingsModal = () => {
               onCheckedChange={handleAudioChange}
             />
           </div>
+          {/* PRD-006: Time Display toggle */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Time Display</label>
+            <SegmentedControl
+              id="time-display-toggle"
+              options={timeDisplayOptions}
+              value={appConfig.timeDisplayMode}
+              onValueChange={handleTimeDisplayChange}
+            />
+          </div>
         </div>
       </div>
 
@@ -69,9 +93,9 @@ export const SettingsModal = () => {
           border/focus-ring from being cropped by overflow:hidden, and to 
           ensure the button's own border is fully visible.
         */}
-        <Button 
-          variant="secondary" 
-          onClick={handleLogout} 
+        <Button
+          variant="secondary"
+          onClick={handleLogout}
           className={styles.logoutButton}
         >
           Log Out
