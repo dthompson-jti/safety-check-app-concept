@@ -45,7 +45,7 @@ const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, tooltipCon
 export const StatusBar = () => {
   const counts = useAtomValue(statusCountsAtom);
 
-  // PRD-02: Blue Pill shows aggregated Due + Due Soon
+  // PRD-02: Blue Pill shows aggregated Due now + Due soon
   const aggregatedDueCount = counts.due + counts.dueSoon;
 
   // Simplified natural language - reads like a sentence
@@ -58,8 +58,8 @@ export const StatusBar = () => {
   // PRD-02: Tapping Blue Pill shows breakdown - reads like sentences
   const dueTooltip = (
     <div className={styles.popoverContent}>
-      <div>{counts.due} Due Now</div>
-      <div>{counts.dueSoon} Due Soon</div>
+      <div>{counts.due} Due now</div>
+      <div>{counts.dueSoon} Due soon</div>
     </div>
   );
 

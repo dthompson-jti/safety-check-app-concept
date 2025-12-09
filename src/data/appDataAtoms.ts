@@ -279,8 +279,8 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
     // Anchor: Due Date - Interval
     // Early: 0-7m
     // Pending: 7-11m (Hidden from header counts)
-    // Due Soon: 11-13m
-    // Due: 13-15m
+    // Due soon: 11-13m
+    // Due now: 13-15m
     // Late: 15m+
 
     const intervalMs = check.baseInterval * 60 * 1000;

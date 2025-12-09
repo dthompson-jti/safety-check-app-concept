@@ -17,8 +17,8 @@ The status of a check is derived dynamically based on the current time relative 
 | :--- | :--- | :--- | :--- |
 | **Early** | `0m` to `7m` | The check has just been generated. It is actionable but considered ahead of schedule. | **Badge:** "Early" (Grey/Neutral) |
 | **Pending** | `7m` to `11m` | The standard checking window. | **Badge:** None (Standard UI) |
-| **Due Soon** | `11m` to `13m` | The check is approaching its deadline. | **Badge:** "Due Soon" (Blue/Info) |
-| **Due** | `13m` to `15m` | The check is strictly due. | **Badge:** "Due" (Blue/Info) |
+| **Due soon** | `11m` to `13m` | The check is approaching its deadline. | **Badge:** "Due soon" (Blue/Info) |
+| **Due now** | `13m` to `15m` | The check is strictly due. | **Badge:** "Due now" (Blue/Info) |
 | **Late** | `15m` to `20m` | The check is past its Due Date but within the grace period. | **Badge:** "Late" (Orange/Warning) |
 | **Missed** | `> 20m` | The grace period has expired. The check is auto-resolved as missed. | **Badge:** "Missed" (Grey/History) |
 | **Completing** | N/A (Transient) | **Phase 1 (0-2s):** User saved, success animation plays. <br> **Phase 2:** Card exits. | **Badge:** "Completed" (Green/Success) |

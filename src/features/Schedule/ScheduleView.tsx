@@ -33,16 +33,16 @@ const SKELETON_COUNT = 8;
 
 const filterLabelMap: Record<Exclude<ScheduleFilter, 'all'>, string> = {
   late: 'Late',
-  'due-soon': 'Due Soon',
+  'due-soon': 'Due soon',
   queued: 'Queued',
 };
 
 const groupChecksByTime = (checks: SafetyCheck[]) => {
-  // PRD-02: Group by status - Late, Due, Due Soon, Upcoming (early/pending)
+  // PRD-02: Group by status - Late, Due now, Due soon, Upcoming (early/pending)
   const groups: Record<string, SafetyCheck[]> = {
     Late: [],
-    Due: [],
-    'Due Soon': [],
+    'Due now': [],
+    'Due soon': [],
     Upcoming: []
   };
 
@@ -78,10 +78,10 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
         groups.Late.push(check);
         break;
       case 'due':
-        groups.Due.push(check);
+        groups['Due now'].push(check);
         break;
       case 'due-soon':
-        groups['Due Soon'].push(check);
+        groups['Due soon'].push(check);
         break;
       case 'early':
       case 'pending':

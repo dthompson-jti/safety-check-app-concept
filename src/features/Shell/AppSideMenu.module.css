@@ -37,22 +37,22 @@
 .headerSeparator {
   height: 1px;
   background-color: var(--surface-border-secondary);
-  margin-top: var(--spacing-3);
+  margin-top: var(--spacing-4);
 }
 
 .content {
-  padding: var(--spacing-2) var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-4);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
   /* Push footer to bottom */
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .separator {
   height: 1px;
   background-color: var(--surface-border-secondary);
-  margin: var(--spacing-2) 0;
+  margin: var(--spacing-4) 0;
 }
 
 .menuItem {

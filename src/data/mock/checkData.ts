@@ -38,18 +38,18 @@ export const generateInitialChecks = (): SafetyCheck[] => {
   // We distribute these across the timeline to demonstrate all states:
   // Early (0-7m into cycle -> Due in 8-15m)
   // Pending (7-13m into cycle -> Due in 2-8m)
-  // Due Soon (13-15m into cycle -> Due in 0-2m)
+  // Due soon (13-15m into cycle -> Due in 0-2m)
   // Late (15-22m into cycle -> Due 0-7m ago)
 
   // Note: Due Date = End of 15m cycle.
-  // Example: If cycle started 14 mins ago, we are in "Due Soon". Due Date is in 1 min.
+  // Example: If cycle started 14 mins ago, we are in "Due soon". Due Date is in 1 min.
 
   const standardChecks = [
     // --- LATE GROUP (Due 2-5 mins ago) ---
     createCheck("A1-101", -2),
     createCheck("A1-102", -5),
 
-    // --- DUE SOON GROUP (Due in 1-2 mins) ---
+    // --- DUE SOON GROUP (Due now in 1-2 mins) ---
     createCheck("A2-205", 1),
     createCheck("A2-206", 2),
 

@@ -2,8 +2,6 @@
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import {
-  connectionStatusAtom,
-  ConnectionStatus,
   appConfigAtom,
   hardwareSimulationAtom
 } from '../../data/atoms';
@@ -14,12 +12,6 @@ import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { Switch } from '../../components/Switch';
 import { Button } from '../../components/Button';
 import styles from './DeveloperModal.module.css';
-
-const connectionOptions: readonly { value: ConnectionStatus; label: string; icon: string }[] = [
-  { value: 'online', label: 'Online', icon: 'cloud' },
-  { value: 'offline', label: 'Offline', icon: 'cloud_off' },
-  { value: 'syncing', label: 'Syncing', icon: 'sync' },
-] as const;
 
 const scanModeOptions = [
   { value: 'qr', label: 'QR Code', icon: 'qr_code_2' },
@@ -38,13 +30,11 @@ interface ToastDefinition {
 const toastDefinitions: ToastDefinition[] = [
   { label: 'Sync Complete', message: 'Data synced', icon: 'cloud_done', variant: 'success', logic: 'Reconnection after offline.' },
   { label: 'Missed Check', message: 'Check for Room 101 missed', icon: 'history', variant: 'warning', logic: 'Ticker passes due + interval.', stableId: 'lifecycle-missed-check' },
-  { label: 'Neutral Info', message: 'No incomplete checks', icon: 'info', variant: 'neutral', logic: 'Action on empty list.' },
   { label: 'Camera Error', message: 'Camera not responding.\nTry restarting your device.', icon: 'no_photography', variant: 'alert', logic: 'Simulated camera failure.' },
   { label: 'NFC Error', message: 'Tag not read.\nHold phone steady against the tag.', icon: 'wifi_tethering_error', variant: 'alert', logic: 'Simulated NFC read failure.' },
 ];
 
 export const DeveloperModal = () => {
-  const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
@@ -135,22 +125,6 @@ export const DeveloperModal = () => {
             />
           </div>
 
-          {/* PRD-02: Resident Status Set Toggle */}
-          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-            <label className={styles.itemLabel}>Resident status options</label>
-            <IconToggleGroup
-              id="resident-status-set-toggle"
-              options={[
-                { value: 'set-2', label: '2 Options', icon: 'looks_two' },
-                { value: 'set-3', label: '3 Options', icon: 'looks_3' },
-                { value: 'set-4', label: '4 Options', icon: 'looks_4' },
-              ]}
-              value={appConfig.residentStatusSet}
-              onValueChange={(val) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, residentStatusSet: val })); }}
-              fullWidth
-            />
-          </div>
-
           <div className={appConfig.simpleSubmitEnabled ? styles.disabledGroup : ''}>
             <div className={styles.settingsItem}>
               <label htmlFor="manual-confirm-switch" className={styles.itemLabel}>Manual confirmation</label>
@@ -176,6 +150,22 @@ export const DeveloperModal = () => {
                 onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, isCheckTypeEnabled: c })))}
               />
             </div>
+          </div>
+
+          {/* PRD-02: Resident Status Set Toggle */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Resident status options</label>
+            <IconToggleGroup
+              id="resident-status-set-toggle"
+              options={[
+                { value: 'set-2', label: '2 Options', icon: 'looks_two' },
+                { value: 'set-3', label: '3 Options', icon: 'looks_3' },
+                { value: 'set-4', label: '4 Options', icon: 'looks_4' },
+              ]}
+              value={appConfig.residentStatusSet}
+              onValueChange={(val) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, residentStatusSet: val })); }}
+              fullWidth
+            />
           </div>
         </div>
       </div>
@@ -235,16 +225,6 @@ export const DeveloperModal = () => {
             />
           </div>
         </div>
-
-        <div style={{ marginTop: 'var(--spacing-2)' }}>
-          <IconToggleGroup
-            options={connectionOptions}
-            value={connectionStatus}
-            onValueChange={(val) => { triggerHaptic('selection'); setConnectionStatus(val); }}
-            id="connection-status-toggle"
-            fullWidth
-          />
-        </div>
       </div>
 
       {/* 6. Toast Playground (Added at Bottom) */}
@@ -252,14 +232,16 @@ export const DeveloperModal = () => {
         <h3 className={styles.sectionHeader}>Toast Playground</h3>
         <div className={styles.toastGrid}>
           {toastDefinitions.map((def, index) => (
-            <Button
-              key={index}
-              variant="secondary"
-              onClick={() => handleToastTrigger(def)}
-            >
-              <span className="material-symbols-rounded">{def.icon}</span>
-              {def.label}
-            </Button>
+            <div key={index} className={styles.toastPlaygroundItem}>
+              <Button
+                variant="secondary"
+                onClick={() => handleToastTrigger(def)}
+              >
+                <span className="material-symbols-rounded">{def.icon}</span>
+                {def.label}
+              </Button>
+              <p className={styles.toastDescription}>{def.logic}</p>
+            </div>
           ))}
         </div>
       </div>

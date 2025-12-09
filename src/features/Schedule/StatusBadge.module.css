@@ -29,7 +29,7 @@
   border-color: var(--primitives-yellow-200);
 }
 
-/* Variant: Info Group (Due, Due Soon, Supplemental) */
+/* Variant: Info Group (Due now, Due soon, Supplemental) */
 .badge[data-status='due'],
 .badge[data-status='due-soon'],
 .badge[data-status='supplemental'] {

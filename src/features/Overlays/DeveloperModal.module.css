@@ -124,3 +124,17 @@
   color: var(--surface-fg-tertiary);
   line-height: 1.4;
 }
+
+/* Toast Playground Item (wraps button + description) */
+.toastPlaygroundItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.toastDescription {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--surface-fg-tertiary);
+  line-height: 1.4;
+}

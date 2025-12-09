@@ -83,7 +83,7 @@
   white-space: nowrap;
 }
 
-/* VARIANT: Info (Blue) - Used for Manual, Supplemental, Due, Due Soon */
+/* VARIANT: Info (Blue) - Used for Manual, Supplemental, Due now, Due soon */
 .statusLabel[data-variant='info'] {
   color: var(--surface-fg-info-primary);
   background-color: var(--surface-bg-info);

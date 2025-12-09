@@ -7,9 +7,9 @@ Implement strict legal timing requirements for safety checks, aggregate header s
 ## Goals
 
 1.  **Legal Compliance**: Enforce precise 7/11/13/15 minute checking windows.
-2.  **Cognitive Load Reduction**: Simplify the header status bar by aggregating "Due" and "Due Soon" items and moving details to a popover.
+2.  **Cognitive Load Reduction**: Simplify the header status bar by aggregating "Due now" and "Due soon" items and moving details to a popover.
 3.  **Flexible Input**: Support configurable resident status options (2, 3, or 4 choices) to accommodate different facility protocols.
-4.  **Visual Clarity**: Differentiate "Due" vs "Due Soon" vs "Late" clearly in the schedule list.
+4.  **Visual Clarity**: Differentiate "Due now" vs "Due soon" vs "Late" clearly in the schedule list.
 
 ---
 
@@ -23,8 +23,8 @@ Safety checks follow a strict timeline based on the 15-minute interval:
 | :--- | :--- | :--- | :--- |
 | **Early** | 0 - 7 mins | Hidden | Grey Badge (Faint) |
 | **Pending** | 7 - 11 mins | Hidden | No Badge (Standard Text) |
-| **Due Soon** | 11 - 13 mins | Visible (Blue) | Blue Badge + Timer (10fps) |
-| **Due** | 13 - 15 mins | Visible (Blue) | Blue Badge + Timer (10fps) |
+| **Due soon** | 11 - 13 mins | Visible (Blue) | Blue Badge + Timer (10fps) |
+| **Due now** | 13 - 15 mins | Visible (Blue) | Blue Badge + Timer (10fps) |
 | **Late** | 15+ mins | Visible (Orange) | Orange Badge + Timer (10fps) |
 
 > **Note**: "Missed" checks (>20m) are handled via a separate lifecycle hook and are terminal states.
@@ -32,13 +32,13 @@ Safety checks follow a strict timeline based on the 15-minute interval:
 ### 2. Header Status Bar
 
 *   **Aggregated "Actionable" Pill**:
-    *   Combines **Due** and **Due Soon** counts into a single Blue pill.
-    *   *Example*: If 2 checks are Due and 3 are Due Soon, the pill displays `5`.
+    *   Combines **Due now** and **Due soon** counts into a single Blue pill.
+    *   *Example*: If 2 checks are Due now and 3 are Due soon, the pill displays `5`.
 *   **Late Pill**:
     *   Displays count of **Late** checks in Orange.
 *   **Interaction**:
     *   Tapping the Blue "Actionable" pill opens a **Popover**.
-    *   **Popover Content**: Natural language breakdown (e.g., "2 Due Now", "3 Due Soon").
+    *   **Popover Content**: Natural language breakdown (e.g., "2 Due now", "3 Due soon").
     *   **Styling**: Dark background (`primary-solid`), white text, sentence case.
 
 ### 3. Schedule List Grouping
@@ -46,7 +46,7 @@ Safety checks follow a strict timeline based on the 15-minute interval:
 The schedule view is divided into distinct priority sections:
 1.  **Late** (Top priority)
 2.  **Due**
-3.  **Due Soon**
+3.  **Due soon**
 4.  **Upcoming** (Includes Early and Pending)
 
 ### 4. Configurable Resident Input
@@ -67,7 +67,7 @@ The resident status input in the check form (`CheckEntryView`) is configurable v
 
 *   **Early Badge**: Clean separate style using `grey-30` background and `grey-200` border to reduce visual noise compared to "Info" badges.
 *   **Due Badge**: New distinct badge for the 13-15m window.
-*   **Text Casing**: All badges use **Title Case** (e.g., "Due Soon", "Early") instead of uppercase.
+*   **Text Casing**: All badges use **Title Case** (e.g., "Due soon", "Early") instead of uppercase.
 
 ---
 
@@ -94,9 +94,9 @@ The resident status input in the check form (`CheckEntryView`) is configurable v
 ## Definition of Done
 
 *   [x] Timing windows (7/11/13/15) strictly enforced in logic.
-*   [x] Header Blue pill aggregates "Due" + "Due Soon".
-*   [x] Header Popover shows breakdown (e.g., "2 Due Now").
-*   [x] Schedule list groups items by Late / Due / Due Soon / Upcoming.
+*   [x] Header Blue pill aggregates "Due now" + "Due soon".
+*   [x] Header Popover shows breakdown (e.g., "2 Due now").
+*   [x] Schedule list groups items by Late / Due now / Due soon / Upcoming.
 *   [x] Resident input supports 4-option 2x2 grid layout.
 *   [x] "Reset Data" in Developer Modal fixes stale check times.
 *   [x] Early badges styled as faint grey.

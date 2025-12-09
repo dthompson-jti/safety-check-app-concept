@@ -14,9 +14,9 @@ const getStatusConfig = (status: SafetyCheckStatus): { label: string; icon: stri
     case 'late':
       return { label: 'Late', icon: 'notifications' };
     case 'due':
-      return { label: 'Due', icon: 'schedule' };
+      return { label: 'Due now', icon: 'schedule' };
     case 'due-soon':
-      return { label: 'Due Soon', icon: 'schedule' };
+      return { label: 'Due soon', icon: 'schedule' };
     case 'early':
       // No icon for Early status
       return { label: 'Early', icon: null };
