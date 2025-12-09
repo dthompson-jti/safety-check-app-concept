@@ -324,15 +324,18 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
                 Supplemental
               </span>
             )}
-
-            {/* 3. Early Badge (No Icon) - Only if not supplemental */}
-            {!isSupplementalCheck && currentCheckStatus === 'early' && (
-              <span className={styles.statusLabel} data-variant="grey">
-                Early
-              </span>
-            )}
           </div>
         </h2>
+
+        {/* Early Check Warning Block */}
+        {!isSupplementalCheck && currentCheckStatus === 'early' && (
+          <div className={styles.warningBlock}>
+            <span className="material-symbols-rounded" aria-hidden="true">
+              warning
+            </span>
+            <span>A check for this room was conducted recently.</span>
+          </div>
+        )}
 
         {isSupplementalCheck && (
           <div className={styles.incidentTypeSection}>

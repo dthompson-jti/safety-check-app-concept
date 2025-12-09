@@ -97,6 +97,28 @@
   border: 1px solid var(--primitives-grey-200);
 }
 
+/* Warning Block - Used for Early Check */
+.warningBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background-color: var(--surface-bg-warning-primary);
+  border: 1px solid var(--surface-border-warning);
+  border-radius: var(--radius-md);
+  color: var(--surface-fg-warning-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.warningBlock .material-symbols-rounded {
+  color: var(--surface-fg-warning-primary);
+  font-variation-settings: 'FILL' 1;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
 .infoNote {
   margin: calc(-1 * var(--spacing-2)) 0 0 0;
   font-size: 0.9rem;
