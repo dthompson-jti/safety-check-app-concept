@@ -125,14 +125,29 @@
   color: var(--surface-fg-secondary);
 }
 
-.checkTypeSection {
-  margin-bottom: var(--spacing-2);
-}
-
-.markMultipleLabel {
+.sectionHeader {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--surface-fg-secondary);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Section container - no extra margin, .formContent gap handles spacing */
+.checkTypeSection {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * Mark Multiple Container
+ * Uses padding-bottom for symmetric spacing around the divider.
+ * No margin-bottom needed - .formContent gap handles inter-section spacing.
+ */
+.markMultipleContainer {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--surface-border-secondary);
 }
 
 .residentListContainer {

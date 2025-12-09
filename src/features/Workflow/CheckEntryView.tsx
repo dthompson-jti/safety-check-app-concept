@@ -333,7 +333,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
             <span className="material-symbols-rounded" aria-hidden="true">
               warning
             </span>
-            <span>A check for this room was conducted recently.</span>
+            <span>This room was checked recently. Are you sure you want to check now?</span>
           </div>
         )}
 
@@ -356,7 +356,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
         {isCheckTypeEnabled && (
           <div className={styles.checkTypeSection}>
-            <label htmlFor="check-type-control">Check type</label>
+            <label htmlFor="check-type-control" className={styles.sectionHeader}>Check type</label>
             <SegmentedControl
               id="check-type-control"
               options={securityCheckTypeOptions}
@@ -368,6 +368,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
         {markMultipleEnabled && checkData.residents.length > 1 && (
           <div className={styles.markMultipleContainer}>
+            <label htmlFor="mark-all-control" className={styles.sectionHeader}>Mark all residents</label>
             <SegmentedControl
               id="mark-all-control"
               options={markMultipleOptions}
