@@ -34,7 +34,9 @@ The check completion workflow relies on a delicate balance between **State Manag
 #### B. The Ghost Item Contract
 **Rule:** The filtering logic for the active view must **include** items with status `'completing'`.
 *   **Why:** If the filter excludes `'completing'` items (like it excludes `'complete'` items), the card will vanish instantly (unmount) without playing its exit animation.
-*   **Implementation:** `ScheduleView` grouping logic explicitly ignores `'complete'` but processes `'completing'`.
+*   **Implementation:**
+    1.  `ScheduleView` grouping logic explicitly **includes** `'completing'` items.
+    2.  **Computed Display Group:** To prevent the item from jumping to a different group (e.g., "Upcoming") when its status changes, sorting logic must calculate its **Display Status** based on the timing window (Late/Due/etc.) rather than using the raw `'completing'` status. This ensures it stays anchored in its original position during the animation.
 
 #### C. The Exit Transition Spec
 **Rule:** Items leaving the list must slide right and collapse height simultaneously.

@@ -127,13 +127,20 @@ export type AppAction =
   | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } }
   | { type: 'RESET_DATA' };
 
-// UPDATED: Logic to support "Fresh Start" rollover.
-// The next check is calculated from the 'originTime' (completion time or missed time),
-// not the previous scheduled due date.
+// UPDATED: Legal Compliance Anchor Logic.
+// Per requirements: If a check is completed/missed AFTER the Max Time (15m),
+// the next check must anchor to the Max Time (previous due date), NOT the completion time.
+// This prevents schedule drift and maintains legal compliance.
 const generateNextCheck = (previousCheck: SafetyCheck, originTime: string): SafetyCheck => {
-  const originDate = new Date(originTime);
+  const originTimestamp = new Date(originTime).getTime();
+  const maxTimeTimestamp = new Date(previousCheck.dueDate).getTime();
+
+  // If the check was completed/missed after the max time, anchor to max time
+  // Otherwise, anchor to the actual completion time (allows flexibility for early/on-time checks)
+  const anchorTimestamp = Math.min(originTimestamp, maxTimeTimestamp);
+
   const intervalMs = previousCheck.baseInterval * 60 * 1000;
-  const nextDueDate = new Date(originDate.getTime() + intervalMs);
+  const nextDueDate = new Date(anchorTimestamp + intervalMs);
 
   return {
     ...previousCheck,

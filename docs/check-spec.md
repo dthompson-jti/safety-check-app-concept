@@ -7,7 +7,7 @@ This document defines the lifecycle states and transition logic for safety check
 *   **Base Interval (`baseInterval`):** The standard duration between checks (e.g., 15 minutes).
 *   **Due Date (`dueDate`):** The target completion time for a check. It marks the end of the "On Time" window and the start of the "Late" window.
 *   **Cycle Start (`windowStartTime`):** `DueDate - BaseInterval`. The moment the previous check was completed (or the cycle began).
-*   **Missed Buffer:** A fixed grace period (e.g., 7 minutes) after the Due Date before a check is considered "Missed".
+*   **Missed Buffer:** A fixed grace period of **5 minutes** after the Due Date before a check is considered "Missed".
 
 ## Lifecycle States
 
@@ -16,25 +16,31 @@ The status of a check is derived dynamically based on the current time relative 
 | Status | Time Window (relative to Cycle Start) | Description | Badge / UI |
 | :--- | :--- | :--- | :--- |
 | **Early** | `0m` to `7m` | The check has just been generated. It is actionable but considered ahead of schedule. | **Badge:** "Early" (Grey/Neutral) |
-| **Pending** | `7m` to `13m` | The standard checking window. | **Badge:** None (Standard UI) |
-| **Due Soon** | `13m` to `15m` | The check is approaching its deadline. | **Badge:** "Due Soon" (Blue/Info) |
-| **Late** | `15m` to `22m` | The check is past its Due Date but within the grace period. | **Badge:** "Late" (Orange/Warning) |
-| **Missed** | `> 22m` | The grace period has expired. The check is auto-resolved as missed. | **Badge:** "Missed" (Grey/History) |
+| **Pending** | `7m` to `11m` | The standard checking window. | **Badge:** None (Standard UI) |
+| **Due Soon** | `11m` to `13m` | The check is approaching its deadline. | **Badge:** "Due Soon" (Blue/Info) |
+| **Due** | `13m` to `15m` | The check is strictly due. | **Badge:** "Due" (Blue/Info) |
+| **Late** | `15m` to `20m` | The check is past its Due Date but within the grace period. | **Badge:** "Late" (Orange/Warning) |
+| **Missed** | `> 20m` | The grace period has expired. The check is auto-resolved as missed. | **Badge:** "Missed" (Grey/History) |
+| **Completing** | N/A (Transient) | **Phase 1 (0-2s):** User saved, success animation plays. <br> **Phase 2:** Card exits. | **Badge:** "Completed" (Green/Success) |
 
 ## Transition Logic
 
 ### 1. Completion Rollover
 When a user completes a check (in any state):
-1.  The current check is marked `complete`.
-2.  A **new check** is immediately generated.
-3.  **New Due Date Calculation:** `Completion Time + Base Interval`.
-4.  **Result:** The new check starts at `T=0` of its own cycle, placing it in the **Early** state.
+1.  **Transient Phase:** Status becomes `completing`. Card visual updates, but data remains active (2s animation).
+2.  **Commit:** After animation, check is marked `complete`.
+3.  A **new check** is immediately generated.
+4.  **Legal Compliance Anchor:** 
+    *   If completed **before or at Max Time** (≤15m): `Next Due Date = Completion Time + Base Interval`
+    *   If completed **after Max Time** (>15m): `Next Due Date = Max Time (Previous Due Date) + Base Interval`
+5.  **Result:** The new check starts at `T=0` of its own cycle, placing it in the **Early** state.
 
 ### 2. Missed Rollover
-When the system detects a check has exceeded the Missed Buffer (`Due Date + 7m`):
+When the system detects a check has exceeded the Missed Buffer (`Due Date + 5m`):
 1.  The current check is marked `missed`.
 2.  A **new check** is immediately generated.
-3.  **New Due Date Calculation:** `Missed Time (Now) + Base Interval`.
+3.  **Legal Compliance Anchor:** Since the check was missed (>15m), the next check anchors to the Max Time (Original Due Date).
+    *   `Next Due Date = Original Due Date + Base Interval`
 4.  **Result:** The new check starts at `T=0` of its own cycle, placing it in the **Early** state. This ensures the guard has a full 15-minute interval for the next round, rather than falling permanently behind schedule.
 
 ---

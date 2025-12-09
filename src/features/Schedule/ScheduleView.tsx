@@ -47,11 +47,33 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
   };
 
   checks.forEach(check => {
-    if (['complete', 'supplemental', 'missed', 'queued', 'completing'].includes(check.status)) {
+    if (['complete', 'supplemental', 'missed', 'queued'].includes(check.status)) {
       return;
     }
 
-    switch (check.status) {
+    // Animation-spec.md "Ghost Item Contract (Rule B)":
+    // 'completing' checks must remain in their ORIGINAL visual position
+    // so AnimatePresence can animate them out when they transition to 'complete'.
+    // We compute their display group based on timing, not actual status.
+    let displayStatus = check.status;
+
+    if (check.status === 'completing') {
+      // Compute what the status WOULD have been based on timing windows
+      // (matches logic in appDataAtoms.ts lines 271-298)
+      const intervalMs = check.baseInterval * 60 * 1000;
+      const dueTime = new Date(check.dueDate).getTime();
+      const windowStartTime = dueTime - intervalMs;
+      const elapsedMs = Date.now() - windowStartTime;
+      const elapsedMinutes = elapsedMs / (60 * 1000);
+
+      if (elapsedMinutes < 7) displayStatus = 'early';
+      else if (elapsedMinutes < 11) displayStatus = 'pending';
+      else if (elapsedMinutes < 13) displayStatus = 'due-soon';
+      else if (elapsedMinutes < 15) displayStatus = 'due';
+      else displayStatus = 'late';
+    }
+
+    switch (displayStatus) {
       case 'late':
         groups.Late.push(check);
         break;

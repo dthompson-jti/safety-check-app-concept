@@ -1,9 +1,9 @@
 // src/data/useCheckLifecycle.ts
 import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { 
-  slowTickerAtom, 
-  selectedFacilityGroupAtom, 
+import {
+  slowTickerAtom,
+  selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
   appConfigAtom
 } from './atoms';
@@ -23,7 +23,7 @@ export const useCheckLifecycle = () => {
   const checks = useAtomValue(safetyChecksAtom);
   const { missedCheckToastsEnabled } = useAtomValue(appConfigAtom);
   const activeToasts = useAtomValue(toastsAtom);
-  
+
   // Context awareness
   const currentGroupId = useAtomValue(selectedFacilityGroupAtom);
   const currentUnitId = useAtomValue(selectedFacilityUnitAtom);
@@ -41,26 +41,26 @@ export const useCheckLifecycle = () => {
       }
 
       const dueDate = new Date(check.dueDate).getTime();
-      
-      // Missed Threshold: Due Date + 7 minutes (fixed buffer)
-      const missedThreshold = dueDate + (7 * 60 * 1000);
+
+      // Missed Threshold: Due Date + 5 minutes (fixed buffer per requirements)
+      const missedThreshold = dueDate + (5 * 60 * 1000);
 
       if (now >= missedThreshold) {
         // 1. Dispatch Action (Update State)
-        dispatch({ 
-            type: 'CHECK_MISSED', 
-            payload: { 
-                checkId: check.id,
-                missedTime: new Date(now).toISOString()
-            } 
+        dispatch({
+          type: 'CHECK_MISSED',
+          payload: {
+            checkId: check.id,
+            missedTime: new Date(now).toISOString()
+          }
         });
-        
+
         // 2. Context Filter for Notifications
         if (check.residents[0]?.location) {
-           const context = getFacilityContextForLocation(check.residents[0].location);
-           if (context && context.groupId === currentGroupId && context.unitId === currentUnitId) {
-             missedChecksInThisTick.push(check.residents[0].location);
-           }
+          const context = getFacilityContextForLocation(check.residents[0].location);
+          if (context && context.groupId === currentGroupId && context.unitId === currentUnitId) {
+            missedChecksInThisTick.push(check.residents[0].location);
+          }
         }
       }
     });
@@ -68,17 +68,17 @@ export const useCheckLifecycle = () => {
     // 3. Batch Notifications with Counter Logic
     if (missedChecksInThisTick.length > 0 && missedCheckToastsEnabled) {
       const stableId = 'lifecycle-missed-check';
-      
+
       // Check if we already have a missed check toast visible
       const existingToast = activeToasts.find(t => t.stableId === stableId);
-      
+
       let totalCount = missedChecksInThisTick.length;
 
       if (existingToast) {
         // UPDATED: Robust Regex to catch "2 checks missed", "10 checks missed", etc.
         // We use case-insensitive flag 'i' and allow flexible whitespace.
         const countMatch = existingToast.message.match(/^(\d+)\s+checks\s+missed/i);
-        
+
         if (countMatch) {
           // If we found a number (e.g. "2"), parse it and add the new batch.
           totalCount += parseInt(countMatch[1], 10);
@@ -90,7 +90,7 @@ export const useCheckLifecycle = () => {
       }
 
       let message = '';
-      
+
       // If the total count is 1 (and it's a fresh toast), show specific details.
       // Otherwise, show the aggregate counter.
       if (totalCount === 1) {

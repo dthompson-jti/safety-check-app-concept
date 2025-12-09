@@ -12,6 +12,7 @@ type CompleteCheckOptions = {
     checkId: string;
     statuses: Record<string, string>;
     notes: string;
+    skipAnimation?: boolean;
     onSuccess?: () => void;
 };
 
@@ -24,18 +25,22 @@ export const useCompleteCheck = () => {
     const { trigger: triggerHaptic } = useHaptics();
     const { play: playSound } = useAppSound();
 
-    const completeCheck = ({ checkId, statuses, notes, onSuccess }: CompleteCheckOptions) => {
+    const completeCheck = ({ checkId, statuses, notes, skipAnimation, onSuccess }: CompleteCheckOptions) => {
         triggerHaptic('success');
         playSound('success');
 
-        // 1. Set status to 'completing' immediately.
-        // This triggers the green card state and the "Completed" badge.
-        dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId } });
-        
-        // 2. Trigger the pulse animation via the ID match.
-        setRecentlyCompletedCheckId(checkId);
+        const animationDuration = skipAnimation ? 0 : 2000;
 
-        // 3. Wait for the animation to play out (2 seconds).
+        // 1. Set status to 'completing' immediately (only if showing animation).
+        // This triggers the green card state and the "Completed" badge.
+        if (!skipAnimation) {
+            dispatch({ type: 'CHECK_SET_COMPLETING', payload: { checkId } });
+
+            // 2. Trigger the pulse animation via the ID match.
+            setRecentlyCompletedCheckId(checkId);
+        }
+
+        // 3. Wait for the animation to play out (2 seconds) or proceed immediately if skipping.
         // This applies to both Online and Offline modes for consistency.
         setTimeout(() => {
             const payload = {
@@ -52,9 +57,11 @@ export const useCompleteCheck = () => {
             }
 
             // Cleanup
-            setRecentlyCompletedCheckId(null);
+            if (!skipAnimation) {
+                setRecentlyCompletedCheckId(null);
+            }
             onSuccess?.();
-        }, 2000);
+        }, animationDuration);
     };
 
     return { completeCheck };
