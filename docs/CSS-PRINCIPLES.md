@@ -113,3 +113,21 @@ The application uses a standardized pattern for lists to ensure consistent heigh
     *   Ensures that text in `.list-item-content` aligns vertically across rows, even if one row has a wide icon and another has a narrow one.
 *   **`.list-item-content`**: The fluid container for text labels and trailing actions.
     *   **Padding Logic**: If a list item has *no* leading icon, `.list-item-root` must have `data-has-leading="false"`. This triggers CSS to add left padding to `.list-item-content`, preventing text from hugging the screen edge.
+
+#### The Gap-Based Spacing Contract
+
+When building form layouts or stacked sections (e.g., `CheckEntryView`):
+
+-   **The Rule:** If a parent container uses `gap` (e.g., `.formContent { gap: var(--spacing-4); }`), child sections should **not** add `margin-bottom`.
+-   **The Benefit:** Spacing is managed in one place (the parent), making it easier to adjust globally and preventing double-spacing bugs.
+-   **For Dividers:** If a section needs a visual divider, use symmetric `padding-bottom` inside the section, not `margin-bottom`. This keeps the divider visually centered between sections.
+-   **Example:**
+    ```css
+    /* CORRECT: Parent handles spacing, divider uses padding */
+    .formContent { gap: var(--spacing-4); }
+    .sectionWithDivider {
+      padding-bottom: var(--spacing-4);
+      border-bottom: 1px solid var(--surface-border-secondary);
+      /* NO margin-bottom here */
+    }
+    ```

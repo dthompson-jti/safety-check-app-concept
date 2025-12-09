@@ -60,6 +60,12 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   Content: Scrollable area with `padding: 0` if containing a list (to allow edge-to-edge separators).
     *   Footer: Fixed/Sticky at bottom if containing actions.
 
+### 5. Form Sections & Spacing
+*   **Directive:** When adding new sections to forms (like `CheckEntryView`), rely on the parent container's `gap` property for inter-section spacing.
+*   **Anti-Pattern:** Do not add `margin-bottom` to section containers when the parent already uses `gap`. This causes double-spacing.
+*   **Section Headers:** Use the `.sectionHeader` class (0.8rem, 600 weight, `--surface-fg-secondary` color) for form section labels.
+*   **Dividers:** If a visual separator is needed, use `border-bottom: 1px solid var(--surface-border-secondary)` with symmetric `padding-bottom`. Do not add `margin-bottom`—the parent `gap` handles spacing to the next item.
+
 ## CSS Architecture
 *   **Directive:** Do not add new global CSS files without updating `src/styles/index.css` to include them in the correct `@layer`.
 *   **Directive:** Prefer CSS Modules (`*.module.css`) for feature-specific styles. Use Global CSS (`src/styles/*.css`) only for reusable design patterns (buttons, lists, inputs).
