@@ -17,8 +17,11 @@ The check completion workflow relies on a delicate balance between **State Manag
 1.  **Trigger:** User scans a QR code or manually submits a check.
 2.  **Phase 1: Transient Success (0ms - 2000ms)**
     *   **State:** Check status updates to `'completing'`.
-    *   **Visual:** Card background turns Green (`var(--surface-bg-success)`). A ripple overlay fires.
+    *   **Visual:** 
+        *   **Outward Pulse:** A green ring expands OUTWARD from the card (`card-flash-complete`).
+        *   **Fade:** Background color fades from Green (`var(--surface-bg-success)`) to Grey (`var(--surface-bg-secondary)`) over 0.8s.
     *   **Layout Constraint:** The card **MUST NOT MOVE**. It must remain in its original list position.
+    *   **Visibility:** Any overlying views (Scan View, Form) **MUST** close immediately to reveal this animation on the list.
 3.  **Phase 2: Exit Transition (at 2000ms)**
     *   **State:** Check status updates to `'complete'`.
     *   **Visual:** Card slides out to the right while collapsing.

@@ -111,13 +111,14 @@ export const ScanView = () => {
             return acc;
           }, {} as Record<string, string>);
 
+          setWorkflow({ view: 'none' });
+
           completeCheck({
             checkId: check.id,
             statuses: defaultStatuses,
             notes: '',
             onSuccess: () => {
               addToast({ message: 'Check completed', icon: 'check_circle', variant: 'success' });
-              setWorkflow({ view: 'none' });
             }
           });
           return;

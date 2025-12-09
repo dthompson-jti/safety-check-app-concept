@@ -30,15 +30,29 @@
 }
 
 /* Keyframe for the completion pulse overlay */
-@keyframes pulse-overlay-success {
+@keyframes card-flash-complete {
   0% {
-    box-shadow: 0 0 0 0px var(--surface-bg-success-secondary);
-    opacity: 0.6;
+    box-shadow: var(--surface-shadow-xs), 0 0 0 0px rgba(13, 147, 90, 0.6);
+  }
+
+  60% {
+    box-shadow: var(--surface-shadow-xs), 0 0 0 16px rgba(13, 147, 90, 0);
   }
 
   100% {
-    box-shadow: 0 0 0 12px var(--surface-bg-success-secondary);
-    opacity: 0;
+    box-shadow: var(--surface-shadow-xs), 0 0 0 16px rgba(13, 147, 90, 0);
+  }
+}
+
+@keyframes card-success-fade {
+  0% {
+    background-color: var(--surface-bg-success);
+    border-color: var(--surface-border-success);
+  }
+
+  100% {
+    background-color: var(--surface-bg-secondary);
+    border-color: var(--surface-border-tertiary);
   }
 }
 
@@ -49,7 +63,6 @@
   border-radius: var(--radius-xl);
   box-shadow: none;
   transition: background-color 0.2s, border-color 0.2s, opacity 0.2s ease-in-out, padding-left 0.2s;
-  overflow: hidden;
 
   /* Base padding - Defaults to Symmetric */
   padding: var(--spacing-3);
@@ -84,10 +97,6 @@
   z-index: 1;
 }
 
-.checkCard.isCompleting::before {
-  animation: pulse-overlay-success 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 .checkCard[data-status='due'],
 .checkCard[data-status='due-soon'] {
   --status-animation-name: card-flash-glow-due-soon;
@@ -108,11 +117,18 @@
 
 .checkCard[data-status='complete'],
 .checkCard[data-status='supplemental'],
-.checkCard[data-status='completing'],
 .checkCard[data-status='queued'] {
   background-color: var(--surface-bg-secondary);
   border-color: var(--surface-border-tertiary);
   box-shadow: none;
+}
+
+.checkCard[data-status='completing'] {
+  background-color: var(--surface-bg-success);
+  border-color: var(--surface-border-success);
+  box-shadow: none;
+  --status-animation-name: card-flash-complete;
+  animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1), card-success-fade 0.8s ease-out forwards;
 }
 
 .statusIndicator {
