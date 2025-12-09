@@ -116,9 +116,11 @@ export const offlineTimestampAtom = atom<number | null>(null);
 
 export interface HardwareSimulation {
   cameraFails: boolean;
+  nfcFails: boolean;
 }
 export const hardwareSimulationAtom = atom<HardwareSimulation>({
   cameraFails: false,
+  nfcFails: false,
 });
 
 export const connectionStatusAtom = atom(
@@ -138,6 +140,7 @@ interface AppConfig {
   scanMode: 'qr' | 'nfc';
   hapticsEnabled: boolean;
   audioEnabled: boolean; // NEW: Decoupled audio setting
+  timeDisplayMode: 'relative' | 'absolute' | 'dual'; // PRD-006: Time display format
   isSlowLoadEnabled: boolean;
   isCheckTypeEnabled: boolean;
   manualConfirmationEnabled: boolean;
@@ -152,6 +155,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   scanMode: 'qr',
   hapticsEnabled: true,
   audioEnabled: true, // Default to true
+  timeDisplayMode: 'relative', // PRD-006: Default to relative countdown
   isSlowLoadEnabled: false,
   isCheckTypeEnabled: false,
   manualConfirmationEnabled: true,
