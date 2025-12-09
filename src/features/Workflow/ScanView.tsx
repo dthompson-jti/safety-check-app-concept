@@ -115,15 +115,9 @@ export const ScanView = () => {
             checkId: check.id,
             statuses: defaultStatuses,
             notes: '',
-            skipAnimation: true,
             onSuccess: () => {
               addToast({ message: 'Check completed', icon: 'check_circle', variant: 'success' });
-              // Keep scanner open - just reset to scanning state after brief success overlay
-              setTimeout(() => {
-                setScanViewState('scanning');
-                // Reset debounce to allow scanning different checks
-                lastScanned.current = null;
-              }, 800);
+              setWorkflow({ view: 'none' });
             }
           });
           return;
