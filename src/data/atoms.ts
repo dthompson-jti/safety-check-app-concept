@@ -158,7 +158,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   markMultipleEnabled: false,
   simpleSubmitEnabled: false,
   showStatusIndicators: false,
-  missedCheckToastsEnabled: true, // Default to true
+  missedCheckToastsEnabled: false, // Default to false
   residentStatusSet: 'set-3', // PRD-02: Default to 3 options (Awake, Sleeping, Refused)
 });
 
