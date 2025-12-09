@@ -43,7 +43,13 @@ React components and libraries (Radix, Framer Motion) change the DOM structure. 
 
 To ensure maximum readability and accessibility, all UI text should use sentence case or title case. **Do not use `text-transform: uppercase;`** for headers, titles, or labels.
 
-#### 5. Design for Layout Stability
+#### 5. The Text Handling Contract
+
+Complex user-facing messages (especially errors) often require specific formatting for clarity.
+-   **The Rule:** Components displaying dynamic messages (like Toasts) must support `white-space: pre-line`.
+-   **The Benefit:** This allows data to control line breaks (using `\n`), enabling the `[Problem].\n[Solution].` pattern without complex HTML parsing.
+
+#### 6. Design for Layout Stability
 
 CSS should be written defensively to prevent elements from "jumping" as content or state changes.
 

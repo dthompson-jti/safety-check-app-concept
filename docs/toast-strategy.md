@@ -23,6 +23,7 @@ Toasts are high-elevation floating surfaces that prioritize readability and touc
     *   **Shadow:** `var(--surface-shadow-md)`
     *   **Elevation:** Layer 200 (Above Content, Navigation, and Floating Buttons)
     *   **Dismissal:** Includes a dedicated 'x' close button on the right edge.
+    *   **Content Formatting:** Supports `white-space: pre-line` to allow explicit line breaks (`\n`) for separating problems from solutions.
 
 *   **Typography:**
     *   **Weight:** 500 (Medium)
@@ -32,6 +33,11 @@ Toasts are high-elevation floating surfaces that prioritize readability and touc
 *   **Iconography:**
     *   **Size:** 20px
     *   **Alignment:** Center-aligned with the first line of text.
+
+### Content Guidelines (NEW)
+*   **Error Messages:** Must be actionable. Follow the pattern: `[Problem description].\n[Actionable resolution].`
+    *   *Bad:* "NFC Error"
+    *   *Good:* "Tag not read.\nHold phone steady against the tag."
 
 ### Semantic Variants
 
@@ -101,8 +107,8 @@ Used for informational messages that are distinct from system status (e.g., spec
 | **Simple Submit** | **KEEP** | `success` | User stays on the list view; explicit feedback required. |
 | **Missed Checks** | **KEEP** | `warning` | Background event driven by time, not user action. |
 | **Dev Tools Reset** | **KEEP** | `neutral` | Destructive action confirmation. |
-| **Simulated Scan (Success)** | **KEEP** | `success` | Confirms dev tool action. |
-| **Simulated Scan (Fail)** | **KEEP** | `neutral` | Informational dev tool feedback. |
+| **Simulated Camera Fail** | **KEEP** | `alert` | "Camera not responding.\nTry restarting your device." |
+| **Simulated NFC Fail** | **KEEP** | `alert` | "Tag not read.\nHold phone steady against the tag." |
 
 ---
 

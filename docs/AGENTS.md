@@ -29,7 +29,13 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 
 ## UI & Component Standards
 
-### 1. List Items
+### 1. High-Precision Implementation
+*   **Verify Paths First:** never guess file locations. Always verify path existence (e.g., `src/types.ts` vs `src/data/types.ts`) before importing or editing to prevent build errors.
+*   **Holistic Fixes:** Do not patch a symptom. Trace the root cause (e.g., if a style is missing, check the global theme variables first).
+*   **Lint Proactively:** Run `npm run lint` immediately after making structural changes (moving files, refactoring atoms).
+*   **Error Feedback Standard:** User-facing errors must follow the `[Problem].\n[Actionable Solution].` pattern (e.g., "Camera not responding.\nTry restarting your device."). Use the `alert` variant for blocking errors.
+
+### 2. List Items
 *   **Directive:** Do not create custom list item components (e.g., `MyFeatureListItem`, `RoomRow`).
 *   **Solution:** Always use the `ActionListItem` component.
 *   **Reasoning:** Enforces the "Golden Row" pattern (56px height, consistent padding, full-width separators) defined in `list.css`.

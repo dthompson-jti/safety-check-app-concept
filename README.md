@@ -41,6 +41,10 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Audio:** Low-latency sound effects managed by a headless `SoundManager` and triggered via `useAppSound`. Audio can be toggled independently of haptics.
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:
     -   **Hardware Failure:** Simulate Camera or NFC reader failures.
+    -   **Simulation Toggles:**
+        -   Force Camera Failure (`HardwareSimulation`): Intercepts camera startup to display error overlays.
+        -   Force NFC Failure (`HardwareSimulation`): Intercepts NFC scans to trigger error feedback.
+        -   Missed Check Logic: Speed up time to test lifecycle events.
     -   **Network Status:** Toggle between Online, Offline, and Syncing states.
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
     -   **NFC Simulation Controls:** Interactive buttons within the NFC workflow to force specific outcomes (Success, Network Error, Tag Locked) for edge-case testing.
