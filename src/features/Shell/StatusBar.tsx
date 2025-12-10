@@ -45,21 +45,16 @@ const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, tooltipCon
 export const StatusBar = () => {
   const counts = useAtomValue(statusCountsAtom);
 
-  // PRD-02: Blue Pill shows aggregated Due now + Due soon
-  const aggregatedDueCount = counts.due + counts.dueSoon;
-
-  // Simplified natural language - reads like a sentence
-  const lateTooltip = (
+  // Tooltips for each status
+  const missedTooltip = (
     <div className={styles.popoverContent}>
-      <span>{counts.late} Late</span>
+      <span>{counts.missed} Missed</span>
     </div>
   );
 
-  // PRD-02: Tapping Blue Pill shows breakdown - reads like sentences
   const dueTooltip = (
     <div className={styles.popoverContent}>
-      <div>{counts.due} Due now</div>
-      <div>{counts.dueSoon} Due soon</div>
+      <span>{counts.due} Due</span>
     </div>
   );
 
@@ -72,10 +67,12 @@ export const StatusBar = () => {
       transition={{ type: 'tween', duration: 0.2 }}
     >
       <div className={styles.contentContainer}>
-        <StatusPill count={counts.late} icon="notifications" status="late" tooltipContent={lateTooltip} />
-        {/* PRD-02: Blue Pill shows aggregated count with breakdown popover */}
-        <StatusPill count={aggregatedDueCount} icon="schedule" status="due-soon" tooltipContent={dueTooltip} />
-        {/* Queued items are handled by OfflineBanner now */}
+        {/* Missed pill (red) - highest priority */}
+        {counts.missed > 0 && (
+          <StatusPill count={counts.missed} icon="notifications_active" status="missed" tooltipContent={missedTooltip} />
+        )}
+        {/* Due pill (yellow/warning) */}
+        <StatusPill count={counts.due} icon="schedule" status="due" tooltipContent={dueTooltip} />
       </div>
     </motion.div>
   );

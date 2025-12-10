@@ -66,8 +66,8 @@ const formatTime = (due: Date, nowTime: number): string => {
  * - Uses 24fps ticker (via fastTicker) only for critical last-minute items.
  */
 export const useCountdown = (dueTime: Date, status: SafetyCheckStatus): string => {
-  // UPDATED: Added 'due' to the list of statuses that show a timer
-  const isActionable = status === 'early' || status === 'pending' || status === 'due-soon' || status === 'due' || status === 'late';
+  // Simplified 3-state model: early/pending (Upcoming), due, missed
+  const isActionable = status === 'early' || status === 'pending' || status === 'due' || status === 'missed';
 
   // 1. Determine Urgency
   const nowForCalc = Date.now();
@@ -77,20 +77,38 @@ export const useCountdown = (dueTime: Date, status: SafetyCheckStatus): string =
   // - Critical (< 60s): Fast Ticker (24fps) for smooth decimals
   // - Urgent (< 5m): Throttled Ticker (10fps)
   // - Normal (> 5m): Slow Ticker (1fps)
+  // - Missed: Slow Ticker (1fps) - no need for fast updates
   let tickerAtom = slowTickerAtom;
 
-  if (diffSeconds < 60 && diffSeconds > -60) {
-    tickerAtom = fastTickerAtom;
-  } else if (diffSeconds < 300) {
-    tickerAtom = throttledTickerAtom;
+  if (status !== 'missed') {
+    if (diffSeconds < 60 && diffSeconds > -60) {
+      tickerAtom = fastTickerAtom;
+    } else if (diffSeconds < 300) {
+      tickerAtom = throttledTickerAtom;
+    }
   }
 
   // 3. Subscribe
   const nowTime = useAtomValue(tickerAtom);
 
   if (!isActionable) {
-    if (status === 'missed') return 'Missed';
     return '';
+  }
+
+  // 4. Special formatting for missed checks: show count-up time (same format as late/overdue)
+  if (status === 'missed') {
+    const overdueSecs = (nowTime - dueTime.getTime()) / 1000;
+    const totalMinutes = Math.floor(overdueSecs / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (totalMinutes < 1) return 'Overdue';
+
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+
+    return `Overdue ${parts.join(' ')}`;
   }
 
   return formatTime(dueTime, nowTime);

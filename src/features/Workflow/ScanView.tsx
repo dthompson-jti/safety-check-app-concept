@@ -98,7 +98,7 @@ export const ScanView = () => {
     setTimeout(() => {
       const checkId = result.startsWith('room:') ? result.split(':')[1] : result;
 
-      const check = allChecks.find(c => c.id === checkId && c.status !== 'complete' && c.status !== 'missed');
+      const check = allChecks.find(c => c.id === checkId && c.status !== 'complete');
 
       if (check) {
         triggerHaptic('success');
@@ -159,7 +159,7 @@ export const ScanView = () => {
     }
     // Always use timeSortedChecks since we only have one view now
     const actionableCandidate = timeSortedChecks.find(c =>
-      c.status !== 'complete' && c.status !== 'missed' && c.type !== 'supplemental'
+      c.status !== 'complete' && c.type !== 'supplemental'
     );
 
     if (actionableCandidate) {

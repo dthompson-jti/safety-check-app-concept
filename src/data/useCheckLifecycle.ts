@@ -42,8 +42,9 @@ export const useCheckLifecycle = () => {
 
       const dueDate = new Date(check.dueDate).getTime();
 
-      // Missed Threshold: Due Date + 5 minutes (fixed buffer per requirements)
-      const missedThreshold = dueDate + (5 * 60 * 1000);
+      // Missed Threshold: Due Date (15m mark - no grace period)
+      // Checks become missed as soon as they pass their due time
+      const missedThreshold = dueDate;
 
       if (now >= missedThreshold) {
         // 1. Dispatch Action (Update State)

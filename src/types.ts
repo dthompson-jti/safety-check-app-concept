@@ -1,12 +1,10 @@
 // src/types.ts
 
 export type SafetyCheckStatus =
-  | 'early'      // 0-7m
-  | 'pending'    // 7-11m (Hidden from header counts)
-  | 'due-soon'   // 11-13m
-  | 'due'        // 13-15m
-  | 'late'       // 15m+
-  | 'missed'     // Lifecycle hook triggers this on timeout
+  | 'early'      // 0-13m (internal, shows "Upcoming" in UI)
+  | 'pending'    // 0-13m (internal, shows "Upcoming" in UI)
+  | 'due'        // 13-15m (warning/yellow)
+  | 'missed'     // 15m+ (alert/red)
   | 'completing'
   | 'complete'
   | 'queued';
@@ -45,6 +43,6 @@ export interface SafetyCheck {
   baseInterval: number; // Minutes between checks (e.g., 15)
 }
 
-export type ScheduleFilter = 'all' | 'late' | 'due-soon' | 'queued';
+export type ScheduleFilter = 'all' | 'due' | 'missed' | 'queued';
 
-export type HistoryFilter = 'all' | 'lateOrMissed' | 'supplemental';
+export type HistoryFilter = 'all' | 'missed' | 'supplemental';

@@ -35,98 +35,94 @@ export const generateInitialChecks = (): SafetyCheck[] => {
   };
 
   // --- STANDARD CHECKS ---
-  // We distribute these across the timeline to demonstrate all states:
-  // Early (0-7m into cycle -> Due in 8-15m)
-  // Pending (7-13m into cycle -> Due in 2-8m)
-  // Due soon (13-15m into cycle -> Due in 0-2m)
-  // Late (15-22m into cycle -> Due 0-7m ago)
-
-  // Note: Due Date = End of 15m cycle.
-  // Example: If cycle started 14 mins ago, we are in "Due soon". Due Date is in 1 min.
+  // Simplified 3-state model:
+  // - Missed: Due date has passed (negative offset)
+  // - Due: Due in 0-2 minutes (warning window)
+  // - Upcoming: Due in 2-15 minutes
+  // NOTE: No check should be due more than 15 minutes from now
 
   const standardChecks = [
-    // --- LATE GROUP (Due 2-5 mins ago) ---
-    createCheck("A1-101", -2),
-    createCheck("A1-102", -5),
+    // --- MISSED GROUP (staggered: 58m, 44m, 13m ago) ---
+    createCheck("A1-101", -58), // "4 Missed" badge (58 min = 4 cycles)
+    createCheck("A1-102", -44), // "3 Missed" badge (44 min = 3 cycles)
+    createCheck("A1-103", -13), // "Missed" badge (13 min = 1 cycle)
 
-    // --- DUE SOON GROUP (Due now in 1-2 mins) ---
+    // --- DUE GROUP (Due in 1-2 mins - warning window) ---
     createCheck("A2-205", 1),
     createCheck("A2-206", 2),
 
-    // --- PENDING GROUP (Due in 5-10 mins) ---
+    // --- UPCOMING GROUP (Due in 3-15 mins) ---
     createCheck("A3-301", 5, [{ type: 'CS', details: 'Separation from J. Miller', residentId: 'jdc_a3_1' }]),
     createCheck("A3-302", 8),
     createCheck("A4-410", 10),
-
-    // --- EARLY GROUP (Due in 13-15 mins) ---
-    createCheck("A4-411", 13),
+    createCheck("A4-411", 12),
     createCheck("A5-502", 14, [{ type: 'MW', details: 'Asthmatic, check inhaler', residentId: 'jdc_a5_1' }]),
-    createCheck("A5-503", 15),
+    createCheck("A5-503", 15), // Max future due time
 
-    // --- FUTURE / STANDARD (Due later) ---
-    createCheck("A6-601", 20, [{ type: 'SR', details: 'Active watch, 15-min checks', residentId: 'jdc_a6_1' }]),
-    createCheck("A6-602", 25),
-    createCheck("A6-604", 30, [
+    // --- OTHER WINGS (capped at 15m future) ---
+    createCheck("A6-601", 15, [{ type: 'SR', details: 'Active watch, 15-min checks', residentId: 'jdc_a6_1' }]),
+    createCheck("A6-602", 15),
+    createCheck("A6-604", 15, [
       { type: 'SR', details: 'Both residents on suicide watch.', residentId: 'jdc_a6_4' },
       { type: 'SR', details: 'Both residents on suicide watch.', residentId: 'jdc_a6_5' }
     ]),
 
-    // JDC - B-Wing (Standard)
-    createCheck("B1-101", 35),
-    createCheck("B1-102", 40),
-    createCheck("B2-201", 45),
+    // JDC - B-Wing (capped at 15m)
+    createCheck("B1-101", 15),
+    createCheck("B1-102", 15),
+    createCheck("B2-201", 15),
 
-    // JDC - C-Wing
-    createCheck("C1-101", 50),
-    createCheck("C1-102", 55),
+    // JDC - C-Wing (capped at 15m)
+    createCheck("C1-101", 15),
+    createCheck("C1-102", 15),
 
-    // Sci-Fi - Star Wars
-    createCheck("Death Star Detention Block", 60),
-    createCheck("Emperor's Throne Room", 65, [
+    // Sci-Fi - Star Wars (capped at 15m future)
+    createCheck("Death Star Detention Block", 15),
+    createCheck("Emperor's Throne Room", 15, [
       { type: 'SW', details: "High-risk Sith Lords. Approach with caution.", residentId: 'sw_palp' },
       { type: 'SW', details: "High-risk Sith Lords. Approach with caution.", residentId: 'sw_vader' }
     ]),
-    createCheck("Millennium Falcon", 70),
-    createCheck("Mos Eisley Cantina", 75),
-    createCheck("Tatooine Homestead", 80),
-    createCheck("Dagobah", 85),
-    createCheck("Bespin", 90),
-    createCheck("Jabba's Palace", 95),
+    createCheck("Millennium Falcon", 15),
+    createCheck("Mos Eisley Cantina", 15),
+    createCheck("Tatooine Homestead", 15),
+    createCheck("Dagobah", 15),
+    createCheck("Bespin", 15),
+    createCheck("Jabba's Palace", 15),
 
-    // Sci-Fi - Harry Potter
-    createCheck("Gryffindor Tower", 100),
-    createCheck("Headmaster's Office", 105, [{ type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'hp_dumbledore' }]),
-    createCheck("Hufflepuff Common Room", 110),
-    createCheck("Potions Classroom", 115),
-    createCheck("The Great Hall", 120),
-    createCheck("Room of Requirement", 125),
-    createCheck("Slytherin Dungeon", 130),
-    createCheck("Ministry of Magic", 135, [{ type: 'MA', details: 'Requires MoM authorization.', residentId: 'hp_umbridge' }]),
+    // Sci-Fi - Harry Potter (capped at 15m future)
+    createCheck("Gryffindor Tower", 15),
+    createCheck("Headmaster's Office", 15, [{ type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'hp_dumbledore' }]),
+    createCheck("Hufflepuff Common Room", 15),
+    createCheck("Potions Classroom", 15),
+    createCheck("The Great Hall", 15),
+    createCheck("Room of Requirement", 15),
+    createCheck("Slytherin Dungeon", 15),
+    createCheck("Ministry of Magic", 15, [{ type: 'MA', details: 'Requires MoM authorization.', residentId: 'hp_umbridge' }]),
 
-    // Sci-Fi - Terminator
-    createCheck("Cyberdyne Annex", 140),
-    createCheck("Future Resistance Bunker", 145, [{ type: 'MA', details: 'Leadership check-in required.', residentId: 't_john' }]),
-    createCheck("Skynet Command Center", 150, [{ type: 'SW', details: 'Hostile cybernetic organism.', residentId: 't_t800_m101' }]),
-    createCheck("Pescadero State Hospital", 155),
-    createCheck("Tech-Noir Nightclub", 160),
-    createCheck("Cyberdyne Systems HQ", 165),
+    // Sci-Fi - Terminator (capped at 15m future)
+    createCheck("Cyberdyne Annex", 15),
+    createCheck("Future Resistance Bunker", 15, [{ type: 'MA', details: 'Leadership check-in required.', residentId: 't_john' }]),
+    createCheck("Skynet Command Center", 15, [{ type: 'SW', details: 'Hostile cybernetic organism.', residentId: 't_t800_m101' }]),
+    createCheck("Pescadero State Hospital", 15),
+    createCheck("Tech-Noir Nightclub", 15),
+    createCheck("Cyberdyne Systems HQ", 15),
 
-    // Sci-Fi - Alien
-    createCheck("LV-426 Medlab", 170, [{ type: 'SW', details: 'Xenomorph detected. High alert.', residentId: 'al_ripley' }]),
-    createCheck("Nostromo Galley", 175),
-    createCheck("Nostromo Cockpit", 180),
-    createCheck("LV-426 Operations Center", 185),
-    createCheck("LV-426 Ventilation Shafts", 190),
-    createCheck("Nostromo Hypersleep Chamber", 195, [{ type: 'SW', details: 'Synthetic. Behavioral monitoring.', residentId: 'al_ash' }]),
-    createCheck("USCSS Prometheus Bridge", 200),
+    // Sci-Fi - Alien (capped at 15m future)
+    createCheck("LV-426 Medlab", 15, [{ type: 'SW', details: 'Xenomorph detected. High alert.', residentId: 'al_ripley' }]),
+    createCheck("Nostromo Galley", 15),
+    createCheck("Nostromo Cockpit", 15),
+    createCheck("LV-426 Operations Center", 15),
+    createCheck("LV-426 Ventilation Shafts", 15),
+    createCheck("Nostromo Hypersleep Chamber", 15, [{ type: 'SW', details: 'Synthetic. Behavioral monitoring.', residentId: 'al_ash' }]),
+    createCheck("USCSS Prometheus Bridge", 15),
 
-    // Sci-Fi - The Expanse
-    createCheck("Rocinante Cockpit", 205),
-    createCheck("Rocinante Engineering", 210),
-    createCheck("Rocinante Galley", 215),
-    createCheck("UN-One", 220),
-    createCheck("Tycho Station Command", 225),
-    createCheck("Ceres Station Docks", 230),
+    // Sci-Fi - The Expanse (capped at 15m future)
+    createCheck("Rocinante Cockpit", 15),
+    createCheck("Rocinante Engineering", 15),
+    createCheck("Rocinante Galley", 15),
+    createCheck("UN-One", 15),
+    createCheck("Tycho Station Command", 15),
+    createCheck("Ceres Station Docks", 15),
   ];
 
   // --- B-WING STRESS TEST DATA GENERATOR ---
@@ -162,7 +158,7 @@ export const generateInitialChecks = (): SafetyCheck[] => {
       id: `chk_stress_b_${i}`,
       type: 'scheduled',
       residents: finalResidents,
-      status: 'late', // Already technically late relative to due date
+      status: 'pending', // Will be recalculated by atoms based on dueDate
       dueDate: new Date(dueTimeMs).toISOString(),
       walkingOrderIndex: 50 + i,
       specialClassifications: [],

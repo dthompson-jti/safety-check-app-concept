@@ -22,27 +22,18 @@
   font-variation-settings: 'opsz' 14;
 }
 
-/* Variant: Late */
-.badge[data-status='late'] {
+/* Variant: Due (Warning - attention needed soon) */
+.badge[data-status='due'] {
   background: var(--surface-bg-warning-primary);
   color: var(--surface-fg-warning-primary);
   border-color: var(--primitives-yellow-200);
 }
 
-/* Variant: Info Group (Due now, Due soon, Supplemental) */
-.badge[data-status='due'],
-.badge[data-status='due-soon'],
+/* Variant: Supplemental */
 .badge[data-status='supplemental'] {
   background: var(--surface-bg-info);
   color: var(--surface-fg-info-primary);
   border-color: var(--primitives-blue-200);
-}
-
-/* Variant: Early (Faint Grey - less prominent) */
-.badge[data-status='early'] {
-  background: var(--primitives-grey-30);
-  color: var(--surface-fg-tertiary);
-  border-color: var(--primitives-grey-200);
 }
 
 /* Variant: Completed */
@@ -53,8 +44,14 @@
   border-color: var(--primitives-green-200);
 }
 
-/* Variant: Missed / Queued (uses default grey) */
-.badge[data-status='missed'],
+/* Variant: Missed (Alert - urgent attention needed) */
+.badge[data-status='missed'] {
+  background: var(--surface-bg-error-primary);
+  color: var(--surface-fg-alert-primary);
+  border-color: var(--primitives-red-200);
+}
+
+/* Variant: Queued (in offline queue, grey) */
 .badge[data-status='queued'] {
   background: var(--primitives-grey-50);
   color: var(--surface-fg-secondary);

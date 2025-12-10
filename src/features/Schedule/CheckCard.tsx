@@ -37,11 +37,12 @@ const ResidentListItem = ({ resident, check }: { resident: Resident; check: Safe
   );
 };
 
-// PRD-006: Helper to format absolute time (No seconds, per user request)
+// PRD-006: Helper to format absolute time (with seconds)
 const formatAbsoluteTime = (date: Date): string => {
   const options: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
+    //second: '2-digit',
   };
   return date.toLocaleTimeString(undefined, options);
 };
@@ -61,7 +62,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
-  const isActionable = !['complete', 'supplemental', 'missed', 'completing', 'queued'].includes(check.status);
+  const isActionable = !['complete', 'supplemental', 'completing', 'queued'].includes(check.status);
 
   const handleCardClick = () => {
     if (isActionable) {
@@ -80,7 +81,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const { residents } = check;
   const roomName = residents[0]?.location || 'N/A';
 
-  const showIndicator = !['complete', 'supplemental', 'missed', 'completing', 'queued'].includes(check.status);
+  const showIndicator = !['complete', 'supplemental', 'completing', 'queued'].includes(check.status);
   const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
 
   // PRD-006: Render time based on mode
@@ -111,8 +112,20 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
       transition={transition}
       animate={{ x: 0, height: 'auto', opacity: 1 }}
       initial={{ opacity: 0 }}
-      // UPDATED EXIT ANIMATION: Slide right (x: 100%) + Collapse height
-      exit={{ x: '100%', height: 0, opacity: 0, overflow: 'hidden', marginBottom: 0 }}
+      // SEQUENCED EXIT: Slide out fully → 150ms pause → Snap collapse
+      exit={{
+        x: '100%',
+        height: 0,
+        opacity: 0,
+        overflow: 'hidden',
+        marginBottom: 0,
+        transition: {
+          x: { duration: 0.2, ease: [0.25, 1, 0.5, 1] },              // Slide out
+          opacity: { duration: 0.15, delay: 0.1, ease: 'easeOut' },   // Delayed fade (visible during slide)
+          height: { duration: 0.2, delay: 0.35, ease: [0.4, 0, 0.2, 1] }, // Snappy collapse after pause
+          marginBottom: { duration: 0.2, delay: 0.35, ease: [0.4, 0, 0.2, 1] }
+        }
+      }}
       className={cardClassName}
       data-status={check.status}
       // Data attribute controls padding logic in CSS
@@ -128,7 +141,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
           <div className={styles.locationInfo}>
             <span className={styles.locationText}>{roomName}</span>
           </div>
-          <StatusBadge status={check.status} type={check.type} />
+          <StatusBadge status={check.status} type={check.type} dueDate={check.dueDate} />
         </div>
         <div className={styles.bottomRow}>
           <ul className={styles.residentList}>

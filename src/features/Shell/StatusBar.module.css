@@ -34,13 +34,12 @@
 }
 
 /* Status-specific colors - foreground only */
-.statusPill[data-status="late"] {
-    color: var(--surface-fg-warning-primary);
+.statusPill[data-status="missed"] {
+    color: var(--surface-fg-alert-primary);
 }
 
-.statusPill[data-status="due-soon"],
 .statusPill[data-status="due"] {
-    color: var(--surface-fg-info-primary);
+    color: var(--surface-fg-warning-primary);
 }
 
 .icon {

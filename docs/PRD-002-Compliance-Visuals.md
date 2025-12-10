@@ -2,54 +2,61 @@
 
 ## Overview
 
-Implement strict legal timing requirements for safety checks, aggregate header status indicators for a cleaner "at-a-glance" view, and introduce configurable high-density input methods for resident statuses.
+Implement strict legal timing requirements for safety checks, simplified header status indicators for a cleaner "at-a-glance" view, and introduce configurable high-density input methods for resident statuses.
 
 ## Goals
 
-1.  **Legal Compliance**: Enforce precise 7/11/13/15 minute checking windows.
-2.  **Cognitive Load Reduction**: Simplify the header status bar by aggregating "Due now" and "Due soon" items and moving details to a popover.
-3.  **Flexible Input**: Support configurable resident status options (2, 3, or 4 choices) to accommodate different facility protocols.
-4.  **Visual Clarity**: Differentiate "Due now" vs "Due soon" vs "Late" clearly in the schedule list.
+1.  **Legal Compliance**: Enforce precise checking windows with a simplified 3-state model.
+2.  **Cognitive Load Reduction**: Simplify the header to show only Missed and Due counts.3.  **Flexible Input**: Support configurable resident status options (2, 3, or 4 choices) to accommodate different facility protocols.
+4.  **Visual Clarity**: Differentiate Upcoming / Due / Missed clearly in the schedule list.
 
 ---
 
 ## UX/UI Specification
 
-### 1. Compliance Timing Windows
+### 1. Compliance Timing Windows (Simplified 3-State Model)
 
 Safety checks follow a strict timeline based on the 15-minute interval:
 
 | Window Name | Time Range (Elapsed) | Header Visibility | UI Representation |
 | :--- | :--- | :--- | :--- |
-| **Early** | 0 - 7 mins | Hidden | Grey Badge (Faint) |
-| **Pending** | 7 - 11 mins | Hidden | No Badge (Standard Text) |
-| **Due soon** | 11 - 13 mins | Visible (Blue) | Blue Badge + Timer (10fps) |
-| **Due now** | 13 - 15 mins | Visible (Blue) | Blue Badge + Timer (10fps) |
-| **Late** | 15+ mins | Visible (Orange) | Orange Badge + Timer (10fps) |
+| **Early** | 0 - 7 mins | Hidden | No Badge (Internal status for form warning) |
+| **Pending** | 7 - 13 mins | Hidden | No Badge ("Upcoming" group) |
+| **Due** | 13 - 15 mins | Visible (Yellow) | Yellow Badge + Timer (10fps) |
+| **Missed** | 15+ mins | Visible (Red) | Red "X Missed" Badge (dynamic) |
 
-> **Note**: "Missed" checks (>20m) are handled via a separate lifecycle hook and are terminal states.
+> **Note**: The "Early" status is internal only - it shows a warning in the check form if completing before 7 minutes. Checks automatically transition to "Missed" at 15m (no grace period).
 
 ### 2. Header Status Bar
 
-*   **Aggregated "Actionable" Pill**:
-    *   Combines **Due now** and **Due soon** counts into a single Blue pill.
-    *   *Example*: If 2 checks are Due now and 3 are Due soon, the pill displays `5`.
-*   **Late Pill**:
-    *   Displays count of **Late** checks in Orange.
+*   **Missed Pill** (First position):
+    *   Displays count of **Missed** checks in Red/Alert.
+    *   Icon: `notifications_active`
+*   **Due Pill**:
+    *   Displays count of **Due** checks in Yellow/Warning.
+    *   Icon: `schedule`
 *   **Interaction**:
-    *   Tapping the Blue "Actionable" pill opens a **Popover**.
-    *   **Popover Content**: Natural language breakdown (e.g., "2 Due now", "3 Due soon").
-    *   **Styling**: Dark background (`primary-solid`), white text, sentence case.
+    *   Tapping each pill opens a **Popover** with natural language (e.g., "3 Missed", "2 Due").
 
 ### 3. Schedule List Grouping
 
-The schedule view is divided into distinct priority sections:
-1.  **Late** (Top priority)
-2.  **Due**
-3.  **Due soon**
-4.  **Upcoming** (Includes Early and Pending)
+The schedule view is divided into three distinct priority sections:
+1.  **Missed** (Top priority - red alert)
+2.  **Due** (Warning status - yellow)
+3.  **Upcoming** (Includes Early and Pending)
 
-### 4. Configurable Resident Input
+### 4. Dynamic Missed Badge Labels
+
+The badge label reflects how many 15-minute cycles have been missed:
+
+| Time Since Due | Badge Label |
+| :--- | :--- |
+| 0-15 min | "Missed" |
+| 15-30 min | "2 Missed" |
+| 30-45 min | "3 Missed" |
+| 45-60 min | "4 Missed" |
+
+### 5. Configurable Resident Input
 
 The resident status input in the check form (`CheckEntryView`) is configurable via `AppConfig`.
 
@@ -58,46 +65,37 @@ The resident status input in the check form (`CheckEntryView`) is configurable v
 *   **Visual Layouts**:
     *   **2 or 3 Options**: Rendered as a standard horizontal segmented control.
     *   **4 Options**: Rendered as a **2x2 Grid** for high density.
-*   **Styling**:
-    *   Minimum touch target: 48px.
-    *   Border collapsing handled via negative margins.
-    *   Title case text (e.g., "Awake", "Sleeping", "Refused", "Out").
 
-### 5. Badge Styling Update
+### 6. Badge Styling
 
-*   **Early Badge**: Clean separate style using `grey-30` background and `grey-200` border to reduce visual noise compared to "Info" badges.
-*   **Due Badge**: New distinct badge for the 13-15m window.
-*   **Text Casing**: All badges use **Title Case** (e.g., "Due soon", "Early") instead of uppercase.
+*   **Due Badge**: Yellow/Warning semantic (`--surface-fg-warning-primary`)
+*   **Missed Badge**: Red/Alert semantic (`--surface-fg-alert-primary`)
+*   **No badge for Upcoming**: Early/Pending checks don't display badges
 
 ---
 
 ## Technical Implementation
 
 ### Data Model (`src/types.ts`)
-*   Updated `SafetyCheckStatus` to include `'due'`.
-*   Updated `ScheduleFilter` logic to support new grouping.
+*   `SafetyCheckStatus`: `'early'`, `'pending'`, `'due'`, `'missed'`, `'completing'`, `'complete'`, `'queued'`
+*   Removed: `'late'`, `'due-soon'`
 
 ### State Management (`src/data/appDataAtoms.ts`)
-*   **Timing Logic**: `safetyChecksAtom` derived atom updated to implement the 7/11/13/15 minute thresholds.
-*   **Mock Data Generation**: Converted `initialChecks` to a factory function `generateInitialChecks()` to ensuring fresh timestamps on "Reset Application Data".
-
-### Developer Tools
-*   **Reset Data**: Now triggers a complete regeneration of mock data anchored to the exact moment of reset, resolving stale timeline issues during testing.
+*   **Timing Logic**: 0-7m → early, 7-13m → pending, 13-15m → due
+*   **Missed Trigger**: At exactly 15m via `useCheckLifecycle.ts`
 
 ### Components
-*   **`StatusBar.tsx`**: Implemented `Popover` for details.
-*   **`CheckCard.tsx`**: Added `'due'` styling and animation support.
-*   **`ResidentCheckControl.tsx`**: Dynamic rendering based on `residentStatusSet`.
+*   **`StatusBar.tsx`**: 2 pills (Missed + Due)
+*   **`StatusBadge.tsx`**: Dynamic "X Missed" labels based on elapsed cycles
+*   **`CheckCard.module.css`**: Warning (yellow) for due, alert (red) for missed
 
 ---
 
 ## Definition of Done
 
-*   [x] Timing windows (7/11/13/15) strictly enforced in logic.
-*   [x] Header Blue pill aggregates "Due now" + "Due soon".
-*   [x] Header Popover shows breakdown (e.g., "2 Due now").
-*   [x] Schedule list groups items by Late / Due now / Due soon / Upcoming.
-*   [x] Resident input supports 4-option 2x2 grid layout.
-*   [x] "Reset Data" in Developer Modal fixes stale check times.
-*   [x] Early badges styled as faint grey.
-*   [x] All badges use Title Case.
+*   [x] Simplified 3-state model (Upcoming/Due/Missed) implemented
+*   [x] Header shows only Missed (red) and Due (yellow) pills
+*   [x] Dynamic "X Missed" badges based on 15-minute cycles
+*   [x] Schedule list groups by Missed / Due / Upcoming
+*   [x] Resident input supports 4-option 2x2 grid layout
+*   [x] Early warning preserved in check form view

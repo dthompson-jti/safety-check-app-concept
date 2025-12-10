@@ -13,7 +13,7 @@ Per `Animation-spec.md`, items transitioning from an active state (e.g., 'Due') 
 3.  Slide off the screen (Phase 2).
 
 **The Challenge:**
-If the list is sorted/grouped by status (e.g., Late -> Due -> Upcoming), a status change to `'completing'` would arguably move the item to a different group (or the "Upcoming" default bucket) *before* the animation completes. This causes the item to "jump" instantly, breaking the users focus.
+If the list is sorted/grouped by status (e.g., Missed -> Due -> Upcoming), a status change to `'completing'` would arguably move the item to a different group (or the "Upcoming" default bucket) *before* the animation completes. This causes the item to "jump" instantly, breaking the users focus.
 
 **The Solution: Computed Display Groups**
 Instead of allowing `'completing'` items to fall into a default group, we explicitly calculate their **intended display group** based on their timing window.
@@ -21,7 +21,7 @@ Instead of allowing `'completing'` items to fall into a default group, we explic
 In `ScheduleView.tsx` (and other lists):
 1.  **Do not filter out** `'completing'` items. They must be present for `AnimatePresence` to detect their removal later.
 2.  **Determine Display Status:** If status is `'completing'`, calculate what the status *would be* based on the current time vs. due date.
-3.  **Sort/Group based on Display Status:** Place the item in the 'Late', 'Due', or 'Upcoming' bucket based on this calculation.
+3.  **Sort/Group based on Display Status:** Place the item in the 'Missed', 'Due', or 'Upcoming' bucket based on this calculation.
 
 **Code Example:**
 ```typescript

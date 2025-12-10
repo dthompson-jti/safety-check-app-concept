@@ -31,7 +31,7 @@ The check completion workflow relies on a delicate balance between **State Manag
 
 #### A. The Sorting Stability Contract
 **Rule:** The sorting algorithm for the active schedule list **MUST NEVER** sort by `status`.
-*   **Why:** If the list sorts by status (e.g., Late > Due Soon > Completing), changing a check to `'completing'` will cause it to instantly "jump" to a new position before the user can see the success animation.
+*   **Why:** If the list sorts by status (e.g., Missed > Due > Completing), changing a check to `'completing'` will cause it to instantly "jump" to a new position before the user can see the success animation.
 *   **Implementation:** Sort strictly by `dueDate` (Time View) or `walkingOrderIndex` (Route View).
 
 #### B. The Ghost Item Contract

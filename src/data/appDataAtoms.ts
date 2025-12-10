@@ -275,13 +275,11 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
 
     if (check.type === 'supplemental') return check;
 
-    // --- WINDOW LOGIC (PRD-02) ---
+    // --- WINDOW LOGIC (Simplified 3-state model) ---
     // Anchor: Due Date - Interval
-    // Early: 0-7m
-    // Pending: 7-11m (Hidden from header counts)
-    // Due soon: 11-13m
-    // Due now: 13-15m
-    // Late: 15m+
+    // Upcoming (early/pending): 0-13m
+    // Due: 13-15m (warning/yellow)
+    // Missed: 15m+ (handled by lifecycle hook)
 
     const intervalMs = check.baseInterval * 60 * 1000;
     const dueTime = new Date(check.dueDate).getTime();
@@ -292,17 +290,15 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
     let newStatus: SafetyCheckStatus = 'pending';
 
     if (elapsedMinutes < 7) {
-      newStatus = 'early';
-    } else if (elapsedMinutes < 11) {
-      newStatus = 'pending';
+      newStatus = 'early'; // Internal: for form warning
     } else if (elapsedMinutes < 13) {
-      newStatus = 'due-soon';
+      newStatus = 'pending';
     } else if (elapsedMinutes < 15) {
       newStatus = 'due';
     } else {
-      newStatus = 'late';
-      // Note: "Missed" is handled by the Lifecycle Hook, not here.
-      // This derived atom only updates UI status for active checks.
+      // 15m+ stays as 'pending' until lifecycle hook marks it 'missed'
+      // This prevents flash of wrong status
+      newStatus = 'pending';
     }
 
     if (check.status === newStatus) {
@@ -325,9 +321,9 @@ const contextFilteredChecksAtom = atom((get) => {
     return [];
   }
 
+  // Keep missed checks visible in schedule (they are actionable)
   const incompleteChecks = allChecks.filter(c =>
     c.status !== 'complete' &&
-    c.status !== 'missed' &&
     c.type !== 'supplemental'
   );
 
@@ -367,8 +363,7 @@ const scheduleFilteredChecksAtom = atom((get) => {
     return checks;
   }
 
-  const filterKey = filter === 'due-soon' ? 'due-soon' : filter;
-  return checks.filter(check => check.status === filterKey);
+  return checks.filter(check => check.status === filter);
 });
 
 export const timeSortedChecksAtom = atom((get) => {
@@ -397,18 +392,16 @@ export const routeSortedChecksAtom = atom((get) => {
   return [...actionable, ...nonActionable];
 });
 
-// PRD-02: Header shows aggregated 'due' (due + due-soon) and 'late'
-// 'early' and 'pending' are hidden from header counts
+// Simplified status counts: missed, due, pending (upcoming)
 export const statusCountsAtom = atom((get) => {
   const checks = get(searchFilteredChecksAtom);
-  const counts = { late: 0, due: 0, dueSoon: 0, pending: 0, completed: 0, queued: 0 };
+  const counts = { missed: 0, due: 0, pending: 0, completed: 0, queued: 0 };
   for (const check of checks) {
     switch (check.status) {
-      case 'late': counts.late++; break;
+      case 'missed': counts.missed++; break;
       case 'due': counts.due++; break;
-      case 'due-soon': counts.dueSoon++; break;
       case 'pending': counts.pending++; break;
-      case 'early': counts.pending++; break; // Early counted internally, hidden from header
+      case 'early': counts.pending++; break; // Early counted as pending
       case 'complete': counts.completed++; break;
       case 'queued': counts.queued++; break;
     }
@@ -472,15 +465,15 @@ export const manualSelectionResultsAtom = atom((get) => {
 
 const baseHistoricalChecksAtom = atom((get) => {
   const { checks } = get(appDataAtom);
-  // PRD-02: Exclude 'due' from historical as it's still active
-  return checks.filter(c => c.status !== 'pending' && c.status !== 'early' && c.status !== 'due-soon' && c.status !== 'due' && c.status !== 'completing');
+  // Exclude active checks from history
+  return checks.filter(c => c.status !== 'pending' && c.status !== 'early' && c.status !== 'due' && c.status !== 'completing');
 });
 
 export const historyCountsAtom = atom((get) => {
   const historicalChecks = get(baseHistoricalChecksAtom);
   return {
     all: historicalChecks.length,
-    lateOrMissed: historicalChecks.filter(c => c.status === 'late' || c.status === 'missed').length,
+    missed: historicalChecks.filter(c => c.status === 'missed').length,
     supplemental: historicalChecks.filter(c => c.type === 'supplemental').length,
   };
 });
@@ -502,8 +495,8 @@ export const groupedHistoryAtom = atom((get) => {
   const filter = get(historyFilterAtom);
 
   let filteredChecks = historicalChecksBase;
-  if (filter === 'lateOrMissed') {
-    filteredChecks = historicalChecksBase.filter(c => c.status === 'late' || c.status === 'missed');
+  if (filter === 'missed') {
+    filteredChecks = historicalChecksBase.filter(c => c.status === 'missed');
   } else if (filter === 'supplemental') {
     filteredChecks = historicalChecksBase.filter(c => c.type === 'supplemental');
   }

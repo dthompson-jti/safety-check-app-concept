@@ -4,9 +4,9 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--surface-bg-tertiary);
-    color: var(--surface-fg-secondary);
-    border: 1px solid var(--surface-border-primary);
+    background-color: var(--surface-bg-brand-solid);
+    color: var(--surface-fg-primary_on_brand);
+    border: 1px solid var(--surface-border-theme_alt);
 
     display: flex;
     align-items: center;

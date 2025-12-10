@@ -97,13 +97,8 @@
   z-index: 1;
 }
 
-.checkCard[data-status='due'],
-.checkCard[data-status='due-soon'] {
+.checkCard[data-status='due'] {
   --status-animation-name: card-flash-glow-due-soon;
-}
-
-.checkCard[data-status='late'] {
-  --status-animation-name: card-flash-glow-late;
 }
 
 .checkCard:not([aria-disabled='true']) {
@@ -129,6 +124,15 @@
   box-shadow: none;
   --status-animation-name: card-flash-complete;
   animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1), card-success-fade 0.8s ease-out forwards;
+  /* Raise above sticky headers (z-index:5) so pulse isn't clipped */
+  position: relative;
+  z-index: 10;
+}
+
+/* Variant: Missed - primary bg with alert indicator */
+.checkCard[data-status='missed'] {
+  background-color: var(--surface-bg-primary);
+  border-color: var(--control-border-tertiary);
 }
 
 .statusIndicator {
@@ -141,26 +145,19 @@
   transition: background-color 0.2s, width 0.2s;
 }
 
-.statusIndicator[data-status='pending'] {
+.statusIndicator[data-status='pending'],
+.statusIndicator[data-status='early'] {
   width: 2px;
 }
 
-.statusIndicator[data-status='due'],
-.statusIndicator[data-status='due-soon'] {
+.statusIndicator[data-status='due'] {
   width: 3px;
-}
-
-.statusIndicator[data-status='late'] {
-  width: 4px;
-}
-
-.statusIndicator[data-status='late'] {
   background-color: var(--surface-fg-warning-primary);
 }
 
-.statusIndicator[data-status='due'],
-.statusIndicator[data-status='due-soon'] {
-  background-color: var(--surface-fg-info-primary);
+.statusIndicator[data-status='missed'] {
+  width: 4px;
+  background-color: var(--surface-fg-alert-primary);
 }
 
 .mainContent {
@@ -243,22 +240,20 @@
 /* PRD-006: Secondary time style for Dual mode (absolute time on top) */
 .dualSecondary {
   font-size: 14px;
-  font-weight:400;
+  font-weight: 400;
   /* Inherit color from .timeDisplay so it uses the same semantic status tokens */
   margin-bottom: 2px;
 }
 
-.checkCard[data-status='late'] .timeDisplay,
-.checkCard[data-status='due'] .timeDisplay,
-.checkCard[data-status='due-soon'] .timeDisplay {
+.checkCard[data-status='due'] .timeDisplay {
   font-weight: 600;
 }
 
-.checkCard[data-status='late'] .timeDisplay {
+.checkCard[data-status='due'] .timeDisplay {
   color: var(--surface-fg-warning-primary);
 }
 
-.checkCard[data-status='due'] .timeDisplay,
-.checkCard[data-status='due-soon'] .timeDisplay {
-  color: var(--surface-fg-info-primary);
+.checkCard[data-status='missed'] .timeDisplay {
+  color: var(--surface-fg-alert-primary);
+  font-weight: 600;
 }

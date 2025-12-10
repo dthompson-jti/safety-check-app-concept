@@ -5,7 +5,6 @@ import { AnimatePresence, motion, Transition } from 'framer-motion';
 import { timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
 import {
   appConfigAtom,
-  completingChecksAtom,
   isScheduleLoadingAtom,
   scheduleSearchQueryAtom,
   isScheduleRefreshingAtom,
@@ -32,22 +31,22 @@ interface ScheduleViewProps {
 const SKELETON_COUNT = 8;
 
 const filterLabelMap: Record<Exclude<ScheduleFilter, 'all'>, string> = {
-  late: 'Late',
-  'due-soon': 'Due soon',
+  missed: 'Missed',
+  due: 'Due',
   queued: 'Queued',
 };
 
 const groupChecksByTime = (checks: SafetyCheck[]) => {
-  // PRD-02: Group by status - Late, Due now, Due soon, Upcoming (early/pending)
+  // Simplified 3-state model: Missed, Due, Upcoming
   const groups: Record<string, SafetyCheck[]> = {
-    Late: [],
-    'Due now': [],
-    'Due soon': [],
+    Missed: [],
+    Due: [],
     Upcoming: []
   };
 
   checks.forEach(check => {
-    if (['complete', 'supplemental', 'missed', 'queued'].includes(check.status)) {
+    // Skip terminal states except missed (which we now show)
+    if (['complete', 'supplemental', 'queued'].includes(check.status)) {
       return;
     }
 
@@ -59,29 +58,24 @@ const groupChecksByTime = (checks: SafetyCheck[]) => {
 
     if (check.status === 'completing') {
       // Compute what the status WOULD have been based on timing windows
-      // (matches logic in appDataAtoms.ts lines 271-298)
+      // This ensures the card stays in its original group during animation
       const intervalMs = check.baseInterval * 60 * 1000;
       const dueTime = new Date(check.dueDate).getTime();
       const windowStartTime = dueTime - intervalMs;
       const elapsedMs = Date.now() - windowStartTime;
       const elapsedMinutes = elapsedMs / (60 * 1000);
 
-      if (elapsedMinutes < 7) displayStatus = 'early';
-      else if (elapsedMinutes < 11) displayStatus = 'pending';
-      else if (elapsedMinutes < 13) displayStatus = 'due-soon';
+      if (elapsedMinutes < 13) displayStatus = 'pending';
       else if (elapsedMinutes < 15) displayStatus = 'due';
-      else displayStatus = 'late';
+      else displayStatus = 'missed'; // Keep in Missed group during animation
     }
 
     switch (displayStatus) {
-      case 'late':
-        groups.Late.push(check);
+      case 'missed':
+        groups.Missed.push(check);
         break;
       case 'due':
-        groups['Due now'].push(check);
-        break;
-      case 'due-soon':
-        groups['Due soon'].push(check);
+        groups.Due.push(check);
         break;
       case 'early':
       case 'pending':
@@ -108,7 +102,6 @@ const groupChecksByRoute = (checks: SafetyCheck[]) => {
 export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
   const { isSlowLoadEnabled } = useAtomValue(appConfigAtom);
-  const completingChecks = useAtomValue(completingChecksAtom);
   const [isLoading, setIsLoading] = useAtom(isScheduleLoadingAtom);
   const isRefreshing = useAtomValue(isScheduleRefreshingAtom);
   const searchQuery = useAtomValue(scheduleSearchQueryAtom);
@@ -173,7 +166,8 @@ export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
               <h2 className={styles.priorityGroupHeader}>{group.title}</h2>
             </motion.div>,
             ...group.checks.map(check => {
-              if (completingChecks.has(check.id)) return null;
+              // Animation-spec.md Ghost Item Contract: completing checks MUST render
+              // so AnimatePresence can animate their exit transition
               return <CheckCard key={check.id} check={check} transition={listTransition} />;
             })
           ])}
