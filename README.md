@@ -44,7 +44,8 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Simulation Toggles:**
         -   Force Camera Failure (`HardwareSimulation`): Intercepts camera startup to display error overlays.
         -   Force NFC Failure (`HardwareSimulation`): Intercepts NFC scans to trigger error feedback.
-        -   Missed Check Logic: Speed up time to test lifecycle events.
+        -   **Missed Check Logic:** Speed up time to test lifecycle events.
+    -   **Lifecycle Stress Test (A-Wing):** The A-Wing mock data is specifically configured with staggered checks (30s intervals) to test every lifecycle boundary (Early->Pending, Pending->Due, Due->Missed, Missed Rollover) in under 60 seconds.
     -   **Network Status:** Toggle between Online, Offline, and Syncing states.
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
     -   **NFC Simulation Controls:** Interactive buttons within the NFC workflow to force specific outcomes (Success, Network Error, Tag Locked) for edge-case testing.

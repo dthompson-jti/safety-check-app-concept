@@ -69,5 +69,18 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Dividers:** If a visual separator is needed, use `border-bottom: 1px solid var(--surface-border-secondary)` with symmetric `padding-bottom`. Do not add `margin-bottom`—the parent `gap` handles spacing to the next item.
 
 ## CSS Architecture
-*   **Directive:** Do not add new global CSS files without updating `src/styles/index.css` to include them in the correct `@layer`.
 *   **Directive:** Prefer CSS Modules (`*.module.css`) for feature-specific styles. Use Global CSS (`src/styles/*.css`) only for reusable design patterns (buttons, lists, inputs).
+
+## 8. Common Pitfalls & Architectural Lessons
+
+### Time-Based Logic & Race Conditions
+*   **Lesson:** When deriving status from time (e.g., `elapsedMinutes < 15`), always account for the **gap** between the derived state and the side-effect trigger (e.g., `useCheckLifecycle`).
+*   **Pattern:** If a side-effect (like "Mark Missed") triggers at `T=15m`, the UI derivation for the `14:59 -> 15:00` transition must be defensive. Force the "Missed" visual state immediately at `T=15` rather than falling back to a default "Pending" state if the side-effect is slightly delayed.
+
+### Mock Data as Testing Infrastructure
+*   **Lesson:** Do not fill mock data with random noise. Use it to construct **deterministic stress tests**.
+*   **Pattern:** See `src/data/mock/checkData.ts` (A-Wing). Configured checks just seconds before major transitions allow for rapid visual verification of the entire lifecycle without waiting 15 minutes.
+
+### Terminology Precision
+*   **Lesson:** User-facing terminology is a strict spec.
+*   **Pattern:** "Due" means "Due". Do not use "Due Now", "Due Soon", or "Due!" unless explicitly specified. Removing variations reduces cognitive load.

@@ -48,13 +48,13 @@ When a user completes a check (in any state):
 2.  **Commit:** After animation, check is marked `complete`.
 3.  A **new check** is immediately generated.
 4.  **Legal Compliance Anchor:** 
-    *   If completed **before or at Max Time** (≤15m): `Next Due Date = Completion Time + Base Interval`
-    *   If completed **after Max Time** (>15m): `Next Due Date = Max Time (Previous Due Date) + Base Interval`
+    *   **Rule:** `Next Due Date = Completion Time + Base Interval`
+    *   **Note:** Schedule drift is allowed. The next check always provides a full 15-minute window from the moment of completion.
 5.  **Result:** The new check starts at `T=0` of its own cycle, placing it in the **Early** state.
 
 ### 2. Missed Trigger
 When the system detects a check has passed its Due Date (15m mark):
 1.  The current check is marked `missed`.
 2.  A **new check** is immediately generated.
-3.  **Legal Compliance Anchor:** `Next Due Date = Original Due Date + Base Interval`
+3.  **Legal Compliance Anchor:** `Next Due Date = Missed Trigger Time + Base Interval`
 4.  **Result:** The new check starts at `T=0` of its own cycle.
