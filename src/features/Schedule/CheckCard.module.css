@@ -67,7 +67,7 @@
   /* Base padding - Defaults to Symmetric */
   padding: var(--spacing-3);
 
-  border: 1px solid var(--surface-border-secondary);
+  border: 1px solid var(--control-border-tertiary);
 
   /* Ensure we have spacing between cards in the list view */
   margin-bottom: var(--spacing-4);
@@ -132,7 +132,6 @@
 /* Variant: Missed - primary bg with alert indicator */
 .checkCard[data-status='missed'] {
   background-color: var(--surface-bg-primary);
-  border-color: var(--control-border-tertiary);
 }
 
 .statusIndicator {
