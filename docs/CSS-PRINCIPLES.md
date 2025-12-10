@@ -131,3 +131,31 @@ When building form layouts or stacked sections (e.g., `CheckEntryView`):
       /* NO margin-bottom here */
     }
     ```
+
+#### The Overflow and Box-Shadow Clipping Contract
+
+When using `overflow: hidden` on containers:
+
+-   **The Problem:** `overflow: hidden` clips all content extending beyond the box, including `box-shadow` and `outline` effects.
+-   **The Impact:** Pulse/glow animations using `box-shadow` (like `card-flash-complete`) will be invisible or truncated.
+-   **The Solution:**
+    1.  Avoid permanent `overflow: hidden` on elements with box-shadow animations.
+    2.  If overflow control is needed for layout (e.g., height collapse), apply it conditionally—only during the specific animation phase that requires it.
+-   **Example (Framer Motion):**
+    ```tsx
+    // DON'T: Permanent overflow clips pulse animation
+    style={{ overflow: 'hidden' }}
+    
+    // DO: Apply only in exit transition
+    exit={{ height: 0, overflow: 'hidden' }}
+    ```
+
+#### The Sequenced Animation Contract
+
+For complex exit animations requiring sequential phases (e.g., slide-out THEN collapse):
+
+-   **The Problem:** Framer Motion applies all `exit` properties simultaneously, even with `delay`. The initial frame state is set immediately.
+-   **The Solution:** Use **nested motion.divs** to separate concerns:
+    -   **Outer div:** Controls slow/delayed properties (height, margin)
+    -   **Inner div:** Controls immediate properties (x, opacity)
+-   **Reference:** See `Animation-spec.md` for full implementation details and timing values.

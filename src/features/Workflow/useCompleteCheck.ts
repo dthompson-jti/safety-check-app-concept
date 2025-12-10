@@ -43,7 +43,7 @@ export const useCompleteCheck = () => {
         // 3. Conditional delay based on mode:
         //    - NFC + Simple: 0ms (instant for rapid "tap tap tap" workflow)
         //    - QR or Manual: 2000ms (preserve animation for better UX feedback)
-        const delay = isRapidMode ? 0 : 2000;
+        const delay = isRapidMode ? 0 : 1000;
 
         setTimeout(() => {
             const payload = {

@@ -39,3 +39,47 @@ if (check.status === 'completing') {
 This ensures the "Rock Solid" principle (see `CARD-STATE-PRD.md`) is maintained. The user sees the card turn green *in place*, and then slide away.
 
 ---
+
+### 1.2 The "Nested Motion Divs" Pattern for Sequenced Animations
+
+**Context:**
+Per `Animation-spec.md`, exit animations should be sequenced: slide-out first, THEN height collapse. This creates a smooth, deliberate exit rather than a chaotic multi-property transition.
+
+**The Challenge:**
+Framer Motion applies all `exit` properties simultaneously at the start of the exit animation. Even with `transition: { delay: X }`, the initial state (e.g., `height: 0`) is applied immediately, causing an instant visual jump.
+
+**The Solution: Nested Motion Divs**
+Wrap the card content in two `motion.div` elements, each responsible for a different aspect of the animation:
+
+```tsx
+// OUTER: Height/margin collapse (delayed)
+<motion.div
+  exit={{
+    height: 0,
+    marginBottom: 0,
+    overflow: 'hidden', // Only apply during exit
+    transition: { delay: 0.1, duration: 0.2 }
+  }}
+>
+  {/* INNER: Slide and fade (immediate) */}
+  <motion.div
+    exit={{
+      x: '100%',
+      opacity: 0,
+      transition: { duration: 0.5 }
+    }}
+  >
+    {/* Card content */}
+  </motion.div>
+</motion.div>
+```
+
+**Critical Details:**
+1.  **No `overflow: hidden` on outer during normal state** — it would clip box-shadow pulse animations.
+2.  **Apply `overflow: hidden` only in the `exit` transition** — this allows height collapse to clip content cleanly.
+3.  **Outer handles layout properties** (height, margin) with delay.
+4.  **Inner handles visual properties** (x, opacity) immediately.
+
+**Reference:** See `Animation-spec.md` for complete timing values and file locations.
+
+---

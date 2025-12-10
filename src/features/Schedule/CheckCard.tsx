@@ -86,7 +86,10 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   // PRD-006: Render time based on mode
   const renderTimeDisplay = () => {
-    if (!isActionable) return null;
+    // Hide time display during completing/complete states
+    if (!isActionable) {
+      return null;
+    }
 
     switch (timeDisplayMode) {
       case 'absolute':
@@ -106,52 +109,69 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
     }
   };
 
+  // Nested Motion Divs Pattern:
+  // - Outer div: Controls height/margin collapse (delayed start)
+  // - Inner div: Controls slide and fade (immediate start)
+  // This separation prevents the instant height change that occurs when
+  // height animation starts at same time as slide animation.
+  // Note: No overflow:hidden on outer - it would clip the pulse box-shadow
   return (
     <motion.div
-      layout
-      transition={transition}
-      animate={{ x: 0, height: 'auto', opacity: 1 }}
-      initial={{ opacity: 0 }}
-      // SEQUENCED EXIT: Slide out fully → 150ms pause → Snap collapse
+      // OUTER: Height collapse wrapper - starts AFTER slide completes
+      initial={{ height: 'auto', marginBottom: 'var(--space-3)' }}
+      animate={{ height: 'auto', marginBottom: 'var(--space-3)' }}
       exit={{
-        x: '100%',
         height: 0,
-        opacity: 0,
-        overflow: 'hidden',
         marginBottom: 0,
+        overflow: 'hidden', // Only clip during exit animation
         transition: {
-          x: { duration: 0.2, ease: [0.25, 1, 0.5, 1] },              // Slide out
-          opacity: { duration: 0.15, delay: 0.1, ease: 'easeOut' },   // Delayed fade (visible during slide)
-          height: { duration: 0.2, delay: 0.35, ease: [0.4, 0, 0.2, 1] }, // Snappy collapse after pause
-          marginBottom: { duration: 0.2, delay: 0.35, ease: [0.4, 0, 0.2, 1] }
+          // Collapse delay: 0.1s (after slide starts), duration: 0.2s
+          delay: 0.1,
+          duration: 0.2,
+          ease: 'linear'
         }
       }}
-      className={cardClassName}
-      data-status={check.status}
-      // Data attribute controls padding logic in CSS
-      data-indicators-visible={showStatusIndicators}
-      onClick={handleCardClick}
-      aria-disabled={!isActionable}
-      whileTap={isActionable ? { scale: 0.98 } : {}}
     >
-      {showStatusIndicators && showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
+      <motion.div
+        // INNER: Slide and fade animation - starts immediately
+        transition={transition}
+        initial={{ opacity: 0, x: 0 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{
+          x: '100%',
+          opacity: 0,
+          transition: {
+            // DEBUG: 2.5x slower - duration: 0.5s (normal: 0.2s)
+            x: { duration: 0.5, ease: [0.25, 1, 0.5, 1] },
+            opacity: { duration: 1.5, delay: 1, ease: 'easeOut' }
+          }
+        }}
+        className={cardClassName}
+        data-status={check.status}
+        data-indicators-visible={showStatusIndicators}
+        onClick={handleCardClick}
+        aria-disabled={!isActionable}
+        whileTap={isActionable ? { scale: 0.98 } : {}}
+      >
+        {showStatusIndicators && showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
 
-      <div className={styles.mainContent}>
-        <div className={styles.topRow}>
-          <div className={styles.locationInfo}>
-            <span className={styles.locationText}>{roomName}</span>
+        <div className={styles.mainContent}>
+          <div className={styles.topRow}>
+            <div className={styles.locationInfo}>
+              <span className={styles.locationText}>{roomName}</span>
+            </div>
+            <StatusBadge status={check.status} type={check.type} dueDate={check.dueDate} />
           </div>
-          <StatusBadge status={check.status} type={check.type} dueDate={check.dueDate} />
+          <div className={styles.bottomRow}>
+            <ul className={styles.residentList}>
+              {residents.map((resident) => (
+                <ResidentListItem key={resident.id} resident={resident} check={check} />
+              ))}
+            </ul>
+            <div className={styles.timeDisplay}>{renderTimeDisplay()}</div>
+          </div>
         </div>
-        <div className={styles.bottomRow}>
-          <ul className={styles.residentList}>
-            {residents.map((resident) => (
-              <ResidentListItem key={resident.id} resident={resident} check={check} />
-            ))}
-          </ul>
-          <div className={styles.timeDisplay}>{renderTimeDisplay()}</div>
-        </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 };

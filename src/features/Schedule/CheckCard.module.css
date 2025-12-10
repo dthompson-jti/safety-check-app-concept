@@ -123,7 +123,7 @@
   border-color: var(--surface-border-success);
   box-shadow: none;
   --status-animation-name: card-flash-complete;
-  animation: var(--status-animation-name) 1.2s cubic-bezier(0.16, 1, 0.3, 1), card-success-fade 0.8s ease-out forwards;
+  animation: var(--status-animation-name) 2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, card-success-fade 0.8s ease-out 0.2s forwards;
   /* Raise above sticky headers (z-index:5) so pulse isn't clipped */
   position: relative;
   z-index: 10;
