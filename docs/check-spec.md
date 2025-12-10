@@ -30,15 +30,15 @@ The status of a check is derived dynamically based on the current time relative 
 
 ## Dynamic Missed Badge Labels
 
-The badge label reflects how many 15-minute cycles have been missed:
+The badge label reflects how many 15-minute cycles have been missed. This is calculated dynamically: `Math.ceil(elapsedMinutes / 15)`.
 
-| Time Since Due | Badge Label |
-| :--- | :--- |
-| 0-15 min | "Missed" |
-| 15-30 min | "2 Missed" |
-| 30-45 min | "3 Missed" |
-| 45-60 min | "4 Missed" |
-| ... | Pattern continues |
+| Time Since Due | Badge Label | Cycles |
+| :--- | :--- | :--- |
+| 0-15 min | "Missed" | 1 |
+| 15-30 min | "2 Missed" | 2 |
+| 30-45 min | "3 Missed" | 3 |
+| 45-60 min | "4 Missed" | 4 |
+| ... | Pattern continues | N |
 
 ## Transition Logic
 

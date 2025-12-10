@@ -1,5 +1,9 @@
 # PRD-006: Time Display Options
 
+> [!WARNING]
+> **DEPRECATION NOTICE**: Absolute Time checks are deprecated. This feature will be removed in a future update to reduce cognitive load. Current goal is stability.
+
+
 ## 1. Overview
 User-configurable time display format for Check Cards: Relative (countdown), Absolute (wall-clock), or Dual (both).
 

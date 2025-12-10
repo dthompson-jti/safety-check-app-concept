@@ -35,31 +35,38 @@ export const generateInitialChecks = (): SafetyCheck[] => {
   };
 
   // --- STANDARD CHECKS ---
-  // Simplified 3-state model:
-  // - Missed: Due date has passed (negative offset)
-  // - Due: Due in 0-2 minutes (warning window)
-  // - Upcoming: Due in 2-15 minutes
-  // NOTE: No check should be due more than 15 minutes from now
+  // Lifecycle stress test configuration:
+  // - A-Wing: Specifically staggered to test all lifecycle transitions.
+  // - Other Wings: Spread evenly within the 15m cap.
 
   const standardChecks = [
-    // --- MISSED GROUP (staggered: 58m, 44m, 13m ago) ---
-    createCheck("A1-101", -58), // "4 Missed" badge (58 min = 4 cycles)
-    createCheck("A1-102", -44), // "3 Missed" badge (44 min = 3 cycles)
-    createCheck("A1-103", -13), // "Missed" badge (13 min = 1 cycle)
+    // =================================================================
+    //               A-WING: LIFECYCLE STRESS TEST ZONE
+    // =================================================================
+    // Checks are positioned near transition boundaries (Missed, Due, Upcoming).
 
-    // --- DUE GROUP (Due in 1-2 mins - warning window) ---
-    createCheck("A2-205", 1),
-    createCheck("A2-206", 2),
+    // --- MISSED GROUP (Multi-cycle test) ---
+    createCheck("A1-101", -30),   // "2 Missed" (2 cycles)
+    createCheck("A1-102", -14.5), // "Missed" -> "2 Missed" in 30s
+    createCheck("A1-103", -1),    // "Missed" (just crossed 15m)
 
-    // --- UPCOMING GROUP (Due in 3-15 mins) ---
-    createCheck("A3-301", 5, [{ type: 'CS', details: 'Separation from J. Miller', residentId: 'jdc_a3_1' }]),
-    createCheck("A3-302", 8),
-    createCheck("A4-410", 10),
-    createCheck("A4-411", 12),
-    createCheck("A5-502", 14, [{ type: 'MW', details: 'Asthmatic, check inhaler', residentId: 'jdc_a5_1' }]),
-    createCheck("A5-503", 15), // Max future due time
+    // --- DUE GROUP (Near-missed transition) ---
+    createCheck("A2-205", 0.5),   // "Due" -> "Missed" in 30s
+    createCheck("A2-206", 1.5),   // "Due" -> "Missed" in 90s
 
-    // --- OTHER WINGS (capped at 15m future) ---
+    // --- UPCOMING -> DUE TRANSITION ---
+    createCheck("A3-301", 2.1, [{ type: 'CS', details: 'Separation from J. Miller', residentId: 'jdc_a3_1' }]),  // "Upcoming" -> "Due" in 6s
+    createCheck("A3-302", 2.5),   // "Upcoming" -> "Due" in 30s
+
+    // --- UPCOMING (Mid-range) ---
+    createCheck("A4-410", 5),
+    createCheck("A4-411", 8),
+
+    // --- UPCOMING (Fresh) ---
+    createCheck("A5-502", 12, [{ type: 'MW', details: 'Asthmatic, check inhaler', residentId: 'jdc_a5_1' }]),
+    createCheck("A5-503", 14),
+
+    // --- A6 (Stable, fresh) ---
     createCheck("A6-601", 15, [{ type: 'SR', details: 'Active watch, 15-min checks', residentId: 'jdc_a6_1' }]),
     createCheck("A6-602", 15),
     createCheck("A6-604", 15, [
@@ -67,61 +74,65 @@ export const generateInitialChecks = (): SafetyCheck[] => {
       { type: 'SR', details: 'Both residents on suicide watch.', residentId: 'jdc_a6_5' }
     ]),
 
-    // JDC - B-Wing (capped at 15m)
-    createCheck("B1-101", 15),
-    createCheck("B1-102", 15),
-    createCheck("B2-201", 15),
+    // =================================================================
+    //               OTHER WINGS: EVEN SPREAD (0-15m Cap)
+    // =================================================================
 
-    // JDC - C-Wing (capped at 15m)
-    createCheck("C1-101", 15),
-    createCheck("C1-102", 15),
+    // JDC - B-Wing (Staggered)
+    createCheck("B1-101", 5),
+    createCheck("B1-102", 10),
+    createCheck("B2-201", 14),
 
-    // Sci-Fi - Star Wars (capped at 15m future)
-    createCheck("Death Star Detention Block", 15),
-    createCheck("Emperor's Throne Room", 15, [
+    // JDC - C-Wing (Staggered)
+    createCheck("C1-101", 3),
+    createCheck("C1-102", 8),
+
+    // Sci-Fi - Star Wars (Spread)
+    createCheck("Death Star Detention Block", 2),
+    createCheck("Emperor's Throne Room", 4, [
       { type: 'SW', details: "High-risk Sith Lords. Approach with caution.", residentId: 'sw_palp' },
       { type: 'SW', details: "High-risk Sith Lords. Approach with caution.", residentId: 'sw_vader' }
     ]),
-    createCheck("Millennium Falcon", 15),
-    createCheck("Mos Eisley Cantina", 15),
-    createCheck("Tatooine Homestead", 15),
-    createCheck("Dagobah", 15),
-    createCheck("Bespin", 15),
+    createCheck("Millennium Falcon", 6),
+    createCheck("Mos Eisley Cantina", 8),
+    createCheck("Tatooine Homestead", 10),
+    createCheck("Dagobah", 12),
+    createCheck("Bespin", 13),
     createCheck("Jabba's Palace", 15),
 
-    // Sci-Fi - Harry Potter (capped at 15m future)
-    createCheck("Gryffindor Tower", 15),
-    createCheck("Headmaster's Office", 15, [{ type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'hp_dumbledore' }]),
-    createCheck("Hufflepuff Common Room", 15),
-    createCheck("Potions Classroom", 15),
-    createCheck("The Great Hall", 15),
-    createCheck("Room of Requirement", 15),
-    createCheck("Slytherin Dungeon", 15),
+    // Sci-Fi - Harry Potter (Spread)
+    createCheck("Gryffindor Tower", 3),
+    createCheck("Headmaster's Office", 5, [{ type: 'SR', details: 'Monitor for phoenix activity.', residentId: 'hp_dumbledore' }]),
+    createCheck("Hufflepuff Common Room", 7),
+    createCheck("Potions Classroom", 9),
+    createCheck("The Great Hall", 11),
+    createCheck("Room of Requirement", 13),
+    createCheck("Slytherin Dungeon", 14),
     createCheck("Ministry of Magic", 15, [{ type: 'MA', details: 'Requires MoM authorization.', residentId: 'hp_umbridge' }]),
 
-    // Sci-Fi - Terminator (capped at 15m future)
-    createCheck("Cyberdyne Annex", 15),
-    createCheck("Future Resistance Bunker", 15, [{ type: 'MA', details: 'Leadership check-in required.', residentId: 't_john' }]),
-    createCheck("Skynet Command Center", 15, [{ type: 'SW', details: 'Hostile cybernetic organism.', residentId: 't_t800_m101' }]),
-    createCheck("Pescadero State Hospital", 15),
-    createCheck("Tech-Noir Nightclub", 15),
+    // Sci-Fi - Terminator (Spread)
+    createCheck("Cyberdyne Annex", 4),
+    createCheck("Future Resistance Bunker", 6, [{ type: 'MA', details: 'Leadership check-in required.', residentId: 't_john' }]),
+    createCheck("Skynet Command Center", 8, [{ type: 'SW', details: 'Hostile cybernetic organism.', residentId: 't_t800_m101' }]),
+    createCheck("Pescadero State Hospital", 10),
+    createCheck("Tech-Noir Nightclub", 12),
     createCheck("Cyberdyne Systems HQ", 15),
 
-    // Sci-Fi - Alien (capped at 15m future)
-    createCheck("LV-426 Medlab", 15, [{ type: 'SW', details: 'Xenomorph detected. High alert.', residentId: 'al_ripley' }]),
-    createCheck("Nostromo Galley", 15),
-    createCheck("Nostromo Cockpit", 15),
-    createCheck("LV-426 Operations Center", 15),
-    createCheck("LV-426 Ventilation Shafts", 15),
-    createCheck("Nostromo Hypersleep Chamber", 15, [{ type: 'SW', details: 'Synthetic. Behavioral monitoring.', residentId: 'al_ash' }]),
+    // Sci-Fi - Alien (Spread)
+    createCheck("LV-426 Medlab", 2, [{ type: 'SW', details: 'Xenomorph detected. High alert.', residentId: 'al_ripley' }]),
+    createCheck("Nostromo Galley", 5),
+    createCheck("Nostromo Cockpit", 7),
+    createCheck("LV-426 Operations Center", 9),
+    createCheck("LV-426 Ventilation Shafts", 11),
+    createCheck("Nostromo Hypersleep Chamber", 13, [{ type: 'SW', details: 'Synthetic. Behavioral monitoring.', residentId: 'al_ash' }]),
     createCheck("USCSS Prometheus Bridge", 15),
 
-    // Sci-Fi - The Expanse (capped at 15m future)
-    createCheck("Rocinante Cockpit", 15),
-    createCheck("Rocinante Engineering", 15),
-    createCheck("Rocinante Galley", 15),
-    createCheck("UN-One", 15),
-    createCheck("Tycho Station Command", 15),
+    // Sci-Fi - The Expanse (Spread)
+    createCheck("Rocinante Cockpit", 3),
+    createCheck("Rocinante Engineering", 6),
+    createCheck("Rocinante Galley", 9),
+    createCheck("UN-One", 11),
+    createCheck("Tycho Station Command", 13),
     createCheck("Ceres Station Docks", 15),
   ];
 

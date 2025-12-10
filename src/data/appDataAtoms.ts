@@ -127,17 +127,10 @@ export type AppAction =
   | { type: 'SYNC_QUEUED_CHECKS'; payload: { syncTime: string } }
   | { type: 'RESET_DATA' };
 
-// UPDATED: Legal Compliance Anchor Logic.
-// Per requirements: If a check is completed/missed AFTER the Max Time (15m),
-// the next check must anchor to the Max Time (previous due date), NOT the completion time.
-// This prevents schedule drift and maintains legal compliance.
+// Anchor Logic: Next Check = Completion Time + Base Interval.
+// Schedule drift is allowed by design. No clamping to previous due date.
 const generateNextCheck = (previousCheck: SafetyCheck, originTime: string): SafetyCheck => {
-  const originTimestamp = new Date(originTime).getTime();
-  const maxTimeTimestamp = new Date(previousCheck.dueDate).getTime();
-
-  // If the check was completed/missed after the max time, anchor to max time
-  // Otherwise, anchor to the actual completion time (allows flexibility for early/on-time checks)
-  const anchorTimestamp = Math.min(originTimestamp, maxTimeTimestamp);
+  const anchorTimestamp = new Date(originTime).getTime();
 
   const intervalMs = previousCheck.baseInterval * 60 * 1000;
   const nextDueDate = new Date(anchorTimestamp + intervalMs);
@@ -296,9 +289,8 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
     } else if (elapsedMinutes < 15) {
       newStatus = 'due';
     } else {
-      // 15m+ stays as 'pending' until lifecycle hook marks it 'missed'
-      // This prevents flash of wrong status
-      newStatus = 'pending';
+      // 15m+ force to 'missed' immediately to prevent flash of 'pending'
+      newStatus = 'missed';
     }
 
     if (check.status === newStatus) {
