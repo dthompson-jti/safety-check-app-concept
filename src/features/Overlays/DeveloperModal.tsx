@@ -9,6 +9,7 @@ import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
+import { SegmentedControl } from '../../components/SegmentedControl';
 import { Switch } from '../../components/Switch';
 import { Button } from '../../components/Button';
 import styles from './DeveloperModal.module.css';
@@ -152,19 +153,35 @@ export const DeveloperModal = () => {
             </div>
           </div>
 
-          {/* PRD-02: Resident Status Set Toggle */}
+          {/* PRD-07: Resident Status Count (2-7) */}
           <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-            <label className={styles.itemLabel}>Resident status options</label>
-            <IconToggleGroup
-              id="resident-status-set-toggle"
+            <label className={styles.itemLabel}>Status count</label>
+            <SegmentedControl
+              id="resident-status-count-toggle"
               options={[
-                { value: 'set-2', label: '2 Options', icon: 'looks_two' },
-                { value: 'set-3', label: '3 Options', icon: 'looks_3' },
-                { value: 'set-4', label: '4 Options', icon: 'looks_4' },
+                { value: 'set-2', label: '2' },
+                { value: 'set-3', label: '3' },
+                { value: 'set-4', label: '4' },
+                { value: 'set-5', label: '5' },
+                { value: 'set-6', label: '6' },
+                { value: 'set-7', label: '7' },
               ]}
               value={appConfig.residentStatusSet}
               onValueChange={(val) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, residentStatusSet: val })); }}
-              fullWidth
+            />
+          </div>
+
+          {/* PRD-07: Status Layout Toggle */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Status layout</label>
+            <SegmentedControl
+              id="status-layout-toggle"
+              options={[
+                { value: 'column', label: 'Column' },
+                { value: 'grid', label: 'Grid' },
+              ]}
+              value={appConfig.markMultipleLayout}
+              onValueChange={(val) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, markMultipleLayout: val })); }}
             />
           </div>
         </div>

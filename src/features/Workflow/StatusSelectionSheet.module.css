@@ -1,0 +1,112 @@
+/* src/features/Workflow/StatusSelectionSheet.module.css */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 111;
+    background-color: var(--surface-bg-primary);
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Handle bar per Bottom Sheet Handle Contract */
+.handleContainer {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-3) 0;
+    flex-shrink: 0;
+}
+
+.handle {
+    width: 40px;
+    height: 4px;
+    background-color: var(--surface-border-primary);
+    border-radius: 9999px;
+}
+
+.header {
+    padding: 0 var(--spacing-4) var(--spacing-3);
+    border-bottom: 1px solid var(--surface-border-secondary);
+    flex-shrink: 0;
+}
+
+.headerTitle {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--surface-fg-primary);
+}
+
+.listContainer {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    /* Safe zone for focus rings */
+    padding: 2px;
+}
+
+/* Column Layout */
+.columnList {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Grid Layout */
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3);
+}
+
+.gridButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: var(--spacing-3) var(--spacing-4);
+    background-color: var(--control-bg-secondary);
+    border: 1px solid var(--control-border-secondary);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--surface-fg-primary);
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+}
+
+.gridButton:active {
+    background-color: var(--control-bg-tertiary);
+    border-color: var(--control-border-tertiary);
+}
+
+@media (hover: hover) {
+    .gridButton:hover {
+        background-color: var(--control-bg-tertiary);
+    }
+}
+
+/* Dead Cell for Grid Layout - Non-interactive placeholder */
+.deadCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    background-color: var(--surface-bg-tertiary);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-md);
+    pointer-events: none;
+}

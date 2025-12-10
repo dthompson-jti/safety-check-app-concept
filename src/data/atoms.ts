@@ -148,7 +148,8 @@ interface AppConfig {
   simpleSubmitEnabled: boolean;
   showStatusIndicators: boolean;
   missedCheckToastsEnabled: boolean; // NEW: Developer toggle for missed check toasts
-  residentStatusSet: 'set-2' | 'set-3' | 'set-4'; // PRD-02: Configurable resident status options
+  residentStatusSet: 'set-2' | 'set-3' | 'set-4' | 'set-5' | 'set-6' | 'set-7'; // PRD-07: Expanded to support 2-7 status options
+  markMultipleLayout: 'column' | 'grid'; // PRD-07: Layout for status selection sheet
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
@@ -164,6 +165,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   showStatusIndicators: false,
   missedCheckToastsEnabled: false, // Default to false
   residentStatusSet: 'set-3', // PRD-02: Default to 3 options (Awake, Sleeping, Refused)
+  markMultipleLayout: 'column', // PRD-07: Default to column layout
 });
 
 // =================================================================

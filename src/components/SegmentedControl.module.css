@@ -1,15 +1,51 @@
 /* src/components/SegmentedControl.module.css */
-/* PRD-02: Segmented control with row and 2x2 grid layouts */
+/* PRD-07: Segmented control with row, column (vertical), and grid layouts */
 /* Follows the border pattern from toggles.css (margin-left: -1px overlap) */
 
 /* =========================================
-   Base Segmented Control (Row Layout)
+   Base Segmented Control (Row Layout - Horizontal)
    ========================================= */
 .segmentedControl {
     display: flex;
     width: 100%;
     border-radius: 6px;
     overflow: hidden;
+}
+
+/* =========================================
+   Column Layout (Vertical Stack)
+   PRD-07: Items stack downward, left-aligned text
+   ========================================= */
+.columnContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.columnContainer .segmentedControlItem {
+    margin-left: 0;
+    margin-top: -1px;
+    border-radius: 0;
+    justify-content: flex-start;
+    /* Left-align text */
+    padding-left: var(--spacing-4);
+    /* Reasonable left margin */
+}
+
+.columnContainer .segmentedControlItem:first-child {
+    margin-top: 0;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 0;
+    /* Override base row layout rule */
+    border-bottom-right-radius: 0;
+}
+
+.columnContainer .segmentedControlItem:last-child {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 .segmentedControlItem {
@@ -77,8 +113,8 @@
 }
 
 /* =========================================
-   Grid Layout (2x2 for 4 options)
-   PRD-02: Uses same border overlap pattern
+   Grid Layout (2-column, any number of rows)
+   PRD-07: Handles 2-7+ items with proper corners
    ========================================= */
 .gridContainer {
     display: grid;
@@ -87,37 +123,69 @@
 }
 
 .gridContainer .segmentedControlItem {
-    /* Reset row layout styles */
+    /* Reset all styles from row layout */
     flex: none;
     margin-left: 0;
     margin-top: 0;
     border-radius: 0;
+    /* All internal corners are 0 */
 }
 
-/* Border overlap for grid - right and bottom edges */
-.gridContainer .segmentedControlItem:nth-child(2),
-.gridContainer .segmentedControlItem:nth-child(4) {
+/* Border overlap for grid - generalized for any size */
+/* Right column items (positions 2, 4, 6, ...) - overlap left border */
+.gridContainer .segmentedControlItem:nth-child(even) {
     margin-left: -1px;
 }
 
-.gridContainer .segmentedControlItem:nth-child(3),
-.gridContainer .segmentedControlItem:nth-child(4) {
+/* Row 2+ items (positions 3, 4, 5, 6, ...) - overlap top border */
+.gridContainer .segmentedControlItem:nth-child(n+3) {
     margin-top: -1px;
 }
 
-/* PRD-02: Rounded outer corners only */
+/* =========================================
+   Outer Corner Radius (only 4 corners)
+   ========================================= */
+
+/* Top-left: always item 1 */
 .gridContainer .segmentedControlItem:nth-child(1) {
     border-top-left-radius: 6px;
 }
 
+/* Top-right: always item 2 */
 .gridContainer .segmentedControlItem:nth-child(2) {
     border-top-right-radius: 6px;
 }
 
-.gridContainer .segmentedControlItem:nth-child(3) {
+/* Bottom-left: second-to-last item when it's in left column (odd position) */
+.gridContainer .segmentedControlItem:nth-last-child(2):nth-child(odd) {
     border-bottom-left-radius: 6px;
 }
 
-.gridContainer .segmentedControlItem:nth-child(4) {
+/* Bottom-left: last item when it's in left column (odd position) and no dead cell */
+.gridContainer .segmentedControlItem:last-child:nth-child(odd) {
+    border-bottom-left-radius: 6px;
+}
+
+/* Bottom-right: last item when it's in right column (even position) */
+.gridContainer .segmentedControlItem:last-child:nth-child(even) {
+    border-bottom-right-radius: 6px;
+}
+
+/* =========================================
+   PRD-07: Dead Cell for Odd Option Counts
+   ========================================= */
+.deadCell {
+    background-color: var(--surface-bg-tertiary);
+    border: 1px solid var(--surface-border-primary);
+    margin-left: -1px;
+    margin-top: -1px;
+    min-height: 48px;
+    pointer-events: none;
+    border-radius: 0;
+    /* Internal corners are 0 */
+}
+
+/* Dead cell is always in right column, so gets bottom-right corner radius */
+.gridContainer .deadCell:last-child {
     border-bottom-right-radius: 6px;
 }

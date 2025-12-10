@@ -13,15 +13,15 @@ interface SegmentedControlProps<T extends string> {
   value: T | '';
   onValueChange: (value: T) => void;
   id: string;
-  /** PRD-02: Layout mode - 'row' for horizontal, 'grid' for 2x2 */
-  layout?: 'row' | 'grid';
+  /** PRD-07: Layout mode - 'row' for horizontal, 'column' for vertical, 'grid' for 2-col */
+  layout?: 'row' | 'column' | 'grid';
 }
 
 /**
  * A full-width, touch-friendly segmented control that is a high-craft evolution
  * of the IconToggleGroup. It supports both an icon and a text label for clarity.
  * 
- * PRD-02: Now supports a 'grid' layout for 4-option configurations (2x2 grid).
+ * PRD-07: Supports 'row' (horizontal), 'column' (vertical), and 'grid' (2-col) layouts.
  */
 export const SegmentedControl = <T extends string>({
   options,
@@ -39,9 +39,15 @@ export const SegmentedControl = <T extends string>({
   };
 
   // Determine container class based on layout
-  const containerClass = layout === 'grid'
-    ? styles.gridContainer
-    : styles.segmentedControl;
+  let containerClass = styles.segmentedControl; // default: row (horizontal)
+  if (layout === 'column') {
+    containerClass = styles.columnContainer;
+  } else if (layout === 'grid') {
+    containerClass = styles.gridContainer;
+  }
+
+  // PRD-07: Calculate if we need a dead cell for grid layout (odd number of items)
+  const needsDeadCell = layout === 'grid' && options.length % 2 !== 0;
 
   return (
     <ToggleGroup.Root
@@ -63,6 +69,8 @@ export const SegmentedControl = <T extends string>({
           <span>{option.label}</span>
         </ToggleGroup.Item>
       ))}
+      {/* PRD-07: Dead cell for grid layout with odd number of options */}
+      {needsDeadCell && <div className={styles.deadCell} aria-hidden="true" />}
     </ToggleGroup.Root>
   );
 };

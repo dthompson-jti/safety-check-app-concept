@@ -8,7 +8,7 @@ import { SegmentedControl } from '../../components/SegmentedControl';
 import { useAutosizeTextArea } from '../../data/useAutosizeTextArea';
 import styles from './ResidentCheckControl.module.css';
 
-// PRD-02: Define all status option sets
+// PRD-07: Define all status option sets (2-7)
 const statusOptionsSet2 = [
   { value: 'Awake', label: 'Awake' },
   { value: 'Sleeping', label: 'Sleeping' },
@@ -27,8 +27,35 @@ const statusOptionsSet4 = [
   { value: 'Out', label: 'Out' },
 ] as const;
 
+const statusOptionsSet5 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+  { value: 'Eating', label: 'Eating' },
+] as const;
+
+const statusOptionsSet6 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+  { value: 'Eating', label: 'Eating' },
+  { value: 'Working', label: 'Working' },
+] as const;
+
+const statusOptionsSet7 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+  { value: 'Eating', label: 'Eating' },
+  { value: 'Working', label: 'Working' },
+  { value: 'Chilling', label: 'Chilling' },
+] as const;
+
 // Union type of all possible status values
-type StatusValue = 'Awake' | 'Sleeping' | 'Refused' | 'Out';
+type StatusValue = 'Awake' | 'Sleeping' | 'Refused' | 'Out' | 'Eating' | 'Working' | 'Chilling';
 
 interface ResidentCheckControlProps {
   resident: Resident;
@@ -54,15 +81,16 @@ export const ResidentCheckControl = ({
   const isClassified = !!classification;
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  // PRD-02: Read config to determine which status options to show
-  const { residentStatusSet } = useAtomValue(appConfigAtom);
+  // PRD-07: Read config to determine which status options and layout to use
+  const { residentStatusSet, markMultipleLayout } = useAtomValue(appConfigAtom);
 
   // Auto-sizing logic for the textarea.
   useAutosizeTextArea(textAreaRef.current, notes);
 
-  // PRD-02: Select appropriate options based on config
+  // PRD-07: Select appropriate options based on config (2-7)
+  // Layout is driven by markMultipleLayout config
   let statusOptions: readonly { value: string; label: string }[];
-  let layout: 'row' | 'grid' = 'row';
+  const layout: 'row' | 'column' | 'grid' = markMultipleLayout;
 
   switch (residentStatusSet) {
     case 'set-2':
@@ -70,7 +98,15 @@ export const ResidentCheckControl = ({
       break;
     case 'set-4':
       statusOptions = statusOptionsSet4;
-      layout = 'grid'; // PRD-02: 4 options use 2x2 grid
+      break;
+    case 'set-5':
+      statusOptions = statusOptionsSet5;
+      break;
+    case 'set-6':
+      statusOptions = statusOptionsSet6;
+      break;
+    case 'set-7':
+      statusOptions = statusOptionsSet7;
       break;
     case 'set-3':
     default:

@@ -18,6 +18,7 @@ import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAt
 import { Button } from '../../components/Button';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
+import { StatusSelectionSheet } from './StatusSelectionSheet';
 import { useCompleteCheck } from './useCompleteCheck';
 import styles from './CheckEntryView.module.css';
 
@@ -25,7 +26,7 @@ type CheckEntryViewProps = {
   checkData: Extract<WorkflowState, { view: 'form' }>;
 };
 
-type StatusValue = 'Awake' | 'Sleeping' | 'Refused' | 'Out';
+type StatusValue = 'Awake' | 'Sleeping' | 'Refused' | 'Out' | 'Eating' | 'Working' | 'Chilling';
 type SecurityCheckTypeValue = 'Locked down' | 'Random';
 
 const securityCheckTypeOptions = [
@@ -41,7 +42,7 @@ const incidentTypeOptions = [
   { value: 'Other', label: 'Other' },
 ];
 
-// PRD-02: Define all mark multiple option sets (mirroring ResidentCheckControl)
+// PRD-07: Define all mark multiple option sets (2-7 options)
 const markMultipleOptionsSet2 = [
   { value: 'Awake', label: 'Awake' },
   { value: 'Sleeping', label: 'Sleeping' },
@@ -58,6 +59,33 @@ const markMultipleOptionsSet4 = [
   { value: 'Sleeping', label: 'Sleeping' },
   { value: 'Refused', label: 'Refused' },
   { value: 'Out', label: 'Out' },
+] as const;
+
+const markMultipleOptionsSet5 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+  { value: 'Eating', label: 'Eating' },
+] as const;
+
+const markMultipleOptionsSet6 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+  { value: 'Eating', label: 'Eating' },
+  { value: 'Working', label: 'Working' },
+] as const;
+
+const markMultipleOptionsSet7 = [
+  { value: 'Awake', label: 'Awake' },
+  { value: 'Sleeping', label: 'Sleeping' },
+  { value: 'Refused', label: 'Refused' },
+  { value: 'Out', label: 'Out' },
+  { value: 'Eating', label: 'Eating' },
+  { value: 'Working', label: 'Working' },
+  { value: 'Chilling', label: 'Chilling' },
 ] as const;
 
 export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
@@ -77,16 +105,19 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     isCheckTypeEnabled,
     manualConfirmationEnabled,
     markMultipleEnabled,
-    residentStatusSet, // PRD-02: Add for dynamic mark multiple options
+    residentStatusSet, // PRD-07: Expanded for 2-7 status options
+    markMultipleLayout, // PRD-07: Column or grid layout
   } = useAtomValue(appConfigAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
-  // PRD-02: Select appropriate mark multiple options based on config
+  // PRD-07: State for status selection sheet
+  const [isStatusSheetOpen, setIsStatusSheetOpen] = useState(false);
+
+  // PRD-07: Select appropriate mark multiple options based on config (2-7)
   let markMultipleOptions: readonly { value: string; label: string }[];
-  let markMultipleLayout: 'row' | 'grid' = 'row';
 
   switch (residentStatusSet) {
     case 'set-2':
@@ -94,7 +125,15 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       break;
     case 'set-4':
       markMultipleOptions = markMultipleOptionsSet4;
-      markMultipleLayout = 'grid';
+      break;
+    case 'set-5':
+      markMultipleOptions = markMultipleOptionsSet5;
+      break;
+    case 'set-6':
+      markMultipleOptions = markMultipleOptionsSet6;
+      break;
+    case 'set-7':
+      markMultipleOptions = markMultipleOptionsSet7;
       break;
     case 'set-3':
     default:
@@ -225,15 +264,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     });
     setStatuses(newStatuses);
   };
-
-  const currentMarkAllValue = useMemo(() => {
-    const uniqueValues = new Set(Object.values(statuses));
-    if (uniqueValues.size === 1) {
-      const val = uniqueValues.values().next().value;
-      if (val) return val;
-    }
-    return '';
-  }, [statuses]);
 
   const canSave = useMemo(() => {
     const allResidentsHaveStatus = checkData.residents.every((res) => statuses[res.id]);
@@ -368,16 +398,24 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
         {markMultipleEnabled && checkData.residents.length > 1 && (
           <div className={styles.markMultipleContainer}>
-            <label htmlFor="mark-all-control" className={styles.sectionHeader}>Mark all residents</label>
-            <SegmentedControl
-              id="mark-all-control"
-              options={markMultipleOptions}
-              value={currentMarkAllValue}
-              onValueChange={handleApplyAll}
-              layout={markMultipleLayout}
-            />
+            <Button
+              variant="secondary"
+              size="m"
+              onClick={() => setIsStatusSheetOpen(true)}
+            >
+              Mark all
+            </Button>
           </div>
         )}
+
+        {/* PRD-07: Status Selection Sheet */}
+        <StatusSelectionSheet
+          isOpen={isStatusSheetOpen}
+          onClose={() => setIsStatusSheetOpen(false)}
+          onSelect={handleApplyAll}
+          options={markMultipleOptions}
+          layout={markMultipleLayout}
+        />
 
         <div className={styles.residentListContainer}>
           {checkData.residents.map((resident) => {
