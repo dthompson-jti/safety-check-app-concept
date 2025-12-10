@@ -64,6 +64,19 @@
     flex-direction: column;
 }
 
+/* Row Layout (horizontal) */
+.rowContainer {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3);
+}
+
+/* Row layout buttons fill width equally */
+.rowContainer .gridButton {
+    flex: 1;
+}
+
 /* Grid Layout */
 .gridContainer {
     display: grid;

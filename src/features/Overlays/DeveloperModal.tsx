@@ -177,6 +177,7 @@ export const DeveloperModal = () => {
             <SegmentedControl
               id="status-layout-toggle"
               options={[
+                { value: 'row', label: 'Row' },
                 { value: 'column', label: 'Column' },
                 { value: 'grid', label: 'Grid' },
               ]}

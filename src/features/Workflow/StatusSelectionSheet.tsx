@@ -14,7 +14,7 @@ interface StatusSelectionSheetProps {
     onClose: () => void;
     onSelect: (status: string) => void;
     options: readonly StatusOption[];
-    layout: 'column' | 'grid';
+    layout: 'row' | 'column' | 'grid';
 }
 
 export const StatusSelectionSheet = ({
@@ -38,6 +38,18 @@ export const StatusSelectionSheet = ({
 
     // Calculate if we need a dead cell for grid layout (odd number of items)
     const needsDeadCell = layout === 'grid' && options.length % 2 !== 0;
+
+    // Determine which container class to use
+    const getContainerClass = () => {
+        switch (layout) {
+            case 'row':
+                return styles.rowContainer;
+            case 'column':
+                return styles.columnList;
+            case 'grid':
+                return styles.gridContainer;
+        }
+    };
 
     return (
         <AnimatePresence>
@@ -74,7 +86,7 @@ export const StatusSelectionSheet = ({
                         {/* Content */}
                         <div className={styles.listContainer}>
                             {layout === 'column' ? (
-                                <div className={styles.columnList}>
+                                <div className={getContainerClass()}>
                                     {options.map((option) => (
                                         <ActionListItem
                                             key={option.value}
@@ -84,7 +96,7 @@ export const StatusSelectionSheet = ({
                                     ))}
                                 </div>
                             ) : (
-                                <div className={styles.gridContainer}>
+                                <div className={getContainerClass()}>
                                     {options.map((option) => (
                                         <button
                                             key={option.value}

@@ -149,7 +149,7 @@ interface AppConfig {
   showStatusIndicators: boolean;
   missedCheckToastsEnabled: boolean; // NEW: Developer toggle for missed check toasts
   residentStatusSet: 'set-2' | 'set-3' | 'set-4' | 'set-5' | 'set-6' | 'set-7'; // PRD-07: Expanded to support 2-7 status options
-  markMultipleLayout: 'column' | 'grid'; // PRD-07: Layout for status selection sheet
+  markMultipleLayout: 'row' | 'column' | 'grid'; // PRD-07: Layout for status selection
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
