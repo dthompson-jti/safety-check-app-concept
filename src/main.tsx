@@ -12,7 +12,7 @@ import './styles/index.css'
 // --- VERSION BOMB ---
 // This forces a clear of localStorage if the version doesn't match.
 // Useful for clearing out old/incompatible data from previous prototypes.
-const APP_VERSION = 'v4'; // Increment this to wipe everyone's data
+const APP_VERSION = 'v5'; // Increment this to wipe everyone's data
 const STORAGE_VERSION_KEY = 'app_version_marker';
 
 try {

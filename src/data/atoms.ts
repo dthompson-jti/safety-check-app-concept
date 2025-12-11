@@ -136,9 +136,14 @@ export const connectionStatusAtom = atom(
   }
 );
 
+export type HapticSuccessPattern = 'light' | 'medium' | 'heavy';
+export type HapticErrorPattern = 'simple' | 'double' | 'grind' | 'stutter';
+
 interface AppConfig {
   scanMode: 'qr' | 'nfc';
   hapticsEnabled: boolean;
+  hapticPatternSuccess: HapticSuccessPattern;
+  hapticPatternError: HapticErrorPattern;
   isSlowLoadEnabled: boolean;
   isCheckTypeEnabled: boolean;
   markMultipleEnabled: boolean;
@@ -151,6 +156,8 @@ interface AppConfig {
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   scanMode: 'qr',
   hapticsEnabled: true,
+  hapticPatternSuccess: 'heavy',
+  hapticPatternError: 'double',
   isSlowLoadEnabled: false,
   isCheckTypeEnabled: false,
   markMultipleEnabled: false,

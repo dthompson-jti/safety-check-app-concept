@@ -18,11 +18,13 @@ interface StatusPillProps {
 }
 
 const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, tooltipContent }) => {
+  const isEmpty = count === 0;
   const pill = (
     <div
       className={styles.statusPill}
       data-status={status}
       data-active="false"
+      data-empty={isEmpty ? "true" : undefined}
     >
       <span className={`material-symbols-rounded ${styles.icon}`}>{icon}</span>
       <span className={styles.count}>{count}</span>
@@ -67,11 +69,9 @@ export const StatusBar = () => {
       transition={{ type: 'tween', duration: 0.2 }}
     >
       <div className={styles.contentContainer}>
-        {/* Missed pill (red) - highest priority */}
-        {counts.missed > 0 && (
-          <StatusPill count={counts.missed} icon="notifications_active" status="missed" tooltipContent={missedTooltip} />
-        )}
-        {/* Due pill (yellow/warning) */}
+        {/* Missed pill (red) - always visible, softened when count=0 */}
+        <StatusPill count={counts.missed} icon="notifications_active" status="missed" tooltipContent={missedTooltip} />
+        {/* Due pill (yellow/warning) - always visible, softened when count=0 */}
         <StatusPill count={counts.due} icon="schedule" status="due" tooltipContent={dueTooltip} />
       </div>
     </motion.div>

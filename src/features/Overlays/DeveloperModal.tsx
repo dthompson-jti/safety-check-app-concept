@@ -207,7 +207,7 @@ export const DeveloperModal = () => {
                 value={theme}
                 onValueChange={(val) => {
                   triggerHaptic('selection');
-                  setTheme(val as 'light' | 'dark-a' | 'dark-b' | 'dark-c');
+                  setTheme(val);
                 }}
               />
             </div>
@@ -224,7 +224,58 @@ export const DeveloperModal = () => {
         </div>
       </div>
 
-      {/* 5. Simulation */}
+      {/* 5. Haptics */}
+      <div className={styles.settingSection}>
+        <h3 className={styles.sectionHeader}>Haptics</h3>
+        <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Success pattern</label>
+            <SegmentedControl
+              id="haptic-success-toggle"
+              options={[
+                { value: 'light', label: 'Light (50ms)' },
+                { value: 'medium', label: 'Medium (100ms)' },
+                { value: 'heavy', label: 'Heavy (150ms)' },
+              ]}
+              value={appConfig.hapticPatternSuccess}
+              onValueChange={(val) => {
+                // Preview: Set the pattern and trigger it so user can feel it
+                setAppConfig((c) => ({ ...c, hapticPatternSuccess: val }));
+
+                // Small delay to let state update, then trigger
+                setTimeout(() => {
+                  triggerHaptic('success');
+                }, 50);
+              }}
+            />
+          </div>
+
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Error pattern</label>
+            <SegmentedControl
+              id="haptic-error-toggle"
+              options={[
+                { value: 'simple', label: 'Simple' },
+                { value: 'double', label: 'Double' },
+                { value: 'grind', label: 'Grind' },
+                { value: 'stutter', label: 'Stutter' },
+              ]}
+              value={appConfig.hapticPatternError}
+              onValueChange={(val) => {
+                // Preview: Set the pattern and trigger it so user can feel it
+                setAppConfig((c) => ({ ...c, hapticPatternError: val }));
+
+                // Small delay to let state update, then trigger
+                setTimeout(() => {
+                  triggerHaptic('error');
+                }, 50);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 6. Simulation */}
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Simulation</h3>
         <div className={styles.settingsGroup}>
@@ -255,7 +306,7 @@ export const DeveloperModal = () => {
         </div>
       </div>
 
-      {/* 6. Toast Playground (Added at Bottom) */}
+      {/* 7. Toast Playground (Added at Bottom) */}
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Toast Playground</h3>
         <div className={styles.toastGrid}>

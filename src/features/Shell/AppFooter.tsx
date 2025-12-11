@@ -80,7 +80,7 @@ export const AppFooter = () => {
 
     // Always use timeSortedChecks since we only have one view now
     const targetCheck = timeSortedChecks.find(c =>
-      c.status !== 'complete' && c.status !== 'missed' && c.type !== 'supplemental'
+      c.status !== 'complete' && c.type !== 'supplemental'
     );
 
     if (targetCheck) {

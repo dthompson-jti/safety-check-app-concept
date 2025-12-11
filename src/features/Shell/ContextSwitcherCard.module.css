@@ -12,10 +12,10 @@
   font-family: var(--font-family-sans);
   position: relative;
   overflow: hidden;
-  
+
   /* Default Style */
   background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
+  border: 1px solid var(--control-border-tertiary);
   padding: var(--spacing-3);
 }
 
@@ -64,6 +64,7 @@
     background-color: var(--surface-bg-primary_hover);
     border-color: var(--control-border-tertiary-hover);
   }
+
   .contextCard:hover .actionIcon {
     color: var(--surface-fg-secondary);
   }

@@ -32,7 +32,7 @@ export const useTheme = () => {
         // Persist choice
         try {
             localStorage.setItem('app-theme', theme);
-        } catch (e) {
+        } catch {
             // Ignore storage errors
         }
     }, [theme]);

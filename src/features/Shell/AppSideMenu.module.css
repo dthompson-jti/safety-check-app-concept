@@ -127,7 +127,7 @@
   text-align: left;
   border-radius: var(--radius-lg);
   background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
+  border: 1px solid var(--control-border-tertiary);
   /* REMOVED SHADOW */
   color: var(--surface-fg-tertiary);
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;

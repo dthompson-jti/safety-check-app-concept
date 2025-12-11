@@ -42,6 +42,11 @@
     color: var(--surface-fg-warning-primary);
 }
 
+/* Empty state - soften when count is 0 */
+.statusPill[data-empty="true"] {
+    opacity: 0.7;
+}
+
 .icon {
     font-size: 1.25rem;
     /* Bumped up from 1rem */

@@ -6,11 +6,18 @@ The application uses a centralized hook `useHaptics` utilizing the Web Vibration
 
 ### Defined Patterns (Semantic Palette)
 
+**Configurable Patterns (via Developer Settings):**
+
+| Type | Options | Default | Feel | Semantic Intent |
+| :--- | :--- | :--- | :--- | :--- |
+| **`success`** | Light: `[50]`<br>Medium: `[100]`<br>**Heavy: `[150]`** | Heavy | Short to firm buzz | Successful transaction or state completion (e.g., Check Complete, NFC Payment). |
+| **`error`** | Simple: `[200]`<br>**Double: `[300, 100, 300]`**<br>Grind: `[50, 50, 50, 50, 50, 50]`<br>Stutter: `[50, 100, 50, 100, 200]` | Double | Varies by selection | Failure of a critical action (e.g., Scan failed, Tag not read). |
+
+**Static Patterns (Non-configurable):**
+
 | Type | Pattern (ms) | Feel | Semantic Intent |
 | :--- | :--- | :--- | :--- |
-| **`success`** | `[50]` | Short, crisp buzz | Successful transaction or state completion (e.g., Check Complete). |
-| **`warning`** | `[100, 30, 100]` | Double buzz | Alert requiring attention (e.g., Offline mode). |
-| **`error`** | `[200, 50, 50]` | Long-short-short | Failure of a critical action (e.g., Scan failed). |
+| **`warning`** | `[100, 50, 100]` | Double buzz | Alert requiring attention (e.g., Offline mode). |
 | **`light`** | `10` | Micro-tick | Subtle feedback for minor non-destructive actions. |
 | **`medium`** | `40` | Noticeable tap | Standard interaction feedback (e.g., Sync starting). |
 | **`heavy`** | `60` | Heavy tap | High-impact actions (e.g., Initiating Scan Mode). |
@@ -36,7 +43,24 @@ The application uses a centralized hook `useHaptics` utilizing the Web Vibration
 
 ---
 
-## 2. Gaps & Opportunities
+## 2. Payment App Haptics Research
+
+### Android NFC Payment
+*   **Duration**: Typically a "short vibration" or "simple bump" (~200ms or less)
+*   **Characteristic**: Single, crisp feedback confirming successful tap-to-pay
+*   **User Expectation**: Users expect a firm, unmistakable confirmation ("thud")
+
+### iOS Apple Pay
+*   **Duration**: Not officially specified, but described as "instant" haptic feedback
+*   **Characteristic**: Single tap with high confidence, unmistakable as success
+*   **Taptic Engine**: Uses precision haptics for clear distinction
+
+### Key Takeaway
+Payment apps use a **single, strong buzz** for success (not gentle multi-tap patterns). This aligns with our decision to use `150ms` (Heavy) as the default success pattern.
+
+---
+
+## 3. Gaps & Opportunities
 
 ### Inconsistencies
 *   **Primitives are Silent**: The `ActionListItem` and `SegmentedControl` components do not have built-in haptics. They rely on the parent to trigger them.
@@ -50,7 +74,7 @@ The application uses a centralized hook `useHaptics` utilizing the Web Vibration
 
 ---
 
-## 3. External Research & Best Practices
+## 4. External Research & Best Practices
 
 ### Platform Constraints (Critical)
 *   **iOS Safari**: Does **not** support `navigator.vibrate`. Haptics will be completely absent for iPhone users unless the app is wrapped (Capacitor/Cordova) or installed as a PWA (support varies by version, generally poor).

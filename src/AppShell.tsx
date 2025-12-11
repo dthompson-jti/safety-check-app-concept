@@ -72,6 +72,21 @@ const AppShellContent = () => {
     // No filmstrip progress needed since we only have one view
   }, [appView, sideMenuProgress]);
 
+  // FIX: Reset side menu progress when entering/exiting workflow views
+  // This prevents stale progress values from causing a stuck menu state
+  useEffect(() => {
+    if (workflowState.view !== 'none') {
+      // Entering a workflow overlay - ensure menu is closed
+      if (sideMenuProgress.get() > 0) {
+        sideMenuProgress.set(0);
+      }
+      // Also ensure appView is dashboardTime when in overlay
+      if (appView === 'sideMenu') {
+        setAppView('dashboardTime');
+      }
+    }
+  }, [workflowState.view, sideMenuProgress, appView, setAppView]);
+
 
   useLayoutEffect(() => {
     const chromeElement = appChromeRef.current;
@@ -121,6 +136,10 @@ const AppShellContent = () => {
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
+    // FIX: Guard against gesture handling during workflow overlays
+    // This prevents stale pointer data from partially opening the side menu
+    if (workflowState.view !== 'none') return;
+
     if (isDragging.current) {
       const deltaX = e.clientX - startX.current;
       const viewportWidth = window.innerWidth;
