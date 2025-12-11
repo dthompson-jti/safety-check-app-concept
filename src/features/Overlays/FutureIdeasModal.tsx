@@ -48,7 +48,6 @@ export const FutureIdeasModal = () => {
         >
             {/* Future Ideas Section */}
             <div className={styles.settingSection}>
-                <h3 className={styles.sectionHeader}>Future Ideas</h3>
                 <div className={styles.warningBlock} style={{
                     padding: 'var(--spacing-3)',
                     marginBottom: 'var(--spacing-3)',

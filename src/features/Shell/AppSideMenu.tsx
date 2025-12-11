@@ -80,8 +80,9 @@ export const AppSideMenu = () => {
         <div className={styles.separator} />
 
         <MenuItem icon="nfc" label="Write NFC tags" onClick={() => setWorkflowState({ view: 'provisioning' })} />
-        {futureIdeasUnlocked && <MenuItem icon="lightbulb" label="Future Ideas" onClick={() => setIsFutureIdeasOpen(true)} />}
         <MenuItem icon="code" label="Developer tools" onClick={() => setIsDevToolsOpen(true)} />
+        {futureIdeasUnlocked && <MenuItem icon="lightbulb" label="Future Ideas" onClick={() => setIsFutureIdeasOpen(true)} />}
+
       </main>
 
       <footer className={styles.footer}>
