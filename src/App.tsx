@@ -50,7 +50,7 @@ function App() {
 
     // Show themed toast
     addToast({
-      message: willBeUnlocked ? 'Dev Mode unlocked 🎮' : 'Dev Mode locked',
+      message: willBeUnlocked ? 'Dave Mode unlocked 🎮' : 'Dave Mode locked',
       icon: willBeUnlocked ? 'code' : 'lock',
       variant: 'neutral',
     });
