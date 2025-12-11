@@ -14,6 +14,7 @@ import {
 import { mockResidents } from '../../data/mock/residentData';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useAppSound } from '../../data/useAppSound';
 import { Button } from '../../components/Button';
 import { appConfigAtom } from '../../data/atoms';
 import { useCompleteCheck } from './useCompleteCheck';
@@ -37,6 +38,7 @@ export const ScanView = () => {
   const addToast = useSetAtom(addToastAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
+  const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
@@ -72,11 +74,12 @@ export const ScanView = () => {
     // STRATEGY UPDATE: Removed redundant toast. 
     // The viewfinder's fail state overlay provides sufficient immediate feedback.
     triggerHaptic('error');
+    playSound('error');
     setScanViewState('fail');
     setTimeout(() => {
       setScanViewState('scanning');
     }, 1500);
-  }, [triggerHaptic]);
+  }, [triggerHaptic, playSound]);
 
   const handleDecode = (result: string) => {
     if (scanViewState !== 'scanning') return;
@@ -97,6 +100,7 @@ export const ScanView = () => {
 
       if (check) {
         triggerHaptic('success');
+        playSound('success');
         setScanViewState('success');
 
         if (appConfig.simpleSubmitEnabled) {

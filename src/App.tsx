@@ -11,7 +11,7 @@ import {
 import { toastsAtom, addToastAtom } from './data/toastAtoms';
 import { dispatchActionAtom } from './data/appDataAtoms';
 import { useCheckLifecycle } from './data/useCheckLifecycle';
-import { useDevMode } from './data/devMode';
+import { useFutureIdeas } from './data/featureFlags';
 import { useKonamiCode } from './hooks/useKonamiCode';
 
 // Components
@@ -20,6 +20,7 @@ import { LoginView } from './features/Session/LoginView';
 import { ToastContainer } from './components/ToastContainer';
 import { ToastMessage } from './components/Toast';
 import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
+import { SoundManager } from './features/Shell/SoundManager';
 
 // 24fps = approx 41.6ms
 const CINEMATIC_FRAME_MS = 41;
@@ -40,23 +41,23 @@ function App() {
 
   useCheckLifecycle();
 
-  // Dev mode toggle via Konami code with toast feedback
-  const { toggle: toggleDevMode, isUnlocked: devModeUnlocked } = useDevMode();
+  // Future Ideas toggle via Konami code with toast feedback
+  const { toggle: toggleFutureIdeas, isUnlocked: futureIdeasUnlocked } = useFutureIdeas();
   const addToast = useSetAtom(addToastAtom);
 
-  const toggleDevModeWithToast = useCallback(() => {
-    const willBeUnlocked = !devModeUnlocked;
-    toggleDevMode();
+  const toggleFutureIdeasWithToast = useCallback(() => {
+    const willBeUnlocked = !futureIdeasUnlocked;
+    toggleFutureIdeas();
 
     // Show themed toast
     addToast({
-      message: willBeUnlocked ? 'Dave Mode unlocked 🎮' : 'Dave Mode locked',
-      icon: willBeUnlocked ? 'code' : 'lock',
+      message: willBeUnlocked ? 'Future Ideas Unlocked' : 'Future Ideas Hidden',
+      icon: willBeUnlocked ? 'lightbulb' : 'lightbulb_outline',
       variant: 'neutral',
     });
-  }, [toggleDevMode, devModeUnlocked, addToast]);
+  }, [toggleFutureIdeas, futureIdeasUnlocked, addToast]);
 
-  useKonamiCode(toggleDevModeWithToast);
+  useKonamiCode(toggleFutureIdeasWithToast);
 
   // Ctrl+Shift+0: Reset app data shortcut ("0 = fresh start")
   const dispatch = useSetAtom(dispatchActionAtom);
@@ -124,6 +125,7 @@ function App() {
   return (
     <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
       <LayoutOrchestrator />
+      <SoundManager />
       <AnimatePresence mode="wait">
         {session.isAuthenticated ? <AppShell /> : <LoginView />}
       </AnimatePresence>

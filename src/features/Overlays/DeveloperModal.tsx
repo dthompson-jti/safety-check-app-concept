@@ -5,21 +5,17 @@ import {
   appConfigAtom,
   hardwareSimulationAtom
 } from '../../data/atoms';
+import { featureFlagsAtom } from '../../data/featureFlags';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useDevMode } from '../../data/devMode';
-import { IconToggleGroup } from '../../components/IconToggleGroup';
+
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { Switch } from '../../components/Switch';
 import { Button } from '../../components/Button';
-import { useTheme } from '../../data/useTheme';
 import styles from './DeveloperModal.module.css';
 
-const scanModeOptions = [
-  { value: 'qr', label: 'QR Code', icon: 'qr_code_2' },
-  { value: 'nfc', label: 'NFC', icon: 'nfc' },
-] as const;
+
 
 interface ToastDefinition {
   label: string;
@@ -44,10 +40,8 @@ export const DeveloperModal = () => {
   const addToast = useSetAtom(addToastAtom);
   const activeToasts = useAtomValue(toastsAtom);
   const { trigger: triggerHaptic } = useHaptics();
-  const { theme, setTheme } = useTheme();
+  const featureFlags = useAtomValue(featureFlagsAtom);
 
-  // Dev mode state (Konami listener is in App.tsx)
-  const { isUnlocked: devModeUnlocked } = useDevMode();
 
   const handleSwitch = (setter: (val: boolean) => void) => (checked: boolean) => {
     triggerHaptic('light');
@@ -177,42 +171,12 @@ export const DeveloperModal = () => {
         </div>
       </div>
 
-      {/* 3. Scan Settings */}
-      <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Scan Settings</h3>
-        <IconToggleGroup
-          id="scan-mode-toggle"
-          options={scanModeOptions}
-          value={appConfig.scanMode}
-          onValueChange={(mode) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, scanMode: mode })); }}
-        />
-      </div>
+
 
       {/* 4. App Style */}
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>App Style</h3>
         <div className={styles.settingsGroup}>
-          {/* Theme Toggle: Only visible when dev mode is unlocked */}
-          {devModeUnlocked && (
-            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-              <label className={styles.itemLabel}>Theme</label>
-              <SegmentedControl
-                id="theme-toggle"
-                options={[
-                  { value: 'light', label: 'Light' },
-                  { value: 'dark-a', label: 'Dark A' },
-                  { value: 'dark-b', label: 'Dark B' },
-                  { value: 'dark-c', label: 'Dark C' },
-                ]}
-                value={theme}
-                onValueChange={(val) => {
-                  triggerHaptic('selection');
-                  setTheme(val);
-                }}
-              />
-            </div>
-          )}
-
           <div className={styles.settingsItem}>
             <label htmlFor="status-indicators-switch" className={styles.itemLabel}>Show status indicators</label>
             <Switch
@@ -224,56 +188,59 @@ export const DeveloperModal = () => {
         </div>
       </div>
 
-      {/* 5. Haptics */}
-      <div className={styles.settingSection}>
-        <h3 className={styles.sectionHeader}>Haptics</h3>
-        <div className={styles.settingsGroup}>
-          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-            <label className={styles.itemLabel}>Success pattern</label>
-            <SegmentedControl
-              id="haptic-success-toggle"
-              options={[
-                { value: 'light', label: 'Light (50ms)' },
-                { value: 'medium', label: 'Medium (100ms)' },
-                { value: 'heavy', label: 'Heavy (150ms)' },
-              ]}
-              value={appConfig.hapticPatternSuccess}
-              onValueChange={(val) => {
-                // Preview: Set the pattern and trigger it so user can feel it
-                setAppConfig((c) => ({ ...c, hapticPatternSuccess: val }));
 
-                // Small delay to let state update, then trigger
-                setTimeout(() => {
-                  triggerHaptic('success');
-                }, 50);
-              }}
-            />
-          </div>
+      {/* 5. Haptics (Only visible when useHapticsEnabled feature flag is on) */}
+      {featureFlags.useHapticsEnabled && (
+        <div className={styles.settingSection}>
+          <h3 className={styles.sectionHeader}>Haptics</h3>
+          <div className={styles.settingsGroup}>
+            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+              <label className={styles.itemLabel}>Success pattern</label>
+              <SegmentedControl
+                id="haptic-success-toggle"
+                options={[
+                  { value: 'light', label: 'Light (50ms)' },
+                  { value: 'medium', label: 'Medium (100ms)' },
+                  { value: 'heavy', label: 'Heavy (150ms)' },
+                ]}
+                value={appConfig.hapticPatternSuccess}
+                onValueChange={(val) => {
+                  // Preview: Set the pattern and trigger it so user can feel it
+                  setAppConfig((c) => ({ ...c, hapticPatternSuccess: val }));
 
-          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-            <label className={styles.itemLabel}>Error pattern</label>
-            <SegmentedControl
-              id="haptic-error-toggle"
-              options={[
-                { value: 'simple', label: 'Simple' },
-                { value: 'double', label: 'Double' },
-                { value: 'grind', label: 'Grind' },
-                { value: 'stutter', label: 'Stutter' },
-              ]}
-              value={appConfig.hapticPatternError}
-              onValueChange={(val) => {
-                // Preview: Set the pattern and trigger it so user can feel it
-                setAppConfig((c) => ({ ...c, hapticPatternError: val }));
+                  // Small delay to let state update, then trigger
+                  setTimeout(() => {
+                    triggerHaptic('success');
+                  }, 50);
+                }}
+              />
+            </div>
 
-                // Small delay to let state update, then trigger
-                setTimeout(() => {
-                  triggerHaptic('error');
-                }, 50);
-              }}
-            />
+            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+              <label className={styles.itemLabel}>Error pattern</label>
+              <SegmentedControl
+                id="haptic-error-toggle"
+                options={[
+                  { value: 'simple', label: 'Simple' },
+                  { value: 'double', label: 'Double' },
+                  { value: 'grind', label: 'Grind' },
+                  { value: 'stutter', label: 'Stutter' },
+                ]}
+                value={appConfig.hapticPatternError}
+                onValueChange={(val) => {
+                  // Preview: Set the pattern and trigger it so user can feel it
+                  setAppConfig((c) => ({ ...c, hapticPatternError: val }));
+
+                  // Small delay to let state update, then trigger
+                  setTimeout(() => {
+                    triggerHaptic('error');
+                  }, 50);
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 6. Simulation */}
       <div className={styles.settingSection}>

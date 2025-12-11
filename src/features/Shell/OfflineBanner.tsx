@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { connectionStatusAtom, offlineTimestampAtom } from '../../data/atoms';
 import { queuedChecksCountAtom, dispatchActionAtom } from '../../data/appDataAtoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useAppSound } from '../../data/useAppSound';
 import styles from './OfflineBanner.module.css';
 
 const formatDuration = (ms: number): string => {
@@ -20,6 +21,7 @@ export const OfflineBanner = () => {
   const queuedCount = useAtomValue(queuedChecksCountAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const { trigger: triggerHaptic } = useHaptics();
+  const { play: playSound } = useAppSound();
 
   const [duration, setDuration] = useState('0:00');
   const bannerRef = useRef<HTMLDivElement>(null);
@@ -83,6 +85,7 @@ export const OfflineBanner = () => {
     setTimeout(() => {
       dispatch({ type: 'SYNC_QUEUED_CHECKS', payload: { syncTime: new Date().toISOString() } });
       triggerHaptic('success');
+      playSound('success');
       setStatus('online');
     }, 2000);
   };

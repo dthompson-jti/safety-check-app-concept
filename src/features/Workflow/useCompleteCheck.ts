@@ -7,6 +7,7 @@ import {
     appConfigAtom,
 } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useAppSound } from '../../data/useAppSound';
 
 type CompleteCheckOptions = {
     checkId: string;
@@ -23,12 +24,14 @@ export const useCompleteCheck = () => {
     const appConfig = useAtomValue(appConfigAtom);
 
     const { trigger: triggerHaptic } = useHaptics();
+    const { play: playSound } = useAppSound();
 
     const completeCheck = ({ checkId, statuses, notes, onSuccess }: CompleteCheckOptions) => {
         // Check if we're in rapid NFC mode: NFC scanning + Simple Submit enabled
         const isRapidMode = appConfig.scanMode === 'nfc' && appConfig.simpleSubmitEnabled;
 
         triggerHaptic('success');
+        playSound('success');
 
         // 1. Set status to 'completing' immediately.
         // This triggers the green card state and the "Completed" badge.

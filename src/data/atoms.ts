@@ -101,6 +101,7 @@ export const isWriteNfcModalOpenAtom = atom(
 );
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
+export const isFutureIdeasModalOpenAtom = atom(false);
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
 export const nfcProvisioningGroupIdAtom = atom<string | null>(null);
@@ -142,6 +143,7 @@ export type HapticErrorPattern = 'simple' | 'double' | 'grind' | 'stutter';
 interface AppConfig {
   scanMode: 'qr' | 'nfc';
   hapticsEnabled: boolean;
+  audioEnabled: boolean;
   hapticPatternSuccess: HapticSuccessPattern;
   hapticPatternError: HapticErrorPattern;
   isSlowLoadEnabled: boolean;
@@ -156,6 +158,7 @@ interface AppConfig {
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   scanMode: 'qr',
   hapticsEnabled: true,
+  audioEnabled: true,
   hapticPatternSuccess: 'heavy',
   hapticPatternError: 'double',
   isSlowLoadEnabled: false,

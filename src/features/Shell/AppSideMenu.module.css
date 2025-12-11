@@ -166,3 +166,48 @@
 .userProfileCard .material-symbols-rounded {
   font-size: 24px;
 }
+
+/* Future Ideas Card */
+.futureIdeasCard {
+  padding: var(--spacing-4);
+  background-color: var(--surface-bg-primary);
+  border: 1px solid var(--control-border-tertiary);
+  border-radius: var(--radius-lg);
+}
+
+.futureIdeasHeader {
+  margin: 0 0 var(--spacing-3) 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--surface-fg-primary);
+}
+
+.futureIdeasWarning {
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+  background-color: var(--color-surface-tertiary);
+  border: 1px solid var(--color-control-tertiary-border);
+  border-radius: var(--radius-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.futureIdeasToggles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.toggleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.toggleItem label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--surface-fg-secondary);
+}

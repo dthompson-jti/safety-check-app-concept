@@ -6,6 +6,7 @@ import {
   workflowStateAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
+  isFutureIdeasModalOpenAtom,
   connectionStatusAtom,
   appViewAtom,
 } from './data/atoms';
@@ -21,6 +22,7 @@ import { ManualCheckSelectorSheet } from './features/Overlays/ManualCheckSelecto
 import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsModal } from './features/Overlays/SettingsModal';
 import { DeveloperModal } from './features/Overlays/DeveloperModal';
+import { FutureIdeasModal } from './features/Overlays/FutureIdeasModal';
 import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
 import { GestureProvider } from './data/GestureProvider';
 import { useGestureContext } from './data/GestureContext';
@@ -41,6 +43,7 @@ const AppShellContent = () => {
 
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
+  const [isFutureIdeasOpen, setIsFutureIdeasOpen] = useAtom(isFutureIdeasModalOpenAtom);
 
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
@@ -287,6 +290,16 @@ const AppShellContent = () => {
         exitDirection="right"
       >
         <DeveloperModal />
+      </FullScreenModal>
+
+      <FullScreenModal
+        isOpen={isFutureIdeasOpen}
+        onClose={() => setIsFutureIdeasOpen(false)}
+        title="Future Ideas"
+        transitionType="slide-horizontal"
+        exitDirection="right"
+      >
+        <FutureIdeasModal />
       </FullScreenModal>
     </div>
   );
