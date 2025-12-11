@@ -1,7 +1,7 @@
 # PRD-006: Time Display Options
 
-> [!WARNING]
-> **DEPRECATION NOTICE**: Absolute Time checks are deprecated. This feature will be removed in a future update to reduce cognitive load. Current goal is stability.
+> [!CAUTION]
+> **REMOVED**: This feature was removed on 2025-12-10. The application now uses Relative (countdown) time display only. See `docs/legacy-sound-implementation.md` for the pattern used to document legacy features.
 
 
 ## 1. Overview

@@ -22,7 +22,6 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Animation:** Framer Motion
 -   **UI Primitives:** Radix UI
 -   **Bottom Sheet Modals:** Vaul
--   **Audio Engine:** use-sound (Howler.js)
 
 ## 3. Prototype Features
 
@@ -38,13 +37,11 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Persistent Chrome:** The application header and footer remain stable during view transitions, preventing layout shifts.
 -   **Sensory Feedback System:** A decoupled, accessible feedback engine provides tangible confirmation for user actions.
     -   **Haptics:** Granular vibration patterns (success, warning, selection) triggered via `useHaptics`.
-    -   **Audio:** Low-latency sound effects managed by a headless `SoundManager` and triggered via `useAppSound`. Audio can be toggled independently of haptics.
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:
     -   **Hardware Failure:** Simulate Camera or NFC reader failures.
     -   **Simulation Toggles:**
         -   Force Camera Failure (`HardwareSimulation`): Intercepts camera startup to display error overlays.
         -   Force NFC Failure (`HardwareSimulation`): Intercepts NFC scans to trigger error feedback.
-        -   **Missed Check Logic:** Speed up time to test lifecycle events.
     -   **Lifecycle Stress Test (A-Wing):** The A-Wing mock data is specifically configured with staggered checks (30s intervals) to test every lifecycle boundary (Early->Pending, Pending->Due, Due->Missed, Missed Rollover) in under 60 seconds.
     -   **Network Status:** Toggle between Online, Offline, and Syncing states.
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
@@ -85,4 +82,4 @@ The project uses **Jotai** for its minimal, atomic state management model. State
 1.  **Persisted State (`src/data/atoms.ts`):** Uses `atomWithStorage` to handle data that must survive a reload (Session, Config, Preferences).
 2.  **App Data (`src/data/appDataAtoms.ts`):** Manages the core business logic (Safety Checks list).
 3.  **Temporal State (The Heartbeat):** A centralized `requestAnimationFrame` loop in `App.tsx` drives UI countdowns and business logic updates.
-4.  **Sensory State (Audio Dispatcher):** A writable atom (`playSoundDispatcherAtom`) acts as a bridge, allowing any component to trigger sounds without direct coupling to the audio engine.
+4.  **Sensory State:** Haptics are triggered via the `useHaptics` hook, which reads the global `hapticsEnabled` config before firing.
