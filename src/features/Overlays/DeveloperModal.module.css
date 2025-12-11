@@ -138,3 +138,9 @@
   color: var(--surface-fg-tertiary);
   line-height: 1.4;
 }
+
+.shortcutHint {
+  font-size: 0.75rem;
+  color: var(--surface-fg-tertiary);
+  font-style: italic;
+}

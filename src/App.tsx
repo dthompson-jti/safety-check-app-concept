@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { useAtomValue, useAtom } from 'jotai';
+import { useEffect, useRef, useCallback } from 'react';
+import { useAtomValue, useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence } from 'framer-motion';
 import * as ToastPrimitive from '@radix-ui/react-toast';
 import {
@@ -8,7 +8,8 @@ import {
   slowTickerAtom,
   throttledTickerAtom
 } from './data/atoms';
-import { toastsAtom } from './data/toastAtoms';
+import { toastsAtom, addToastAtom } from './data/toastAtoms';
+import { dispatchActionAtom } from './data/appDataAtoms';
 import { useCheckLifecycle } from './data/useCheckLifecycle';
 import { useDevMode } from './data/devMode';
 import { useKonamiCode } from './hooks/useKonamiCode';
@@ -42,6 +43,31 @@ function App() {
   // Dev mode toggle via Konami code (always listening)
   const { toggle: toggleDevMode } = useDevMode();
   useKonamiCode(toggleDevMode);
+
+  // Ctrl+Shift+0: Reset app data shortcut ("0 = fresh start")
+  const dispatch = useSetAtom(dispatchActionAtom);
+  const addToast = useSetAtom(addToastAtom);
+
+  const handleResetShortcut = useCallback(() => {
+    dispatch({ type: 'RESET_DATA' });
+    addToast({ message: 'Data reset (Ctrl+Shift+Backspace)', icon: 'restart_alt', variant: 'neutral' });
+  }, [dispatch, addToast]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // DEBUG: Log all ctrl/shift combos
+      if (e.ctrlKey || e.shiftKey) {
+        console.log('Key event:', { key: e.key, code: e.code, ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey });
+      }
+      // Use e.code ('Digit0') because e.key with Shift becomes ')'
+      if (e.ctrlKey && e.shiftKey && e.code === 'Digit0') {
+        e.preventDefault();
+        handleResetShortcut();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleResetShortcut]);
 
   // Version Log to verify deployment
   useEffect(() => {
