@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import {
   workflowStateAtom,
-  isManualCheckModalOpenAtom,
   hardwareSimulationAtom,
 } from '../../data/atoms';
 import {
@@ -36,7 +35,6 @@ export const ScanView = () => {
   const simulation = useAtomValue(hardwareSimulationAtom);
 
   const addToast = useSetAtom(addToastAtom);
-  const setIsManualCheckModalOpen = useSetAtom(isManualCheckModalOpenAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
   const { completeCheck } = useCompleteCheck();
@@ -144,9 +142,7 @@ export const ScanView = () => {
 
   const handleClose = () => setWorkflow({ view: 'none' });
 
-  const handleOpenManualSelection = () => {
-    setIsManualCheckModalOpen(true);
-  };
+
 
   const handleSimulateSuccess = () => {
     if (workflow.view === 'scanning' && workflow.targetCheckId) {

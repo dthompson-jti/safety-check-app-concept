@@ -40,13 +40,26 @@ function App() {
 
   useCheckLifecycle();
 
-  // Dev mode toggle via Konami code (always listening)
-  const { toggle: toggleDevMode } = useDevMode();
-  useKonamiCode(toggleDevMode);
+  // Dev mode toggle via Konami code with toast feedback
+  const { toggle: toggleDevMode, isUnlocked: devModeUnlocked } = useDevMode();
+  const addToast = useSetAtom(addToastAtom);
+
+  const toggleDevModeWithToast = useCallback(() => {
+    const willBeUnlocked = !devModeUnlocked;
+    toggleDevMode();
+
+    // Show themed toast
+    addToast({
+      message: willBeUnlocked ? 'Dev Mode unlocked 🎮' : 'Dev Mode locked',
+      icon: willBeUnlocked ? 'code' : 'lock',
+      variant: 'neutral',
+    });
+  }, [toggleDevMode, devModeUnlocked, addToast]);
+
+  useKonamiCode(toggleDevModeWithToast);
 
   // Ctrl+Shift+0: Reset app data shortcut ("0 = fresh start")
   const dispatch = useSetAtom(dispatchActionAtom);
-  const addToast = useSetAtom(addToastAtom);
 
   const handleResetShortcut = useCallback(() => {
     dispatch({ type: 'RESET_DATA' });

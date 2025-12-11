@@ -1,5 +1,6 @@
 // src/features/Shell/AppSideMenu.tsx
 import { useSetAtom, useAtomValue } from 'jotai';
+import { useCallback } from 'react';
 import {
   sessionAtom,
   isSettingsModalOpenAtom,
@@ -9,8 +10,10 @@ import {
   selectedFacilityUnitAtom,
   workflowStateAtom,
 } from '../../data/atoms';
+import { addToastAtom } from '../../data/toastAtoms';
+import { useHaptics } from '../../data/useHaptics';
 import { useDevMode } from '../../data/devMode';
-import { useLongPress } from '../../hooks/useLongPress';
+import { useTapCounter } from '../../hooks/useTapCounter';
 import { ContextSwitcherCard } from './ContextSwitcherCard';
 import styles from './AppSideMenu.module.css';
 
@@ -31,8 +34,25 @@ export const AppSideMenu = () => {
   const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
   const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
 
-  const { toggle: toggleDevMode } = useDevMode();
-  const longPressHandlers = useLongPress(toggleDevMode, 3000);
+  const { toggle: toggleDevMode, isUnlocked: devModeUnlocked } = useDevMode();
+  const addToast = useSetAtom(addToastAtom);
+  const { trigger: triggerHaptic } = useHaptics();
+
+  // Tap counter with feedback
+  const toggleDevModeWithFeedback = useCallback(() => {
+    const willBeUnlocked = !devModeUnlocked;
+    toggleDevMode();
+
+    // Haptic + Toast feedback
+    triggerHaptic(willBeUnlocked ? 'success' : 'light');
+    addToast({
+      message: willBeUnlocked ? 'Dev Mode unlocked 🎮' : 'Dev Mode locked',
+      icon: willBeUnlocked ? 'code' : 'lock',
+      variant: 'neutral',
+    });
+  }, [toggleDevMode, devModeUnlocked, addToast, triggerHaptic]);
+
+  const { onTap: handleDevModeTap } = useTapCounter(toggleDevModeWithFeedback, 7, 3000);
 
   const handleLogout = () => {
     setSession({ isAuthenticated: false, userName: null });
@@ -41,8 +61,8 @@ export const AppSideMenu = () => {
   return (
     <aside className={styles.sideMenu}>
       <header className={styles.header}>
-        {/* Long press (3s) on title to unlock dev mode */}
-        <h1 className={styles.title} {...longPressHandlers}>Safeguard</h1>
+        {/* Tap 7 times on logo to toggle dev mode */}
+        <h1 className={styles.title} onClick={handleDevModeTap}>Safeguard</h1>
         <div className={styles.headerSeparator} />
       </header>
 
