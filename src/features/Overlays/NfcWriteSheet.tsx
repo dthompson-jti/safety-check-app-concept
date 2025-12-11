@@ -10,7 +10,6 @@ import {
 } from '../../data/nfcAtoms';
 import { Button } from '../../components/Button';
 import { useHaptics } from '../../data/useHaptics';
-import { useAppSound } from '../../data/useAppSound';
 import styles from './NfcWriteSheet.module.css';
 
 export const NfcWriteSheet = () => {
@@ -19,7 +18,6 @@ export const NfcWriteSheet = () => {
   const [simulationMode] = useAtom(nfcSimulationAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useAppSound();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -75,7 +73,6 @@ export const NfcWriteSheet = () => {
           setWorkflow({ status: 'success', roomId, roomName });
           setProvisionedIds(prev => new Set(prev).add(roomId));
           triggerHaptic('success');
-          playSound('success');
         }
       } else if (action === 'net-error') {
         if ('roomId' in workflow) {
@@ -83,7 +80,6 @@ export const NfcWriteSheet = () => {
           const error: NfcError = { code: 'WRITE_FAILED', message: 'Network connection lost' };
           setWorkflow({ status: 'error', roomId, roomName, error });
           triggerHaptic('error');
-          playSound('error');
         }
       } else if (action === 'locked-error') {
         if ('roomId' in workflow) {
@@ -91,7 +87,6 @@ export const NfcWriteSheet = () => {
           const error: NfcError = { code: 'TAG_LOCKED', message: 'Tag is write-locked' };
           setWorkflow({ status: 'error', roomId, roomName, error });
           triggerHaptic('error');
-          playSound('error');
         }
       }
     }, 500);
@@ -119,7 +114,6 @@ export const NfcWriteSheet = () => {
             setWorkflow({ status: 'success', roomId, roomName });
             setProvisionedIds(prev => new Set(prev).add(roomId));
             triggerHaptic('success');
-            playSound('success');
           } else {
             setWorkflow({
               status: 'error',
@@ -128,7 +122,6 @@ export const NfcWriteSheet = () => {
               error: { code: 'WRITE_FAILED', message: 'Tag connection lost' }
             });
             triggerHaptic('error');
-            playSound('error');
           }
         }
       }, 2000);
@@ -144,7 +137,7 @@ export const NfcWriteSheet = () => {
 
     return () => clearTimeout(timer);
 
-  }, [workflow, simulationMode, setWorkflow, setProvisionedIds, triggerHaptic, playSound]);
+  }, [workflow, simulationMode, setWorkflow, setProvisionedIds, triggerHaptic]);
 
   if (workflow.status === 'idle' || workflow.status === 'selecting') return null;
 

@@ -88,7 +88,7 @@
 }
 
 .toast-close-button:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--utility-alpha-black-10);
 }
 
 .toast-close-button .material-symbols-rounded {

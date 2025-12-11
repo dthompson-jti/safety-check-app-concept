@@ -9,6 +9,8 @@ import {
   selectedFacilityUnitAtom,
   workflowStateAtom,
 } from '../../data/atoms';
+import { useDevMode } from '../../data/devMode';
+import { useLongPress } from '../../hooks/useLongPress';
 import { ContextSwitcherCard } from './ContextSwitcherCard';
 import styles from './AppSideMenu.module.css';
 
@@ -29,6 +31,9 @@ export const AppSideMenu = () => {
   const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
   const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
 
+  const { toggle: toggleDevMode } = useDevMode();
+  const longPressHandlers = useLongPress(toggleDevMode, 3000);
+
   const handleLogout = () => {
     setSession({ isAuthenticated: false, userName: null });
   };
@@ -36,7 +41,8 @@ export const AppSideMenu = () => {
   return (
     <aside className={styles.sideMenu}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Safeguard</h1>
+        {/* Long press (3s) on title to unlock dev mode */}
+        <h1 className={styles.title} {...longPressHandlers}>Safeguard</h1>
         <div className={styles.headerSeparator} />
       </header>
 
@@ -58,10 +64,7 @@ export const AppSideMenu = () => {
         <div className={styles.separator} />
 
         <button className={styles.userProfileCard} onClick={() => setIsSettingsOpen(true)}>
-          <div className={styles.userInfo}>
-            <span className={styles.userName}>Jane Doe</span>
-            <span className={styles.userRole}>Officer #12344</span>
-          </div>
+          <span className={styles.userName}>Jane Doe</span>
           <span className="material-symbols-rounded">settings</span>
         </button>
       </footer>

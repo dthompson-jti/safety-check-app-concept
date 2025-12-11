@@ -10,13 +10,14 @@ import {
 } from './data/atoms';
 import { toastsAtom } from './data/toastAtoms';
 import { useCheckLifecycle } from './data/useCheckLifecycle';
+import { useDevMode } from './data/devMode';
+import { useKonamiCode } from './hooks/useKonamiCode';
 
 // Components
 import { AppShell } from './AppShell';
 import { LoginView } from './features/Session/LoginView';
 import { ToastContainer } from './components/ToastContainer';
 import { ToastMessage } from './components/Toast';
-import { SoundManager } from './features/Shell/SoundManager';
 import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
 
 // 24fps = approx 41.6ms
@@ -37,6 +38,10 @@ function App() {
   const lastFastTickRef = useRef<number>(0);
 
   useCheckLifecycle();
+
+  // Dev mode toggle via Konami code (always listening)
+  const { toggle: toggleDevMode } = useDevMode();
+  useKonamiCode(toggleDevMode);
 
   // Version Log to verify deployment
   useEffect(() => {
@@ -79,7 +84,6 @@ function App() {
 
   return (
     <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
-      <SoundManager />
       <LayoutOrchestrator />
       <AnimatePresence mode="wait">
         {session.isAuthenticated ? <AppShell /> : <LoginView />}

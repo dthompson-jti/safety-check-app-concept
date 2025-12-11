@@ -8,10 +8,12 @@ import {
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useDevMode } from '../../data/devMode';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { Switch } from '../../components/Switch';
 import { Button } from '../../components/Button';
+import { useTheme } from '../../data/useTheme';
 import styles from './DeveloperModal.module.css';
 
 const scanModeOptions = [
@@ -40,9 +42,12 @@ export const DeveloperModal = () => {
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
-  // UPDATED: Need access to active toasts to calculate the increment
   const activeToasts = useAtomValue(toastsAtom);
   const { trigger: triggerHaptic } = useHaptics();
+  const { theme, setTheme } = useTheme();
+
+  // Dev mode state (Konami listener is in App.tsx)
+  const { isUnlocked: devModeUnlocked } = useDevMode();
 
   const handleSwitch = (setter: (val: boolean) => void) => (checked: boolean) => {
     triggerHaptic('light');
@@ -117,24 +122,7 @@ export const DeveloperModal = () => {
             />
           </div>
 
-          <div className={styles.settingsItem}>
-            <label htmlFor="missed-toasts-switch" className={styles.itemLabel}>Missed check toasts</label>
-            <Switch
-              id="missed-toasts-switch"
-              checked={appConfig.missedCheckToastsEnabled}
-              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, missedCheckToastsEnabled: c })))}
-            />
-          </div>
-
           <div className={appConfig.simpleSubmitEnabled ? styles.disabledGroup : ''}>
-            <div className={styles.settingsItem}>
-              <label htmlFor="manual-confirm-switch" className={styles.itemLabel}>Manual confirmation</label>
-              <Switch
-                id="manual-confirm-switch"
-                checked={appConfig.manualConfirmationEnabled}
-                onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, manualConfirmationEnabled: c })))}
-              />
-            </div>
             <div className={styles.settingsItem}>
               <label htmlFor="mark-multiple-switch" className={styles.itemLabel}>Mark multiple</label>
               <Switch
@@ -203,6 +191,27 @@ export const DeveloperModal = () => {
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>App Style</h3>
         <div className={styles.settingsGroup}>
+          {/* Theme Toggle: Only visible when dev mode is unlocked */}
+          {devModeUnlocked && (
+            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+              <label className={styles.itemLabel}>Theme</label>
+              <SegmentedControl
+                id="theme-toggle"
+                options={[
+                  { value: 'light', label: 'Light' },
+                  { value: 'dark-a', label: 'Dark A' },
+                  { value: 'dark-b', label: 'Dark B' },
+                  { value: 'dark-c', label: 'Dark C' },
+                ]}
+                value={theme}
+                onValueChange={(val) => {
+                  triggerHaptic('selection');
+                  setTheme(val as 'light' | 'dark-a' | 'dark-b' | 'dark-c');
+                }}
+              />
+            </div>
+          )}
+
           <div className={styles.settingsItem}>
             <label htmlFor="status-indicators-switch" className={styles.itemLabel}>Show status indicators</label>
             <Switch

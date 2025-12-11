@@ -12,7 +12,6 @@ import {
 } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useAppSound } from '../../data/useAppSound';
 import { Button } from '../../components/Button';
 import { useCompleteCheck } from '../Workflow/useCompleteCheck';
 import styles from './AppFooter.module.css';
@@ -35,7 +34,6 @@ export const AppFooter = () => {
 
   const footerRef = useRef<HTMLElement>(null);
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
   useLayoutEffect(() => {
@@ -72,7 +70,6 @@ export const AppFooter = () => {
     // Check if NFC failure simulation is active
     if (simulation.nfcFails) {
       triggerHaptic('error');
-      playSound('error');
       addToast({
         message: 'Tag not read.\nHold phone steady against the tag.',
         icon: 'wifi_tethering_error',
@@ -88,7 +85,6 @@ export const AppFooter = () => {
 
     if (targetCheck) {
       triggerHaptic('success');
-      playSound('success');
 
       if (appConfig.simpleSubmitEnabled) {
         const defaultStatuses = targetCheck.residents.reduce((acc, resident) => {

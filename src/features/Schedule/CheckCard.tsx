@@ -1,4 +1,3 @@
-// src/features/Schedule/CheckCard.tsx
 import { useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion, Transition } from 'framer-motion';
@@ -6,8 +5,7 @@ import { SafetyCheck, Resident } from '../../types';
 import {
   workflowStateAtom,
   recentlyCompletedCheckIdAtom,
-  appConfigAtom,
-  slowTickerAtom
+  appConfigAtom
 } from '../../data/atoms';
 import { useCountdown } from '../../data/useCountdown';
 import { StatusBadge } from './StatusBadge';
@@ -37,26 +35,12 @@ const ResidentListItem = ({ resident, check }: { resident: Resident; check: Safe
   );
 };
 
-// PRD-006: Helper to format absolute time (with seconds)
-const formatAbsoluteTime = (date: Date): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    hour: 'numeric',
-    minute: '2-digit',
-    //second: '2-digit',
-  };
-  return date.toLocaleTimeString(undefined, options);
-};
 
-// PRD-006: Sub-component for absolute time display (subscribes to 1fps ticker)
-const AbsoluteTimeDisplay = ({ dueTime }: { dueTime: Date }) => {
-  useAtomValue(slowTickerAtom); // Re-render at 1fps
-  return <>{formatAbsoluteTime(dueTime)}</>;
-};
 
 export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
-  const { showStatusIndicators, timeDisplayMode } = useAtomValue(appConfigAtom);
+  const { showStatusIndicators } = useAtomValue(appConfigAtom);
 
   const isPulsing = recentlyCompletedCheckId === check.id;
 
@@ -84,30 +68,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const showIndicator = !['complete', 'supplemental', 'completing', 'queued'].includes(check.status);
   const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
 
-  // PRD-006: Render time based on mode
-  const renderTimeDisplay = () => {
-    // Hide time display during completing/complete states
-    if (!isActionable) {
-      return null;
-    }
 
-    switch (timeDisplayMode) {
-      case 'absolute':
-        return <AbsoluteTimeDisplay dueTime={dueDate} />;
-      case 'dual':
-        return (
-          <>
-            <span className={styles.dualSecondary}>
-              <AbsoluteTimeDisplay dueTime={dueDate} />
-            </span>
-            <span>{relativeTime}</span>
-          </>
-        );
-      case 'relative':
-      default:
-        return relativeTime;
-    }
-  };
 
   // Nested Motion Divs Pattern:
   // - Outer div: Controls height/margin collapse (delayed start)
@@ -168,7 +129,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
                 <ResidentListItem key={resident.id} resident={resident} check={check} />
               ))}
             </ul>
-            <div className={styles.timeDisplay}>{renderTimeDisplay()}</div>
+            <div className={styles.timeDisplay}>{isActionable ? relativeTime : null}</div>
           </div>
         </div>
       </motion.div>

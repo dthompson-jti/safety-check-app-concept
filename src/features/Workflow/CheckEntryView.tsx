@@ -11,7 +11,6 @@ import {
 import { dispatchActionAtom, safetyChecksAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useAppSound } from '../../data/useAppSound';
 import { useVisualViewport } from '../../data/useVisualViewport';
 import { useScrollToFocused } from '../../data/useScrollToFocused';
 import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAtoms';
@@ -103,14 +102,12 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   const connectionStatus = useAtomValue(connectionStatusAtom);
   const {
     isCheckTypeEnabled,
-    manualConfirmationEnabled,
     markMultipleEnabled,
     residentStatusSet, // PRD-07: Expanded for 2-7 status options
     markMultipleLayout, // PRD-07: Column or grid layout
   } = useAtomValue(appConfigAtom);
 
   const { trigger: triggerHaptic } = useHaptics();
-  const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
 
   // PRD-07: State for status selection sheet
@@ -171,8 +168,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
   const [incidentType, setIncidentType] = useState<string>('');
 
-  const [isAttested, setIsAttested] = useState(draft?.isAttested || false);
-
   // Determine Flags
   const isManualCheck = checkData.type === 'scheduled' && checkData.method === 'manual';
   const isSupplementalCheck = checkData.type === 'supplemental';
@@ -200,13 +195,12 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
           draft: {
             statuses: statuses as Record<string, string>,
             notes,
-            checkType: securityCheckType,
-            isAttested
+            checkType: securityCheckType
           }
         });
       }
     };
-  }, [checkData, statuses, notes, securityCheckType, isAttested, saveDraft]);
+  }, [checkData, statuses, notes, securityCheckType, saveDraft]);
 
 
   useLayoutEffect(() => {
@@ -269,10 +263,9 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     const allResidentsHaveStatus = checkData.residents.every((res) => statuses[res.id]);
     if (!allResidentsHaveStatus) return false;
     if (isCheckTypeEnabled && !securityCheckType) return false;
-    if (isManualCheck && manualConfirmationEnabled && !isAttested) return false;
     if (isSupplementalCheck && !incidentType) return false;
     return true;
-  }, [statuses, checkData.residents, isCheckTypeEnabled, securityCheckType, isManualCheck, isAttested, manualConfirmationEnabled, isSupplementalCheck, incidentType]);
+  }, [statuses, checkData.residents, isCheckTypeEnabled, securityCheckType, isSupplementalCheck, incidentType]);
 
   const handleSave = () => {
     if (!canSave) return;
@@ -284,7 +277,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
     }
 
     triggerHaptic('success');
-    playSound('success');
 
     const consolidatedNotes = Object.values(notes)
       .filter(note => note.trim() !== '')
@@ -437,20 +429,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
             );
           })}
         </div>
-
-        {isManualCheck && manualConfirmationEnabled && (
-          <div className={styles.attestationContainer}>
-            <input
-              type="checkbox"
-              id="attestation-checkbox"
-              checked={isAttested}
-              onChange={(e) => setIsAttested(e.target.checked)}
-            />
-            <label htmlFor="attestation-checkbox" className={styles.attestationLabel}>
-              I verify that I am present at this room at the time of check.
-            </label>
-          </div>
-        )}
       </main>
 
       <footer className={styles.footer} ref={footerRef} data-scrolled={showScrollShadow}>

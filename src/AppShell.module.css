@@ -3,7 +3,8 @@
 .appContainer {
   position: relative;
   width: 100%;
-  height: 100svh; /* Use svh for mobile viewport consistency */
+  height: 100svh;
+  /* Use svh for mobile viewport consistency */
   overflow: hidden;
   /* The base background is set here. The main content will sit on top of this. */
   background-color: var(--surface-bg-secondary);
@@ -16,7 +17,8 @@
   width: 85%;
   max-width: 400px;
   height: 100%;
-  z-index: 100; /* Ensure menu is on top */
+  z-index: 100;
+  /* Ensure menu is on top */
   will-change: transform;
   box-shadow: var(--surface-shadow-2xl);
 }
@@ -28,15 +30,24 @@
   /* DEFINITIVE FIX: This wrapper no longer has a background color. */
   /* It is now a transparent container for the animated MainLayout and the backdrop. */
   will-change: transform;
-  overflow: hidden; /* This is critical for border-radius to apply correctly */
+  overflow: hidden;
+  /* This is critical for border-radius to apply correctly */
 }
 
 .backdrop {
   position: absolute;
   inset: 0;
   background-color: rgba(10, 12, 18, 0.75);
-  z-index: 99; /* Sits on top of content, below menu */
+  z-index: 99;
+  /* Sits on top of content, below menu */
   cursor: pointer;
+}
+
+/* Dark mode: deeper backdrop for more contrast */
+[data-theme='dark-a'] .backdrop,
+[data-theme='dark-b'] .backdrop,
+[data-theme='dark-c'] .backdrop {
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 /* NEW: A dedicated container for the top application chrome (banner, header). */

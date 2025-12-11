@@ -26,14 +26,14 @@
 .badge[data-status='due'] {
   background: var(--surface-bg-warning-primary);
   color: var(--surface-fg-warning-primary);
-  border-color: var(--primitives-yellow-200);
+  border-color: var(--surface-border-warning);
 }
 
 /* Variant: Supplemental */
 .badge[data-status='supplemental'] {
   background: var(--surface-bg-info);
   color: var(--surface-fg-info-primary);
-  border-color: var(--primitives-blue-200);
+  border-color: var(--surface-border-info);
 }
 
 /* Variant: Completed */
@@ -41,19 +41,19 @@
 .badge[data-status='completing'] {
   background: var(--surface-bg-success);
   color: var(--surface-fg-success-primary);
-  border-color: var(--primitives-green-200);
+  border-color: var(--surface-border-success);
 }
 
 /* Variant: Missed (Alert - urgent attention needed) */
 .badge[data-status='missed'] {
   background: var(--surface-bg-error-primary);
   color: var(--surface-fg-alert-primary);
-  border-color: var(--primitives-red-200);
+  border-color: var(--surface-border-alert);
 }
 
 /* Variant: Queued (in offline queue, grey) */
 .badge[data-status='queued'] {
-  background: var(--primitives-grey-50);
+  background: var(--surface-bg-secondary_subtle);
   color: var(--surface-fg-secondary);
-  border-color: var(--primitives-grey-300);
+  border-color: var(--surface-border-primary);
 }

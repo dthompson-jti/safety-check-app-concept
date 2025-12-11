@@ -21,8 +21,9 @@
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 56px; /* CRITICAL: Touch target standard (44px+) */
-  padding: 0; 
+  min-height: 56px;
+  /* CRITICAL: Touch target standard (44px+) */
+  padding: 0;
   background: transparent;
   border: none;
   text-align: left;
@@ -31,7 +32,7 @@
   outline: none;
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* 
     CRITICAL: Full-width separator logic.
     The border sits on the root element to span edge-to-edge.
@@ -42,7 +43,7 @@
 
 /* Active State */
 .list-item-root:active:not(:disabled) {
-  background-color: var(--surface-bg-primary_pressed);
+  background-color: var(--surface-bg-primary_hover);
 }
 
 /* Disabled State */
@@ -65,7 +66,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px; /* 16px padding + 24px icon + 8px gap */
+  width: 48px;
+  /* 16px padding + 24px icon + 8px gap */
   flex-shrink: 0;
   color: var(--surface-fg-quaternary);
 }
@@ -83,12 +85,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
   /* Standard Padding */
   padding-right: var(--spacing-4);
   padding-top: var(--spacing-3);
   padding-bottom: var(--spacing-3);
-  
+
   min-height: 56px;
   gap: var(--spacing-3);
   min-width: 0;
@@ -107,7 +109,8 @@
 .list-item-text-group {
   display: flex;
   flex-direction: column;
-  min-width: 0; /* CRITICAL: Enables text truncation in flex children */
+  min-width: 0;
+  /* CRITICAL: Enables text truncation in flex children */
 }
 
 /* Typography */
@@ -126,7 +129,7 @@
   color: var(--surface-fg-secondary);
   line-height: 1.4;
   margin-top: 2px;
-  
+
   /* Truncation */
   white-space: nowrap;
   overflow: hidden;

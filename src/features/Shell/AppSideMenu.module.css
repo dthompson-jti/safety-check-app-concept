@@ -9,6 +9,7 @@
   color: var(--surface-fg-primary);
   font-family: var(--font-family-sans);
   overflow-y: auto;
+  border-right: 1px solid var(--surface-border-secondary);
 }
 
 .header {

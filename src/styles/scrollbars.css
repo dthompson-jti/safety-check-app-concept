@@ -14,7 +14,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--primitives-dark-tint-700);
+  background-color: var(--primitives-gray-tint-700);
   border-radius: 6px;
   border: 3px solid transparent;
   background-clip: content-box;
@@ -43,7 +43,7 @@
   padding-right: 16px;
 }
 
-.scrollbar-stealth > .scrollbar-stealth-content {
+.scrollbar-stealth>.scrollbar-stealth-content {
   /* Pull the content back into the padded gutter area */
   margin-right: -16px;
 }
