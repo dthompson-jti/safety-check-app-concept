@@ -3,11 +3,26 @@
 .popover-content {
   background-color: var(--surface-bg-primary);
   color: var(--surface-fg-primary);
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   border: 1px solid var(--surface-border-secondary);
   box-shadow: var(--surface-shadow-xl);
   z-index: 1100;
   /* Above most UI, below modals */
+}
+
+/* Tooltip variant - black background, high contrast */
+.popover-content-tooltip {
+  background-color: var(--primitives-grey-900);
+  color: var(--surface-fg-white);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: var(--surface-shadow-md);
+  border: 1px solid var(--primitives-grey-800);
+  user-select: none;
+  z-index: 1100;
 }
 
 .popover-arrow {
@@ -36,4 +51,13 @@
 [data-theme='dark-b'] .popover-arrow,
 [data-theme='dark-c'] .popover-arrow {
   fill: var(--primitives-grey-50);
+}
+
+/* --- Dark Mode: Invert Tooltip Variant --- */
+[data-theme='dark-a'] .popover-content-tooltip,
+[data-theme='dark-b'] .popover-content-tooltip,
+[data-theme='dark-c'] .popover-content-tooltip {
+  background-color: var(--primitives-grey-50);
+  color: var(--primitives-grey-900);
+  border-color: var(--primitives-grey-200);
 }

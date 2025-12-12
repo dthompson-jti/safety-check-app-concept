@@ -25,6 +25,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 ## 3. Prototype Features
 
+-   **Installable PWA:** A progressive web app configuration that allows the prototype to be installed on home screens, with offline-ready assets ensuring the app loads instantly even without a network.
 -   **Simulated Login/Logout:** A complete start-of-shift session workflow. This includes secure, client-side validation and a generic, enumeration-resistant error for failed credentials.
 -   **Sequential Context Selection:** Upon login, the user enters a mandatory, full-screen **Drill-Down Navigation** flow to select their Facility (Group) and Unit. This replaces traditional dropdowns with a native-style "Push/Pop" page transition pattern.
 -   **State Persistence:** The application mimics native behavior by persisting the user's session, view preferences (List vs. Card), and completed checks across page reloads.

@@ -40,7 +40,7 @@ export const UserAvatar = () => {
     // Conditionally render enhanced dropdown or basic popover
     if (featureFlags.enableEnhancedAvatarDropdown) {
         return (
-            <Popover trigger={avatarElement}>
+            <Popover trigger={avatarElement} variant="default">
                 <UserMenu displayName={displayName} />
             </Popover>
         );
@@ -54,7 +54,7 @@ export const UserAvatar = () => {
     );
 
     return (
-        <Popover trigger={avatarElement}>
+        <Popover trigger={avatarElement} variant="tooltip">
             {popoverContent}
         </Popover>
     );

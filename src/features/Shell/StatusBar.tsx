@@ -34,7 +34,7 @@ const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, tooltipCon
   // If tooltipContent is provided, wrap in Popover for touch-friendly interaction
   if (tooltipContent) {
     return (
-      <Popover trigger={pill}>
+      <Popover trigger={pill} variant="tooltip">
         {tooltipContent}
       </Popover>
     );

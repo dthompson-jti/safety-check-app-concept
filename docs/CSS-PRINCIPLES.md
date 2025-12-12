@@ -69,6 +69,29 @@ We enforce a strict coupling between navigation type, transition, and meaning:
     -   **Transition**: **Slide from Bottom**.
     -   **Meaning**: Temporary utility overlay (*NFC Write*).
 
+#### 8. The Semantic Token Selection Pattern
+
+When styling status messages, badges, or notification blocks, semantic token selection must be **intent-driven**, not merely aesthetic:
+
+-   **Info (Blue):** Informational messages that provide context without urgency. Used for neutral status indicators.
+    -   Example: "Early" check status (room checked recently, but not an error or problem).
+    -   Tokens: `--surface-bg-info`, `--surface-border-info`, `--surface-fg-info-primary`.
+    -   Icon: `info` (filled).
+-   **Warning (Yellow):** Caution messages requiring user attention but not blocking progress.
+    -   Example: Network degradation, approaching deadline.
+    -   Tokens: `--surface-bg-warning-primary`, `--surface-border-warning`, `--surface-fg-warning-primary`.
+    -   Icon: `warning` (filled).
+-   **Alert/Error (Red):** Critical errors or failures requiring immediate action.
+    -   Example: Hardware failure, validation error, missed check.
+    -   Tokens: `--surface-bg-error-primary`, `--surface-border-alert`, `--surface-fg-alert-primary`.
+    -   Icon: `error` or `cancel` (filled).
+-   **Success (Green):** Confirmation of successful completion.
+    -   Example: Check saved, sync complete.
+    -   Tokens: `--surface-bg-success`, `--surface-border-success`, `--surface-fg-success-primary`.
+    -   Icon: `check_circle` or `task_alt` (filled).
+
+**Anti-Pattern:** Do not use Warning semantics for informational states just because they "stand out." This dilutes the signal and trains users to ignore yellow messages.
+
 ---
 
 ### Key Architectural Patterns

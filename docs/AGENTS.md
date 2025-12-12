@@ -55,14 +55,42 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   Leading icons in lists: `var(--surface-fg-quaternary)`.
     *   Interactive icons: `var(--surface-fg-secondary)` (default) or `var(--surface-fg-primary)` (active).
 
-### 4. Sheets & Drawers (Vaul)
+### 4. Segmented Controls & Toggle Groups
+*   **Directive:** Use `SegmentedControl` for all multi-option selectors with 2-7 options.
+*   **Layout Options:**
+    *   `layout="row"` (default): Horizontal button group.
+    *   `layout="column"`: Vertical stack with left-aligned text.
+    *   `layout="grid"`: 2-column grid for 4+ options.
+*   **Item Direction:**
+    *   `itemDirection="row"` (default): Icon + Label horizontally (side-by-side).
+    *   `itemDirection="column"`: Icon above Label (vertically stacked, centered).
+*   **Anti-Pattern:** Do not use `IconToggleGroup` when labels are needed. `SegmentedControl` is the unified component that supports both icon-only and icon+label patterns.
+*   **Example:**
+    ```tsx
+    <SegmentedControl
+      options={[
+        { value: 'qr', label: 'QR Code', icon: 'qr_code_2' },
+        { value: 'nfc', label: 'NFC', icon: 'nfc' },
+      ]}
+      value={scanMode}
+      onValueChange={setScanMode}
+      itemDirection="column"  // Icon above label
+    />
+    ```
+
+### 5. Import Hygiene
+*   **Directive:** When replacing a component (e.g., `IconToggleGroup` → `SegmentedControl`), **always remove the obsolete import** in the same commit.
+*   **Why:** Unused imports cause lint errors (`'IconToggleGroup' is defined but never used`) and create confusion for future maintainers.
+*   **Pattern:** After making component substitutions, verify all imports at the top of the file are actively used.
+
+### 6. Sheets & Drawers (Vaul)
 *   **Directive:** Use the standard overlay structure:
     *   **Handle:** If using `Drawer.Root` directly (bypassing `BottomSheet` wrapper), you **must** manually implement the handle bar (`.handleContainer` + `.handle`) to ensure visual consistency.
     *   Header: Fixed height (60px), `sticky` or fixed positioning.
     *   Content: Scrollable area with `padding: 0` if containing a list (to allow edge-to-edge separators).
     *   Footer: Fixed/Sticky at bottom if containing actions.
 
-### 5. Form Sections & Spacing
+### 7. Form Sections & Spacing
 *   **Directive:** When adding new sections to forms (like `CheckEntryView`), rely on the parent container's `gap` property for inter-section spacing.
 *   **Anti-Pattern:** Do not add `margin-bottom` to section containers when the parent already uses `gap`. This causes double-spacing.
 *   **Section Headers:** Use the `.sectionHeader` class (0.8rem, 600 weight, `--surface-fg-secondary` color) for form section labels.

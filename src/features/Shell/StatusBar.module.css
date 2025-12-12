@@ -60,7 +60,6 @@
 
 /* Popover content - simple sentence-like text */
 .popoverContent {
-    padding: var(--spacing-2) var(--spacing-3);
     font-size: 0.875rem;
     line-height: 1.5;
 }
