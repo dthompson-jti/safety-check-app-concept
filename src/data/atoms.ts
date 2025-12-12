@@ -178,7 +178,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   simpleSubmitEnabled: false,
   showStatusIndicators: false,
   residentStatusSet: 'set-3', // PRD-02: Default to 3 options (Awake, Sleeping, Refused)
-  markMultipleLayout: 'column', // PRD-07: Default to column layout
+  markMultipleLayout: 'row', // PRD-07: Default to row layout
 });
 
 // =================================================================

@@ -3,7 +3,8 @@ import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import {
   appConfigAtom,
-  hardwareSimulationAtom
+  hardwareSimulationAtom,
+  connectionStatusAtom
 } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
@@ -36,6 +37,7 @@ const toastDefinitions: ToastDefinition[] = [
 export const DeveloperModal = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
+  const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
   const activeToasts = useAtomValue(toastsAtom);
@@ -246,6 +248,22 @@ export const DeveloperModal = () => {
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Simulation</h3>
         <div className={styles.settingsGroup}>
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Connectivity</label>
+            <SegmentedControl
+              id="connectivity-toggle"
+              options={[
+                { value: 'online', label: 'Online', icon: 'cloud' },
+                { value: 'offline', label: 'Offline', icon: 'cloud_off' },
+              ]}
+              value={connectionStatus === 'offline' ? 'offline' : 'online'}
+              onValueChange={(val) => {
+                triggerHaptic('selection');
+                setConnectionStatus(val as 'online' | 'offline');
+              }}
+              itemDirection="column"
+            />
+          </div>
           <div className={styles.settingsItem}>
             <label htmlFor="camera-fail-switch" className={styles.itemLabel}>Force Camera Failure</label>
             <Switch

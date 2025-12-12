@@ -1,6 +1,7 @@
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { useCallback } from 'react';
+import { themeAtom } from './useTheme';
 
 /**
  * Future Ideas Feature Flags
@@ -36,6 +37,8 @@ export const featureFlagsAtom = atomWithStorage<FeatureFlags>('feature-flags', {
 // Hook with stable callbacks for Future Ideas unlock state
 export const useFutureIdeas = () => {
     const [isUnlocked, setUnlocked] = useAtom(futureIdeasUnlockedAtom);
+    const [, setFeatureFlags] = useAtom(featureFlagsAtom);
+    const setTheme = useSetAtom(themeAtom);
 
     const unlock = useCallback(() => {
         setUnlocked(true);
@@ -43,12 +46,42 @@ export const useFutureIdeas = () => {
 
     const lock = useCallback(() => {
         setUnlocked(false);
-    }, [setUnlocked]);
+        // Reset all feature flags to default (off)
+        // Use setTimeout to ensure state updates are processed
+        setTimeout(() => {
+            setFeatureFlags({
+                useSoundEnabled: false,
+                useHapticsEnabled: false,
+                enableDarkMode: false,
+                enableEnhancedAvatarDropdown: false,
+            });
+            // Reset theme to light
+            setTheme('light');
+        }, 0);
+    }, [setUnlocked, setFeatureFlags, setTheme]);
 
     // Toggle: Konami code or 7-tap toggles visibility
     const toggle = useCallback(() => {
-        setUnlocked((prev) => !prev);
-    }, [setUnlocked]);
+        let wasUnlocked = false;
+        setUnlocked((prev) => {
+            wasUnlocked = prev;
+            return !prev;
+        });
+
+        // If we were unlocked and are now locking, reset everything
+        // Use setTimeout to ensure state updates are processed
+        if (wasUnlocked) {
+            setTimeout(() => {
+                setFeatureFlags({
+                    useSoundEnabled: false,
+                    useHapticsEnabled: false,
+                    enableDarkMode: false,
+                    enableEnhancedAvatarDropdown: false,
+                });
+                setTheme('light');
+            }, 0);
+        }
+    }, [setUnlocked, setFeatureFlags, setTheme]);
 
     return { isUnlocked, unlock, lock, toggle };
 };

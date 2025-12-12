@@ -264,6 +264,14 @@
   --surface-border-success: var(--primitives-green-600);
   --surface-border-info: var(--primitives-blue-600);
 
+  /* Status Foregrounds - Lighter for dark mode */
+  --surface-fg-alert-primary: var(--primitives-red-400);
+  --surface-fg-alert-secondary: var(--primitives-red-300);
+  --surface-fg-warning-primary: var(--primitives-yellow-400);
+  --surface-fg-warning-secondary: var(--primitives-yellow-300);
+  --surface-fg-info-primary: var(--primitives-blue-400);
+  --surface-fg-info-secondary: var(--primitives-blue-300);
+
   /* Overlay */
   --surface-bg-overlay: #000000;
 
@@ -368,6 +376,14 @@
   --surface-border-success: var(--primitives-green-600);
   --surface-border-info: var(--primitives-blue-600);
 
+  /* Status Foregrounds - Lighter for dark mode */
+  --surface-fg-alert-primary: var(--primitives-red-400);
+  --surface-fg-alert-secondary: var(--primitives-red-300);
+  --surface-fg-warning-primary: var(--primitives-yellow-400);
+  --surface-fg-warning-secondary: var(--primitives-yellow-300);
+  --surface-fg-info-primary: var(--primitives-blue-400);
+  --surface-fg-info-secondary: var(--primitives-blue-300);
+
   /* Overlay */
   --surface-bg-overlay: #000000;
 
@@ -471,6 +487,14 @@
   --surface-border-alert_subtle: var(--primitives-red-900);
   --surface-border-success: var(--primitives-green-850);
   --surface-border-info: var(--primitives-blue-850);
+
+  /* Status Foregrounds - Lighter for dark mode */
+  --surface-fg-alert-primary: var(--primitives-red-400);
+  --surface-fg-alert-secondary: var(--primitives-red-300);
+  --surface-fg-warning-primary: var(--primitives-yellow-400);
+  --surface-fg-warning-secondary: var(--primitives-yellow-300);
+  --surface-fg-info-primary: var(--primitives-blue-400);
+  --surface-fg-info-secondary: var(--primitives-blue-300);
 
   /* Overlay */
   --surface-bg-overlay: #000000;

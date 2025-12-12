@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 type Theme = 'light' | 'dark-a' | 'dark-b' | 'dark-c';
 
 // The atom holds the user's theme preference.
-const themeAtom = atom<Theme>((() => {
+export const themeAtom = atom<Theme>((() => {
     try {
         const stored = localStorage.getItem('app-theme') as Theme | null;
         if (stored === 'light' || stored === 'dark-a' || stored === 'dark-b' || stored === 'dark-c') {
