@@ -34,6 +34,7 @@ export const AppSideMenu = () => {
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
   const setSession = useSetAtom(sessionAtom);
 
+  const session = useAtomValue(sessionAtom);
   const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
   const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
 
@@ -60,7 +61,7 @@ export const AppSideMenu = () => {
   const { onTap: handleFutureIdeasTap } = useTapCounter(toggleFutureIdeasWithFeedback, 7, 3000);
 
   const handleLogout = () => {
-    setSession({ isAuthenticated: false, userName: null });
+    setSession({ isAuthenticated: false, user: null });
   };
 
   return (
@@ -91,7 +92,7 @@ export const AppSideMenu = () => {
         <div className={styles.separator} />
 
         <button className={styles.userProfileCard} onClick={() => setIsSettingsOpen(true)}>
-          <span className={styles.userName}>Jane Doe</span>
+          <span className={styles.userName}>{session.user?.displayName || 'Unknown User'}</span>
           <span className="material-symbols-rounded">settings</span>
         </button>
       </footer>

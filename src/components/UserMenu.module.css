@@ -1,0 +1,25 @@
+/* src/components/UserMenu.module.css */
+
+.menuContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
+    /* 8px internal padding */
+    min-width: 140px;
+
+    /* Remove all styling - let popover-content handle it */
+    /* The popover-content class provides: bg, border-radius, shadow */
+}
+
+.userName {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--surface-fg-primary);
+    padding: var(--spacing-1) 0;
+}
+
+/* Button wrapper to add margin from container edge */
+.logoutButton {
+    margin-top: var(--spacing-1);
+}

@@ -1,14 +1,16 @@
 // src/features/Overlays/SettingsModal.tsx
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { appConfigAtom, sessionAtom } from '../../data/atoms';
+import { appConfigAtom, sessionAtom, userPreferencesAtom } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
 import { useHaptics } from '../../data/useHaptics';
 import { useTheme } from '../../data/useTheme';
+import { generateAvatarHue } from '../../data/users';
 import { IconToggleGroup } from '../../components/IconToggleGroup';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { Switch } from '../../components/Switch';
 import { Button } from '../../components/Button';
+import { ColorSlider } from '../../components/ColorSlider';
 import styles from './SettingsModal.module.css';
 
 const scanModeOptions = [
@@ -19,18 +21,39 @@ const scanModeOptions = [
 export const SettingsModal = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [featureFlags] = useAtom(featureFlagsAtom);
+  const [userPreferences, setUserPreferences] = useAtom(userPreferencesAtom);
+  const session = useAtomValue(sessionAtom);
   const setSession = useSetAtom(sessionAtom);
   const { trigger: triggerHaptic } = useHaptics();
   const { theme, setTheme } = useTheme();
+
+  const currentUser = session.user;
 
   const handleHapticsChange = (checked: boolean) => {
     triggerHaptic('light');
     setAppConfig(currentConfig => ({ ...currentConfig, hapticsEnabled: checked }));
   };
 
-  const handleLogout = () => {
-    setSession({ isAuthenticated: false, userName: null });
+  const handleAvatarColorChange = (hue: number) => {
+    if (!currentUser) return;
+
+    setUserPreferences(prefs => ({
+      ...prefs,
+      [currentUser.username]: {
+        ...prefs[currentUser.username],
+        avatarHue: hue,
+      },
+    }));
   };
+
+  const handleLogout = () => {
+    setSession({ isAuthenticated: false, user: null });
+  };
+
+  // Get current avatar hue (custom or generated)
+  const currentAvatarHue = currentUser
+    ? (userPreferences[currentUser.username]?.avatarHue ?? generateAvatarHue(currentUser.username))
+    : 0;
 
   // Animation: Slide-in from right (x: 100% -> 0) to replicate native modal behavior.
   return (
@@ -105,6 +128,24 @@ export const SettingsModal = () => {
               />
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Appearance Section */}
+      <div className={styles.settingsSection}>
+        <h3 className={styles.sectionTitle}>Appearance</h3>
+        <div className={styles.settingsGroup}>
+          <div
+            className={styles.settingsItem}
+            style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}
+            data-no-hover="true"
+          >
+            <ColorSlider
+              label="Avatar Color"
+              value={currentAvatarHue}
+              onChange={handleAvatarColorChange}
+            />
+          </div>
         </div>
       </div>
 

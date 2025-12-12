@@ -5,8 +5,8 @@
     height: 36px;
     border-radius: 50%;
     background-color: var(--surface-bg-brand-solid);
+    /* Static blue - overridden by inline style when feature flag is on */
     color: var(--surface-fg-primary_on_brand);
-    border: 1px solid var(--surface-border-theme_alt);
 
     display: flex;
     align-items: center;

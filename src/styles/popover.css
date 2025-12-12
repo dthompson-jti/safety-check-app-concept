@@ -1,12 +1,17 @@
 /* src/styles/popover.css */
 
 .popover-content {
-  background-color: var(--surface-bg-primary-solid);
-  color: var(--surface-fg-on-solid);
-  border-radius: var(--spacing-2);
+  background-color: var(--surface-bg-primary);
+  color: var(--surface-fg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border-secondary);
   box-shadow: var(--surface-shadow-xl);
   z-index: 1100;
   /* Above most UI, below modals */
+}
+
+.popover-arrow {
+  fill: var(--surface-bg-primary);
 }
 
 /* REFACTOR: Use the standardized global keyframes from animations.css */
@@ -16,10 +21,6 @@
 
 .popover-content[data-state='closed'] {
   animation: scaleOut 150ms ease-in;
-}
-
-.popover-arrow {
-  fill: var(--surface-bg-primary-solid);
 }
 
 /* --- Dark Mode: Invert Popover --- */

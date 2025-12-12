@@ -1,0 +1,89 @@
+/* src/components/ColorSlider.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: 100%;
+}
+
+.label {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--surface-fg-primary);
+}
+
+.controlRow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: 12px 0;
+    /* Space for thumb overflow */
+}
+
+/* Track wrapper - provides the 1px border around gradient */
+.trackWrapper {
+    flex: 1;
+    height: 6px;
+    /* 4px gradient + 1px border each side */
+    border-radius: 99px;
+    border: 1px solid var(--surface-border-primary);
+    position: relative;
+    cursor: pointer;
+    background: var(--surface-bg-secondary);
+    /* Fallback */
+}
+
+/* Inner gradient track */
+.trackGradient {
+    position: absolute;
+    inset: 0;
+    border-radius: 99px;
+    background: linear-gradient(to right,
+            oklch(0.65 0.18 0),
+            oklch(0.65 0.18 60),
+            oklch(0.65 0.18 120),
+            oklch(0.65 0.18 180),
+            oklch(0.65 0.18 240),
+            oklch(0.65 0.18 300),
+            oklch(0.65 0.18 360));
+}
+
+/* Large draggable thumb */
+.thumb {
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface-bg-primary);
+    border: 2px solid var(--surface-border-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    touch-action: none;
+    z-index: 1;
+}
+
+.thumb:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.thumb:active,
+.thumb[data-dragging="true"] {
+    cursor: grabbing;
+}
+
+.thumb:focus-visible {
+    outline: 2px solid var(--surface-border-focus);
+    outline-offset: 2px;
+}
+
+/* Color swatch preview with 1px border */
+.swatch {
+    width: 52px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--surface-border-primary);
+    flex-shrink: 0;
+}

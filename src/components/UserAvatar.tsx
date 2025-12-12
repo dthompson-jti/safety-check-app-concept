@@ -1,32 +1,55 @@
 // src/components/UserAvatar.tsx
 import { useAtomValue } from 'jotai';
-import { sessionAtom } from '../data/atoms';
+import { sessionAtom, userPreferencesAtom } from '../data/atoms';
+import { featureFlagsAtom } from '../data/featureFlags';
+import { generateAvatarHue, getAvatarColor } from '../data/users';
 import { Popover } from './Popover';
+import { UserMenu } from './UserMenu';
 import styles from './UserAvatar.module.css';
 
 export const UserAvatar = () => {
     const session = useAtomValue(sessionAtom);
+    const userPreferences = useAtomValue(userPreferencesAtom);
+    const featureFlags = useAtomValue(featureFlagsAtom);
 
-    // Extract initials from userName
-    const getInitials = (name: string | null): string => {
-        if (!name) return '--';
-        const parts = name.trim().split(' ');
-        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    };
+    if (!session.user) {
+        return null;
+    }
 
-    const initials = getInitials(session.userName);
-    const fullName = session.userName || 'Unknown User';
+    const { initials, displayName, username } = session.user;
+
+    // Get color: Only use OKLCH when enhanced dropdown is enabled
+    let backgroundColor: string | undefined;
+    if (featureFlags.enableEnhancedAvatarDropdown) {
+        const customHue = userPreferences[username]?.avatarHue;
+        const hue = customHue !== undefined ? customHue : generateAvatarHue(username);
+        backgroundColor = getAvatarColor(hue);
+    }
+    // When flag is OFF, backgroundColor is undefined -> falls back to CSS static blue
 
     const avatarElement = (
-        <div className={styles.avatar} aria-label={`User: ${fullName}`}>
+        <div
+            className={styles.avatar}
+            aria-label={`User: ${displayName}`}
+            style={backgroundColor ? { backgroundColor } : undefined}
+        >
             {initials}
         </div>
     );
 
+    // Conditionally render enhanced dropdown or basic popover
+    if (featureFlags.enableEnhancedAvatarDropdown) {
+        return (
+            <Popover trigger={avatarElement}>
+                <UserMenu displayName={displayName} />
+            </Popover>
+        );
+    }
+
+    // Default: Simple name popover
     const popoverContent = (
         <div className={styles.popoverContent}>
-            {fullName}
+            {displayName}
         </div>
     );
 

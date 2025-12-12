@@ -4,6 +4,7 @@ import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { sessionAtom } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
+import { findUser } from '../../data/users';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { Modal } from '../../components/Modal';
@@ -49,17 +50,29 @@ export const LoginView = () => {
     }
     if (hasError) return;
 
-    if (username.trim() === 'test' && password.trim() === 'test') {
+    // Validate password first (always 'test')
+    if (password.trim() !== 'test') {
+      setFormError('Incorrect username or password.');
+      return;
+    }
+
+    // Find user in MOCK_USERS
+    const user = findUser(username.trim());
+    if (user) {
       dispatch({ type: 'RESET_DATA' });
-      setSession({ isAuthenticated: true, userName: username.trim() });
+      setSession({ isAuthenticated: true, user });
     } else {
       setFormError('Incorrect username or password.');
     }
   };
 
   const handleShortcutLogin = () => {
-    dispatch({ type: 'RESET_DATA' });
-    setSession({ isAuthenticated: true, userName: 'Jane Doe' });
+    // Use first user as shortcut
+    const user = findUser('dthompson');
+    if (user) {
+      dispatch({ type: 'RESET_DATA' });
+      setSession({ isAuthenticated: true, user });
+    }
   };
 
   const handleUsernameChange = (val: string) => {

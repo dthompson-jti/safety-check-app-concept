@@ -86,6 +86,14 @@ export const FutureIdeasModal = () => {
                             onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, enableDarkMode: c })))}
                         />
                     </div>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="enable-enhanced-avatar-switch" className={styles.itemLabel}>Enhanced Avatar Dropdown</label>
+                        <Switch
+                            id="enable-enhanced-avatar-switch"
+                            checked={featureFlags.enableEnhancedAvatarDropdown}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, enableEnhancedAvatarDropdown: c })))}
+                        />
+                    </div>
                 </div>
             </div>
         </motion.div>

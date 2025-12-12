@@ -14,9 +14,12 @@ export const Popover = ({ trigger, children, open, onOpenChange }: PopoverProps)
     <RadixPopover.Root open={open} onOpenChange={onOpenChange}>
       <RadixPopover.Trigger asChild>{trigger}</RadixPopover.Trigger>
       <RadixPopover.Portal>
-        <RadixPopover.Content className="popover-content" sideOffset={5}>
+        <RadixPopover.Content
+          className="popover-content"
+          sideOffset={5}
+          collisionPadding={8}
+        >
           {children}
-          <RadixPopover.Arrow className="popover-arrow" />
         </RadixPopover.Content>
       </RadixPopover.Portal>
     </RadixPopover.Root>

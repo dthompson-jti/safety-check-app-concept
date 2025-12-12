@@ -22,15 +22,26 @@ export const appViewAtom = atomWithStorage<AppView>('sc_view', 'dashboardTime');
 //                      Session State
 // =================================================================
 
+import type { User } from './users';
+
 interface Session {
   isAuthenticated: boolean;
-  userName: string | null;
+  user: User | null;
 }
 
 export const sessionAtom = atom<Session>({
   isAuthenticated: false,
-  userName: null,
+  user: null,
 });
+
+// User preferences (avatar color overrides)
+interface UserPreferences {
+  [username: string]: {
+    avatarHue?: number; // Custom hue override (0-360)
+  };
+}
+
+export const userPreferencesAtom = atomWithStorage<UserPreferences>('sc_user_prefs', {});
 
 // =================================================================
 //                  Context Selection State
@@ -175,7 +186,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
 // =================================================================
 
 export const logoutAtom = atom(null, (_get, set) => {
-  set(sessionAtom, { isAuthenticated: false, userName: null });
+  set(sessionAtom, { isAuthenticated: false, user: null });
   set(isContextSelectionRequiredAtom, true);
   set(selectedFacilityGroupAtom, null);
   set(selectedFacilityUnitAtom, null);

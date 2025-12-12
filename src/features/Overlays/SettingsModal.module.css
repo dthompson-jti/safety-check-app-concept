@@ -62,6 +62,11 @@
   .settingsItem:hover {
     background-color: var(--surface-bg-primary_hover);
   }
+
+  /* Disable hover for items like sliders that need interaction */
+  .settingsItem[data-no-hover="true"]:hover {
+    background-color: var(--surface-bg-primary);
+  }
 }
 
 .itemLabel {

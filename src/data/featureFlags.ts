@@ -23,12 +23,14 @@ export interface FeatureFlags {
     useSoundEnabled: boolean;
     useHapticsEnabled: boolean;
     enableDarkMode: boolean;
+    enableEnhancedAvatarDropdown: boolean;
 }
 
 export const featureFlagsAtom = atomWithStorage<FeatureFlags>('feature-flags', {
     useSoundEnabled: false,
     useHapticsEnabled: false,
     enableDarkMode: false,
+    enableEnhancedAvatarDropdown: false,
 });
 
 // Hook with stable callbacks for Future Ideas unlock state
