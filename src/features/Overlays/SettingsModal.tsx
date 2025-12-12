@@ -132,23 +132,25 @@ export const SettingsModal = () => {
         </div>
       </div>
 
-      {/* Appearance Section */}
-      <div className={styles.settingsSection}>
-        <h3 className={styles.sectionTitle}>Appearance</h3>
-        <div className={styles.settingsGroup}>
-          <div
-            className={styles.settingsItem}
-            style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}
-            data-no-hover="true"
-          >
-            <ColorSlider
-              label="Avatar Color"
-              value={currentAvatarHue}
-              onChange={handleAvatarColorChange}
-            />
+      {/* Appearance Section: Only visible when enhanced avatar dropdown is enabled */}
+      {featureFlags.enableEnhancedAvatarDropdown && (
+        <div className={styles.settingsSection}>
+          <h3 className={styles.sectionTitle}>Appearance</h3>
+          <div className={styles.settingsGroup}>
+            <div
+              className={styles.settingsItem}
+              style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}
+              data-no-hover="true"
+            >
+              <ColorSlider
+                label="Avatar Color"
+                value={currentAvatarHue}
+                onChange={handleAvatarColorChange}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className={styles.settingsSection}>
         <h3 className={styles.sectionTitle}>Account</h3>
