@@ -353,7 +353,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
         {!isSupplementalCheck && currentCheckStatus === 'early' && (
           <div className={styles.warningBlock}>
             <span className="material-symbols-rounded" aria-hidden="true">
-              warning
+              info
             </span>
             <span>This room was checked recently. Are you sure you want to check now?</span>
           </div>

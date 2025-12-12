@@ -6,7 +6,7 @@ import { featureFlagsAtom } from '../../data/featureFlags';
 import { useHaptics } from '../../data/useHaptics';
 import { useTheme } from '../../data/useTheme';
 import { generateAvatarHue } from '../../data/users';
-import { IconToggleGroup } from '../../components/IconToggleGroup';
+
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { Switch } from '../../components/Switch';
 import { Button } from '../../components/Button';
@@ -70,11 +70,12 @@ export const SettingsModal = () => {
           {/* Scan Mode: Always visible */}
           <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
             <label className={styles.itemLabel}>Scan Mode</label>
-            <IconToggleGroup
+            <SegmentedControl
               id="scan-mode-toggle"
               options={scanModeOptions}
               value={appConfig.scanMode}
               onValueChange={(mode) => { triggerHaptic('selection'); setAppConfig((c) => ({ ...c, scanMode: mode })); }}
+              itemDirection="column"
             />
           </div>
 

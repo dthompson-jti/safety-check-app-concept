@@ -15,6 +15,8 @@ interface SegmentedControlProps<T extends string> {
   id: string;
   /** PRD-07: Layout mode - 'row' for horizontal, 'column' for vertical, 'grid' for 2-col */
   layout?: 'row' | 'column' | 'grid';
+  /** Item content direction - 'row' for icon+text horizontal, 'column' for icon above text */
+  itemDirection?: 'row' | 'column';
 }
 
 /**
@@ -29,6 +31,7 @@ export const SegmentedControl = <T extends string>({
   onValueChange,
   id,
   layout = 'row',
+  itemDirection = 'row',
 }: SegmentedControlProps<T>) => {
   // Radix's onValueChange can be empty if an item is deselected.
   // This handler ensures we only call the parent callback with a valid value.
@@ -45,6 +48,11 @@ export const SegmentedControl = <T extends string>({
   } else if (layout === 'grid') {
     containerClass = styles.gridContainer;
   }
+
+  // Determine item class based on itemDirection
+  const itemClass = itemDirection === 'column'
+    ? `${styles.segmentedControlItem} ${styles.itemColumn}`
+    : styles.segmentedControlItem;
 
   // PRD-07: Calculate if we need a dead cell for grid layout (odd number of items)
   const needsDeadCell = layout === 'grid' && options.length % 2 !== 0;
@@ -63,7 +71,7 @@ export const SegmentedControl = <T extends string>({
           key={option.value}
           value={option.value}
           aria-label={option.label}
-          className={styles.segmentedControlItem}
+          className={itemClass}
         >
           {option.icon && <span className="material-symbols-rounded">{option.icon}</span>}
           <span>{option.label}</span>
