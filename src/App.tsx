@@ -59,29 +59,29 @@ function App() {
 
   useKonamiCode(toggleFutureIdeasWithToast);
 
-  // Ctrl+Shift+0: Reset app data shortcut ("0 = fresh start")
+  // Ctrl+Backspace: Reset app data shortcut
   const dispatch = useSetAtom(dispatchActionAtom);
 
-  const handleResetShortcut = useCallback(() => {
-    dispatch({ type: 'RESET_DATA' });
-    addToast({ message: 'Data reset (Ctrl+Shift+Backspace)', icon: 'restart_alt', variant: 'neutral' });
-  }, [dispatch, addToast]);
-
   useEffect(() => {
+    console.log('🎯 Keyboard listener attached');
     const handleKeyDown = (e: KeyboardEvent) => {
-      // DEBUG: Log all ctrl/shift combos
-      if (e.ctrlKey || e.shiftKey) {
-        console.log('Key event:', { key: e.key, code: e.code, ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey });
-      }
-      // Use e.code ('Digit0') because e.key with Shift becomes ')'
-      if (e.ctrlKey && e.shiftKey && e.code === 'Digit0') {
+      // DEBUG: Log all keyboard events
+      console.log('Key event:', { key: e.key, code: e.code, ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey });
+
+      // Check for Ctrl+Backspace
+      if (e.ctrlKey && e.key === 'Backspace' && !e.shiftKey && !e.altKey) {
+        console.log('🔥 RESET TRIGGERED!');
         e.preventDefault();
-        handleResetShortcut();
+        dispatch({ type: 'RESET_DATA' });
+        addToast({ message: 'Data reset (Ctrl+Backspace)', icon: 'restart_alt', variant: 'neutral' });
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleResetShortcut]);
+    return () => {
+      console.log('🎯 Keyboard listener removed');
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [dispatch, addToast]);
 
   // Version Log to verify deployment
   useEffect(() => {
