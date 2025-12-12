@@ -277,7 +277,7 @@ const AppShellContent = () => {
         onClose={() => setIsSettingsOpen(false)}
         title="Settings"
         transitionType="slide-horizontal"
-        exitDirection="right"
+        actionType="back"
       >
         <SettingsModal />
       </FullScreenModal>
@@ -287,7 +287,7 @@ const AppShellContent = () => {
         onClose={() => setIsDevToolsOpen(false)}
         title="Developer Tools"
         transitionType="slide-horizontal"
-        exitDirection="right"
+        actionType="back"
       >
         <DeveloperModal />
       </FullScreenModal>
@@ -297,7 +297,7 @@ const AppShellContent = () => {
         onClose={() => setIsFutureIdeasOpen(false)}
         title="Future Ideas"
         transitionType="slide-horizontal"
-        exitDirection="right"
+        actionType="back"
       >
         <FutureIdeasModal />
       </FullScreenModal>

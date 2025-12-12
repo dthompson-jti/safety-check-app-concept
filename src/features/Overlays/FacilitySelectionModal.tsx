@@ -30,18 +30,18 @@ const contentVariants = {
   },
   exit: (direction: number) => ({
     x: direction < 0 ? '100%' : '-100%',
-    opacity: 1, 
+    opacity: 1,
   }),
 };
 
 export const FacilitySelectionModal = () => {
   const [isContextRequired, setIsContextRequired] = useAtom(isContextSelectionRequiredAtom);
   const [isModalOpen, setIsModalOpen] = useAtom(isContextSelectionModalOpenAtom);
-  
+
   // We track global state but selection is stateless in this view until confirmed
   const [selectedGroup, setSelectedGroup] = useAtom(selectedFacilityGroupAtom);
   const [selectedUnit, setSelectedUnit] = useAtom(selectedFacilityUnitAtom);
-  
+
   const logout = useSetAtom(logoutAtom);
   const setAppView = useSetAtom(appViewAtom);
   const setIsScheduleLoading = useSetAtom(isScheduleLoadingAtom);
@@ -49,10 +49,10 @@ export const FacilitySelectionModal = () => {
 
   const [step, setStep] = useState<Step>('group');
   const [direction, setDirection] = useState(0);
-  
+
   // Temporary state for the multi-step flow
   const [tempGroupId, setTempGroupId] = useState<string | null>(selectedGroup);
-  
+
   const [modalExitDirection, setModalExitDirection] = useState<'right' | 'left'>('right');
 
   const isOpen = isContextRequired || isModalOpen;
@@ -64,7 +64,7 @@ export const FacilitySelectionModal = () => {
       setTempGroupId(selectedGroup);
       setModalExitDirection('right');
     }
-  }, [isOpen, selectedGroup]); 
+  }, [isOpen, selectedGroup]);
 
   const handleLeftAction = () => {
     if (step === 'unit') {
@@ -93,14 +93,14 @@ export const FacilitySelectionModal = () => {
   const handleUnitSelect = (unitId: string) => {
     triggerHaptic('selection');
     if (!tempGroupId) return;
-    
+
     setModalExitDirection('left');
 
     // Trigger loading if context changed
     if (tempGroupId !== selectedGroup || unitId !== selectedUnit) {
       setIsScheduleLoading(true);
     }
-    
+
     // Commit Selection
     setSelectedGroup(tempGroupId);
     setSelectedUnit(unitId);
@@ -112,7 +112,7 @@ export const FacilitySelectionModal = () => {
       // Login flow complete
       setIsContextRequired(false);
     }
-    
+
     // Close modal after state updates
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -128,22 +128,17 @@ export const FacilitySelectionModal = () => {
   // Unit Step -> Always Back
   // Group Step + Login Flow -> Back (Logout)
   // Group Step + Switch Flow -> Close
-  const getLeftIcon = () => {
-    if (step === 'unit') return 'arrow_back';
-    return isContextRequired ? 'arrow_back' : 'close';
-  };
-
   const getTitle = () => {
     if (step === 'group') return 'Select Facility';
     return 'Select Unit';
   };
 
   return (
-    <FullScreenModal 
-      isOpen={isOpen} 
-      onClose={handleLeftAction} 
+    <FullScreenModal
+      isOpen={isOpen}
+      onClose={handleLeftAction}
       title={getTitle()}
-      leftIcon={getLeftIcon()}
+      // Default actionType="back" applies (Left Arrow)
       transitionType="slide-horizontal"
       exitDirection={modalExitDirection}
     >

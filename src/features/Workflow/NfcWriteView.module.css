@@ -3,7 +3,8 @@
 .viewContainer {
   position: fixed;
   inset: 0;
-  z-index: 105; /* Above other content */
+  z-index: 105;
+  /* Above other content */
   background-color: var(--surface-bg-secondary);
   display: flex;
   flex-direction: column;
@@ -16,8 +17,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-2);
-  height: 60px; /* Explicit fixed height */
-  padding: 0 var(--spacing-4);
+  min-height: 56px;
+  /* STANDARDIZED: spacing-3 vertical, spacing-4 horizontal */
+  padding: var(--spacing-3) var(--spacing-4);
   background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
@@ -25,7 +27,8 @@
 
 .header h3 {
   margin: 0;
-  font-size: 1.1rem; /* Standard Overlay Title Size */
+  font-size: 1.1rem;
+  /* Standard Overlay Title Size */
   font-weight: 600;
   color: var(--surface-fg-primary);
 }
@@ -33,7 +36,8 @@
 .controlsHeader {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3); /* Tighter gap */
+  gap: var(--spacing-3);
+  /* Tighter gap */
   padding: var(--spacing-3) var(--spacing-4);
   background-color: var(--surface-bg-secondary);
   border-bottom: 1px solid var(--surface-border-secondary);
@@ -55,9 +59,9 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0; 
+  gap: 0;
   background-color: var(--surface-bg-primary);
-  
+
   /* Safe area for scrolling */
   padding-bottom: calc(var(--spacing-4) + env(safe-area-inset-bottom));
 }

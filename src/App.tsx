@@ -63,24 +63,16 @@ function App() {
   const dispatch = useSetAtom(dispatchActionAtom);
 
   useEffect(() => {
-    console.log('🎯 Keyboard listener attached');
     const handleKeyDown = (e: KeyboardEvent) => {
-      // DEBUG: Log all keyboard events
-      console.log('Key event:', { key: e.key, code: e.code, ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey });
-
       // Check for Ctrl+Backspace
       if (e.ctrlKey && e.key === 'Backspace' && !e.shiftKey && !e.altKey) {
-        console.log('🔥 RESET TRIGGERED!');
         e.preventDefault();
         dispatch({ type: 'RESET_DATA' });
         addToast({ message: 'Data reset (Ctrl+Backspace)', icon: 'restart_alt', variant: 'neutral' });
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      console.log('🎯 Keyboard listener removed');
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [dispatch, addToast]);
 
   // Version Log to verify deployment

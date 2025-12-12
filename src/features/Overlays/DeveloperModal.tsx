@@ -101,7 +101,7 @@ export const DeveloperModal = () => {
           <span className="material-symbols-rounded">restart_alt</span>
           Reset Application Data
         </Button>
-        <span className={styles.shortcutHint}>Shortcut: Ctrl+Shift+Backspace</span>
+        <span className={styles.shortcutHint}>Shortcut: Ctrl+Backspace</span>
       </div>
 
       {/* 2. Workflow Section */}

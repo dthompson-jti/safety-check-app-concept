@@ -51,11 +51,23 @@ Complex user-facing messages (especially errors) often require specific formatti
 
 #### 6. Design for Layout Stability
 
-CSS should be written defensively to prevent elements from "jumping" as content or state changes.
-
 -   **The Contract:** When an element is only sometimes visible, its container must **always reserve the necessary space** for it.
 -   **The Default State Contract:** Components should default to their most stable, symmetric state in CSS. Modifiers (via data attributes) should only apply asymmetric changes. This prevents "Flash of Unstyled Content" (FOUC) or layout shifts during JS hydration.
 -   **The Persistent Chrome Contract:** Structural elements like Headers and Footers should generally remain mounted. Conditional rendering of these elements changes the layout viewport size, causing underlying content to jump. Use Z-index layering to hide them if necessary.
+
+#### 7. The Strict Transition-Navigation Pairing
+
+We enforce a strict coupling between navigation type, transition, and meaning:
+
+1.  **Horizontal Flow ("Push")**
+    -   **Elements**: Left Title + **Back Arrow (Left)**.
+    -   **Transition**: **Slide from Right**.
+    -   **Meaning**: Deepening context or linear process (*Record Check*, *Facility Selection*, *Dev Tools*, *Settings*).
+
+2.  **Vertical Modal ("Cover")**
+    -   **Elements**: Left Title + **Close 'X' (Right)**.
+    -   **Transition**: **Slide from Bottom**.
+    -   **Meaning**: Temporary utility overlay (*NFC Write*).
 
 ---
 
