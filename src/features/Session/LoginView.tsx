@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { sessionAtom } from '../../data/atoms';
+import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { Modal } from '../../components/Modal';
@@ -19,6 +20,7 @@ export const LoginView = () => {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
   const setSession = useSetAtom(sessionAtom);
+  const dispatch = useSetAtom(dispatchActionAtom);
 
   // Layout Stability Hooks
   useVisualViewport();
@@ -48,6 +50,7 @@ export const LoginView = () => {
     if (hasError) return;
 
     if (username.trim() === 'test' && password.trim() === 'test') {
+      dispatch({ type: 'RESET_DATA' });
       setSession({ isAuthenticated: true, userName: username.trim() });
     } else {
       setFormError('Incorrect username or password.');
@@ -55,6 +58,7 @@ export const LoginView = () => {
   };
 
   const handleShortcutLogin = () => {
+    dispatch({ type: 'RESET_DATA' });
     setSession({ isAuthenticated: true, userName: 'Jane Doe' });
   };
 
