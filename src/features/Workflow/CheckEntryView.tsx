@@ -11,7 +11,6 @@ import {
 import { dispatchActionAtom, safetyChecksAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useVisualViewport } from '../../data/useVisualViewport';
 import { useScrollToFocused } from '../../data/useScrollToFocused';
 import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAtoms';
 import { Button } from '../../components/Button';
@@ -137,9 +136,6 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       markMultipleOptions = markMultipleOptionsSet3;
       break;
   }
-
-  // Layout Stability: Sync height with visual viewport
-  useVisualViewport();
 
   const footerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLElement>(null);

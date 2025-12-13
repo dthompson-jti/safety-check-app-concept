@@ -1,5 +1,5 @@
 // src/AppShell.tsx
-import { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAtomValue, useAtom } from 'jotai';
 import { motion, AnimatePresence, useTransform, animate } from 'framer-motion';
 import {
@@ -26,6 +26,7 @@ import { FutureIdeasModal } from './features/Overlays/FutureIdeasModal';
 import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
 import { GestureProvider } from './data/GestureProvider';
 import { useGestureContext } from './data/GestureContext';
+import { useVisualViewport } from './data/useVisualViewport';
 import styles from './AppShell.module.css';
 
 // High-Performance Transition Configuration
@@ -90,28 +91,8 @@ const AppShellContent = () => {
     }
   }, [workflowState.view, sideMenuProgress, appView, setAppView]);
 
-
-  useLayoutEffect(() => {
-    const chromeElement = appChromeRef.current;
-    if (!chromeElement) return;
-
-    const observer = new ResizeObserver(entries => {
-      window.requestAnimationFrame(() => {
-        if (!Array.isArray(entries) || !entries.length) {
-          return;
-        }
-        const height = entries[0].target.getBoundingClientRect().height;
-        document.documentElement.style.setProperty('--header-height', `${height}px`);
-      });
-    });
-
-    observer.observe(chromeElement);
-
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.removeProperty('--header-height');
-    };
-  }, []);
+  // Global Viewport Contract: Ensure --visual-viewport-height is always available
+  useVisualViewport();
 
   useEffect(() => {
     if (workflowState.view === 'form' && 'residents' in workflowState && workflowState.residents.length > 0) {

@@ -17,14 +17,8 @@ import { useAppSound } from '../../data/useAppSound';
 import { useFutureIdeas } from './../../data/featureFlags';
 import { useTapCounter } from '../../hooks/useTapCounter';
 import { ContextSwitcherCard } from './ContextSwitcherCard';
+import { ActionListItem } from '../../components/ActionListItem';
 import styles from './AppSideMenu.module.css';
-
-const MenuItem = ({ icon, label, onClick, disabled = false }: { icon: string; label: string; onClick: () => void; disabled?: boolean }) => (
-  <button className={styles.menuItem} onClick={onClick} disabled={disabled}>
-    <span className="material-symbols-rounded">{icon}</span>
-    {label}
-  </button>
-);
 
 export const AppSideMenu = () => {
   const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
@@ -80,14 +74,39 @@ export const AppSideMenu = () => {
         />
         <div className={styles.separator} />
 
-        <MenuItem icon="nfc" label="Write NFC tags" onClick={() => setWorkflowState({ view: 'provisioning' })} />
-        <MenuItem icon="code" label="Developer tools" onClick={() => setIsDevToolsOpen(true)} />
-        {futureIdeasUnlocked && <MenuItem icon="lightbulb" label="Future Ideas" onClick={() => setIsFutureIdeasOpen(true)} />}
-
+        <div className={styles.menuList}>
+          <ActionListItem
+            label="Write NFC tags"
+            leadingIcon="nfc"
+            onClick={() => setWorkflowState({ view: 'provisioning' })}
+            showChevron={false}
+          />
+          <ActionListItem
+            label="Developer tools"
+            leadingIcon="code"
+            onClick={() => setIsDevToolsOpen(true)}
+            showChevron={false}
+          />
+          {futureIdeasUnlocked && (
+            <ActionListItem
+              label="Future Ideas"
+              leadingIcon="lightbulb"
+              onClick={() => setIsFutureIdeasOpen(true)}
+              showChevron={false}
+            />
+          )}
+        </div>
       </main>
 
       <footer className={styles.footer}>
-        <MenuItem icon="logout" label="Log out" onClick={handleLogout} />
+        <div className={styles.menuList}>
+          <ActionListItem
+            label="Log out"
+            leadingIcon="logout"
+            onClick={handleLogout}
+            showChevron={false}
+          />
+        </div>
 
         <div className={styles.separator} />
 

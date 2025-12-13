@@ -108,6 +108,12 @@
   }
 }
 
+/* Wrapper for ActionListItem components */
+.menuList {
+  display: flex;
+  flex-direction: column;
+}
+
 .footer {
   flex-shrink: 0;
   padding: var(--spacing-4);

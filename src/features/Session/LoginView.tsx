@@ -8,7 +8,6 @@ import { findUser } from '../../data/users';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { Modal } from '../../components/Modal';
-import { useVisualViewport } from '../../data/useVisualViewport';
 import { useScrollToFocused } from '../../data/useScrollToFocused';
 import styles from './LoginView.module.css';
 
@@ -23,8 +22,7 @@ export const LoginView = () => {
   const setSession = useSetAtom(sessionAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
 
-  // Layout Stability Hooks
-  useVisualViewport();
+  // Layout Stability Hook
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   useScrollToFocused({
     containerRef: scrollContainerRef,
