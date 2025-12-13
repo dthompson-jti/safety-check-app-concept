@@ -40,7 +40,7 @@
 .container[data-classified='true'] {
   background-color: var(--surface-bg-warning-primary);
   border-color: var(--surface-border-warning);
-  box-shadow: 0 0 0 2px var(--primitives-yellow-100);
+  box-shadow: 0 0 0 2px var(--surface-bg-warning-secondary);
 }
 
 .container[data-classified='true'] .residentName {
@@ -55,6 +55,7 @@
   line-height: 1.5;
   color: var(--surface-fg-warning-primary);
 }
+
 .classificationDetails p strong {
   color: var(--surface-fg-warning-primary);
 }
@@ -71,8 +72,8 @@
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   resize: vertical;
-  min-height: 40px; 
-  overflow: hidden; 
+  min-height: 40px;
+  overflow: hidden;
 }
 
 .notesInput::placeholder {
