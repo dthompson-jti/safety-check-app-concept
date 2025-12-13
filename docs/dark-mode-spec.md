@@ -42,19 +42,39 @@ All status colors use consistent OKLCH lightness steps:
 
 | Step | OKLCH L | Usage |
 |:---|:---|:---|
+| 700 | ~38-42% | **Borders (Dark C)** |
 | 800 | ~28% | Existing light-dark |
-| 850 | ~22% | **Borders** |
-| 900 | ~18% | Mid |
-| 950 | ~13% | Secondary backgrounds |
-| 975 | ~8% | **Primary backgrounds (darkest)** |
+| 850 | ~22% | Secondary backgrounds (Dark C) |
+| 900 | ~18% | **Primary backgrounds (Dark C)** |
+| 950 | ~13% | Dark A/B backgrounds |
+| 975 | ~10% | Theme-tinted selected states |
 
-### Dark C Status Token Mapping
+### Theme Palette Extension
 
-| Type | Token Used |
-|:---|:---|
-| Backgrounds | `-975` (darkest) |
-| Secondary | `-950` |
-| Borders | `-850` |
+The theme (blue) palette was extended with a `theme-975` primitive for ultra-dark selected states:
+
+| Token | Hex | OKLCH L | Usage |
+|:---|:---|:---|:---|
+| `theme-950` | `#022762` | ~20% | Selected state hover (dark) |
+| `theme-975` | `#011a42` | ~13% | Selected state base (dark) |
+
+### Dark C Status Token Mapping (Updated)
+
+| Type | Token Used | Notes |
+|:---|:---|:---|
+| Backgrounds | `-900` | L≈18%, visible against grey-940 body |
+| Secondary | `-850` | L≈22% |
+| Borders | `-700` | L≈38-42%, high contrast |
+| Foregrounds | `-400` | Lighter for dark mode readability |
+
+### Dark Mode Selected States
+
+| Token | Primitive | Notes |
+|:---|:---|:---|
+| `--control-bg-selected` | `theme-975` | Subtle blue tint on dark bg |
+| `--control-bg-selected-hover` | `theme-950` | Lighter on hover |
+| `--control-fg-selected` | `theme-200` | Raised one step for contrast |
+| `--control-fg-selected-hover` | `theme-100` | Near-white on hover |
 
 ---
 

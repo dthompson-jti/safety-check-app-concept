@@ -39,12 +39,33 @@ In dark mode, we're using deep saturated colors (e.g., `yellow-950: #4E1D08` or 
 | Info | Low-chroma blue | L:15%, C:0.03, H:230° | `#12151a` |
 
 ### Border Strategy
-Light mode uses `-500/-600` variants for borders (high visibility).
-Dark mode should use `-600/-700` (slightly muted but still visible):
 
-| State | Light Border | Dark Border |
+Light mode uses `-500/-600` variants for borders (high visibility).
+
+**Dark A/B** use `-600` (slightly muted but visible):
+| State | Light Border | Dark A/B Border |
 |:---|:---|:---|
 | Warning | `yellow-500` | `yellow-600` (#CD6000) |
 | Error/Alert | `red-500` | `red-600` (#E3403A) |
 | Success | `green-500` | `green-600` (#0D935A) |
 | Info | `blue-500` | `blue-600` (#0085C9) |
+
+**Dark C** uses `-700` for higher contrast against the deeper grey body (grey-940):
+| State | Dark C Border | OKLCH L |
+|:---|:---|:---|
+| Warning | `yellow-700` (#B04100) | ~42% |
+| Error/Alert | `red-700` (#BB2E28) | ~40% |
+| Success | `green-700` (#017647) | ~38% |
+| Info | `blue-700` (#016AA2) | ~42% |
+
+### Dark C Background Mapping (Updated 2024-12)
+
+Dark C backgrounds were shifted UP for visibility (from 975/950 to 900/850):
+
+| State | Token | Primitive | OKLCH L |
+|:---|:---|:---|:---|
+| Warning BG | `--surface-bg-warning-primary` | `yellow-900` | ~18% |
+| Warning BG Secondary | `--surface-bg-warning-secondary` | `yellow-850` | ~22% |
+| Alert BG | `--surface-bg-error-primary` | `red-900` | ~18% |
+| Info BG | `--surface-bg-info` | `blue-900` | ~18% |
+| Success BG | `--surface-bg-success` | `green-900` | ~18% |

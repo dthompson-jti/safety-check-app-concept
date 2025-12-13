@@ -112,3 +112,23 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 ### Terminology Precision
 *   **Lesson:** User-facing terminology is a strict spec.
 *   **Pattern:** "Due" means "Due". Do not use "Due Now", "Due Soon", or "Due!" unless explicitly specified. Removing variations reduces cognitive load.
+
+### Dark Mode Token Hygiene
+*   **Directive:** When styling any themed element (badges, warnings, selected states, glows), **always use semantic tokens** from `semantics.css`, never primitive tokens directly.
+*   **Why Primitives Fail:** Tokens like `var(--primitives-yellow-100)` are optimized for light mode (L≈95%). In dark mode, they remain unchanged, creating jarring bright spots.
+*   **Anti-Pattern:**
+    ```css
+    /* WRONG - hardcoded primitive, won't adapt */
+    box-shadow: 0 0 0 2px var(--primitives-yellow-100);
+    background: var(--primitives-red-50);
+    ```
+*   **Correct Pattern:**
+    ```css
+    /* CORRECT - semantic token adapts per theme */
+    box-shadow: 0 0 0 2px var(--surface-bg-warning-secondary);
+    background: var(--surface-bg-error-primary);
+    ```
+*   **Selected State Tokens (Dark Mode):**
+    -   Background: `--control-bg-selected` → `theme-975` (dark blue tint)
+    -   Foreground: `--control-fg-selected` → `theme-200` (light blue text)
+*   **Reference:** See `docs/dark-mode-spec.md` for full token mapping tables.

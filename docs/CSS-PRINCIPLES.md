@@ -92,6 +92,29 @@ When styling status messages, badges, or notification blocks, semantic token sel
 
 **Anti-Pattern:** Do not use Warning semantics for informational states just because they "stand out." This dilutes the signal and trains users to ignore yellow messages.
 
+#### 9. The Dark Mode Token Hygiene Principle
+
+When styling themed elements (badges, warnings, selected states), **always use semantic tokens**, never primitive tokens directly.
+
+-   **The Problem:** Primitive tokens like `var(--primitives-yellow-100)` don't adapt to dark mode. They remain the same light-mode-optimized color, causing jarring contrast issues.
+-   **The Solution:** Use the semantic equivalents that are remapped per theme:
+
+| Instead of... | Use... |
+|:---|:---|
+| `var(--primitives-yellow-100)` | `var(--surface-bg-warning-secondary)` |
+| `var(--primitives-red-50)` | `var(--surface-bg-error-primary)` |
+| `var(--primitives-blue-600)` | `var(--surface-border-info)` |
+| Hardcoded hex (`#0a1428`) | `var(--primitives-theme-975)` or appropriate semantic |
+
+-   **Box-Shadow Warning:** `box-shadow` colors are especially prone to this error. If using a colored box-shadow for emphasis (e.g., classified resident glow), the color **must** be a semantic token:
+    ```css
+    /* WRONG - hardcoded, won't adapt to dark mode */
+    box-shadow: 0 0 0 2px var(--primitives-yellow-100);
+    
+    /* CORRECT - semantic token adapts per theme */
+    box-shadow: 0 0 0 2px var(--surface-bg-warning-secondary);
+    ```
+
 ---
 
 ### Key Architectural Patterns
