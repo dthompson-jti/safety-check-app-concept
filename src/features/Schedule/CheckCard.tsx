@@ -7,6 +7,7 @@ import {
   recentlyCompletedCheckIdAtom,
   appConfigAtom
 } from '../../data/atoms';
+import { featureFlagsAtom } from '../../data/featureFlags';
 import { useCountdown } from '../../data/useCountdown';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckCard.module.css';
@@ -41,8 +42,15 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const { showStatusIndicators } = useAtomValue(appConfigAtom);
+  const { feat_card_gradient, feat_card_border, feat_hazard_texture, feat_invert_card } = useAtomValue(featureFlagsAtom);
 
   const isPulsing = recentlyCompletedCheckId === check.id;
+
+  // Calculate sync delay ONCE on mount - aligns animations to global clock
+  const ANIMATION_PERIOD_MS = 2400; // Border pulse is 2.4s
+  const syncDelay = useMemo(() => {
+    return -(Date.now() % ANIMATION_PERIOD_MS);
+  }, []);
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
@@ -66,7 +74,21 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const roomName = residents[0]?.location || 'N/A';
 
   const showIndicator = !['complete', 'supplemental', 'completing', 'queued'].includes(check.status);
-  const cardClassName = `${styles.checkCard} ${isPulsing ? styles.isCompleting : ''}`;
+
+  // Apply card effect classes for missed checks
+  const isLate = check.status === 'missed';
+  const hasAnimatedEffects = isLate && (feat_card_gradient || feat_card_border || feat_hazard_texture);
+  const cardEffectClasses = [
+    styles.checkCard,
+    isPulsing ? styles.isCompleting : '',
+    isLate && feat_card_gradient ? styles.cardGradient : '',
+    isLate && feat_card_border ? styles.cardBorder : '',
+    isLate && feat_hazard_texture ? styles.cardHazard : '',
+    isLate && feat_invert_card ? styles.cardInvert : ''
+  ].filter(Boolean).join(' ');
+
+  // Apply sync delay only when animated effects are active
+  const cardStyle = hasAnimatedEffects ? { animationDelay: `${syncDelay}ms` } : undefined;
 
 
 
@@ -107,8 +129,10 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
             opacity: { duration: 1.5, delay: 1, ease: 'easeOut' }
           }
         }}
-        className={cardClassName}
+        className={cardEffectClasses}
+        style={cardStyle}
         data-status={check.status}
+        data-check-id={check.id}
         data-indicators-visible={showStatusIndicators}
         onClick={handleCardClick}
         aria-disabled={!isActionable}

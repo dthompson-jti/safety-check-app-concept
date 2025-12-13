@@ -1,0 +1,58 @@
+/* src/features/LateEffects/JumpFAB.module.css */
+
+.fab {
+    position: fixed;
+    bottom: calc(var(--footer-height, 96px) + var(--spacing-4));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 160;
+    /* Above pulse map, below sheets */
+
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-4);
+
+    background-color: var(--surface-bg-error-solid);
+    color: var(--control-fg-on-solid);
+    border: none;
+    border-radius: 9999px;
+    /* Fully rounded */
+
+    box-shadow: var(--surface-shadow-xl);
+
+    cursor: pointer;
+
+    font-size: 0.875rem;
+    font-weight: 600;
+
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.fab:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: var(--surface-shadow-2xl);
+}
+
+.fab:active {
+    transform: translateX(-50%) translateY(0);
+}
+
+.fab:focus {
+    outline: none;
+}
+
+.fab:focus-visible {
+    outline: 2px solid var(--control-fg-on-solid);
+    outline-offset: 2px;
+}
+
+.fabLabel {
+    white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fab:hover {
+        transform: translateX(-50%);
+    }
+}

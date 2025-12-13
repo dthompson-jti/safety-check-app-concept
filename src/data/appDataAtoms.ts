@@ -401,6 +401,9 @@ export const statusCountsAtom = atom((get) => {
   return counts;
 });
 
+// Derived atom for Late Check Concepts: count of missed/late checks
+export const lateCheckCountAtom = atom((get) => get(statusCountsAtom).missed);
+
 export const queuedChecksCountAtom = atom((get) => {
   const { checks } = get(appDataAtom);
   return checks.filter(c => c.status === 'queued').length;

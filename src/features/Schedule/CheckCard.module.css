@@ -156,7 +156,7 @@
 
 .statusIndicator[data-status='missed'] {
   width: 4px;
-  background-color: var(--surface-fg-alert-primary);
+  background-color: var(--surface-bg-error-solid);
 }
 
 .mainContent {
@@ -255,4 +255,118 @@
 .checkCard[data-status='missed'] .timeDisplay {
   color: var(--surface-fg-alert-primary);
   font-weight: 600;
+}
+
+/* =========================================
+   Late Check Concepts: Card Visual Effects
+   ========================================= */
+
+/* Magma Gradient - Animated red gradient background */
+.cardGradient {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 59, 48, 0.18) 0%,
+      rgba(255, 149, 0, 0.12) 50%,
+      rgba(255, 59, 48, 0.18) 100%),
+    var(--surface-bg-primary);
+  background-size: 200% 200%, auto;
+  animation: magma-flow 8s ease-in-out infinite;
+}
+
+@keyframes magma-flow {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Fluid Borders - Glowing animated border */
+.cardBorder {
+  border-width: 2px;
+  border-color: var(--surface-border-alert);
+  box-shadow: 0 0 8px rgba(255, 59, 48, 0.15);
+  animation: border-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes border-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(255, 59, 48, 0.15);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(255, 59, 48, 0.25);
+  }
+}
+
+/* Hazard Texture - Diagonal stripes overlay with fade */
+.cardHazard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 59, 48, 0.08) 10px,
+      rgba(255, 59, 48, 0.08) 20px);
+  border-radius: inherit;
+  pointer-events: none;
+  animation: hazard-fade 2.4s ease-in-out infinite;
+}
+
+@keyframes hazard-fade {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cardGradient {
+    animation: none;
+  }
+
+  .cardBorder {
+    animation: none;
+  }
+
+  .cardHazard::after {
+    animation: none;
+  }
+}
+
+/* Invert Card - Full red background with white text */
+.cardInvert {
+  background: var(--surface-bg-error-solid) !important;
+  border-color: var(--surface-bg-error-solid) !important;
+  color: white !important;
+}
+
+.cardInvert .roomNumber,
+.cardInvert .locationText,
+.cardInvert .residentName,
+.cardInvert .residentListItem,
+.cardInvert .timeDisplay {
+  color: white !important;
+}
+
+.cardInvert .statusIndicator {
+  background-color: white !important;
+}
+
+.cardInvert .warningIcon {
+  color: white !important;
 }

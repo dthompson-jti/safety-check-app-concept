@@ -1,9 +1,13 @@
 // src/features/Schedule/StatusBadge.tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { SafetyCheckStatus, SafetyCheckType } from '../../types';
 import { slowTickerAtom } from '../../data/atoms';
+import { featureFlagsAtom } from '../../data/featureFlags';
 import styles from './StatusBadge.module.css';
+
+// Global pulse period in ms - must match CSS animation duration
+const PULSE_PERIOD_MS = 1200;
 
 interface StatusBadgeProps {
   status: SafetyCheckStatus;
@@ -44,9 +48,17 @@ const getMissedLabel = (dueDate: string, now: number): string => {
   return cycles === 1 ? 'Missed' : `${cycles} Missed`;
 };
 
+
+
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate }) => {
-  // Subscribe to slow ticker for missed badge updates
+  // All hooks MUST be at top before any early returns (React Rules of Hooks)
   const now = useAtomValue(slowTickerAtom);
+  const { feat_badge_mode, feat_invert_badge, feat_invert_card } = useAtomValue(featureFlagsAtom);
+
+  // Calculate sync delay ONCE on mount - aligns animation to global clock
+  const syncDelay = useMemo(() => {
+    return -(Date.now() % PULSE_PERIOD_MS);
+  }, []); // Empty deps = only runs on mount
 
   // Upcoming items (early/pending) should NOT have a badge
   if (status === 'pending' || status === 'early') {
@@ -70,8 +82,25 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
     label = getMissedLabel(dueDate, now);
   }
 
+  // Determine which classes to apply to badge
+  // Invert Badge: solid red bg, white text
+  // Invert Card: white bg, red text (to contrast with red card)
+  const shouldInvertBadgeOnly = status === 'missed' && feat_invert_badge && !feat_invert_card;
+  const shouldInvertForCard = status === 'missed' && feat_invert_card;
+  const shouldPulse = feat_badge_mode === 'pulse' && status === 'missed';
+
+  const badgeClasses = [
+    styles.badge,
+    shouldPulse ? styles.badgePulse : '',
+    shouldInvertBadgeOnly ? styles.badgeInvert : '',
+    shouldInvertForCard ? styles.badgeInvertForCard : ''
+  ].filter(Boolean).join(' ');
+
+  // Apply sync delay only when pulsing
+  const badgeStyle = shouldPulse ? { animationDelay: `${syncDelay}ms` } : undefined;
+
   return (
-    <div className={styles.badge} data-status={effectiveStatus}>
+    <div className={badgeClasses} data-status={effectiveStatus} style={badgeStyle}>
       {config.icon && (
         <span className={`material-symbols-rounded ${styles.badgeIcon}`}>
           {config.icon}

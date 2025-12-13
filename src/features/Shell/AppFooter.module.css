@@ -18,6 +18,30 @@
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
+/* Glass Tint Pulse - Late Check warning effect */
+body[data-glass-tint="active"] .footer {
+  animation: glass-tint-pulse-footer 1.2s ease-in-out infinite;
+}
+
+@keyframes glass-tint-pulse-footer {
+
+  0%,
+  100% {
+    background-color: rgba(255, 59, 48, 0.05);
+  }
+
+  50% {
+    background-color: rgba(255, 59, 48, 0.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-glass-tint="active"] .footer {
+    animation: none;
+    background-color: rgba(255, 59, 48, 0.1);
+  }
+}
+
 .scanButton {
   width: 100%;
   height: 48px;

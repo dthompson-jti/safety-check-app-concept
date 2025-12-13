@@ -47,6 +47,12 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Network Status:** Toggle between Online, Offline, and Syncing states.
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
     -   **NFC Simulation Controls:** Interactive buttons within the NFC workflow to force specific outcomes (Success, Network Error, Tag Locked) for edge-case testing.
+-   **Late Check Visual Language:** A comprehensive suite of ambient and micro-interaction effects that activate when checks become overdue, creating progressive urgency without overwhelming the user:
+    -   **Glass Tint Pulse:** Header and footer glassmorphic surfaces pulse with a subtle red tint (synchronized 1.2s animation).
+    -   **Vignette Overlay:** A directional red glow emerges from the top of the viewport, concentrating visual attention on late items.
+    -   **Card Effects:** Animated magma gradient backgrounds, pulsing borders, and hazard texture overlays on late check cards.
+    -   **Badge Pulse:** Status badges throb in sync with a global animation clock (mount-time synchronization).
+    -   **Jump FAB:** Context-aware floating action button that appears only on the main schedule list, scrolling to the first late check.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.
 -   **Manual Check Workflow:** A streamlined flow where selecting a room manually bypasses the scanner and navigates directly to the check entry form, respecting user intent.
 -   **Simulated Admin Tools & Offline Mode:** Complete UI simulations for NFC tag provisioning and offline data synchronization workflows.

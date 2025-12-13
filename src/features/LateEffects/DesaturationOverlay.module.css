@@ -1,0 +1,35 @@
+/* src/features/LateEffects/DesaturationOverlay.module.css */
+
+.desaturation {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 150;
+    /* Below vignette (200), above content */
+
+    /* Desaturate everything beneath this layer */
+    backdrop-filter: saturate(0.3) brightness(0.9);
+    -webkit-backdrop-filter: saturate(0.3) brightness(0.9);
+
+    /* Fade in smoothly */
+    animation: desaturation-fade-in 1s ease-out;
+}
+
+@keyframes desaturation-fade-in {
+    from {
+        backdrop-filter: saturate(1) brightness(1);
+        -webkit-backdrop-filter: saturate(1) brightness(1);
+    }
+
+    to {
+        backdrop-filter: saturate(0.3) brightness(0.9);
+        -webkit-backdrop-filter: saturate(0.3) brightness(0.9);
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .desaturation {
+        animation: none;
+    }
+}

@@ -25,6 +25,18 @@ export interface FeatureFlags {
     useHapticsEnabled: boolean;
     enableDarkMode: boolean;
     enableEnhancedAvatarDropdown: boolean;
+    // Late Check Concepts
+    feat_vignette: boolean;
+    feat_desaturation: boolean;
+    feat_glass_tint: boolean;
+    feat_card_gradient: boolean;
+    feat_card_border: boolean;
+    feat_hazard_texture: boolean;
+    feat_invert_card: boolean;
+    feat_invert_badge: boolean;
+    feat_badge_mode: 'none' | 'pulse' | 'ticker';
+    feat_jump_fab: boolean;
+    feat_bio_sync: boolean;
 }
 
 export const featureFlagsAtom = atomWithStorage<FeatureFlags>('feature-flags', {
@@ -32,6 +44,18 @@ export const featureFlagsAtom = atomWithStorage<FeatureFlags>('feature-flags', {
     useHapticsEnabled: false,
     enableDarkMode: false,
     enableEnhancedAvatarDropdown: false,
+    // Late Check Concepts - all default to OFF
+    feat_vignette: false,
+    feat_desaturation: false,
+    feat_glass_tint: false,
+    feat_card_gradient: false,
+    feat_card_border: false,
+    feat_hazard_texture: false,
+    feat_invert_card: false,
+    feat_invert_badge: false,
+    feat_badge_mode: 'none',
+    feat_jump_fab: false,
+    feat_bio_sync: false,
 });
 
 // Hook with stable callbacks for Future Ideas unlock state
@@ -54,6 +78,18 @@ export const useFutureIdeas = () => {
                 useHapticsEnabled: false,
                 enableDarkMode: false,
                 enableEnhancedAvatarDropdown: false,
+                // Late Check Concepts
+                feat_vignette: false,
+                feat_desaturation: false,
+                feat_glass_tint: false,
+                feat_card_gradient: false,
+                feat_card_border: false,
+                feat_hazard_texture: false,
+                feat_invert_card: false,
+                feat_invert_badge: false,
+                feat_badge_mode: 'none',
+                feat_jump_fab: false,
+                feat_bio_sync: false,
             });
             // Reset theme to light
             setTheme('light');
@@ -77,6 +113,18 @@ export const useFutureIdeas = () => {
                     useHapticsEnabled: false,
                     enableDarkMode: false,
                     enableEnhancedAvatarDropdown: false,
+                    // Late Check Concepts
+                    feat_vignette: false,
+                    feat_desaturation: false,
+                    feat_glass_tint: false,
+                    feat_card_gradient: false,
+                    feat_card_border: false,
+                    feat_hazard_texture: false,
+                    feat_invert_card: false,
+                    feat_invert_badge: false,
+                    feat_badge_mode: 'none',
+                    feat_jump_fab: false,
+                    feat_bio_sync: false,
                 });
                 setTheme('light');
             }, 0);

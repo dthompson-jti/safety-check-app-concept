@@ -49,6 +49,35 @@ Complex user-facing messages (especially errors) often require specific formatti
 -   **The Rule:** Components displaying dynamic messages (like Toasts) must support `white-space: pre-line`.
 -   **The Benefit:** This allows data to control line breaks (using `\n`), enabling the `[Problem].\n[Solution].` pattern without complex HTML parsing.
 
+#### 6. Body Data Attributes for Global CSS Effects
+
+When implementing global visual effects that span multiple components (e.g., glass tint, theme overlays), prefer **body data attributes** over rendered overlay divs.
+
+-   **The Pattern:** A component sets a data attribute on `<body>` via `useEffect`, and CSS selectors trigger visual changes across the app.
+-   **Example:**
+    ```tsx
+    // Component logic
+    useEffect(() => {
+      if (shouldActivate) {
+        document.body.setAttribute('data-glass-tint', 'active');
+      } else {
+        document.body.removeAttribute('data-glass-tint');
+      }
+      return () => document.body.removeAttribute('data-glass-tint');
+    }, [shouldActivate]);
+    ```
+    ```css
+    /* Global CSS - applies to header/footer when active */
+    body[data-glass-tint="active"] .header {
+      animation: glass-tint-pulse 1.2s ease-in-out infinite;
+    }
+    ```
+-   **Benefits:**
+    -   **No z-index conflicts:** Effect is applied directly to target elements, not overlaid.
+    -   **Performance:** No extra DOM nodes, uses existing surfaces.
+    -   **Maintainability:** CSS co-located with affected components, not in a separate overlay component.
+-   **When to Use:** Glass tints, global color shifts, late-state indicators, theme-based animations.
+
 #### 6. Design for Layout Stability
 
 -   **The Contract:** When an element is only sometimes visible, its container must **always reserve the necessary space** for it.

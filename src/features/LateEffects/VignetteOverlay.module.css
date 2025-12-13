@@ -1,0 +1,51 @@
+/* src/features/LateEffects/VignetteOverlay.module.css */
+
+.vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    /* Above all content but below toasts */
+
+    /* Red glow from edges - using actual color, not background token */
+    box-shadow: inset 0 0 120px 20px rgba(255, 59, 48, 0.25);
+
+    /* Blend mode for light theme */
+    mix-blend-mode: multiply;
+
+    /* Top-focused gradient mask - first 25% of screen only */
+    -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 0.85) 25%,
+            rgba(0, 0, 0, 0) 100%);
+    mask-image: linear-gradient(to bottom,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 0.85) 25%,
+            rgba(0, 0, 0, 0) 100%);
+
+    /* Fade in smoothly */
+    animation: vignette-fade-in 1s ease-out;
+}
+
+/* Dark mode requires different blend mode and more intense glow */
+[data-theme^='dark'] .vignette {
+    mix-blend-mode: screen;
+    box-shadow: inset 0 0 140px 30px rgba(255, 59, 48, 0.35);
+}
+
+@keyframes vignette-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .vignette {
+        animation: none;
+    }
+}

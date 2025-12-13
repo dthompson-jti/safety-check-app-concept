@@ -57,3 +57,60 @@
   color: var(--surface-fg-secondary);
   border-color: var(--surface-border-primary);
 }
+
+/* Late Check Concepts: Badge Pulse Animation */
+/* Lull → thump → lull pattern: long rest, quick pulse, long rest */
+@keyframes badge-pulse {
+
+  0%,
+  40% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
+
+  60%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply pulse independently - always animate when pulse mode is active */
+.badge.badgePulse {
+  animation: badge-pulse 1.2s ease-in-out infinite;
+}
+
+/* Sync to Bio-Sync timing when active (slower, synchronized 2.5s) */
+body[data-late-state="active"] .badge.badgePulse {
+  animation: badge-pulse 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge.badgePulse {
+    animation: none;
+  }
+}
+
+/* Invert Badge - Solid red background with white text (standalone) */
+.badge.badgeInvert {
+  background: var(--surface-bg-error-solid) !important;
+  color: white !important;
+  border-color: var(--surface-bg-error-solid) !important;
+}
+
+.badge.badgeInvert .badgeIcon {
+  color: white !important;
+}
+
+/* Invert Badge for Card - White background with red text (when card is inverted) */
+.badge.badgeInvertForCard {
+  background: white !important;
+  color: var(--surface-bg-error-solid) !important;
+  border-color: white !important;
+}
+
+.badge.badgeInvertForCard .badgeIcon {
+  color: var(--surface-bg-error-solid) !important;
+}

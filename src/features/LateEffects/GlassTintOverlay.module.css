@@ -1,0 +1,51 @@
+/* src/features/LateEffects/GlassTintOverlay.module.css */
+
+.headerTint,
+.footerTint {
+    position: fixed;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 9999;
+    /* Above absolutely everything */
+    background: rgba(255, 59, 48, 0.15);
+    /* Lighter for light mode */
+    mix-blend-mode: multiply;
+    animation: tint-fade-in 1s ease-out;
+}
+
+/* Dark mode: brighter tint with screen blend */
+:root[data-theme^="dark"] .headerTint,
+:root[data-theme^="dark"] .footerTint {
+    background: rgba(255, 59, 48, 0.15);
+    mix-blend-mode: screen;
+}
+
+.headerTint {
+    top: 0;
+    height: var(--header-height, 56px);
+}
+
+.footerTint {
+    bottom: 0;
+    height: var(--footer-height, 96px);
+}
+
+@keyframes tint-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .headerTint,
+    .footerTint {
+        animation: none;
+    }
+}

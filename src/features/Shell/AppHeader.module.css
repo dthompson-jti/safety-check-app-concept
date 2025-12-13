@@ -11,6 +11,30 @@
   z-index: 10;
 }
 
+/* Glass Tint Pulse - Late Check warning effect */
+body[data-glass-tint="active"] .header {
+  animation: glass-tint-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes glass-tint-pulse {
+
+  0%,
+  100% {
+    background-color: rgba(255, 59, 48, 0.05);
+  }
+
+  50% {
+    background-color: rgba(255, 59, 48, 0.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-glass-tint="active"] .header {
+    animation: none;
+    background-color: rgba(255, 59, 48, 0.1);
+  }
+}
+
 .headerContent {
   display: flex;
   align-items: center;

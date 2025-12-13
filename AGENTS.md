@@ -132,3 +132,26 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     -   Background: `--control-bg-selected` → `theme-975` (dark blue tint)
     -   Foreground: `--control-fg-selected` → `theme-200` (light blue text)
 *   **Reference:** See `docs/dark-mode-spec.md` for full token mapping tables.
+
+### Animation Synchronization Patterns
+*   **Lesson:** CSS animations with constantly updating `animation-delay` values (e.g., via CSS variables updated every frame) will restart the animation on each update, causing jittery, non-periodic behavior.
+*   **Anti-Pattern:**
+    ```tsx
+    // WRONG - updates every 24fps, restarts animation constantly
+    useEffect(() => {
+      const interval = setInterval(() => {
+        document.body.style.setProperty('--anim-offset', `${-(Date.now() % 1200)}ms`);
+      }, 42); // 24fps
+    }, []);
+    ```
+    ```css
+    .badge { animation-delay: var(--anim-offset); }
+    ```
+*   **Correct Pattern (Mount-Time Sync):**
+    ```tsx
+    // CORRECT - calculate delay ONCE on mount, never changes
+    const syncDelay = useMemo(() => -(Date.now() % PERIOD), []);
+    return <div style={{ animationDelay: `${syncDelay}ms` }} />;
+    ```
+*   **Why It Works:** All elements sync to the same global clock (Date.now()), but the delay is calculated once and applied via inline style, allowing CSS to run the animation smoothly.
+*   **When to Use:** Any time you need multiple independently-mounted components to animate in perfect unison (e.g., badge pulses, card border glows, glass tint breathing).

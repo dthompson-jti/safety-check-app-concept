@@ -59,8 +59,10 @@ export const FutureIdeasModal = () => {
                     lineHeight: '1.4'
                 }}>
                     <strong>Experimental Features</strong><br />
-                    These are ideas being explored for a future version. Do not build unless Jeff asks.
+                    These are just conceptual ideas for a potential future version.  Nothing here is expected for v1.
                 </div>
+
+                {/* Original Features */}
                 <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
                         <label htmlFor="use-sound-switch" className={styles.itemLabel}>Use Sound</label>
@@ -92,6 +94,111 @@ export const FutureIdeasModal = () => {
                             id="enable-enhanced-avatar-switch"
                             checked={featureFlags.enableEnhancedAvatarDropdown}
                             onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, enableEnhancedAvatarDropdown: c })))}
+                        />
+                    </div>
+                </div>
+
+                {/* Late Check Concepts */}
+                <h3 style={{ marginTop: 'var(--spacing-5)', marginBottom: 'var(--spacing-3)', fontSize: '0.875rem', fontWeight: 600, color: 'var(--surface-fg-secondary)' }}>
+                    Late Check Concepts
+                </h3>
+
+                {/* Global Atmosphere */}
+                <div className={styles.settingsGroup}>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-vignette-switch" className={styles.itemLabel}>Active Vignette</label>
+                        <Switch
+                            id="feat-vignette-switch"
+                            checked={featureFlags.feat_vignette}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_vignette: c })))}
+                        />
+                    </div>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-glass-tint-switch" className={styles.itemLabel}>Glass Tinting</label>
+                        <Switch
+                            id="feat-glass-tint-switch"
+                            checked={featureFlags.feat_glass_tint}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_glass_tint: c })))}
+                        />
+                    </div>
+                </div>
+
+                {/* Card Visuals */}
+                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-card-gradient-switch" className={styles.itemLabel}>Magma Gradient</label>
+                        <Switch
+                            id="feat-card-gradient-switch"
+                            checked={featureFlags.feat_card_gradient}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_card_gradient: c })))}
+                        />
+                    </div>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-card-border-switch" className={styles.itemLabel}>Fluid Borders</label>
+                        <Switch
+                            id="feat-card-border-switch"
+                            checked={featureFlags.feat_card_border}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_card_border: c })))}
+                        />
+                    </div>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-hazard-texture-switch" className={styles.itemLabel}>Hazard Texture</label>
+                        <Switch
+                            id="feat-hazard-texture-switch"
+                            checked={featureFlags.feat_hazard_texture}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_hazard_texture: c })))}
+                        />
+                    </div>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-invert-card-switch" className={styles.itemLabel}>Invert Card</label>
+                        <Switch
+                            id="feat-invert-card-switch"
+                            checked={featureFlags.feat_invert_card}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_invert_card: c })))}
+                        />
+                    </div>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-invert-badge-switch" className={styles.itemLabel}>Invert Badge</label>
+                        <Switch
+                            id="feat-invert-badge-switch"
+                            checked={featureFlags.feat_invert_badge}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_invert_badge: c })))}
+                        />
+                    </div>
+                </div>
+
+                {/* Badge Pulse - Simple Toggle */}
+                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-badge-pulse-switch" className={styles.itemLabel}>Badge Pulse</label>
+                        <Switch
+                            id="feat-badge-pulse-switch"
+                            checked={featureFlags.feat_badge_mode === 'pulse'}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_badge_mode: c ? 'pulse' : 'none' })))}
+                        />
+                    </div>
+                </div>
+
+                {/* Navigation */}
+                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-jump-fab-switch" className={styles.itemLabel}>Jump FAB</label>
+                        <Switch
+                            id="feat-jump-fab-switch"
+                            checked={featureFlags.feat_jump_fab}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_jump_fab: c })))}
+                        />
+                    </div>
+                </div>
+
+                {/* System */}
+                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="feat-bio-sync-switch" className={styles.itemLabel}>Bio-Sync Mode</label>
+                        <Switch
+                            id="feat-bio-sync-switch"
+                            checked={featureFlags.feat_bio_sync}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_bio_sync: c })))}
                         />
                     </div>
                 </div>
