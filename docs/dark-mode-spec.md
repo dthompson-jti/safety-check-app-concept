@@ -78,12 +78,37 @@ The theme (blue) palette was extended with a `theme-975` primitive for ultra-dar
 
 ---
 
-## Inverted Components
+## Component Behavior in Dark Mode
+
+### Inverted Components
 
 These components **invert** in dark mode (light-on-dark → dark-on-light):
 
-- Tooltip
-- Popover
+- **Tooltip**: Maintains high contrast by inverting to light background with dark text
+
+### Standard Dark Mode Components
+
+These components follow standard semantic tokens (dark background in dark mode):
+
+- **Popover** (including advanced avatar menu): Uses `--surface-bg-primary` and follows theme
+- **Modals**: Standard elevation-based theming
+- **Cards**: Standard elevation-based theming
+
+### Enhanced Visual Depth
+
+**Shadows** are automatically strengthened in all dark modes to improve visual hierarchy:
+
+| Shadow Token | Light Mode Opacity | Dark Mode Opacity | Usage |
+|:---|:---|:---|:---|
+| `--surface-shadow-xs` | ~5% | 20% | Minimal elevation |
+| `--surface-shadow-sm` | ~5-10% | 25% | Small components |
+| `--surface-shadow-md` | ~6-10% | 20-30% | Cards |
+| `--surface-shadow-lg` | ~5-8% | 25-35% | Elevated panels |
+| `--surface-shadow-xl` | ~5-8% | 30-40% | **Popovers, dropdowns** |
+| `--surface-shadow-2xl` | ~18% | 40-50% | Modals |
+| `--surface-shadow-3xl` | ~14% | 40-45% | Maximum elevation |
+
+> **Rationale**: Dark backgrounds reduce shadow visibility. Higher opacity shadows (2-10x stronger) maintain clear elevation hierarchy and visual separation between layers.
 
 ---
 

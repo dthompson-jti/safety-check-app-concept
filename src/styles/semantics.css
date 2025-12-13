@@ -317,6 +317,16 @@
   --control-border-tertiary: var(--primitives-grey-800);
   --control-border-tertiary-hover: var(--primitives-grey-700);
   --control-border-tertiary-pressed: var(--primitives-grey-600);
+
+  /* Shadows - Increased strength for dark mode */
+  --surface-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --surface-shadow-sm: 0 1px 2px -1px rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.25);
+  --surface-shadow-md: 0 2px 4px -2px rgba(0, 0, 0, 0.3), 0 4px 8px -2px rgba(0, 0, 0, 0.2);
+  --surface-shadow-lg: 0 4px 6px -2px rgba(0, 0, 0, 0.35), 0 8px 16px -4px rgba(0, 0, 0, 0.25), 0 0 1px 0 rgba(0, 0, 0, 0.3);
+  --surface-shadow-xl: 0 8px 10px -4px rgba(0, 0, 0, 0.4), 0 16px 24px -8px rgba(0, 0, 0, 0.3), 0 0 1px 0 rgba(0, 0, 0, 0.35);
+  --surface-shadow-2xl: 0 20px 24px -8px rgba(0, 0, 0, 0.5), 0 0 1px 0 rgba(0, 0, 0, 0.4);
+  --surface-shadow-3xl: 0 32px 64px -16px rgba(0, 0, 0, 0.45), 0 0 1px 0 rgba(0, 0, 0, 0.4);
+  --surface-shadow-pill: 0px 1px 3px 0px rgba(0, 0, 0, 0.25), 0px 1px 2px -1px rgba(0, 0, 0, 0.25);
 }
 
 /* ----------------------------------------- */
@@ -429,6 +439,16 @@
   --control-border-tertiary: var(--primitives-grey-800);
   --control-border-tertiary-hover: var(--primitives-grey-700);
   --control-border-tertiary-pressed: var(--primitives-grey-600);
+
+  /* Shadows - Increased strength for dark mode */
+  --surface-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --surface-shadow-sm: 0 1px 2px -1px rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.25);
+  --surface-shadow-md: 0 2px 4px -2px rgba(0, 0, 0, 0.3), 0 4px 8px -2px rgba(0, 0, 0, 0.2);
+  --surface-shadow-lg: 0 4px 6px -2px rgba(0, 0, 0, 0.35), 0 8px 16px -4px rgba(0, 0, 0, 0.25), 0 0 1px 0 rgba(0, 0, 0, 0.3);
+  --surface-shadow-xl: 0 8px 10px -4px rgba(0, 0, 0, 0.4), 0 16px 24px -8px rgba(0, 0, 0, 0.3), 0 0 1px 0 rgba(0, 0, 0, 0.35);
+  --surface-shadow-2xl: 0 20px 24px -8px rgba(0, 0, 0, 0.5), 0 0 1px 0 rgba(0, 0, 0, 0.4);
+  --surface-shadow-3xl: 0 32px 64px -16px rgba(0, 0, 0, 0.45), 0 0 1px 0 rgba(0, 0, 0, 0.4);
+  --surface-shadow-pill: 0px 1px 3px 0px rgba(0, 0, 0, 0.25), 0px 1px 2px -1px rgba(0, 0, 0, 0.25);
 }
 
 /* ----------------------------------------- */
@@ -541,4 +561,14 @@
   --control-border-tertiary: var(--primitives-grey-860);
   --control-border-tertiary-hover: var(--primitives-grey-840);
   --control-border-tertiary-pressed: var(--primitives-grey-700);
+
+  /* Shadows - Increased strength for dark mode */
+  --surface-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --surface-shadow-sm: 0 1px 2px -1px rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.25);
+  --surface-shadow-md: 0 2px 4px -2px rgba(0, 0, 0, 0.3), 0 4px 8px -2px rgba(0, 0, 0, 0.2);
+  --surface-shadow-lg: 0 4px 6px -2px rgba(0, 0, 0, 0.35), 0 8px 16px -4px rgba(0, 0, 0, 0.25), 0 0 1px 0 rgba(0, 0, 0, 0.3);
+  --surface-shadow-xl: 0 8px 10px -4px rgba(0, 0, 0, 0.4), 0 16px 24px -8px rgba(0, 0, 0, 0.3), 0 0 1px 0 rgba(0, 0, 0, 0.35);
+  --surface-shadow-2xl: 0 20px 24px -8px rgba(0, 0, 0, 0.5), 0 0 1px 0 rgba(0, 0, 0, 0.4);
+  --surface-shadow-3xl: 0 32px 64px -16px rgba(0, 0, 0, 0.45), 0 0 1px 0 rgba(0, 0, 0, 0.4);
+  --surface-shadow-pill: 0px 1px 3px 0px rgba(0, 0, 0, 0.25), 0px 1px 2px -1px rgba(0, 0, 0, 0.25);
 }

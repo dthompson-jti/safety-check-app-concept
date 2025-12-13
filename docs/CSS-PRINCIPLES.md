@@ -115,6 +115,41 @@ When styling themed elements (badges, warnings, selected states), **always use s
     box-shadow: 0 0 0 2px var(--surface-bg-warning-secondary);
     ```
 
+#### 10. The Dark Mode Shadow Strength Principle
+
+Shadows serve a critical role in establishing visual hierarchy through elevation. However, **dark backgrounds reduce shadow visibility dramatically**.
+
+-   **The Pattern:** All `--surface-shadow-*` tokens are automatically strengthened (2-10x opacity increase) in dark modes via theme-specific overrides in `semantics.css`.
+-   **The Opacity Scale:**
+    -   Light mode: 5-18% opacity (subtle, natural)
+    -   Dark modes: 20-50% opacity (pronounced, clear separation)
+-   **The Rationale:** Without stronger shadows, elevated surfaces (popovers, modals, cards) blend into dark backgrounds, losing depth perception and visual hierarchy.
+-   **Implementation:** Never override shadow tokens with hard-coded values. Always use the semantic `--surface-shadow-*` tokens to ensure automatic dark mode adaptation.
+
+**Example Usage:**
+```css
+/* CORRECT - Uses semantic token that adapts to dark mode */
+.popover {
+  box-shadow: var(--surface-shadow-xl);
+}
+
+/* WRONG - Hard-coded shadow won't strengthen in dark mode */
+.popover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+```
+
+#### 11. The Popover Semantic Token Pattern
+
+**Popovers** (including dropdowns, tooltips with UI elements, and menus) follow standard dark mode theming and must use semantic tokens:
+
+-   **Background:** `var(--surface-bg-primary)` (adapts per theme)
+-   **Foreground:** `var(--surface-fg-primary)` (adapts per theme)
+-   **Border:** `var(--surface-border-secondary)` (adapts per theme)
+-   **Shadow:** `var(--surface-shadow-xl)` (strengthens in dark mode)
+
+**Anti-Pattern:** Do not hard-code light colors for popovers with the assumption they should "pop out" in dark mode. This creates jarring discontinuity and breaks the elevation hierarchy system.
+
 ---
 
 ### Key Architectural Patterns

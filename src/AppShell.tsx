@@ -30,11 +30,12 @@ import { useVisualViewport } from './data/useVisualViewport';
 import styles from './AppShell.module.css';
 
 // High-Performance Transition Configuration
-// Uses a faster duration (0.25s) and a punchier easing curve for a native feel.
+// Uses a spring for a "thrown" native feel
 const viewTransition = {
-  type: 'tween',
-  duration: 0.25,
-  ease: [0.25, 1, 0.5, 1],
+  type: 'spring',
+  stiffness: 400,
+  damping: 40,
+  restDelta: 0.001 // High precision stopping
 } as const;
 
 const AppShellContent = () => {
@@ -164,32 +165,42 @@ const AppShellContent = () => {
   const handlePointerUp = (e: React.PointerEvent) => {
     if (!isDragging.current) return;
 
+    // 1. Cleanup Capture
     isDragging.current = false;
     (e.currentTarget as Element).releasePointerCapture(e.pointerId);
 
+    // 2. Capture Physics Data
     const deltaX = e.clientX - startX.current;
-    const SWIPE_THRESHOLD = 50;
-    const PROGRESS_THRESHOLD = 0.4;
+    const currentProgress = sideMenuProgress.get();
+
+    // 3. Deterministic Decision Matrix
+    // The logic *must* result in 0 or 1. Limit ambiguous states.
+    let shouldOpen = false;
 
     if (appView === 'sideMenu') {
-      if (deltaX < -SWIPE_THRESHOLD || sideMenuProgress.get() < (1 - PROGRESS_THRESHOLD)) {
-        setAppView('dashboardTime');
-      } else {
-        animate(sideMenuProgress, 1, viewTransition);
-      }
-      return;
+      // Closing Logic:
+      // - Dragged closed more than 20% (0.8 progress)
+      // - OR swiped hard left (> 50px)
+      shouldOpen = !(currentProgress < 0.8 || deltaX < -50);
+    } else {
+      // Opening Logic:
+      // - Dragged open more than 20% (0.2 progress)
+      // - OR swiped hard right (> 50px)
+      shouldOpen = currentProgress > 0.2 || deltaX > 50;
     }
 
-    if (appView === 'dashboardTime' && deltaX > SWIPE_THRESHOLD) {
-      if (deltaX > sideMenuWidth * PROGRESS_THRESHOLD) {
-        setAppView('sideMenu');
-      } else {
-        animate(sideMenuProgress, 0, viewTransition);
-      }
-      return;
-    }
+    // 4. Execution (The "Direct Method")
+    const target = shouldOpen ? 1 : 0;
 
-    // No filmstrip navigation since we only have dashboardTime view
+    // Animate physics first (Visual)
+    animate(sideMenuProgress, target, viewTransition);
+
+    // Sync state (Logical)
+    if (shouldOpen) {
+      setAppView('sideMenu');
+    } else {
+      setAppView('dashboardTime');
+    }
   };
 
   const mainViewX = useTransform(sideMenuProgress, [0, 1], [0, sideMenuWidth]);

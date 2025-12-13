@@ -38,26 +38,4 @@
   animation: scaleOut 150ms ease-in;
 }
 
-/* --- Dark Mode: Invert Popover --- */
-[data-theme='dark-a'] .popover-content,
-[data-theme='dark-b'] .popover-content,
-[data-theme='dark-c'] .popover-content {
-  background-color: var(--primitives-grey-50);
-  color: var(--primitives-grey-900);
-  border: 1px solid var(--primitives-grey-200);
-}
-
-[data-theme='dark-a'] .popover-arrow,
-[data-theme='dark-b'] .popover-arrow,
-[data-theme='dark-c'] .popover-arrow {
-  fill: var(--primitives-grey-50);
-}
-
-/* --- Dark Mode: Invert Tooltip Variant --- */
-[data-theme='dark-a'] .popover-content-tooltip,
-[data-theme='dark-b'] .popover-content-tooltip,
-[data-theme='dark-c'] .popover-content-tooltip {
-  background-color: var(--primitives-grey-50);
-  color: var(--primitives-grey-900);
-  border-color: var(--primitives-grey-200);
-}
+/* Dark mode styling is handled by semantic tokens - no overrides needed */
