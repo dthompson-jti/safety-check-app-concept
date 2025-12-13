@@ -177,7 +177,7 @@ The following concepts from this catalog have been implemented in the production
 
 #### Magma Gradient (2.1)
 - **Implementation:** Animated background gradient on late check cards
-- **Animation:** 8s ease-in-out background-position shift, mount-time synced
+- **Animation:** 4s ease-in-out background-position shift, mount-time synced
 - **Visual:** `linear-gradient(135deg, rgba red/orange)` layered over base background
 - **Files:** `CheckCard.module.css` (`.cardGradient`)
 
@@ -214,9 +214,10 @@ The following concepts from this catalog have been implemented in the production
 ### 🔧 Technical Patterns Established
 
 #### Mount-Time Animation Sync
-- **Problem:** Continuously updated CSS variables restart animations
-- **Solution:** Calculate `-(Date.now() % PERIOD)` once in `useMemo`, apply via inline style
-- **Used By:** Badge pulse (1.2s), Border pulse (2.4s), Hazard fade (2.4s), Magma flow (8s)
+- **Problem:** Continuously updated CSS variables restart animations; different period constants cause drift
+- **Solution:** Calculate `-(Date.now() % 1200)` once in `useMemo`, apply via inline style. All animations use same 1200ms base.
+- **Used By:** Badge pulse (1.2s = 1x base), Border pulse (2.4s = 2x base), Hazard fade (2.4s = 2x base), Magma flow (4s = 3.3x base)
+- **Critical:** All components MUST use `ANIMATION_SYNC_BASE_MS = 1200` to prevent drift
 - **Reference:** See `AGENTS.md` - Animation Synchronization Patterns
 
 #### Body Data Attribute Pattern
@@ -234,9 +235,182 @@ The following concepts from this catalog have been implemented in the production
 ### 📊 Animation Periods Summary
 | Effect | Period | Sync Method |
 |--------|--------|-------------|
-| Badge Pulse | 1.2s | Mount-time |
+| Badge Pulse | 1.2s | Mount-time (1200ms base) |
 | Glass Tint | 1.2s | CSS (no sync needed) |
-| Border Pulse | 2.4s | Mount-time |
-| Hazard Fade | 2.4s | Mount-time |
-| Magma Flow | 8s | Mount-time |
+| Border Pulse | 2.4s | Mount-time (1200ms base) |
+| Hazard Fade | 2.4s | Mount-time (1200ms base) |
+| Magma Flow | 4s | Mount-time (1200ms base) |
 | Vignette | 1s fade-in | One-shot |
+
+**Note:** All mount-time synced animations use the same 1200ms base period to prevent drift, regardless of their actual animation duration.
+
+---
+
+## Evaluation Criteria & Scoring
+
+### Framework
+
+Each implemented concept is evaluated across multiple dimensions to assess effectiveness and identify potential issues.
+
+#### Functional Criteria
+- **Visibility (In View)**: How effectively does the concept draw attention to late items currently visible on screen?
+- **Visibility (Out of View)**: How well does it signal late items that are off-screen/require scrolling?
+
+#### Perceptual Criteria
+- **Craft Enhancement**: Does it enhance perceived quality and polish of the interface?
+- **Urgency Communication**: How effectively does it convey urgency without causing panic?
+
+#### Contra-Indicators (Risks)
+- **Legibility Reduction**: Does it reduce text readability or content clarity?
+- **Cognitive Load**: Does it add unnecessary mental burden or distraction?
+- **Motion Sensitivity**: Could it trigger discomfort for users sensitive to motion/flashing?
+
+#### Scoring: ● High / ◐ Medium / ○ Low
+
+---
+
+### Evaluation Matrix
+
+| **Concept** | **In-View Visibility** | **Out-of-View Visibility** | **Craft** | **Urgency** | **⚠️ Legibility** | **⚠️ Cognitive Load** | **⚠️ Motion** |
+|-------------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| **Glass Tint Pulse** | ● | ● | ● | ◐ | ○ | ○ | ○ |
+| **Vignette** | ◐ | ● | ● | ◐ | ○ | ○ | ○ |
+| **Magma Gradient** | ● | ○ | ● | ◐ | ○ | ○ | ○ |
+| **Fluid Borders** | ● | ○ | ● | ● | ○ | ○ | ◐ |
+| **Hazard Texture** | ● | ○ | ● | ● | ◐ | ○ | ○ |
+| **Badge Pulse** | ● | ○ | ● | ● | ○ | ○ | ◐ |
+| **Jump FAB** | ● | ● | ◐ | ● | ○ | ○ | ○ |
+| **Invert Card** | ● | ○ | ◐ | ● | ◐ | ◐ | ○ |
+
+---
+
+### Detailed Analysis
+
+#### Glass Tint Pulse
+**Strengths:**
+- ● **Craft**: Sophisticated breathing effect on glass surfaces
+- ● **In-View/Out-of-View**: Ambient effect visible regardless of scroll position
+- ○ **Safe**: Low contrast (0.05→0.15), no legibility or motion issues
+
+**Considerations:**
+- ◐ **Urgency**: Subtle by design, may not be noticed immediately
+
+**Verdict:** ✅ Ideal ambient indicator with zero downsides
+
+---
+
+#### Vignette
+**Strengths:**
+- ● **Out-of-View**: Directional glow from top signals "look up" for late items
+- ● **Craft**: Professional gradient mask, concentrated subtly
+
+**Considerations:**
+- ◐ **In-View**: Less effective if late item is already at top of screen
+
+**Verdict:** ✅ Excellent spatial cue with minimal risk
+
+---
+
+#### Magma Gradient
+**Strengths:**
+- ● **Craft**: High-quality animated texture
+- ● **In-View**: Immediately distinguishes late cards
+
+**Considerations:**
+- ○ **Out-of-View**: No help for items off-screen
+
+**Verdict:** ✅ Premium visual treatment for visible items
+
+---
+
+#### Fluid Borders
+**Strengths:**
+- ● **In-View**: Pulsing glow creates urgency
+- ● **Craft**: Smooth animation, reduced intensity in light mode
+
+**Considerations:**
+- ◐ **Motion**: 2.4s pulse may be noticeable to sensitive users (mitigated by `prefers-reduced-motion`)
+
+**Verdict:** ✅ Strong urgency signal with motion fallback
+
+---
+
+#### Hazard Texture
+**Strengths:**
+- ● **Urgency**: Universal "caution" language
+- ● **Craft**: Subtle striping at low opacity
+
+**Considerations:**
+- ◐ **Legibility**: Diagonal lines can interfere with text (low opacity mitigates)
+
+**Verdict:** ⚠️ Monitor in user testing for readability impact
+
+---
+
+#### Badge Pulse
+**Strengths:**
+- ● **Urgency**: Throbbing creates visceral urgency
+- ● **In-View**: Highly noticeable
+
+**Considerations:**
+- ◐ **Motion**: Most visually active element (mitigated by slow 1.2s cycle and `prefers-reduced-motion`)
+
+**Verdict:** ✅ Effective urgency signal with accessibility fallback
+
+---
+
+#### Jump FAB
+**Strengths:**
+- ● **Out-of-View**: Explicitly solves scrolling problem
+- ● **Visibility**: Shows count and provides action
+
+**Considerations:**
+- ◐ **Craft**: Functional over beautiful (solid red pill)
+- Smart visibility prevents context issues
+
+**Verdict:** ✅ Functional solution to navigation problem
+
+---
+
+#### Invert Card
+**Strengths:**
+- ● **Urgency**: Maximum visual contrast
+- ● **In-View**: Impossible to miss
+
+**Considerations:**
+- ◐ **Legibility**: Red/white inversion may reduce readability for some users
+- ◐ **Cognitive Load**: High contrast can be jarring
+- Overrides other card effects (magma gradient)
+
+**Verdict:** ⚠️ Use sparingly - strong intervention that may fatigue users
+
+---
+
+### Recommended Combinations
+
+Based on evaluation scores, here are optimized preset combinations:
+
+#### **Preset 1: Subtle Awareness**
+- Glass Tint Pulse ✓
+- Vignette ✓
+- Jump FAB ✓
+- **Use Case:** Always-on ambient mode, low cognitive load
+
+#### **Preset 2: Progressive Urgency**
+- Glass Tint Pulse ✓
+- Vignette ✓
+- Badge Pulse ✓
+- Fluid Borders ✓
+- Jump FAB ✓
+- **Use Case:** Balanced approach, clear urgency without overwhelming
+
+#### **Preset 3: Maximum Alert**
+- All effects enabled
+- **Use Case:** Critical situations only, high urgency tolerance
+
+#### **Preset 4: Motion-Sensitive**
+- Glass Tint (static fallback via `prefers-reduced-motion`)
+- Vignette (no animation)
+- Magma Gradient (static)
+- Jump FAB ✓
+- **Use Case:** Accessibility-first configuration

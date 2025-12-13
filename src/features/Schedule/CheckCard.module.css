@@ -270,7 +270,7 @@
       rgba(255, 59, 48, 0.18) 100%),
     var(--surface-bg-primary);
   background-size: 200% 200%, auto;
-  animation: magma-flow 8s ease-in-out infinite;
+  animation: magma-flow 4s ease-in-out infinite;
 }
 
 @keyframes magma-flow {

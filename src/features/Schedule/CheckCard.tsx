@@ -47,9 +47,10 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const isPulsing = recentlyCompletedCheckId === check.id;
 
   // Calculate sync delay ONCE on mount - aligns animations to global clock
-  const ANIMATION_PERIOD_MS = 2400; // Border pulse is 2.4s
+  // All animations sync to 1200ms base: badge (1x), border/hazard (2x), magma (3.3x)
+  const ANIMATION_SYNC_BASE_MS = 1200;
   const syncDelay = useMemo(() => {
-    return -(Date.now() % ANIMATION_PERIOD_MS);
+    return -(Date.now() % ANIMATION_SYNC_BASE_MS);
   }, []);
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);

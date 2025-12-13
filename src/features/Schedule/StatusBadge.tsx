@@ -6,8 +6,9 @@ import { slowTickerAtom } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
 import styles from './StatusBadge.module.css';
 
-// Global pulse period in ms - must match CSS animation duration
-const PULSE_PERIOD_MS = 1200;
+// Global animation sync base - shared across all components for perfect alignment
+// Badge pulse: 1.2s (1x base), Card border/hazard: 2.4s (2x base), Magma: 4s (~3.3x base)
+const ANIMATION_SYNC_BASE_MS = 1200;
 
 interface StatusBadgeProps {
   status: SafetyCheckStatus;
@@ -57,7 +58,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
 
   // Calculate sync delay ONCE on mount - aligns animation to global clock
   const syncDelay = useMemo(() => {
-    return -(Date.now() % PULSE_PERIOD_MS);
+    return -(Date.now() % ANIMATION_SYNC_BASE_MS);
   }, []); // Empty deps = only runs on mount
 
   // Upcoming items (early/pending) should NOT have a badge

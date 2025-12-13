@@ -147,11 +147,13 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     ```css
     .badge { animation-delay: var(--anim-offset); }
     ```
-*   **Correct Pattern (Mount-Time Sync):**
+*   **Correct Pattern (Mount-Time Sync with Unified Base):**
     ```tsx
-    // CORRECT - calculate delay ONCE on mount, never changes
-    const syncDelay = useMemo(() => -(Date.now() % PERIOD), []);
+    // CORRECT - use shared 1200ms base for ALL animations
+    const ANIMATION_SYNC_BASE_MS = 1200;
+    const syncDelay = useMemo(() => -(Date.now() % ANIMATION_SYNC_BASE_MS), []);
     return <div style={{ animationDelay: `${syncDelay}ms` }} />;
     ```
-*   **Why It Works:** All elements sync to the same global clock (Date.now()), but the delay is calculated once and applied via inline style, allowing CSS to run the animation smoothly.
+*   **Why It Works:** All components sync to the same 1200ms clock. Animations with different periods (badge 1.2s, border 2.4s, magma 4s) phase-lock at regular intervals, preventing drift.
+*   **Critical:** All components MUST use the same base period (1200ms) even if their animation duration is different (e.g., 2.4s animation still uses 1200ms sync base).
 *   **When to Use:** Any time you need multiple independently-mounted components to animate in perfect unison (e.g., badge pulses, card border glows, glass tint breathing).
