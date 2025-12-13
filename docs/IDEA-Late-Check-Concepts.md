@@ -1,104 +1,68 @@
-# IDEA-001: Late Check Notification System
+# IDEA-002: Late Check Visual Language (Consolidated)
 
-This document outlines the proposed implementation candidates for the "Late Check" notification system, formatted as individual feature tickets.
-
----
-
-## IDEA-001-A: The "Pulse-Map" (Unified Density & Signal)
-**Priority**: Critical (P0) | **Effort**: Medium | **Visual Impact**: High
-
-### 1. Problem Statement
-Users scrolling through long schedule lists (50+ rooms) lose context of "Late" checks that are off-screen. Current "scroll to top" arrows are generic and dumb. Users need global situational awareness without leaving their current task.
-
-### 2. The Solution
-Implement a **Heatmap Mini-map** on the right edge of the viewport that acts as both a density visualizer and a navigation tool. Enhance it with the **Ambient Pulse** animation to draw attention when critical.
-
-### 3. Specifications
-*   **Location**: Fixed right overlay, `right: 2px`, `width: 4px`, `height: 100%`. Z-index 100.
-*   **Visual Logic**:
-    *   Map the `listHeight` to the `viewportHeight`.
-    *   Render 2px height "Ticks" at relative positions for every check.
-    *   **Color Mapping**:
-        *   Late (>15m): `var(--surface-error)` (Red)
-        *   Due Soon: `var(--surface-warning)` (Orange)
-        *   Others: Transparent or very faint grey.
-*   **Animation (The Pulse)**:
-    *   If `status === 'late'`, the corresponding Tick continuously pulses opacity `0.4` -> `1.0` -> `0.4` (2s duration).
-*   **Interaction**:
-    *   **Tap**: Scrolls list immediately to that position.
-    *   **Drag**: "Scrubbing" the mini-map scrolls the list (like VS Code).
-
-### 4. Technical Considerations
-*   **Performance**: Avoid re-calculating positions on every frame. Use a `ResizeObserver` on the list container to map IDs to % positions once.
-*   **Haptics**: See *IDEA-001-C*.
+This document outlines the final selected candidates for the "Late Check" visual system, combining the core utility winners with the expanded atmospheric dimensions from Round 6.
 
 ---
 
-## IDEA-001-B: Living Background (Atmospheric Vignette)
-**Priority**: High (P1) | **Effort**: High | **Visual Impact**: Very High
+## Part 1: The New Expansions (Atmosphere & Physics)
+*refined concepts based on Dimensional Brainstorming.*
 
-### 1. Problem Statement
-A "Late" check is a critical safety failure, but standard list items often blend together. We need a way to change the *mood* of the application to signal "Alert" without using annoying popups or sirens.
-
-### 2. The Solution
-Instead of just styling the card, we implement a **Global Ambient Vignette**. When any check is Late, the global application background (behind the list) transitions to a subtle, animated **Urgency Gradient**.
-
-### 3. Specifications
+### **IDEA-1A: Vignette Signal (Noise + Pulse)**
+*   **Formula**: `Edge Vignette (#11)` + `Noise (#1B)` + `Pulse (#1A)`
 *   **Visual**:
-    *   A CSS `radial-gradient` or mesh at the corners of the viewport.
-    *   **Colors**: Deep, desaturated red/charcoal (`#330505` -> `var(--app-bg)`).
-    *   **Animation**: The gradient positions slowly drift (perlin noise simulation via CSS translate) to feel "alive".
-*   **Trigger Logic**:
-    *   `const isCritical = lateCount > 0;`
-    *   Transition opacity `0` -> `1` over 1000ms when state changes.
-*   **Constraint**: Must not reduce contrast of text readability.
+    *   **The Glow**: A soft red (`var(--surface-error)`) inset box-shadow pulses at the screen edges.
+    *   **The Texture**: A static 2px "White Noise" grain overlay (5% opacity) is applied on top of the glow.
+    *   **The Pulse**: The overlay breathes slowly (2s loop).
+*   **Why**: The noise adds a visceral "Geiger counter" or "Signal Interference" texture to the standard red glow, making it felt rather than just seen.
 
----
-
-## IDEA-001-C: Haptic Ticks (Tactile Feedback)
-**Priority**: Medium (P2) | **Effort**: Low | **Visual Impact**: None
-
-### 1. Problem Statement
-Professional users often operate the app "eyes-free" or while walking. They need to confirm list status without focusing on the screen.
-
-### 2. The Solution
-Augment the **Pulse-Map** (IDEA-001-A) with **Haptic Road Bumps**.
-
-### 3. Specifications
-*   **Interaction**:
-    *   When the user drags their finger along the Mini-map (Scrubbing):
-    *   Trigger `Haptics.impact({ style: 'light' })` when crossing a "Due Soon" tick.
-    *   Trigger `Haptics.impact({ style: 'heavy' })` when crossing a "Late" tick.
-*   **Scroll**:
-    *   When browsing the main list, crossing a "Late" header also triggers a 'heavy' impact.
-
----
-
-## IDEA-001-D: Jump FAB (Smart Navigation)
-**Priority**: Medium (P2) | **Effort**: Low | **Visual Impact**: Medium
-
-### 1. Problem Statement
-If a user is 50 items down the list and a new check becomes late at the top, they might miss the Mini-map signal. They need a "One Click Fix".
-
-### 2. The Solution
-A floating pill button that appears **conditionally** only when late items are off-screen.
-
-### 3. Specifications
+### **IDEA-1C: Glass Pulse**
+*   **Formula**: `Tinted Glass (#1C)` + `Gentle Pulse`
 *   **Visual**:
-    *   Capsule shape: `40px` height.
-    *   Text: "1 Late ↑" or "2 Late ↓".
-    *   Color: `var(--surface-error)` background, White text.
-    *   Shadow: `var(--shadow-elevation-high)`.
-*   **Logic**:
-    *   `IntersectionObserver` monitors the Late Cards.
-    *   Show FAB if: `totalLate > 0` AND `visibleLate === 0`.
-*   **Animation**:
-    *   Enter: Slide Up + Fade In (`spring`).
-    *   Exit: Scale Down + Fade Out.
-*   **Action**:
-    *   Clicking smooth-scrolls to the nearest Late item.
+    *   The App Header and Bottom Navigation Bar (glass materials) pick up a subtle red tint.
+    *   **Animation**: This tint creates a gentle "heartbeat" effect, pulsing the opacity of the red layer from 0.05 to 0.15.
+*   **Why**: frames the content in the alert state.
+
+### **IDEA-2D: Anchored Bioluminescence (Heatmap Glow)**
+*   **Visual**:
+    *   Instead of a generic center glow, a **Radial Gradient** is anchored specifically to the collection of "Late" badges.
+    *   The glow emanates *from the badge* and spreads into the card background.
+*   **Why**: Connects the "Source" (the badge) to the "Effect" (the card highlight).
+
+### **IDEA-SYNC: The Synchronized Living System**
+*A unified animation system where multiple elements "breathe" in perfect unison.*
+
+*   **Global Clock**: All CSS animations share the same `duration` and `delay` to ensure perfect phase alignment.
+*   **Component 1: Synced Background**: Late cards have a gentle, periodic colored gradient pulse overlay.
+*   **Component 2: Synced Badges**: All "Late" badges scale up/down slightly (`scale(1.0)` -> `scale(1.05)`) in sync.
+*   **Component 3: Synced Lines (#4-New)**:
+    *   The list separator lines for late items grow in the **X-axis** only.
+    *   Animation: `scaleX(1)` -> `scaleX(1.1)`.
+    *   **Result**: The entire list structure feels like it is expanding and contracting like a lung.
 
 ---
 
-## Summary of Recommendation
-Implement **IDEA-001-A (Pulse-Map)** as the core utility. It solves the navigational problem and the urgency problem simultaneously. Add **IDEA-001-B (Living Background)** if resources allow for a premium "High Craft" feel.
+## Part 2: The Core Winners (Utility & Feedback)
+*Retained top concepts from original research.*
+
+### **1. Jump FAB (#12)**
+*   **Role**: Navigation.
+*   **Spec**: Floating pill ("1 Late ↑") appears only when the target is off-screen.
+*   **Interaction**: Click to scroll.
+
+### **2. Haptic Ticks (001-C)**
+*   **Role**: Tactile Feedback.
+*   **Spec**: Dragging/Scrubbing the "Pulse Map" (or scrollbar area) triggers haptic bumps: light for "Due", heavy for "Late".
+
+### **3. Living Gradient (001-A / #4)**
+*   **Role**: Texture.
+*   **Spec**: A slowly moving mesh gradient in the background of the Late Card (or the global background in "Critical" mode).
+
+---
+
+## Synthesis: The "Critical State" Composition
+
+When the app enters **Critical Mode** (Late Check > 15m), the following activates:
+
+1.  **Global Layer**: **IDEA-1A (Vignette Noise)** fades in to frame the screen in static tension.
+2.  **List Layer**: **IDEA-SYNC** activates. Lines stretch, Badges swell, and backgrounds glow in a unified 4-second breathing loop.
+3.  **Action Layer**: If the check is not visible, the **Jump FAB** slides up.
