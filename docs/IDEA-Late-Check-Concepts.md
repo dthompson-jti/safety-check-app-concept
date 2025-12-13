@@ -155,3 +155,88 @@ Instead of random animations, we implement a **Single Global Oscillator** in the
 *   **t=2.0s**: Return to rest.
 
 This makes the *entire UI* feel like a single living organism reacting to the "Late" infection.
+
+---
+
+## Implementation Status (December 2024)
+
+The following concepts from this catalog have been implemented in the production codebase:
+
+### ✅ Implemented
+
+#### Glass Tinting (1.2)
+- **Implementation:** Body data attribute pattern (`data-glass-tint="active"`) triggers pulsing background-color animation on header/footer
+- **Animation:** 1.2s smooth ease-in-out pulse, `rgba(255, 59, 48, 0.05)` → `0.15`
+- **Technical:** Uses `useEffect` to set/remove body attribute, CSS animations handle visual effect
+- **Files:** `GlassTintOverlay.tsx`, `AppHeader.module.css`, `AppFooter.module.css`
+
+#### Vignette Signal (1.1)
+- **Implementation:** Fixed-position overlay with gradient mask, concentrates effect in top 25% of viewport
+- **Visual:** Radial gradient with mask controlling opacity falloff
+- **Files:** `VignetteOverlay.tsx`, `VignetteOverlay.module.css`
+
+#### Magma Gradient (2.1)
+- **Implementation:** Animated background gradient on late check cards
+- **Animation:** 8s ease-in-out background-position shift, mount-time synced
+- **Visual:** `linear-gradient(135deg, rgba red/orange)` layered over base background
+- **Files:** `CheckCard.module.css` (`.cardGradient`)
+
+#### Fluid Borders (2.3)
+- **Implementation:** Pulsing box-shadow on late check cards
+- **Animation:** 2.4s border glow pulse, synced via mount-time delay
+- **Visual:** Reduced opacity in light mode (`0.15/0.25`), standard in dark
+- **Files:** `CheckCard.module.css` (`.cardBorder`)
+
+#### Hazard Texture (2.4)
+- **Implementation:** Diagonal stripe overlay with fade animation
+- **Animation:** 2.4s opacity pulse synced with border
+- **Visual:** `repeating-linear-gradient(45deg)` at low opacity
+- **Files:** `CheckCard.module.css` (`.cardHazard`)
+
+#### Synced Scale Pulse (3.1)
+- **Implementation:** Badge throbs with lull-thump-lull rhythm
+- **Animation:** 1.2s ease-in-out, `scale(1)` → `1.04`, mount-time synced
+- **Keyframes:** 0-40% rest, 40-50% rise, 50-60% fall, 60-100% rest
+- **Files:** `StatusBadge.module.css`, `StatusBadge.tsx`
+
+#### Jump FAB (5.2)
+- **Implementation:** Context-aware floating action button
+- **Logic:** Only shows on main schedule list (`workflowState.view === 'none'`), hides when drilled into forms
+- **Visual:** Solid red pill with count, centered horizontally above footer
+- **Interaction:** Smooth scroll to first late check, focus-visible outline follows pill shape
+- **Files:** `JumpFAB.tsx`, `JumpFAB.module.css`
+
+#### Invert Card & Badge (New)
+- **Implementation:** Full red card with white text, or standalone red badge
+- **Mutual Exclusivity:** Invert Card includes badge inversion
+- **Files:** `CheckCard.module.css` (`.cardInvert`), `StatusBadge.module.css` (`.badgeInvert`, `.badgeInvertForCard`)
+
+### 🔧 Technical Patterns Established
+
+#### Mount-Time Animation Sync
+- **Problem:** Continuously updated CSS variables restart animations
+- **Solution:** Calculate `-(Date.now() % PERIOD)` once in `useMemo`, apply via inline style
+- **Used By:** Badge pulse (1.2s), Border pulse (2.4s), Hazard fade (2.4s), Magma flow (8s)
+- **Reference:** See `AGENTS.md` - Animation Synchronization Patterns
+
+#### Body Data Attribute Pattern
+- **Problem:** Overlay divs cause z-index conflicts and extra DOM nodes
+- **Solution:** Component sets body attribute, CSS targets existing elements
+- **Used By:** Glass tint pulse
+- **Reference:** See `STRATEGY-CSS-Principles.md` - Body Data Attributes for Global CSS Effects
+
+### ❌ Not Implemented (From Original Catalog)
+- Desaturation Focus (1.3) - Removed, too heavy
+- Pulse Map (5.1) - Removed entirely
+- Counter Ticker (3.4) - Replaced with pulse mode
+- Bio-Sync Mode - Implemented but differs from original concept (global CSS variable approach replaced with mount-time sync)
+
+### 📊 Animation Periods Summary
+| Effect | Period | Sync Method |
+|--------|--------|-------------|
+| Badge Pulse | 1.2s | Mount-time |
+| Glass Tint | 1.2s | CSS (no sync needed) |
+| Border Pulse | 2.4s | Mount-time |
+| Hazard Fade | 2.4s | Mount-time |
+| Magma Flow | 8s | Mount-time |
+| Vignette | 1s fade-in | One-shot |
