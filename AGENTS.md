@@ -255,3 +255,11 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     ```
 *   **Unnecessary Type Assertions:** Do not use `as Type` when TypeScript can already infer the type. ESLint flags this as `@typescript-eslint/no-unnecessary-type-assertion`.
 *   **Environment-Agnostic Timer Types:** Use `ReturnType<typeof setTimeout>` instead of `NodeJS.Timeout` to avoid TS2503 in browser environments.
+
+### Pulse Effects Pattern (Global Visuals)
+*   **Lesson:** For continuous, global animations (like glass breathing or urgency gradients), avoid React render cycles.
+*   **Pattern:**
+    1.  **Manager Component:** `PulseEffectsManager.tsx` (Logic only, returns `null`).
+    2.  **Data Attribute:** Sets `body[data-glass-pulse="basic|gradient"]` based on state.
+    3.  **CSS Subscription:** Components (`.header`, `.footer`) subscribe to the body attribute via CSS selectors.
+*   **Why:** Allows a single state update to trigger high-performance, synchronized animations across multiple DOM nodes without re-rendering the component tree.

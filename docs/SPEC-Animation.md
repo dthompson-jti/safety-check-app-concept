@@ -207,3 +207,25 @@ const LoginView = lazy(() => withMinDelay(
   MIN_SPLASH_MS
 ));
 ```
+
+## 8. Pulse Effect Timing Contract
+
+All continuous pulse animations must synchronize to a global 1200ms base clock to prevent visual chaos ("Christmas Tree Effect") when multiple elements pulse simultaneously.
+
+### The Sync Base
+`ANIMATION_SYNC_BASE_MS = 1200`
+
+### Multipliers
+| Effect | Style | Duration | Multiplier |
+|:---|:---|:---|:---|
+| **Basic Pulse** | Opacity Breath | 1.2s | 1x |
+| **Badge Pulse** | Scale/Opacity | 1.2s | 1x |
+| **Gradient Pulse** | Magma Flow | 2.4s | 2x |
+| **Border Pulse** | Fluid Border | 2.4s | 2x |
+
+### Implementation Pattern
+Calculate `animation-delay` once on mount:
+```tsx
+const syncDelay = useMemo(() => -(Date.now() % 1200), []);
+// Applied to style={{ animationDelay: `${syncDelay}ms` }}
+```
