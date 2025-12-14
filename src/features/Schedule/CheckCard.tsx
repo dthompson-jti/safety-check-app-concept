@@ -125,9 +125,9 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
           x: '100%',
           opacity: 0,
           transition: {
-            // DEBUG: 2.5x slower - duration: 0.5s (normal: 0.2s)
-            x: { duration: 0.5, ease: [0.25, 1, 0.5, 1] },
-            opacity: { duration: 1.5, delay: 1, ease: 'easeOut' }
+            // Corrected: duration: 0.2s, no delay
+            x: { duration: 0.2, ease: [0.25, 1, 0.5, 1] },
+            opacity: { duration: 0.2, ease: 'easeOut' }
           }
         }}
         className={cardEffectClasses}
