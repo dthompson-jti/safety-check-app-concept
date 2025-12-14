@@ -26,6 +26,7 @@
 body[data-glass-pulse="basic"] .footer,
 body[data-glass-tint="active"] .footer {
   animation: pulse-basic-footer 1.2s ease-in-out infinite;
+  animation-delay: var(--glass-sync-delay, 0ms);
 }
 
 @keyframes pulse-basic-footer {
@@ -40,7 +41,7 @@ body[data-glass-tint="active"] .footer {
   }
 }
 
-/* Gradient Pulse - Flowing magma effect (2.4s cycle, 2x sync base) */
+/* Gradient Pulse - Flowing magma effect (4.8s cycle, 4x sync base) */
 /* Uses ::before pseudo-element to avoid conflicts with safe-area padding */
 body[data-glass-pulse="gradient"] .footer {
   position: relative;
@@ -58,7 +59,8 @@ body[data-glass-pulse="gradient"] .footer::before {
       var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05)) 100%),
     var(--surface-bg-header-translucent);
   background-size: 200% 200%, auto;
-  animation: pulse-gradient-footer 2.4s ease-in-out infinite;
+  animation: pulse-gradient-footer 4.8s ease-in-out infinite;
+  animation-delay: var(--glass-sync-delay, 0ms);
 }
 
 @keyframes pulse-gradient-footer {

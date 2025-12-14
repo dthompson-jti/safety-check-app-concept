@@ -9,6 +9,7 @@ import {
 } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
 import { useCountdown } from '../../data/useCountdown';
+import { useEpochSync, SYNC_BASE_MS } from '../../hooks/useEpochSync';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckCard.module.css';
 
@@ -46,12 +47,17 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const isPulsing = recentlyCompletedCheckId === check.id;
 
-  // Calculate sync delay ONCE on mount - aligns animations to global clock
-  // All animations sync to 1200ms base: badge (1x), border/hazard (2x), pulse (2x)
-  const ANIMATION_SYNC_BASE_MS = 1200;
-  const syncDelay = useMemo(() => {
-    return -(Date.now() % ANIMATION_SYNC_BASE_MS);
-  }, []);
+  // Determine the animation period BEFORE calling useEpochSync
+  // - Basic pulse: 1.2s (SYNC_BASE_MS)
+  // - Gradient pulse: 4.8s (SYNC_BASE_MS * 4)
+  // - Other effects (border, hazard): 2.4s (SYNC_BASE_MS * 2)
+  const isLate = check.status === 'missed';
+  const effectivePeriod =
+    (isLate && feat_card_pulse === 'basic') ? SYNC_BASE_MS
+      : (isLate && feat_card_pulse === 'gradient') ? SYNC_BASE_MS * 4
+        : SYNC_BASE_MS * 2;
+  const syncStyle = useEpochSync(effectivePeriod);
+
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
@@ -76,14 +82,12 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const showIndicator = !['complete', 'supplemental', 'completing', 'queued'].includes(check.status);
 
-  // Apply card effect classes for missed checks
-  const isLate = check.status === 'missed';
 
   // Determine pulse class based on feat_card_pulse
-  // 'basic' = new subtle opacity breathing
-  // 'gradient' = original Magma flowing gradient effect
+  // 'basic' = subtle opacity breathing (1.2s)
+  // 'gradient' = magma flowing gradient effect (4.8s)
   const pulseClass = isLate && feat_card_pulse === 'basic' ? styles.cardPulseBasic
-    : isLate && feat_card_pulse === 'gradient' ? styles.cardGradient  // Use original Magma
+    : isLate && feat_card_pulse === 'gradient' ? styles.cardGradient  // Use original magma gradient
       : '';
 
   // Legacy: feat_card_gradient still works if feat_card_pulse is 'none'
@@ -101,7 +105,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   ].filter(Boolean).join(' ');
 
   // Apply sync delay only when animated effects are active
-  const cardStyle = hasAnimatedEffects ? { animationDelay: `${syncDelay}ms` } : undefined;
+  const cardStyle = hasAnimatedEffects ? syncStyle : undefined;
 
 
 

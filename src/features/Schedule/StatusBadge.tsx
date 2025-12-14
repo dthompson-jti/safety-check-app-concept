@@ -1,14 +1,12 @@
 // src/features/Schedule/StatusBadge.tsx
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 import { SafetyCheckStatus, SafetyCheckType } from '../../types';
 import { slowTickerAtom } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
+import { useEpochSync, SYNC_BASE_MS } from '../../hooks/useEpochSync';
 import styles from './StatusBadge.module.css';
 
-// Global animation sync base - shared across all components for perfect alignment
-// Badge pulse: 1.2s (1x base), Card border/hazard: 2.4s (2x base), Magma: 4s (~3.3x base)
-const ANIMATION_SYNC_BASE_MS = 1200;
 
 interface StatusBadgeProps {
   status: SafetyCheckStatus;
@@ -56,10 +54,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
   const now = useAtomValue(slowTickerAtom);
   const { feat_badge_mode, feat_invert_badge, feat_invert_card } = useAtomValue(featureFlagsAtom);
 
-  // Calculate sync delay ONCE on mount - aligns animation to global clock
-  const syncDelay = useMemo(() => {
-    return -(Date.now() % ANIMATION_SYNC_BASE_MS);
-  }, []); // Empty deps = only runs on mount
+  // Use centralized epoch sync for perfect animation alignment
+  const syncStyle = useEpochSync(SYNC_BASE_MS);
+
 
   // Upcoming items (early/pending) should NOT have a badge
   if (status === 'pending' || status === 'early') {
@@ -98,7 +95,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
   ].filter(Boolean).join(' ');
 
   // Apply sync delay only when pulsing
-  const badgeStyle = shouldPulse ? { animationDelay: `${syncDelay}ms` } : undefined;
+  const badgeStyle = shouldPulse ? syncStyle : undefined;
 
   return (
     <div className={badgeClasses} data-status={effectiveStatus} style={badgeStyle}>

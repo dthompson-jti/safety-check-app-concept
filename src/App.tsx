@@ -9,8 +9,7 @@ import {
   throttledTickerAtom
 } from './data/atoms';
 import { toastsAtom, addToastAtom } from './data/toastAtoms';
-import { dispatchActionAtom, lateCheckCountAtom } from './data/appDataAtoms';
-import { featureFlagsAtom } from './data/featureFlags';
+import { dispatchActionAtom } from './data/appDataAtoms';
 import { useCheckLifecycle } from './data/useCheckLifecycle';
 import { useFutureIdeas } from './data/featureFlags';
 import { useKonamiCode } from './hooks/useKonamiCode';
@@ -44,8 +43,7 @@ const CINEMATIC_FRAME_MS = 41;
 function App() {
   const session = useAtomValue(sessionAtom);
   const toasts = useAtomValue(toastsAtom);
-  const lateCount = useAtomValue(lateCheckCountAtom);
-  const { feat_bio_sync } = useAtomValue(featureFlagsAtom);
+
 
   // Heartbeat Setters
   const [, setFastTicker] = useAtom(fastTickerAtom);
@@ -93,26 +91,15 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [dispatch, addToast]);
 
-  // Set data-late-state attribute on body for Bio-Sync
-  useEffect(() => {
-    if (lateCount > 0 && feat_bio_sync) {
-      document.body.setAttribute('data-late-state', 'active');
-    } else {
-      document.body.removeAttribute('data-late-state');
-    }
 
-    return () => {
-      document.body.removeAttribute('data-late-state');
-    };
-  }, [lateCount, feat_bio_sync]);
 
   // Version Log to verify deployment
   useEffect(() => {
     console.log('eProbation Prototype v1.3 - Performance Optimized');
   }, []);
 
+
   useEffect(() => {
-    const PULSE_DURATION_MS = 1200; // Badge pulse is 1.2s
 
     const animate = () => {
       const now = Date.now();
@@ -121,11 +108,6 @@ function App() {
       if (now - lastFastTickRef.current >= CINEMATIC_FRAME_MS) {
         setFastTicker(now);
         lastFastTickRef.current = now;
-
-        // Global animation sync: Calculate offset to align all animations
-        // This forces any animation started NOW to sync with the master clock
-        const syncOffset = -(now % PULSE_DURATION_MS);
-        document.body.style.setProperty('--anim-sync-offset', `${syncOffset}ms`);
       }
 
       // 2. 10fps Ticker (Text Timers - Fixes React Thrashing)

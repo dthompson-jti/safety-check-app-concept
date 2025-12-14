@@ -197,18 +197,6 @@ export const FutureIdeasModal = () => {
                         />
                     </div>
                 </div>
-
-                {/* System */}
-                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
-                    <div className={styles.settingsItem}>
-                        <label htmlFor="feat-bio-sync-switch" className={styles.itemLabel}>Bio-Sync Mode</label>
-                        <Switch
-                            id="feat-bio-sync-switch"
-                            checked={featureFlags.feat_bio_sync}
-                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_bio_sync: c })))}
-                        />
-                    </div>
-                </div>
             </div>
         </motion.div>
     );

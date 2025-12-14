@@ -261,7 +261,7 @@
    Late Check Concepts: Card Visual Effects
    ========================================= */
 
-/* Magma Gradient - Animated red gradient background */
+/* Magma Gradient - Animated red gradient background (4.8s for sync with header) */
 .cardGradient {
   /* LIGHT MODE (Default): Subtler to avoid overpowering, with slight warmth to fix flatness */
   --magma-start: rgba(255, 59, 48, 0.06);
@@ -276,7 +276,8 @@
       var(--magma-end) 100%),
     var(--surface-bg-error-primary);
   background-size: 200% 200%, auto;
-  animation: magma-flow 4s ease-in-out infinite;
+  animation: magma-flow 4.8s ease-in-out infinite;
+  animation-delay: var(--card-sync-delay, 0ms);
 }
 
 /* DARK MODE: Stronger, pure red (Preserved as requested) */
@@ -367,7 +368,7 @@
   }
 }
 
-/* Gradient Pulse - Flowing magma effect with bottom-weighted opacity ("Gentle") */
+/* Gradient Pulse - Flowing gradient effect (4.8s, matches header) */
 .cardPulseGradient {
   position: relative;
 }
@@ -379,15 +380,16 @@
   z-index: 0;
   border-radius: inherit;
   pointer-events: none;
-  /* Bottom-weighted gradient: more opaque at bottom for "grounded" gentle feel */
+  /* Flowing gradient with visible opacity */
   background:
-    linear-gradient(to bottom, transparent 0%, rgba(255, 59, 48, 0.06) 100%),
     linear-gradient(135deg,
-      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.02)) 0%,
-      var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.08)) 50%,
-      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.02)) 100%);
-  background-size: auto, 200% 200%;
-  animation: card-pulse-gradient 2.4s ease-in-out infinite;
+      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.04)) 0%,
+      var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.12)) 50%,
+      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.04)) 100%);
+  background-size: 200% 200%;
+  animation: card-pulse-gradient 4.8s ease-in-out infinite;
+  /* Inherit animation-delay from parent via CSS variable */
+  animation-delay: var(--card-sync-delay, 0ms);
 }
 
 @keyframes card-pulse-gradient {
