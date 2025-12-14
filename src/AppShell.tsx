@@ -7,6 +7,7 @@ import {
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
   isFutureIdeasModalOpenAtom,
+  isUserSettingsModalOpenAtom,
   connectionStatusAtom,
   appViewAtom,
 } from './data/atoms';
@@ -23,6 +24,7 @@ import { FullScreenModal } from './components/FullScreenModal';
 import { SettingsModal } from './features/Overlays/SettingsModal';
 import { DeveloperModal } from './features/Overlays/DeveloperModal';
 import { FutureIdeasModal } from './features/Overlays/FutureIdeasModal';
+import { UserSettingsModal } from './features/Overlays/UserSettingsModal';
 import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
 import { GestureProvider } from './data/GestureProvider';
 import { useGestureContext } from './data/GestureContext';
@@ -46,6 +48,7 @@ const AppShellContent = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
   const [isFutureIdeasOpen, setIsFutureIdeasOpen] = useAtom(isFutureIdeasModalOpenAtom);
+  const [isUserSettingsOpen, setIsUserSettingsOpen] = useAtom(isUserSettingsModalOpenAtom);
 
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
@@ -292,6 +295,16 @@ const AppShellContent = () => {
         actionType="back"
       >
         <FutureIdeasModal />
+      </FullScreenModal>
+
+      <FullScreenModal
+        isOpen={isUserSettingsOpen}
+        onClose={() => setIsUserSettingsOpen(false)}
+        title="User Settings"
+        transitionType="slide-horizontal"
+        actionType="back"
+      >
+        <UserSettingsModal />
       </FullScreenModal>
     </div>
   );

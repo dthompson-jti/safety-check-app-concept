@@ -1,37 +1,17 @@
 // src/features/Overlays/FutureIdeasModal.tsx
 import { useAtom } from 'jotai';
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { featureFlagsAtom } from '../../data/featureFlags';
-import { appConfigAtom } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useTheme } from '../../data/useTheme';
 import { Switch } from '../../components/Switch';
 import styles from './DeveloperModal.module.css';
 
 export const FutureIdeasModal = () => {
     const [featureFlags, setFeatureFlags] = useAtom(featureFlagsAtom);
-    const [appConfig, setAppConfig] = useAtom(appConfigAtom);
     const { trigger: triggerHaptic } = useHaptics();
-    const { theme, setTheme } = useTheme();
 
-    // CRITICAL: Reset actual settings when feature flags are disabled
-    useEffect(() => {
-        // When dark mode feature is disabled, reset theme to light
-        if (!featureFlags.enableDarkMode && theme !== 'light') {
-            setTheme('light');
-        }
-
-        // When sound feature is disabled, turn off audio
-        if (!featureFlags.useSoundEnabled && appConfig.audioEnabled) {
-            setAppConfig(cur => ({ ...cur, audioEnabled: false }));
-        }
-
-        // When haptics feature is disabled, turn off haptics
-        if (!featureFlags.useHapticsEnabled && appConfig.hapticsEnabled) {
-            setAppConfig(cur => ({ ...cur, hapticsEnabled: false }));
-        }
-    }, [featureFlags.enableDarkMode, featureFlags.useSoundEnabled, featureFlags.useHapticsEnabled, theme, setTheme, appConfig.audioEnabled, appConfig.hapticsEnabled, setAppConfig]);
+    // NOTE: Theme reset is now handled by the Future Ideas lock/unlock callbacks
+    // in featureFlags.ts, so we don't need a useEffect here that would fight with that logic
 
     const handleSwitch = (setter: (val: boolean) => void) => (checked: boolean) => {
         triggerHaptic('light');

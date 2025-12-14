@@ -1,16 +1,16 @@
 // src/components/UserAvatar.tsx
-import { useAtomValue } from 'jotai';
-import { sessionAtom, userPreferencesAtom } from '../data/atoms';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { sessionAtom, userPreferencesAtom, isUserSettingsModalOpenAtom } from '../data/atoms';
 import { featureFlagsAtom } from '../data/featureFlags';
 import { generateAvatarHue, getAvatarColor } from '../data/users';
 import { Popover } from './Popover';
-import { UserMenu } from './UserMenu';
 import styles from './UserAvatar.module.css';
 
 export const UserAvatar = () => {
     const session = useAtomValue(sessionAtom);
     const userPreferences = useAtomValue(userPreferencesAtom);
     const featureFlags = useAtomValue(featureFlagsAtom);
+    const setUserSettingsOpen = useSetAtom(isUserSettingsModalOpenAtom);
 
     if (!session.user) {
         return null;
@@ -32,18 +32,16 @@ export const UserAvatar = () => {
             className={styles.avatar}
             aria-label={`User: ${displayName}`}
             style={backgroundColor ? { backgroundColor } : undefined}
+            onClick={featureFlags.enableEnhancedAvatarDropdown ? () => setUserSettingsOpen(true) : undefined}
+            role={featureFlags.enableEnhancedAvatarDropdown ? "button" : undefined}
         >
             {initials}
         </div>
     );
 
-    // Conditionally render enhanced dropdown or basic popover
+    // Enhanced mode: Just show clickable avatar (no popover)
     if (featureFlags.enableEnhancedAvatarDropdown) {
-        return (
-            <Popover trigger={avatarElement} variant="default">
-                <UserMenu displayName={displayName} />
-            </Popover>
-        );
+        return avatarElement;
     }
 
     // Default: Simple name popover

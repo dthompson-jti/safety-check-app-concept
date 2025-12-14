@@ -3,23 +3,61 @@
 .menuContainer {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    gap: var(--spacing-3);
     padding: var(--spacing-2);
-    /* 8px internal padding */
-    min-width: 140px;
-
-    /* Remove all styling - let popover-content handle it */
-    /* The popover-content class provides: bg, border-radius, shadow */
+    min-width: 220px;
 }
 
-.userName {
+/* Centered Header with Secondary Background */
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-4);
+    background: var(--surface-bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.avatarLarge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    /* Background set via inline style to match header avatar color */
+    color: var(--surface-fg-on-solid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.displayName {
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--surface-fg-primary);
-    padding: var(--spacing-1) 0;
+    text-align: center;
 }
 
-/* Button wrapper to add margin from container edge */
-.logoutButton {
-    margin-top: var(--spacing-1);
+/* Section Wrapper */
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding: 0 var(--spacing-3);
+    --swatch-display: none;
+}
+
+.sectionLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--surface-fg-secondary);
+    letter-spacing: 0.05em;
+}
+
+/* Divider */
+.divider {
+    height: 1px;
+    background: var(--surface-border-secondary);
+    margin: 0;
 }

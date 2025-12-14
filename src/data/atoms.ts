@@ -113,6 +113,7 @@ export const isWriteNfcModalOpenAtom = atom(
 export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
 export const isFutureIdeasModalOpenAtom = atom(false);
+export const isUserSettingsModalOpenAtom = atom(false); // Future Idea: Enhanced Avatar
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
 export const nfcProvisioningGroupIdAtom = atom<string | null>(null);

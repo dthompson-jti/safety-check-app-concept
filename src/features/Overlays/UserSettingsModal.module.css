@@ -1,0 +1,111 @@
+/* src/features/Overlays/UserSettingsModal.module.css */
+
+.userSettingsContainer {
+    font-family: var(--font-family-sans);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--spacing-4);
+    gap: var(--spacing-6);
+}
+
+/* User Profile Header */
+.profileHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4);
+    background: var(--surface-bg-secondary);
+    border-radius: var(--radius-lg);
+}
+
+.avatarLarge {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    color: var(--surface-fg-on-solid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.userName {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--surface-fg-primary);
+    margin: 0;
+    text-align: center;
+}
+
+/* Settings Sections */
+.settingsSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.sectionTitle {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--surface-fg-secondary);
+    letter-spacing: 0.05em;
+    padding-bottom: var(--spacing-2);
+    border-bottom: 1px solid var(--surface-border-secondary);
+    margin: 0;
+}
+
+.settingsGroup {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-bg-primary);
+    border-radius: var(--spacing-3);
+    border: 1px solid var(--surface-border-secondary);
+    overflow: hidden;
+}
+
+.settingsItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--surface-bg-primary);
+    border: none;
+    font-family: var(--font-family-sans);
+    font-size: 1rem;
+    color: var(--surface-fg-primary);
+    text-align: left;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid var(--surface-border-secondary);
+
+    /* Hide swatch in color sliders */
+    --swatch-display: none;
+}
+
+.settingsItem:last-child {
+    border-bottom: none;
+}
+
+@media (hover: hover) {
+    .settingsItem:hover {
+        background-color: var(--surface-bg-primary_hover);
+    }
+
+    .settingsItem[data-no-hover="true"]:hover {
+        background-color: var(--surface-bg-primary);
+    }
+}
+
+.itemLabel {
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.logoutButton {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--spacing-1);
+}

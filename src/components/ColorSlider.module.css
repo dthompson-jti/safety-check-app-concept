@@ -86,4 +86,5 @@
     border-radius: var(--radius-sm);
     border: 1px solid var(--surface-border-primary);
     flex-shrink: 0;
+    display: var(--swatch-display, block);
 }

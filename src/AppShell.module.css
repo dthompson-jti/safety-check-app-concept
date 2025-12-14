@@ -20,7 +20,6 @@
   z-index: 100;
   /* Ensure menu is on top */
   will-change: transform;
-  box-shadow: var(--surface-shadow-2xl);
 }
 
 .mainViewWrapper {

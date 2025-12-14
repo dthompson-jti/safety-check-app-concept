@@ -94,8 +94,12 @@
   --surface-shadow-2xl: 0 20px 24px -8px #0A0C122D, 0 0 1px 0 #0A0C120A;
   --surface-shadow-3xl: 0 32px 64px -16px #0A0C1223, 0 0 1px 0 #0A0C120A;
   --surface-shadow-pill: 0px 1px 3px 0px rgba(10, 13, 18, 0.1), 0px 1px 2px -1px rgba(10, 13, 18, 0.1);
+
+  /* Shadow Colors - Semantic tokens for colored shadows */
+  --shadow-color-brand: rgba(88, 144, 237, 0.25);
+
   /* The custom, theme-colored shadow for the main Scan button. */
-  --surface-shadow-scan-button: 0 8px 16px 0 rgba(88, 144, 237, 0.25), 0 2px 2px 0 rgba(88, 144, 237, 0.25);
+  --surface-shadow-scan-button: 0 8px 16px 0 var(--shadow-color-brand), 0 2px 2px 0 var(--shadow-color-brand);
 
   /* ----------------------------------------- */
   /*             SEMANTIC - CONTROL            */
@@ -318,6 +322,9 @@
   --control-border-tertiary-hover: var(--primitives-grey-700);
   --control-border-tertiary-pressed: var(--primitives-grey-600);
 
+  /* Shadow Colors - Reduced opacity for dark backgrounds */
+  --shadow-color-brand: rgba(88, 144, 237, 0.15);
+
   /* Shadows - Increased strength for dark mode */
   --surface-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   --surface-shadow-sm: 0 1px 2px -1px rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.25);
@@ -440,6 +447,9 @@
   --control-border-tertiary-hover: var(--primitives-grey-700);
   --control-border-tertiary-pressed: var(--primitives-grey-600);
 
+  /* Shadow Colors - Reduced opacity for dark backgrounds */
+  --shadow-color-brand: rgba(88, 144, 237, 0.15);
+
   /* Shadows - Increased strength for dark mode */
   --surface-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   --surface-shadow-sm: 0 1px 2px -1px rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.25);
@@ -561,6 +571,9 @@
   --control-border-tertiary: var(--primitives-grey-860);
   --control-border-tertiary-hover: var(--primitives-grey-840);
   --control-border-tertiary-pressed: var(--primitives-grey-700);
+
+  /* Shadow Colors - Reduced opacity for dark backgrounds */
+  --shadow-color-brand: rgba(88, 144, 237, 0.15);
 
   /* Shadows - Increased strength for dark mode */
   --surface-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
