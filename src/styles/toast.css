@@ -65,6 +65,41 @@
   white-space: pre-line;
   /* Support \n for multi-line error messages */
   margin: 0;
+  /* Allow text to grow but not shrink below content size */
+  flex-grow: 1;
+}
+
+/* --- Action Button --- */
+
+.toast-action {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  /* Semantic Colors */
+  background-color: var(--surface-bg-primary);
+  color: var(--surface-fg-primary);
+  border: 1px solid var(--surface-border-primary);
+  box-shadow: var(--surface-shadow-sm);
+
+  transition: transform 0.1s, background-color 0.2s;
+
+  /* Separate from text and close button */
+  margin-left: 8px;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.toast-action:active {
+  transform: scale(0.96);
+  background-color: var(--surface-bg-secondary);
 }
 
 /* --- Close Button --- */

@@ -18,6 +18,7 @@ import { useFutureIdeas } from './../../data/featureFlags';
 import { useTapCounter } from '../../hooks/useTapCounter';
 import { ContextSwitcherCard } from './ContextSwitcherCard';
 import { ActionListItem } from '../../components/ActionListItem';
+import { APP_VERSION } from '../../config';
 import styles from './AppSideMenu.module.css';
 
 export const AppSideMenu = () => {
@@ -62,7 +63,10 @@ export const AppSideMenu = () => {
     <aside className={styles.sideMenu}>
       <header className={styles.header}>
         {/* Tap 7 times on logo to toggle Future Ideas */}
-        <h1 className={styles.title} onClick={handleFutureIdeasTap}>Safeguard</h1>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title} onClick={handleFutureIdeasTap}>Safeguard</h1>
+          <span className={styles.version}>{APP_VERSION}</span>
+        </div>
         <div className={styles.headerSeparator} />
       </header>
 

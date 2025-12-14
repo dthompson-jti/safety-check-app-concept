@@ -11,13 +11,33 @@ export interface Toast {
   message: string;
   icon: string;
   variant: ToastVariant;
+  // New features for PWA Update
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  persistent?: boolean;
 }
 
 export const toastsAtom = atom<Toast[]>([]);
 
 export const addToastAtom = atom(
   null,
-  (get, set, { message, icon, variant = 'neutral', stableId }: { message: string; icon: string; variant?: ToastVariant, stableId?: string }) => {
+  (get, set, {
+    message,
+    icon,
+    variant = 'neutral',
+    stableId,
+    action,
+    persistent
+  }: {
+    message: string;
+    icon: string;
+    variant?: ToastVariant;
+    stableId?: string;
+    action?: { label: string; onClick: () => void };
+    persistent?: boolean;
+  }) => {
     const currentToasts = get(toastsAtom);
     const now = Date.now();
 
@@ -34,6 +54,8 @@ export const addToastAtom = atom(
           message,
           icon,
           variant,
+          action,      // Update action if provided
+          persistent,  // Update persistence if provided
           timestamp: now // Reset timer
         };
         set(toastsAtom, updatedToasts);
@@ -44,20 +66,22 @@ export const addToastAtom = atom(
     // Strategy 2: Strict Mode Deduplication (Legacy)
     // Prevents double-invocation effects in React 18 Strict Mode from showing duplicates.
     // Only applies if no stableId was provided.
-    const newToast: Toast = { 
-      id: nanoid(), 
-      stableId, 
-      timestamp: now, 
-      message, 
-      icon, 
-      variant 
+    const newToast: Toast = {
+      id: nanoid(),
+      stableId,
+      timestamp: now,
+      message,
+      icon,
+      variant,
+      action,
+      persistent
     };
 
     if (currentToasts.length > 0 && currentToasts[currentToasts.length - 1].message === message && !stableId) {
-        const updatedToasts = [...currentToasts.slice(0, -1), newToast];
-        set(toastsAtom, updatedToasts);
+      const updatedToasts = [...currentToasts.slice(0, -1), newToast];
+      set(toastsAtom, updatedToasts);
     } else {
-        set(toastsAtom, [...currentToasts, newToast]);
+      set(toastsAtom, [...currentToasts, newToast]);
     }
   }
 );

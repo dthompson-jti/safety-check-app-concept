@@ -186,7 +186,11 @@ export const ScanView = () => {
       case 'scanning':
         return (
           <Scanner
-            onDecode={handleDecode}
+            onScan={(results) => {
+              if (results && results.length > 0) {
+                handleDecode(results[0].rawValue);
+              }
+            }}
             onError={handleError}
             constraints={{ facingMode: 'environment' }}
             scanDelay={500}

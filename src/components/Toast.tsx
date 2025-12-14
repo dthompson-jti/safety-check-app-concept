@@ -10,14 +10,16 @@ import { removeToastAtom, Toast } from '../data/toastAtoms';
  * with Framer Motion to handle animations, adhering to the project's canonical
  * 'spring' animation principle for a consistent, high-craft feel.
  */
-export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp }: Toast) => {
+export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp, action, persistent }: Toast) => {
   const removeToast = useSetAtom(removeToastAtom);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-dismiss logic that respects updates (timestamp)
   useEffect(() => {
-    // Only set a timer for non-persistent variants
-    if (!['alert', 'warning'].includes(variant)) {
+    // Only set a timer for non-persistent variants AND if not explicitly persistent
+    const shouldAutoDismiss = !['alert', 'warning'].includes(variant) && !persistent;
+
+    if (shouldAutoDismiss) {
       timerRef.current = setTimeout(() => {
         removeToast(id);
       }, 4000);
@@ -26,7 +28,7 @@ export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [id, timestamp, variant, removeToast]);
+  }, [id, timestamp, variant, persistent, removeToast]);
 
   return (
     <ToastPrimitive.Root
@@ -53,6 +55,19 @@ export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp
       >
         <span className="material-symbols-rounded toast-icon">{icon}</span>
         <ToastPrimitive.Description className="toast-description">{message}</ToastPrimitive.Description>
+
+        {action && (
+          <button
+            className="toast-action"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent swipe trigger if any
+              action.onClick();
+            }}
+          >
+            {action.label}
+          </button>
+        )}
+
         <ToastPrimitive.Close className="toast-close-button" aria-label="Close">
           <span className="material-symbols-rounded">close</span>
         </ToastPrimitive.Close>

@@ -1,42 +1,22 @@
 /// <reference types="vite/client" />
-
-// This interface provides robust type definitions for Vite's environment variables,
-// ensuring `import.meta.env` is always correctly typed in TypeScript.
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}
+/// <reference types="vite-plugin-pwa/client" />
 
 interface ImportMetaEnv {
-  // Environment variables can be strings, booleans, or not defined.
-  [key: string]: string | boolean | undefined;
-  BASE_URL: string;
-  MODE: string;
-  DEV: boolean;
-  PROD: boolean;
-  SSR: boolean;
+  readonly VITE_APP_TITLE: string
+  // more env variables...
 }
 
-
-declare module '*.module.css' {
-  const classes: { readonly [key: string]: string };
-  export default classes;
+interface ImportMeta {
+  readonly env: ImportMetaEnv
 }
 
-declare module '*.module.scss' {
-  const classes: { readonly [key:string]: string };
-  export default classes;
-}
-
-// Defines the type for the third-party QR scanner component.
-declare module '@yudiel/react-qr-scanner' {
-  import { ComponentType } from 'react';
-  
-  interface ScannerProps {
-    onDecode: (result: string) => void;
-    onError: (error: unknown) => void;
-    constraints?: MediaTrackConstraints;
-    scanDelay?: number;
+declare module 'virtual:pwa-register/react' {
+  import { type State, type RegisterSWOptions } from 'vite-plugin-pwa/types' // Fix: Import specific types if needed or use any
+  // Simplified type definition based on usage
+  export interface RegisterSWHook {
+    needRefresh: [boolean, (needRefresh: boolean) => void]
+    offlineReady: [boolean, (offlineReady: boolean) => void]
+    updateServiceWorker: (reloadPage?: boolean) => Promise<void>
   }
-
-  export const Scanner: ComponentType<ScannerProps>;
+  export function useRegisterSW(options?: RegisterSWOptions): RegisterSWHook
 }

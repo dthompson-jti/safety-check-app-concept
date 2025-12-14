@@ -26,6 +26,7 @@ import { ToastContainer } from './components/ToastContainer';
 import { ToastMessage } from './components/Toast';
 import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
 import { SoundManager } from './features/Shell/SoundManager';
+import { ReloadPrompt } from './components/ReloadPrompt';
 
 
 // 24fps = approx 41.6ms
@@ -173,6 +174,7 @@ function App() {
       </AnimatePresence>
 
       <ToastContainer />
+      <ReloadPrompt />
     </ToastPrimitive.Provider>
   );
 }
