@@ -23,6 +23,13 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **UI Primitives:** Radix UI
 -   **Bottom Sheet Modals:** Vaul
 
+### Performance Optimization
+
+-   **Lazy Loading:** Major application states (`AppShell`, `LoginView`) are code-split using `React.lazy()` and `Suspense` to reduce initial bundle size.
+-   **Manual Chunk Splitting:** Vendor libraries are strategically divided into separate chunks (`vendor-react`, `vendor-ui`, `vendor-heavy`) to optimize caching and reduce time-to-interactive.
+-   **Font Display Strategy:** All Google Fonts use `display=swap` to prevent render-blocking and eliminate font flash.
+-   **SEO & Accessibility:** Includes meta description and semantic HTML landmarks for improved discoverability and screen reader support.
+
 ## 3. Prototype Features
 
 -   **Installable PWA:** A progressive web app configuration that allows the prototype to be installed on home screens, with offline-ready assets ensuring the app loads instantly even without a network.

@@ -99,7 +99,59 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 ## CSS Architecture
 *   **Directive:** Prefer CSS Modules (`*.module.css`) for feature-specific styles. Use Global CSS (`src/styles/*.css`) only for reusable design patterns (buttons, lists, inputs).
 
-## 8. Common Pitfalls & Architectural Lessons
+## 9. Bundle Optimization & Performance
+
+### Lazy Loading Strategy
+*   **Directive:** Major application states that represent distinct user flows should be lazy-loaded using `React.lazy()` with `Suspense`.
+*   **Pattern (Named Exports):**
+    ```tsx
+    // Named exports need explicit default mapping
+    const AppShell = lazy(() => import('./AppShell').then(m => ({ default: m.AppShell })));
+    const LoginView = lazy(() => import('./features/Session/LoginView').then(m => ({ default: m.LoginView })));
+    
+    // Wrap in Suspense with themed fallback
+    <Suspense fallback={<LoadingSpinner />}>
+      {isAuthenticated ? <AppShell /> : <LoginView />}
+    </Suspense>
+    ```
+*   **When to Use:** Authentication boundaries, admin tools, developer modals, or any feature used by <50% of users.
+*   **When NOT to Use:** Components in the critical render path (headers, core UI primitives, state management).
+
+### Vite Code Splitting (Manual Chunks)
+*   **Directive:** When building for production, use `manualChunks` in `vite.config.ts` to separate vendor libraries by update frequency and size.
+*   **Pattern:**
+    ```ts
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'jotai'],
+            'vendor-ui': ['@radix-ui/*'],  // All Radix packages
+            'vendor-heavy': ['framer-motion', '@yudiel/react-qr-scanner'],
+          }
+        }
+      }
+    }
+    ```
+*   **Reasoning:**
+    - `vendor-react`: Core framework (rarely changes, highly cacheable)
+    - `vendor-ui`: UI primitives (moderate update frequency)
+    - `vendor-heavy`: Large animation/feature libraries (defer loading when possible)
+
+### Font Performance
+*   **Directive:** All external font links MUST include `&display=swap` to prevent render-blocking.
+*   **Pattern:**
+    ```html
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    ```
+*   **Why:** Without `display=swap`, browsers block rendering until fonts load, inflating First Contentful Paint (FCP).
+
+### Dead Code Elimination
+*   **Directive:** Before adding a new dependency, verify it will be actively used. Periodically audit `package.json` for unused libraries.
+*   **Pattern:** Use `grep` to verify usage across `src/`: `grep -r "from 'library-name'" src/`
+*   **Recent Example:** `gsap` was removed after confirming zero imports (saved ~50KB).
+
+## 10. Common Pitfalls & Architectural Lessons
 
 ### Time-Based Logic & Race Conditions
 *   **Lesson:** When deriving status from time (e.g., `elapsedMinutes < 15`), always account for the **gap** between the derived state and the side-effect trigger (e.g., `useCheckLifecycle`).

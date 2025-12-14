@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai';
 import { AnimatePresence } from 'framer-motion';
 import * as ToastPrimitive from '@radix-ui/react-toast';
@@ -15,16 +15,18 @@ import { useCheckLifecycle } from './data/useCheckLifecycle';
 import { useFutureIdeas } from './data/featureFlags';
 import { useKonamiCode } from './hooks/useKonamiCode';
 
-// Components
-import { AppShell } from './AppShell';
-import { LoginView } from './features/Session/LoginView';
+import { VignetteOverlay } from './features/LateEffects/VignetteOverlay';
+import { JumpFAB } from './features/LateEffects/JumpFAB';
+import { GlassTintOverlay } from './features/LateEffects/GlassTintOverlay';
+
+// Lazy load heavy components to reduce initial bundle size
+const AppShell = lazy(() => import('./AppShell').then(module => ({ default: module.AppShell })));
+const LoginView = lazy(() => import('./features/Session/LoginView').then(module => ({ default: module.LoginView })));
 import { ToastContainer } from './components/ToastContainer';
 import { ToastMessage } from './components/Toast';
 import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
 import { SoundManager } from './features/Shell/SoundManager';
-import { VignetteOverlay } from './features/LateEffects/VignetteOverlay';
-import { JumpFAB } from './features/LateEffects/JumpFAB';
-import { GlassTintOverlay } from './features/LateEffects/GlassTintOverlay';
+
 
 // 24fps = approx 41.6ms
 const CINEMATIC_FRAME_MS = 41;
@@ -148,7 +150,20 @@ function App() {
       <VignetteOverlay />
       <JumpFAB />
       <AnimatePresence mode="wait">
-        {session.isAuthenticated ? <AppShell /> : <LoginView />}
+        <Suspense fallback={
+          <div style={{
+            width: '100vw',
+            height: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--surface-primary)'
+          }}>
+            <span className="material-symbols-rounded" style={{ fontSize: '48px', color: 'var(--fg-secondary)' }}>hourglass_empty</span>
+          </div>
+        }>
+          {session.isAuthenticated ? <AppShell /> : <LoginView />}
+        </Suspense>
       </AnimatePresence>
 
       <AnimatePresence>

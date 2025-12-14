@@ -38,4 +38,30 @@ export default defineConfig({
   // Configure the base path for GitHub Pages deployment.
   // This should be the name of your repository.
   base: '/safety-check-app-concept/',
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'jotai'],
+          'vendor-ui': [
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-context-menu',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-select',
+            '@radix-ui/react-slot',
+            '@radix-ui/react-switch',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-toast',
+            '@radix-ui/react-toggle',
+            '@radix-ui/react-toggle-group',
+            '@radix-ui/react-toolbar',
+            '@radix-ui/react-tooltip',
+          ],
+          'vendor-heavy': ['framer-motion', '@yudiel/react-qr-scanner'],
+        }
+      }
+    }
+  }
 })
