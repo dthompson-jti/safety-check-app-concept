@@ -26,13 +26,20 @@ Because our design system uses CSS Variables and distinct themes (`light`, `dark
     ```
 *   **Interpreting Results:** Focus on the "Worst Violations" table. Ignore "theoretical" failures for pairs that are never actually used (e.g., `text-on-brand` vs `surface-bg-error`).
 
-### B. Runtime Analysis: Axe DevTools / Lighthouse
-For examining the actual rendered DOM (including focus states, aria-labels, and font sizes).
+### B. Automated Runtime Analysis (Proposed)
+We are moving away from browser-agent auditing toward standard engineering tools (See `docs/IDEA-002-automated-audit-tooling.md`).
 
-**Tool:** Axe DevTools (Browser Extension) or Chrome Lighthouse
-*   **What it does:** Scans the active page for structural and contrast issues.
-*   **Why broadly recommended:** It creates the industry-standard report for "page health."
-*   **Note on "Pa11y":** While `pa11y` is a popular CLI wrapper for accessibility testing, we currently rely on **Axe** (via Lighthouse/DevTools) and our custom **Contrast Audit** script. We may adopt `pa11y-ci` in the future for automated pipeline checks.
+**1. Static Linting:** `eslint-plugin-jsx-a11y`
+*   **Target:** `package.json`, React components.
+*   **Goal:** Catch semantic errors (missing alt, invalid ARIA) in the IDE.
+
+**2. Headless Auditing:** `pa11y-ci`
+*   **Target:** Rendered DOM via CLI.
+*   **Goal:** Catch contrast and structural issues in the build pipeline (`npm run test:a11y`).
+*   **Shift:** This replaces manual "Axe" runs for routine checks.
+
+### C. Manual Analysis: Axe DevTools / Lighthouse
+Retained for deep-dive debugging of specific interactive flows that CLIs miss.
 
 ---
 
