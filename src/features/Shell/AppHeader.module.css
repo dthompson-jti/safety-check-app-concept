@@ -16,8 +16,21 @@
    ========================================= */
 
 /* Basic Pulse - Opacity breathing effect (1.2s cycle) */
+/* Basic Pulse - Opacity breathing effect (1.2s cycle) */
+/* Moved to ::before to layer ON TOP of glass background */
 body[data-glass-pulse="basic"] .header,
 body[data-glass-tint="active"] .header {
+  /* No direct animation, keep base glass background */
+}
+
+body[data-glass-pulse="basic"] .header::before,
+body[data-glass-tint="active"] .header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* Behind content, on top of background */
+  pointer-events: none;
   animation: pulse-basic 1.2s ease-in-out infinite;
   animation-delay: var(--glass-sync-delay, 0ms);
 }
@@ -26,25 +39,51 @@ body[data-glass-tint="active"] .header {
 
   0%,
   100% {
+    /* Light Mode Min: 5% (Tuned additive) */
     background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
   }
 
   50% {
-    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.15));
+    /* Light Mode Max: 12% (Tuned additive) */
+    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.12));
   }
+}
+
+/* Dark Mode Overrides for Basic Pulse */
+body[data-theme^='dark'] .header {
+  /* Dark Mode Min: 8% (Tuned additive) */
+  --surface-bg-pulse-min: rgba(255, 59, 48, 0.08);
+  /* Dark Mode Max: 15% (Tuned additive) */
+  --surface-bg-pulse-max: rgba(255, 59, 48, 0.15);
 }
 
 /* Gradient Pulse - Flowing magma effect (4.8s cycle, 4x sync base) */
 body[data-glass-pulse="gradient"] .header {
+  /* Emulate Card Magma Colors (+ Boost) */
+  /* Light Min: 6% -> 7%, Mid: 12% -> 14% */
+  --magma-start: rgba(255, 59, 48, 0.07);
+  --magma-mid: rgba(255, 80, 40, 0.14);
+  --magma-end: rgba(255, 59, 48, 0.07);
+
   background:
     linear-gradient(135deg,
-      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05)) 0%,
-      var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.15)) 50%,
-      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05)) 100%),
+      var(--magma-start) 0%,
+      var(--magma-mid) 50%,
+      var(--magma-end) 100%),
     var(--surface-bg-header-translucent);
   background-size: 200% 200%, auto;
   animation: pulse-gradient 4.8s ease-in-out infinite;
   animation-delay: var(--glass-sync-delay, 0ms);
+}
+
+/* Dark Mode Overrides for Gradient Pulse */
+body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
+  /* Emulate Dark Mode + Min 13% opacity request */
+  /* Dark Min: 25% (Boost), Mid: 65% (Boost) */
+  --magma-start: rgba(255, 59, 48, 0.25);
+  --magma-mid: rgba(255, 59, 48, 0.65);
+  /* Slightly higher than min */
+  --magma-end: rgba(255, 59, 48, 0.25);
 }
 
 @keyframes pulse-gradient {
@@ -77,7 +116,10 @@ body[data-glass-pulse="gradient"] .header {
   gap: 12px;
   height: 60px;
   padding: 8px 12px;
+  padding: 8px 12px;
   position: relative;
+  z-index: 1;
+  /* Ensure content sits above pulse layer */
 }
 
 .leftActions {

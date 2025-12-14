@@ -157,6 +157,21 @@
 .statusIndicator[data-status='missed'] {
   width: 4px;
   background-color: var(--surface-bg-error-solid);
+  /* Pulse opacity 100% -> 80% sync with gradient */
+  animation: indicator-pulse 4.8s ease-in-out infinite;
+  animation-delay: var(--card-sync-delay, 0ms);
+}
+
+@keyframes indicator-pulse {
+
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .mainContent {
@@ -281,10 +296,12 @@
 }
 
 /* DARK MODE: Stronger, pure red (Preserved as requested) */
+/* DARK MODE: Stronger, pure red (Preserved as requested) */
 :global([data-theme^='dark']) .cardGradient {
-  --magma-start: rgba(255, 59, 48, 0.15);
+  /* Dark Mode Min: 15% -> 13% */
+  --magma-start: rgba(255, 59, 48, 0.13);
   --magma-mid: rgba(255, 59, 48, 0.25);
-  --magma-end: rgba(255, 59, 48, 0.15);
+  --magma-end: rgba(255, 59, 48, 0.13);
 }
 
 @keyframes magma-flow {
@@ -354,13 +371,15 @@
 /* Basic Pulse - Subtle opacity breathing on card background */
 .cardPulseBasic {
   animation: card-pulse-basic 1.2s ease-in-out infinite;
+  animation-delay: var(--card-sync-delay, 0ms);
 }
 
 @keyframes card-pulse-basic {
 
   0%,
   100% {
-    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.03));
+    /* Light Mode Min: 3% -> 6% */
+    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.06));
   }
 
   50% {
@@ -406,7 +425,8 @@
 
 /* Dark mode adjustments for card pulse */
 :global([data-theme^='dark']) .cardPulseBasic {
-  --surface-bg-pulse-min: rgba(255, 59, 48, 0.05);
+  /* Dark Mode Min: 5% -> 7% */
+  --surface-bg-pulse-min: rgba(255, 59, 48, 0.07);
   --surface-bg-pulse-max: rgba(255, 59, 48, 0.12);
 }
 
@@ -436,6 +456,10 @@
   .cardPulseBasic {
     animation: none;
     background-color: var(--surface-bg-pulse-static, rgba(255, 59, 48, 0.05));
+  }
+
+  .statusIndicator[data-status='missed'] {
+    animation: none;
   }
 
   .cardPulseGradient::before {

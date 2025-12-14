@@ -23,8 +23,45 @@
    ========================================= */
 
 /* Basic Pulse - Opacity breathing effect (1.2s cycle) */
+/* Basic Pulse - Opacity breathing effect (1.2s cycle) */
+/* Moved to ::before to layer ON TOP of glass background */
 body[data-glass-pulse="basic"] .footer,
 body[data-glass-tint="active"] .footer {
+  /* No direct animation, keep base glass background */
+}
+
+body[data-glass-pulse="basic"] .footer::before,
+body[data-glass-tint="active"] .footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Behind content (footer text is direct descendent usually, need to check stacking) */
+  /* Note: Gradient used z-index -1, we'll match it. 
+     If footer children don't have z-index, they might be below -1? 
+     No, stacking context is footer. -1 is behind background of footer? 
+     Wait, footer has background. -1 goes BEHIND footer background? 
+     Actually, standard CSS: negative z-index children go behind parent background 
+     IF parent doesn't have a background-color? 
+     Footer DOES have background. 
+     So ::before with -1 might be hidden! 
+     
+     BUT Gradient pulse is using z-index: -1 and worked? 
+     Let's check code. 
+     Line 10 says background-color set on .footer. 
+     Line 60 (Step 399) sets z-index: -1 on Gradient ::before. 
+     If User saw Gradient, then -1 works? 
+     Maybe because .footer establishes a stacking context (via fixed pos or backdrop-filter)?
+     Backdrop-filter establishes stacking context!
+     In that context, negative z-index is behind content but... 
+     Actually, "If an element with a background establishes a stacking context, the background is painted at the bottom of the stack."
+     Negative z-index children are painted BEFORE the background? No, above background, below 0?
+     "The background of the stacking context element is painted first."
+     "Then negative z-index descendants."
+     So ::before (z-1) should be ON TOP of Footer Background.
+     
+     So z-index: -1 is correct for "On top of bg, behind text". */
+  pointer-events: none;
   animation: pulse-basic-footer 1.2s ease-in-out infinite;
   animation-delay: var(--glass-sync-delay, 0ms);
 }
@@ -33,12 +70,22 @@ body[data-glass-tint="active"] .footer {
 
   0%,
   100% {
+    /* Light Mode Min: 5% (Tuned additive) */
     background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
   }
 
   50% {
-    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.15));
+    /* Light Mode Max: 12% (Tuned additive) */
+    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.12));
   }
+}
+
+/* Dark Mode Overrides for Basic Pulse */
+body[data-theme^='dark'] .footer {
+  /* Dark Mode Min: 8% (Tuned additive) */
+  --surface-bg-pulse-min: rgba(255, 59, 48, 0.08);
+  /* Dark Mode Max: 15% (Tuned additive) */
+  --surface-bg-pulse-max: rgba(255, 59, 48, 0.15);
 }
 
 /* Gradient Pulse - Flowing magma effect (4.8s cycle, 4x sync base) */
@@ -52,26 +99,32 @@ body[data-glass-pulse="gradient"] .footer::before {
   position: absolute;
   inset: 0;
   z-index: -1;
+  /* Emulate Card Magma Colors (+ Boost) */
+  /* Light Min: 6% -> 7%, Mid: 12% -> 14% */
+  --magma-start: rgba(255, 59, 48, 0.07);
+  --magma-mid: rgba(255, 80, 40, 0.14);
+  --magma-end: rgba(255, 59, 48, 0.07);
+
+  /* Add Red Tint Base */
+  --magma-base: rgba(255, 59, 48, 0.10);
+
   background:
     linear-gradient(135deg,
-      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05)) 0%,
-      var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.15)) 50%,
-      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05)) 100%),
-    var(--surface-bg-header-translucent);
-  background-size: 200% 200%, auto;
-  animation: pulse-gradient-footer 4.8s ease-in-out infinite;
-  animation-delay: var(--glass-sync-delay, 0ms);
+      var(--magma-start) 0%,
+      var(--magma-mid) 50%,
+      var(--magma-end) 100%),
+    var(--magma-base);
+  background-size: 200% 200%;
+  animation: pulse-gradient-footer 4.8s linear infinite;
 }
 
 @keyframes pulse-gradient-footer {
-
-  0%,
-  100% {
+  0% {
     background-position: 0% 50%;
   }
 
-  50% {
-    background-position: 100% 50%;
+  100% {
+    background-position: 200% 50%;
   }
 }
 
