@@ -263,14 +263,27 @@
 
 /* Magma Gradient - Animated red gradient background */
 .cardGradient {
+  /* LIGHT MODE (Default): Subtler to avoid overpowering, with slight warmth to fix flatness */
+  --magma-start: rgba(255, 59, 48, 0.06);
+  --magma-mid: rgba(255, 80, 40, 0.12);
+  /* Slight orange tint for depth */
+  --magma-end: rgba(255, 59, 48, 0.06);
+
   background:
     linear-gradient(135deg,
-      rgba(255, 59, 48, 0.18) 0%,
-      rgba(255, 149, 0, 0.12) 50%,
-      rgba(255, 59, 48, 0.18) 100%),
-    var(--surface-bg-primary);
+      var(--magma-start) 0%,
+      var(--magma-mid) 50%,
+      var(--magma-end) 100%),
+    var(--surface-bg-error-primary);
   background-size: 200% 200%, auto;
   animation: magma-flow 4s ease-in-out infinite;
+}
+
+/* DARK MODE: Stronger, pure red (Preserved as requested) */
+:global([data-theme^='dark']) .cardGradient {
+  --magma-start: rgba(255, 59, 48, 0.15);
+  --magma-mid: rgba(255, 59, 48, 0.25);
+  --magma-end: rgba(255, 59, 48, 0.15);
 }
 
 @keyframes magma-flow {

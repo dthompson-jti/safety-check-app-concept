@@ -87,6 +87,7 @@ export const useFutureIdeas = () => {
                 enableDarkMode: true,
                 feat_glass_tint: true,
                 feat_card_gradient: true,
+                feat_invert_badge: true,
             }));
         }, 0);
     }, [setUnlocked, setTheme, setAppConfig, setFeatureFlags]);
