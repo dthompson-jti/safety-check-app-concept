@@ -31,7 +31,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Font Loading Strategy:** Self-hosted fonts (`/fonts/`) with `font-display: block` for icons (prevents ligature text flash) and `font-display: swap` for text fonts.
 -   **Inline Critical CSS:** `index.html` contains inline `<style>` for background colors and dark mode detection, ensuring instant visual feedback before React hydrates.
 -   **PWA Manifest Polish:** `vite.config.ts` manifest includes matching `background_color` and `theme_color` to prevent splash screen color mismatches.
--   **Cinematic Splash Transition:** Lazy-loaded components use `withMinDelay` wrapper (500ms minimum) to prevent animation wobble. The splash and login share Framer Motion `layoutId`s for seamless logo+title handoff with staggered form entry.
+-   **Cinematic Splash Transition:** Lazy-loaded components use `withMinDelay` wrapper (500ms minimum for LoginView) to prevent animation wobble. The splash and login share a Framer Motion `layoutId` for seamless logo handoff. Title and form fields use staggered entry animation (300ms delay after logo settles).
 -   **SEO & Accessibility:** Includes meta description and semantic HTML landmarks for improved discoverability and screen reader support.
 
 ## 3. Prototype Features

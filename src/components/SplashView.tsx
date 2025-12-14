@@ -21,8 +21,7 @@ export const SplashView = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'var(--surface-bg-primary, var(--splash-bg))',
-                gap: 8,
+                background: 'var(--surface-bg-secondary, var(--splash-bg))',
             }}
         >
             <motion.div
@@ -35,17 +34,6 @@ export const SplashView = () => {
             >
                 <JournalLogo size={144} />
             </motion.div>
-            <motion.h3
-                layoutId="app-title"
-                style={{
-                    margin: 0,
-                    fontSize: '1.5rem',
-                    fontWeight: 500,
-                    color: 'var(--surface-fg-primary)',
-                }}
-            >
-                Safeguard
-            </motion.h3>
         </div>
     );
 };

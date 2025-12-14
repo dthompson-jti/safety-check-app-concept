@@ -21,6 +21,7 @@ export const LoginView = () => {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const setSession = useSetAtom(sessionAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
 
@@ -59,8 +60,12 @@ export const LoginView = () => {
     // Find user in MOCK_USERS
     const user = findUser(username.trim());
     if (user) {
-      dispatch({ type: 'RESET_DATA' });
-      setSession({ isAuthenticated: true, user });
+      // Show loading state, then transition after brief delay
+      setIsSubmitting(true);
+      setTimeout(() => {
+        dispatch({ type: 'RESET_DATA' });
+        setSession({ isAuthenticated: true, user });
+      }, 500);
     } else {
       setFormError('Incorrect username or password.');
     }
@@ -69,11 +74,14 @@ export const LoginView = () => {
   const handleShortcutLogin = () => {
     // Disable layoutId to prevent distortion during exit
     setIsExiting(true);
-    // Use first user as shortcut
+    // Use same loading UX as normal login
     const user = findUser('dthompson');
     if (user) {
-      dispatch({ type: 'RESET_DATA' });
-      setSession({ isAuthenticated: true, user });
+      setIsSubmitting(true);
+      setTimeout(() => {
+        dispatch({ type: 'RESET_DATA' });
+        setSession({ isAuthenticated: true, user });
+      }, 500);
     }
   };
 
@@ -94,18 +102,18 @@ export const LoginView = () => {
     transition: { duration: 0.4 },
   };
 
-  // Staggered animation for form entry
-  const formContainerVariants = {
+  // Staggered animation for content entry (after logo transition)
+  const contentContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.15 }
+      transition: { staggerChildren: 0.1, delayChildren: 0.3 } // Delay to allow logo layoutId to settle
     }
   };
 
-  const formItemVariants = {
+  const contentItemVariants = {
     hidden: { opacity: 0, y: 12 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.25 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
   };
 
   return (
@@ -119,7 +127,12 @@ export const LoginView = () => {
         transition={{ duration: 0.3 }}
       >
         <div className={styles.scrollableContent} ref={scrollContainerRef}>
-          <div className={styles.loginFormCard}>
+          <motion.div
+            className={styles.loginFormCard}
+            variants={contentContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             <div className={styles.appTitle}>
               <motion.div layoutId={isExiting ? undefined : "app-logo"}>
                 <JournalLogo
@@ -129,15 +142,14 @@ export const LoginView = () => {
                   title="Developer Shortcut Login"
                 />
               </motion.div>
-              <motion.h3 layoutId={isExiting ? undefined : "app-title"}>Safeguard</motion.h3>
+              {/* Title appears AFTER logo settles via stagger */}
+              <motion.h3 variants={contentItemVariants}>Safeguard</motion.h3>
             </div>
             <motion.form
               onSubmit={handleLogin}
               className={styles.formFields}
               noValidate
-              variants={formContainerVariants}
-              initial="hidden"
-              animate="visible"
+              variants={contentItemVariants}
             >
 
               <motion.div
@@ -153,7 +165,7 @@ export const LoginView = () => {
               </motion.div>
 
               <motion.div
-                variants={formItemVariants}
+                variants={contentItemVariants}
                 animate={isAttempted && usernameError ? shakeAnimation : {}}
               >
                 <TextInput
@@ -168,8 +180,7 @@ export const LoginView = () => {
                 {usernameError && <div className={styles.errorMessage}>{usernameError}</div>}
               </motion.div>
 
-              <motion.div
-                variants={formItemVariants}
+              <motion.div variants={contentItemVariants}
                 animate={isAttempted && passwordError ? shakeAnimation : {}}
               >
                 <TextInput
@@ -183,16 +194,16 @@ export const LoginView = () => {
                 {passwordError && <div className={styles.errorMessage}>{passwordError}</div>}
               </motion.div>
 
-              <motion.div variants={formItemVariants}>
-                <Button type="submit" variant="primary" size="m" style={{ width: '100%', marginTop: '8px' }}>
+              <motion.div variants={contentItemVariants}>
+                <Button type="submit" variant="primary" size="m" loading={isSubmitting} loadingText="Signing in..." style={{ width: '100%', marginTop: '8px' }}>
                   Log In
                 </Button>
               </motion.div>
-              <motion.div variants={formItemVariants} className={styles.supportLink}>
+              <motion.div variants={contentItemVariants} className={styles.supportLink}>
                 <button type="button" onClick={() => setIsHelpModalOpen(true)}>Trouble signing in?</button>
               </motion.div>
             </motion.form>
-          </div>
+          </motion.div>
 
           <footer className={styles.pageFooter}>
             <p>&copy; Journal Technologies 2025.</p>

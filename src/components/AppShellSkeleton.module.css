@@ -1,0 +1,163 @@
+/* src/components/AppShellSkeleton.module.css */
+
+/* Reuse shimmer keyframes */
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--surface-bg-primary);
+}
+
+/* Skeleton Header */
+.header {
+    height: 60px;
+    background: var(--surface-bg-primary);
+    border-bottom: 1px solid var(--surface-border-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-3);
+}
+
+.headerIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-xl);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.4;
+}
+
+.headerCenter {
+    width: 120px;
+    height: 20px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.4;
+}
+
+.headerAvatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--surface-bg-tertiary);
+    opacity: 0.4;
+}
+
+/* Skeleton Content */
+.content {
+    flex: 1;
+    overflow: hidden;
+    padding: var(--spacing-4);
+    padding-top: calc(var(--spacing-4) + 60px);
+    /* Account for header */
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+/* Section Header Skeleton */
+.sectionHeader {
+    width: 80px;
+    height: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.3;
+    margin-bottom: var(--spacing-2);
+}
+
+/* Card Skeleton */
+.card {
+    position: relative;
+    background: var(--surface-bg-primary);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-3);
+    padding-left: var(--spacing-5);
+    overflow: hidden;
+}
+
+.cardShimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent 25%,
+            var(--surface-bg-secondary_hover) 50%,
+            transparent 75%);
+    animation: shimmer 1.5s infinite linear;
+}
+
+.cardIndicator {
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--surface-bg-tertiary);
+    opacity: 0.5;
+}
+
+.cardRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.cardTitle {
+    width: 45%;
+    height: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.5;
+}
+
+.cardBadge {
+    width: 60px;
+    height: 22px;
+    border-radius: var(--radius-md);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.4;
+}
+
+.cardSubtitle {
+    width: 65%;
+    height: 14px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.4;
+}
+
+/* Skeleton Footer */
+.footer {
+    height: 96px;
+    background: var(--surface-bg-primary);
+    border-top: 1px solid var(--surface-border-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-4);
+    padding: 0 var(--spacing-4);
+}
+
+.footerButton {
+    width: 64px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.3;
+}

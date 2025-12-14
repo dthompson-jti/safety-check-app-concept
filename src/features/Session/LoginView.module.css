@@ -8,6 +8,7 @@
 .viewportStack {
   display: flex;
   flex-direction: column;
+  width: 100%;
   /* Fallback for browsers without visualViewport API */
   height: 100vh;
   /* The Contract: Bind to the visual viewport height */

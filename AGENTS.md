@@ -105,19 +105,37 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 
 ### Lazy Loading Strategy
 *   **Directive:** Major application states that represent distinct user flows should be lazy-loaded using `React.lazy()` with `Suspense`.
-*   **Pattern (Named Exports):**
+*   **Pattern (Named Exports with Context-Aware Fallback):**
     ```tsx
     // Named exports need explicit default mapping
     const AppShell = lazy(() => import('./AppShell').then(m => ({ default: m.AppShell })));
-    const LoginView = lazy(() => import('./features/Session/LoginView').then(m => ({ default: m.LoginView })));
+    const LoginView = lazy(() => withMinDelay(import('./features/Session/LoginView').then(m => ({ default: m.LoginView })), 500));
     
-    // Wrap in Suspense with themed fallback
-    <Suspense fallback={<LoadingSpinner />}>
-      {isAuthenticated ? <AppShell /> : <LoginView />}
-    </Suspense>
+    // Persistent background + context-aware fallback
+    <div style={{ position: 'fixed', inset: 0, background: 'var(--surface-bg-secondary)' }}>
+      <Suspense fallback={
+        <DelayedFallback delay={200}>
+          {session.isAuthenticated ? <AppShellSkeleton /> : <SplashView />}
+        </DelayedFallback>
+      }>
+        {session.isAuthenticated ? <AppShell /> : <LoginView />}
+      </Suspense>
+    </div>
     ```
 *   **When to Use:** Authentication boundaries, admin tools, developer modals, or any feature used by <50% of users.
 *   **When NOT to Use:** Components in the critical render path (headers, core UI primitives, state management).
+
+### Button Loading State
+*   **Directive:** For async actions (login, save, submit), use the `Button` component's `loading` prop.
+*   **Pattern:**
+    ```tsx
+    <Button loading={isSubmitting} loadingText="Signing in...">Log In</Button>
+    ```
+*   **Behavior:**
+    -   Shows spinning arc icon (left-aligned, matching icon size)
+    -   Displays `loadingText` if provided, otherwise shows original children
+    -   Disables button, sets `aria-busy="true"`
+*   **Anti-Pattern:** Do not center a spinner and hide text. Show both for context.
 
 ### Vite Code Splitting (Manual Chunks)
 *   **Directive:** When building for production, use `manualChunks` in `vite.config.ts` to separate vendor libraries by update frequency and size.
@@ -145,26 +163,22 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Async Loading for Heavy Fonts:** Material Symbols (~5MB) uses `fetchpriority="low"` preload to avoid blocking initial render.
 *   **Critical Icons Pattern:** Login screen uses inline SVGs from `CriticalIcons.tsx` (`JournalLogo`, `ErrorIcon`) to render instantly.
 *   **Brand Logo Token:** `--brand-logo-text` CSS variable adapts logo wordmark text: dark grey in light mode, white in dark modes.
-*   **Shared LayoutId Transition:** Both `SplashView` and `LoginView` use matching `layoutId` props for cinematic Framer Motion handoff:
+*   **Shared LayoutId Transition:** `SplashView` (logo only, no text) and `LoginView` share `layoutId="app-logo"` for cinematic Framer Motion handoff:
     ```tsx
-    // SplashView.tsx
+    // SplashView.tsx - Logo only, secondary background
     <motion.div layoutId="app-logo"><JournalLogo size={144} /></motion.div>
-    <motion.h3 layoutId="app-title">Safeguard</motion.h3>
 
-    // LoginView.tsx - logo/title animate from center to header
+    // LoginView.tsx - Title and form stagger in AFTER logo settles
     <motion.div layoutId={isExiting ? undefined : "app-logo"}><JournalLogo size={144} /></motion.div>
-    <motion.h3 layoutId={isExiting ? undefined : "app-title"}>Safeguard</motion.h3>
+    <motion.h3 variants={contentItemVariants}>Safeguard</motion.h3> // No layoutId, staggered entry
     ```
 *   **Conditional LayoutId on Exit:** Set `layoutId={undefined}` when triggering navigation to AppShell to prevent logo distortion during unmount.
-*   **Minimum Splash Time:** Wrap lazy imports with `withMinDelay(promise, 500)` to ensure splash displays long enough for smooth animation:
-    ```tsx
-    const withMinDelay = <T,>(promise: Promise<T>, minMs: number): Promise<T> =>
-      Promise.all([promise, new Promise(r => setTimeout(r, minMs))]).then(([result]) => result);
-    const LoginView = lazy(() => withMinDelay(import('./features/Session/LoginView'), MIN_SPLASH_MS));
-    ```
-*   **Staggered Form Entry:** Use Framer Motion `variants` with `staggerChildren` for sequential form field fade-in.
+*   **Minimum Splash Time:** Wrap lazy imports with `withMinDelay(promise, 500)` for LoginView only. AppShell has no delay for faster post-login transition.
+*   **Staggered Content Entry:** Use Framer Motion `variants` with `staggerChildren: 0.1` and `delayChildren: 0.3` for sequential title and form field fade-in after logo animation.
 *   **DelayedFallback Component:** Wraps Suspense fallback to only show after 200ms delay, preventing spinner flash on fast loads.
-*   **index.html Inline CSS:** Critical background colors, dark mode detection, and the full Journal logo SVG are inlined for instant render.
+*   **AppShellSkeleton:** For post-login transitions, show a skeleton (header/footer chrome + shimmer cards) instead of the brand splash—progressive disclosure feels faster.
+*   **Persistent Background Wrapper:** Wrap Suspense in a `position: fixed; inset: 0` div with `background: var(--surface-bg-secondary)` to prevent black flash during AnimatePresence transitions.
+*   **index.html Inline CSS:** Critical background colors (), dark mode detection, and the full Journal logo SVG are inlined for instant render.
 
 ### Dead Code Elimination
 *   **Directive:** Before adding a new dependency, verify it will be actively used. Periodically audit `package.json` for unused libraries.

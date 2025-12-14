@@ -19,12 +19,14 @@ import { VignetteOverlay } from './features/LateEffects/VignetteOverlay';
 import { JumpFAB } from './features/LateEffects/JumpFAB';
 import { GlassTintOverlay } from './features/LateEffects/PulseEffectsManager';
 
-// Lazy load heavy components with minimum delay to prevent animation wobble
+// Lazy load heavy components
+// LoginView: minimum delay for cinematic boot experience
+// AppShell: NO delay - skeleton fallback provides progressive disclosure
 const MIN_SPLASH_MS = 500;
 const withMinDelay = <T,>(promise: Promise<T>, minMs: number): Promise<T> =>
   Promise.all([promise, new Promise(resolve => setTimeout(resolve, minMs))]).then(([result]) => result);
 
-const AppShell = lazy(() => withMinDelay(import('./AppShell').then(module => ({ default: module.AppShell })), MIN_SPLASH_MS));
+const AppShell = lazy(() => import('./AppShell').then(module => ({ default: module.AppShell })));
 const LoginView = lazy(() => withMinDelay(import('./features/Session/LoginView').then(module => ({ default: module.LoginView })), MIN_SPLASH_MS));
 import { ToastContainer } from './components/ToastContainer';
 import { ToastMessage } from './components/Toast';
@@ -32,6 +34,7 @@ import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
 import { SoundManager } from './features/Shell/SoundManager';
 import { ReloadPrompt } from './components/ReloadPrompt';
 import { SplashView } from './components/SplashView';
+import { AppShellSkeleton } from './components/AppShellSkeleton';
 import { DelayedFallback } from './components/DelayedFallback';
 
 
@@ -156,15 +159,24 @@ function App() {
       <GlassTintOverlay />
       <VignetteOverlay />
       <JumpFAB />
-      <AnimatePresence mode="wait">
-        <Suspense fallback={
-          <DelayedFallback delay={200}>
-            <SplashView />
-          </DelayedFallback>
-        }>
-          {session.isAuthenticated ? <AppShell /> : <LoginView />}
-        </Suspense>
-      </AnimatePresence>
+      {/* Persistent background wrapper prevents black flash during transitions */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'var(--surface-bg-secondary, var(--splash-bg))',
+        zIndex: 0
+      }}>
+        <AnimatePresence mode="wait">
+          <Suspense fallback={
+            <DelayedFallback delay={200}>
+              {/* Context-aware fallback: SplashView for boot, Skeleton for app transition */}
+              {session.isAuthenticated ? <AppShellSkeleton /> : <SplashView />}
+            </DelayedFallback>
+          }>
+            {session.isAuthenticated ? <AppShell /> : <LoginView />}
+          </Suspense>
+        </AnimatePresence>
+      </div>
 
       <AnimatePresence>
         {toasts.map((toast) => (
