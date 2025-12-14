@@ -27,6 +27,7 @@ import { ToastMessage } from './components/Toast';
 import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
 import { SoundManager } from './features/Shell/SoundManager';
 import { ReloadPrompt } from './components/ReloadPrompt';
+import { SplashView } from './components/SplashView';
 
 
 // 24fps = approx 41.6ms
@@ -151,18 +152,7 @@ function App() {
       <VignetteOverlay />
       <JumpFAB />
       <AnimatePresence mode="wait">
-        <Suspense fallback={
-          <div style={{
-            width: '100vw',
-            height: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'var(--surface-primary)'
-          }}>
-            <span className="material-symbols-rounded" style={{ fontSize: '48px', color: 'var(--fg-secondary)' }}>hourglass_empty</span>
-          </div>
-        }>
+        <Suspense fallback={<SplashView />}>
           {session.isAuthenticated ? <AppShell /> : <LoginView />}
         </Suspense>
       </AnimatePresence>

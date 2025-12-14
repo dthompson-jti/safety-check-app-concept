@@ -9,6 +9,7 @@ import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { Modal } from '../../components/Modal';
 import { useScrollToFocused } from '../../data/useScrollToFocused';
+import { JournalLogo, ErrorIcon } from '../../components/CriticalIcons';
 import styles from './LoginView.module.css';
 
 export const LoginView = () => {
@@ -103,13 +104,14 @@ export const LoginView = () => {
         <div className={styles.scrollableContent} ref={scrollContainerRef}>
           <div className={styles.loginFormCard}>
             <div className={styles.appTitle}>
-              <span
-                className={`material-symbols-rounded ${styles.shortcutIcon}`}
-                onClick={handleShortcutLogin}
-                title="Developer Shortcut Login"
-              >
-                shield
-              </span>
+              <motion.div layoutId="app-logo">
+                <JournalLogo
+                  size={48}
+                  className={styles.shortcutIcon}
+                  onClick={handleShortcutLogin}
+                  title="Developer Shortcut Login"
+                />
+              </motion.div>
               <h3>Safeguard</h3>
             </div>
             <form onSubmit={handleLogin} className={styles.formFields} noValidate>
@@ -120,7 +122,7 @@ export const LoginView = () => {
               >
                 {formError && (
                   <div className={styles.formError}>
-                    <span className="material-symbols-rounded">dangerous</span>
+                    <ErrorIcon size={20} />
                     <span>{formError}</span>
                   </div>
                 )}

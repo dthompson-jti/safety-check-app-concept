@@ -259,7 +259,7 @@ export const DeveloperModal = () => {
               value={connectionStatus === 'offline' ? 'offline' : 'online'}
               onValueChange={(val) => {
                 triggerHaptic('selection');
-                setConnectionStatus(val as 'online' | 'offline');
+                setConnectionStatus(val);
               }}
               itemDirection="column"
             />

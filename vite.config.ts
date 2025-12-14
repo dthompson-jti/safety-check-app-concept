@@ -8,12 +8,15 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'maskable-icon.png'],
+      includeAssets: ['favicon.svg', 'favicon-32x32.png', 'apple-touch-icon.png', 'maskable-icon.png'],
       manifest: {
         name: 'Safety Check App',
         short_name: 'SafetyCheck',
         description: 'Safety Check Application Concept',
-        theme_color: '#ffffff',
+        theme_color: '#f8f9fa',
+        background_color: '#f8f9fa',
+        display: 'standalone',
+        orientation: 'portrait',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -26,10 +29,10 @@ export default defineConfig({
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'maskable-icon.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable' // We use the same icon for maskable as it has padding, or use specific if needed
+            purpose: 'maskable'
           }
         ]
       }

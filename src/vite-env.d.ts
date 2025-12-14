@@ -11,7 +11,7 @@ interface ImportMeta {
 }
 
 declare module 'virtual:pwa-register/react' {
-  import { type State, type RegisterSWOptions } from 'vite-plugin-pwa/types' // Fix: Import specific types if needed or use any
+  import type { RegisterSWOptions } from 'vite-plugin-pwa/types'
   // Simplified type definition based on usage
   export interface RegisterSWHook {
     needRefresh: [boolean, (needRefresh: boolean) => void]

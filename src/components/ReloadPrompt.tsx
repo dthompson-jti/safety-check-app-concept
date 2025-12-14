@@ -34,7 +34,7 @@ export const ReloadPrompt = () => {
                 action: {
                     label: 'Update',
                     onClick: () => {
-                        updateServiceWorker(true);
+                        void updateServiceWorker(true);
                         setNeedRefresh(false);
                     },
                 },
