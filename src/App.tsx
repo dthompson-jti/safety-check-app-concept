@@ -17,17 +17,22 @@ import { useKonamiCode } from './hooks/useKonamiCode';
 
 import { VignetteOverlay } from './features/LateEffects/VignetteOverlay';
 import { JumpFAB } from './features/LateEffects/JumpFAB';
-import { GlassTintOverlay } from './features/LateEffects/GlassTintOverlay';
+import { GlassTintOverlay } from './features/LateEffects/PulseEffectsManager';
 
-// Lazy load heavy components to reduce initial bundle size
-const AppShell = lazy(() => import('./AppShell').then(module => ({ default: module.AppShell })));
-const LoginView = lazy(() => import('./features/Session/LoginView').then(module => ({ default: module.LoginView })));
+// Lazy load heavy components with minimum delay to prevent animation wobble
+const MIN_SPLASH_MS = 500;
+const withMinDelay = <T,>(promise: Promise<T>, minMs: number): Promise<T> =>
+  Promise.all([promise, new Promise(resolve => setTimeout(resolve, minMs))]).then(([result]) => result);
+
+const AppShell = lazy(() => withMinDelay(import('./AppShell').then(module => ({ default: module.AppShell })), MIN_SPLASH_MS));
+const LoginView = lazy(() => withMinDelay(import('./features/Session/LoginView').then(module => ({ default: module.LoginView })), MIN_SPLASH_MS));
 import { ToastContainer } from './components/ToastContainer';
 import { ToastMessage } from './components/Toast';
 import { LayoutOrchestrator } from './features/Shell/LayoutOrchestrator';
 import { SoundManager } from './features/Shell/SoundManager';
 import { ReloadPrompt } from './components/ReloadPrompt';
 import { SplashView } from './components/SplashView';
+import { DelayedFallback } from './components/DelayedFallback';
 
 
 // 24fps = approx 41.6ms
@@ -152,7 +157,11 @@ function App() {
       <VignetteOverlay />
       <JumpFAB />
       <AnimatePresence mode="wait">
-        <Suspense fallback={<SplashView />}>
+        <Suspense fallback={
+          <DelayedFallback delay={200}>
+            <SplashView />
+          </DelayedFallback>
+        }>
           {session.isAuthenticated ? <AppShell /> : <LoginView />}
         </Suspense>
       </AnimatePresence>

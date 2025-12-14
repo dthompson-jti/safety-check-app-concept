@@ -1,9 +1,10 @@
 // src/features/Overlays/FutureIdeasModal.tsx
 import { useAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { featureFlagsAtom } from '../../data/featureFlags';
+import { featureFlagsAtom, PulseStyle } from '../../data/featureFlags';
 import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
+import { SegmentedControl } from '../../components/SegmentedControl';
 import styles from './DeveloperModal.module.css';
 
 export const FutureIdeasModal = () => {
@@ -93,26 +94,52 @@ export const FutureIdeasModal = () => {
                             onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_vignette: c })))}
                         />
                     </div>
-                    <div className={styles.settingsItem}>
-                        <label htmlFor="feat-glass-tint-switch" className={styles.itemLabel}>Glass Tinting</label>
-                        <Switch
-                            id="feat-glass-tint-switch"
-                            checked={featureFlags.feat_glass_tint}
-                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_glass_tint: c })))}
+                </div>
+
+                {/* Pulse Effects */}
+                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 500, color: 'var(--surface-fg-tertiary)' }}>
+                    Pulse Effects
+                </h4>
+                <div className={styles.settingsGroup}>
+                    <div style={{ padding: 'var(--spacing-3) 0' }}>
+                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', color: 'var(--surface-fg-secondary)' }}>Glass Pulse Style</label>
+                        <SegmentedControl
+                            id="glass-pulse-style"
+                            options={[
+                                { value: 'none', label: 'None' },
+                                { value: 'basic', label: 'Basic' },
+                                { value: 'gradient', label: 'Gradient' },
+                            ]}
+                            value={featureFlags.feat_glass_pulse}
+                            onValueChange={(v) => {
+                                triggerHaptic('light');
+                                setFeatureFlags(cur => ({ ...cur, feat_glass_pulse: v as PulseStyle }));
+                            }}
+                        />
+                    </div>
+                    <div style={{ padding: 'var(--spacing-3) 0' }}>
+                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', color: 'var(--surface-fg-secondary)' }}>Card Pulse Style</label>
+                        <SegmentedControl
+                            id="card-pulse-style"
+                            options={[
+                                { value: 'none', label: 'None' },
+                                { value: 'basic', label: 'Basic' },
+                                { value: 'gradient', label: 'Gradient' },
+                            ]}
+                            value={featureFlags.feat_card_pulse}
+                            onValueChange={(v) => {
+                                triggerHaptic('light');
+                                setFeatureFlags(cur => ({ ...cur, feat_card_pulse: v as PulseStyle }));
+                            }}
                         />
                     </div>
                 </div>
 
-                {/* Card Visuals */}
-                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
-                    <div className={styles.settingsItem}>
-                        <label htmlFor="feat-card-gradient-switch" className={styles.itemLabel}>Magma Gradient</label>
-                        <Switch
-                            id="feat-card-gradient-switch"
-                            checked={featureFlags.feat_card_gradient}
-                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_card_gradient: c })))}
-                        />
-                    </div>
+                {/* Card Visuals (Legacy) */}
+                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 500, color: 'var(--surface-fg-tertiary)' }}>
+                    Other Card Effects
+                </h4>
+                <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
                         <label htmlFor="feat-card-border-switch" className={styles.itemLabel}>Fluid Borders</label>
                         <Switch

@@ -18,27 +18,73 @@
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
-/* Glass Tint Pulse - Late Check warning effect */
+/* =========================================
+   Glass Pulse Effects - Late Check Warning
+   ========================================= */
+
+/* Basic Pulse - Opacity breathing effect (1.2s cycle) */
+body[data-glass-pulse="basic"] .footer,
 body[data-glass-tint="active"] .footer {
-  animation: glass-tint-pulse-footer 1.2s ease-in-out infinite;
+  animation: pulse-basic-footer 1.2s ease-in-out infinite;
 }
 
-@keyframes glass-tint-pulse-footer {
+@keyframes pulse-basic-footer {
 
   0%,
   100% {
-    background-color: rgba(255, 59, 48, 0.05);
+    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
   }
 
   50% {
-    background-color: rgba(255, 59, 48, 0.15);
+    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.15));
   }
 }
 
+/* Gradient Pulse - Flowing magma effect (2.4s cycle, 2x sync base) */
+/* Uses ::before pseudo-element to avoid conflicts with safe-area padding */
+body[data-glass-pulse="gradient"] .footer {
+  position: relative;
+}
+
+body[data-glass-pulse="gradient"] .footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(135deg,
+      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05)) 0%,
+      var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.15)) 50%,
+      var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05)) 100%),
+    var(--surface-bg-header-translucent);
+  background-size: 200% 200%, auto;
+  animation: pulse-gradient-footer 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse-gradient-footer {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Accessibility: Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
+
+  body[data-glass-pulse="basic"] .footer,
+  body[data-glass-pulse="gradient"] .footer,
   body[data-glass-tint="active"] .footer {
     animation: none;
-    background-color: rgba(255, 59, 48, 0.1);
+    background-color: var(--surface-bg-pulse-static, rgba(255, 59, 48, 0.1));
+  }
+
+  body[data-glass-pulse="gradient"] .footer::before {
+    animation: none;
   }
 }
 

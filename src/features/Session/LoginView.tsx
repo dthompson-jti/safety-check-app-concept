@@ -20,6 +20,7 @@ export const LoginView = () => {
   const [formError, setFormError] = useState('');
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const setSession = useSetAtom(sessionAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
 
@@ -66,6 +67,8 @@ export const LoginView = () => {
   };
 
   const handleShortcutLogin = () => {
+    // Disable layoutId to prevent distortion during exit
+    setIsExiting(true);
     // Use first user as shortcut
     const user = findUser('dthompson');
     if (user) {
@@ -91,6 +94,20 @@ export const LoginView = () => {
     transition: { duration: 0.4 },
   };
 
+  // Staggered animation for form entry
+  const formContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.15 }
+    }
+  };
+
+  const formItemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.25 } }
+  };
+
   return (
     <>
       <motion.div
@@ -104,7 +121,7 @@ export const LoginView = () => {
         <div className={styles.scrollableContent} ref={scrollContainerRef}>
           <div className={styles.loginFormCard}>
             <div className={styles.appTitle}>
-              <motion.div layoutId="app-logo">
+              <motion.div layoutId={isExiting ? undefined : "app-logo"}>
                 <JournalLogo
                   size={144}
                   className={styles.shortcutIcon}
@@ -112,9 +129,16 @@ export const LoginView = () => {
                   title="Developer Shortcut Login"
                 />
               </motion.div>
-              <h3>Safeguard</h3>
+              <motion.h3 layoutId={isExiting ? undefined : "app-title"}>Safeguard</motion.h3>
             </div>
-            <form onSubmit={handleLogin} className={styles.formFields} noValidate>
+            <motion.form
+              onSubmit={handleLogin}
+              className={styles.formFields}
+              noValidate
+              variants={formContainerVariants}
+              initial="hidden"
+              animate="visible"
+            >
 
               <motion.div
                 animate={isAttempted && formError ? shakeAnimation : {}}
@@ -128,7 +152,10 @@ export const LoginView = () => {
                 )}
               </motion.div>
 
-              <motion.div animate={isAttempted && usernameError ? shakeAnimation : {}}>
+              <motion.div
+                variants={formItemVariants}
+                animate={isAttempted && usernameError ? shakeAnimation : {}}
+              >
                 <TextInput
                   type="text"
                   placeholder="Username"
@@ -141,7 +168,10 @@ export const LoginView = () => {
                 {usernameError && <div className={styles.errorMessage}>{usernameError}</div>}
               </motion.div>
 
-              <motion.div animate={isAttempted && passwordError ? shakeAnimation : {}}>
+              <motion.div
+                variants={formItemVariants}
+                animate={isAttempted && passwordError ? shakeAnimation : {}}
+              >
                 <TextInput
                   type="password"
                   placeholder="Password"
@@ -153,13 +183,15 @@ export const LoginView = () => {
                 {passwordError && <div className={styles.errorMessage}>{passwordError}</div>}
               </motion.div>
 
-              <Button type="submit" variant="primary" size="m" style={{ width: '100%', marginTop: '8px' }}>
-                Log In
-              </Button>
-              <div className={styles.supportLink}>
+              <motion.div variants={formItemVariants}>
+                <Button type="submit" variant="primary" size="m" style={{ width: '100%', marginTop: '8px' }}>
+                  Log In
+                </Button>
+              </motion.div>
+              <motion.div variants={formItemVariants} className={styles.supportLink}>
                 <button type="button" onClick={() => setIsHelpModalOpen(true)}>Trouble signing in?</button>
-              </div>
-            </form>
+              </motion.div>
+            </motion.form>
           </div>
 
           <footer className={styles.pageFooter}>

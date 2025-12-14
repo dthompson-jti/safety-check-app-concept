@@ -42,12 +42,12 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const { showStatusIndicators } = useAtomValue(appConfigAtom);
-  const { feat_card_gradient, feat_card_border, feat_hazard_texture, feat_invert_card } = useAtomValue(featureFlagsAtom);
+  const { feat_card_pulse, feat_card_gradient, feat_card_border, feat_hazard_texture, feat_invert_card } = useAtomValue(featureFlagsAtom);
 
   const isPulsing = recentlyCompletedCheckId === check.id;
 
   // Calculate sync delay ONCE on mount - aligns animations to global clock
-  // All animations sync to 1200ms base: badge (1x), border/hazard (2x), magma (3.3x)
+  // All animations sync to 1200ms base: badge (1x), border/hazard (2x), pulse (2x)
   const ANIMATION_SYNC_BASE_MS = 1200;
   const syncDelay = useMemo(() => {
     return -(Date.now() % ANIMATION_SYNC_BASE_MS);
@@ -78,11 +78,23 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   // Apply card effect classes for missed checks
   const isLate = check.status === 'missed';
-  const hasAnimatedEffects = isLate && (feat_card_gradient || feat_card_border || feat_hazard_texture);
+
+  // Determine pulse class based on feat_card_pulse
+  // 'basic' = new subtle opacity breathing
+  // 'gradient' = original Magma flowing gradient effect
+  const pulseClass = isLate && feat_card_pulse === 'basic' ? styles.cardPulseBasic
+    : isLate && feat_card_pulse === 'gradient' ? styles.cardGradient  // Use original Magma
+      : '';
+
+  // Legacy: feat_card_gradient still works if feat_card_pulse is 'none'
+  const legacyGradient = isLate && feat_card_pulse === 'none' && feat_card_gradient ? styles.cardGradient : '';
+
+  const hasAnimatedEffects = isLate && (feat_card_pulse !== 'none' || feat_card_gradient || feat_card_border || feat_hazard_texture);
   const cardEffectClasses = [
     styles.checkCard,
     isPulsing ? styles.isCompleting : '',
-    isLate && feat_card_gradient ? styles.cardGradient : '',
+    pulseClass,
+    legacyGradient,
     isLate && feat_card_border ? styles.cardBorder : '',
     isLate && feat_hazard_texture ? styles.cardHazard : '',
     isLate && feat_invert_card ? styles.cardInvert : ''

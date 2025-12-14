@@ -17,6 +17,9 @@ import { appConfigAtom } from './atoms';
  * REPLACES: devMode.ts (Dave Mode)
  */
 
+// Pulse style options for glass and card effects
+export type PulseStyle = 'none' | 'basic' | 'gradient';
+
 // Unlock state for Future Ideas section
 export const futureIdeasUnlockedAtom = atomWithStorage('future-ideas-unlocked', false);
 
@@ -26,11 +29,14 @@ export interface FeatureFlags {
     useHapticsEnabled: boolean;
     enableDarkMode: boolean;
     enableEnhancedAvatarDropdown: boolean;
-    // Late Check Concepts
+    // Late Check Concepts - Pulse Effects
+    feat_glass_pulse: PulseStyle;  // Header/Footer pulse style
+    feat_card_pulse: PulseStyle;   // Card background pulse style
+    // Late Check Concepts - Other Effects
     feat_vignette: boolean;
     feat_desaturation: boolean;
-    feat_glass_tint: boolean;
-    feat_card_gradient: boolean;
+    feat_glass_tint: boolean;      // Legacy - kept for migration
+    feat_card_gradient: boolean;   // Legacy - kept for migration
     feat_card_border: boolean;
     feat_hazard_texture: boolean;
     feat_invert_card: boolean;
@@ -45,6 +51,9 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     useHapticsEnabled: false,
     enableDarkMode: false,
     enableEnhancedAvatarDropdown: false,
+    // Late Check Concepts - Pulse defaults to 'none'
+    feat_glass_pulse: 'none',
+    feat_card_pulse: 'none',
     // Late Check Concepts - all default to OFF
     feat_vignette: false,
     feat_desaturation: false,
@@ -85,8 +94,8 @@ export const useFutureIdeas = () => {
                 useHapticsEnabled: true,
                 useSoundEnabled: true,
                 enableDarkMode: true,
-                feat_glass_tint: true,
-                feat_card_gradient: true,
+                feat_glass_pulse: 'gradient',
+                feat_card_pulse: 'gradient',
                 feat_invert_badge: true,
             }));
         }, 0);

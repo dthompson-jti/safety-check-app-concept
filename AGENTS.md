@@ -143,21 +143,28 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 ### Font Performance & Critical Path Assets
 *   **Self-Hosted Fonts:** Fonts are served from `/public/fonts/` to enable offline PWA support.
 *   **Async Loading for Heavy Fonts:** Material Symbols (~5MB) uses `fetchpriority="low"` preload to avoid blocking initial render.
-*   **Critical Icons Pattern:** Login screen icons (`shield`, `error`) use inline SVGs from `CriticalIcons.tsx` to render instantly.
-*   **SplashView → Login Transition:** Both components share `layoutId="app-logo"` for seamless Framer Motion animated handoff.
-*   **Pattern:**
+*   **Critical Icons Pattern:** Login screen uses inline SVGs from `CriticalIcons.tsx` (`JournalLogo`, `ErrorIcon`) to render instantly.
+*   **Brand Logo Token:** `--brand-logo-text` CSS variable adapts logo wordmark text: dark grey in light mode, white in dark modes.
+*   **Shared LayoutId Transition:** Both `SplashView` and `LoginView` use matching `layoutId` props for cinematic Framer Motion handoff:
     ```tsx
-    // SplashView.tsx - renders during lazy-load
-    <motion.div layoutId="app-logo">
-      <JournalLogo size={64} />
-    </motion.div>
+    // SplashView.tsx
+    <motion.div layoutId="app-logo"><JournalLogo size={144} /></motion.div>
+    <motion.h3 layoutId="app-title">Safeguard</motion.h3>
 
-    // LoginView.tsx - logo animates from center to header position
-    <motion.div layoutId="app-logo">
-      <JournalLogo size={48} />
-    </motion.div>
+    // LoginView.tsx - logo/title animate from center to header
+    <motion.div layoutId={isExiting ? undefined : "app-logo"}><JournalLogo size={144} /></motion.div>
+    <motion.h3 layoutId={isExiting ? undefined : "app-title"}>Safeguard</motion.h3>
     ```
-*   **index.html Inline CSS:** Critical background colors and dark mode detection are inlined to prevent white flash before React hydrates.
+*   **Conditional LayoutId on Exit:** Set `layoutId={undefined}` when triggering navigation to AppShell to prevent logo distortion during unmount.
+*   **Minimum Splash Time:** Wrap lazy imports with `withMinDelay(promise, 500)` to ensure splash displays long enough for smooth animation:
+    ```tsx
+    const withMinDelay = <T,>(promise: Promise<T>, minMs: number): Promise<T> =>
+      Promise.all([promise, new Promise(r => setTimeout(r, minMs))]).then(([result]) => result);
+    const LoginView = lazy(() => withMinDelay(import('./features/Session/LoginView'), MIN_SPLASH_MS));
+    ```
+*   **Staggered Form Entry:** Use Framer Motion `variants` with `staggerChildren` for sequential form field fade-in.
+*   **DelayedFallback Component:** Wraps Suspense fallback to only show after 200ms delay, preventing spinner flash on fast loads.
+*   **index.html Inline CSS:** Critical background colors, dark mode detection, and the full Journal logo SVG are inlined for instant render.
 
 ### Dead Code Elimination
 *   **Directive:** Before adding a new dependency, verify it will be actively used. Periodically audit `package.json` for unused libraries.

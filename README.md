@@ -31,6 +31,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Font Loading Strategy:** Self-hosted fonts (`/fonts/`) with `font-display: block` for icons (prevents ligature text flash) and `font-display: swap` for text fonts.
 -   **Inline Critical CSS:** `index.html` contains inline `<style>` for background colors and dark mode detection, ensuring instant visual feedback before React hydrates.
 -   **PWA Manifest Polish:** `vite.config.ts` manifest includes matching `background_color` and `theme_color` to prevent splash screen color mismatches.
+-   **Cinematic Splash Transition:** Lazy-loaded components use `withMinDelay` wrapper (500ms minimum) to prevent animation wobble. The splash and login share Framer Motion `layoutId`s for seamless logo+title handoff with staggered form entry.
 -   **SEO & Accessibility:** Includes meta description and semantic HTML landmarks for improved discoverability and screen reader support.
 
 ## 3. Prototype Features
@@ -59,9 +60,9 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
     -   **NFC Simulation Controls:** Interactive buttons within the NFC workflow to force specific outcomes (Success, Network Error, Tag Locked) for edge-case testing.
 -   **Late Check Visual Language:** A comprehensive suite of ambient and micro-interaction effects that activate when checks become overdue, creating progressive urgency without overwhelming the user:
-    -   **Glass Tint Pulse:** Header and footer glassmorphic surfaces pulse with a subtle red tint (synchronized 1.2s animation).
+    -   **Global Pulse Effects:** Header and footer glassmorphic surfaces pulse to indicate urgency. Supports two modes: **Basic** (subtle opacity breathing, 1.2s) and **Gradient** (flowing magma animation, 2.4s).
     -   **Vignette Overlay:** A directional red glow emerges from the top of the viewport, concentrating visual attention on late items.
-    -   **Card Effects:** Animated magma gradient backgrounds, pulsing borders, and hazard texture overlays on late check cards.
+    -   **Card Effects:** Late cards feature visual treatments to demand attention, including **Pulse** (opacity breath), **Magma Gradient** (flowing red background), and **Fluid Borders**.
     -   **Badge Pulse:** Status badges throb in sync with a global animation clock (mount-time synchronization).
     -   **Jump FAB:** Context-aware floating action button that appears only on the main schedule list, scrolling to the first late check.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.

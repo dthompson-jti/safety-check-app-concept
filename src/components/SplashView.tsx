@@ -18,9 +18,11 @@ export const SplashView = () => {
                 width: '100vw',
                 height: '100vh',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 background: 'var(--surface-bg-primary, var(--splash-bg))',
+                gap: 8,
             }}
         >
             <motion.div
@@ -29,11 +31,21 @@ export const SplashView = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: 16,
                 }}
             >
                 <JournalLogo size={144} />
             </motion.div>
+            <motion.h3
+                layoutId="app-title"
+                style={{
+                    margin: 0,
+                    fontSize: '1.5rem',
+                    fontWeight: 500,
+                    color: 'var(--surface-fg-primary)',
+                }}
+            >
+                Safeguard
+            </motion.h3>
         </div>
     );
 };

@@ -132,3 +132,78 @@ Uses "Push/Pop" navigation metaphor:
 - **Haptics:** Success state triggers `success` haptic pattern
 - **Sound:** Success state triggers `success` audio cue
 - **Ripple:** Use `::before` pseudo-elements for overlays
+
+---
+
+## 7. Splash Screen Transition
+
+The splash → login transition uses a multi-layered approach to achieve a native-quality cinematic handoff.
+
+### Architecture
+
+| Component | Role |
+|-----------|------|
+| `index.html` | Static HTML splash (Journal logo + "Safeguard" title) shown instantly |
+| `SplashView.tsx` | React fallback with matching layout and shared `layoutId`s |
+| `LoginView.tsx` | Target view with staggered form entry and conditional `layoutId` |
+| `DelayedFallback.tsx` | Prevents spinner flash on fast loads (200ms delay) |
+| `withMinDelay()` | Ensures minimum 500ms display time for lazy imports |
+
+### Shared LayoutIds
+
+```tsx
+// SplashView.tsx - centered logo + title
+<motion.div layoutId="app-logo"><JournalLogo size={144} /></motion.div>
+<motion.h3 layoutId="app-title">Safeguard</motion.h3>
+
+// LoginView.tsx - logo/title in header position
+<motion.div layoutId={isExiting ? undefined : "app-logo"}>
+  <JournalLogo size={144} />
+</motion.div>
+<motion.h3 layoutId={isExiting ? undefined : "app-title"}>Safeguard</motion.h3>
+```
+
+### Conditional LayoutId on Exit
+
+**Problem:** When clicking login bypass, the logo distorts during the exit to AppShell because Framer Motion animates the `layoutId` handoff to a non-existent target.
+
+**Solution:** Track `isExiting` state and set `layoutId={undefined}` before triggering navigation:
+
+```tsx
+const [isExiting, setIsExiting] = useState(false);
+
+const handleShortcutLogin = () => {
+  setIsExiting(true);  // Disable layoutId before navigation
+  setSession({ isAuthenticated: true, user });
+};
+```
+
+### Staggered Form Entry
+
+```tsx
+const formContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.15 }
+  }
+};
+
+const formItemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.25 } }
+};
+```
+
+### Minimum Splash Time
+
+```tsx
+const MIN_SPLASH_MS = 500;
+const withMinDelay = <T,>(promise: Promise<T>, minMs: number): Promise<T> =>
+  Promise.all([promise, new Promise(r => setTimeout(r, minMs))]).then(([result]) => result);
+
+const LoginView = lazy(() => withMinDelay(
+  import('./features/Session/LoginView').then(m => ({ default: m.LoginView })),
+  MIN_SPLASH_MS
+));
+```
