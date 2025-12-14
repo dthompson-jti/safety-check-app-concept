@@ -154,6 +154,7 @@ export const ResidentCheckControl = ({
         value={notes}
         onChange={(e) => onNotesChange(resident.id, e.target.value)}
         placeholder="Enter optional notes"
+        aria-label={`Notes for ${resident.name}`}
         rows={1} // Start as a single line
         className={styles.notesInput}
       />

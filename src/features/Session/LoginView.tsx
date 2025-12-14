@@ -130,6 +130,7 @@ export const LoginView = () => {
                 <TextInput
                   type="text"
                   placeholder="Username"
+                  aria-label="Username"
                   value={username}
                   onChange={(e) => handleUsernameChange(e.target.value)}
                   isInvalid={!!usernameError}
@@ -142,6 +143,7 @@ export const LoginView = () => {
                 <TextInput
                   type="password"
                   placeholder="Password"
+                  aria-label="Password"
                   value={password}
                   onChange={(e) => handlePasswordChange(e.target.value)}
                   isInvalid={!!passwordError}
@@ -161,9 +163,9 @@ export const LoginView = () => {
           <footer className={styles.pageFooter}>
             <p>&copy; Journal Technologies 2025.</p>
             <p>
-              <a href="#privacy">Privacy Policy</a>
+              <a href="#" onClick={(e) => e.preventDefault()}>Privacy Policy</a>
               <span className={styles.footerSeparator}>&middot;</span>
-              <a href="#terms">Terms of Use</a>
+              <a href="#" onClick={(e) => e.preventDefault()}>Terms of Use</a>
             </p>
           </footer>
         </div>

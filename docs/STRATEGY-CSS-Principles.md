@@ -133,7 +133,11 @@ When styling themed elements (badges, warnings, selected states), **always use s
 | `var(--primitives-yellow-100)` | `var(--surface-bg-warning-secondary)` |
 | `var(--primitives-red-50)` | `var(--surface-bg-error-primary)` |
 | `var(--primitives-blue-600)` | `var(--surface-border-info)` |
-| Hardcoded hex (`#0a1428`) | `var(--primitives-theme-975)` or appropriate semantic |
+| Hardcoded hex (`#0a1428`) | `var(--primitives-theme-800)` or appropriate semantic |
+
+-   **Primary Buttons:**
+    -   Background: `theme-800` (Dark) vs `theme-700` (Light)
+    -   Contrast: Always check against `grey-50` or `white` foreground.
 
 -   **Box-Shadow Warning:** `box-shadow` colors are especially prone to this error. If using a colored box-shadow for emphasis (e.g., classified resident glow), the color **must** be a semantic token:
     ```css

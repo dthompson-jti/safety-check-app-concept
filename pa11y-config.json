@@ -1,0 +1,12 @@
+{
+    "defaults": {
+        "standard": "WCAG2AA",
+        "timeout": 30000,
+        "actions": [
+            "set field input[type='text'] to dthompson",
+            "set field input[type='password'] to test",
+            "click element button[type='submit']",
+            "wait for element nav to be visible"
+        ]
+    }
+}

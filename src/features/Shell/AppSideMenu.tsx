@@ -114,7 +114,7 @@ export const AppSideMenu = () => {
 
         <div className={styles.separator} />
 
-        <button className={styles.userProfileCard} onClick={() => setIsSettingsOpen(true)}>
+        <button className={styles.userProfileCard} onClick={() => setIsSettingsOpen(true)} aria-label="Settings">
           <span className={styles.userName}>{session.user?.displayName || 'Unknown User'}</span>
           <span className="material-symbols-rounded">settings</span>
         </button>

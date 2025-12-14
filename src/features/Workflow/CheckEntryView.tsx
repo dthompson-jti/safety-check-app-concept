@@ -347,7 +347,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
         {/* Early Check Warning Block */}
         {!isSupplementalCheck && currentCheckStatus === 'early' && (
-          <div className={styles.warningBlock}>
+          <div className={styles.warningBlock} role="status">
             <span className="material-symbols-rounded" aria-hidden="true">
               info
             </span>

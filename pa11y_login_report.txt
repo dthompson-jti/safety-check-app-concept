@@ -1,0 +1,49 @@
+
+Welcome to Pa11y
+
+ > Running Pa11y on URL http://localhost:3000/safety-check-app-concept/
+
+Results for URL: http://localhost:3000/safety-check-app-concept/
+
+ ΓÇó Error: This element has insufficient contrast at this conformance level. Expected a contrast ratio of at least 3:1, but text in this element has a contrast ratio of 2.41:1. Recommendation:  change text colour to #91959c.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle1.Guideline1_4.1_4_3.G145.Fail
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > div > div > span
+   ΓööΓöÇΓöÇ <span class="material-symbols-rounded _shortcutIcon_ylxq4_181" title="Developer Shortcut Login">shield</span>
+
+ ΓÇó Error: This textinput element does not have a name available to an accessibility API. Valid names are: label element, title undefined, aria-label undefined, aria-labelledby undefined.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.InputText.Name
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > div > form > div:nth-child(2) > input
+   ΓööΓöÇΓöÇ <input placeholder="Username" data-invalid="false" type="text" value="">
+
+ ΓÇó Error: This form field should be labelled in some way. Use the label element (either with a "for" attribute or wrapped around the form field), or "title", "aria-label" or "aria-labelledby" attributes as appropriate.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle1.Guideline1_3.1_3_1.F68
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > div > form > div:nth-child(2) > input
+   ΓööΓöÇΓöÇ <input placeholder="Username" data-invalid="false" type="text" value="">
+
+ ΓÇó Error: This passwordinput element does not have a name available to an accessibility API. Valid names are: label element, title undefined, aria-label undefined, aria-labelledby undefined.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.InputPassword.Name
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > div > form > div:nth-child(3) > input
+   ΓööΓöÇΓöÇ <input placeholder="Password" data-invalid="false" type="password" value="">
+
+ ΓÇó Error: This form field should be labelled in some way. Use the label element (either with a "for" attribute or wrapped around the form field), or "title", "aria-label" or "aria-labelledby" attributes as appropriate.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle1.Guideline1_3.1_3_1.F68
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > div > form > div:nth-child(3) > input
+   ΓööΓöÇΓöÇ <input placeholder="Password" data-invalid="false" type="password" value="">
+
+ ΓÇó Error: This link points to a named anchor "privacy" within the document, but no anchor exists with that name.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle2.Guideline2_4.2_4_1.G1,G123,G124.NoSuchID
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > footer > p:nth-child(2) > a:nth-child(1)
+   ΓööΓöÇΓöÇ <a href="#privacy">Privacy Policy</a>
+
+ ΓÇó Error: This element has insufficient contrast at this conformance level. Expected a contrast ratio of at least 4.5:1, but text in this element has a contrast ratio of 2.29:1. Recommendation:  change text colour to #6f737a.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Fail
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > footer > p:nth-child(2) > span
+   ΓööΓöÇΓöÇ <span class="_footerSeparator_ylxq4_375">┬╖</span>
+
+ ΓÇó Error: This link points to a named anchor "terms" within the document, but no anchor exists with that name.
+   Γö£ΓöÇΓöÇ WCAG2AA.Principle2.Guideline2_4.2_4_1.G1,G123,G124.NoSuchID
+   Γö£ΓöÇΓöÇ #root > div:nth-child(1) > div > footer > p:nth-child(2) > a:nth-child(3)
+   ΓööΓöÇΓöÇ <a href="#terms">Terms of Use</a>
+
+8 Errors
+

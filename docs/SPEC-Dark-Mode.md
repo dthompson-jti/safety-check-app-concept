@@ -7,16 +7,37 @@ In dark mode, **lighter surfaces are higher** in the elevation hierarchy. This m
 - **Elevated (Cards):** Lighter Grey (e.g., `grey-900`)
 - **Overlay (Modals):** Lightest Grey (e.g., `grey-800`)
 
-## 2. Theme Variants
+## 2. Accessibility & Contrast Strategy
+All dark themes must meet **WCAG AA (4.5:1)** contrast ratios. This requires specific semantic overrides that differ from light mode patterns.
+
+### The "Light-on-Dark" Contrast Shift
+Primitives that work in light mode (e.g., `red-600` on white) usually fail in dark mode. We use a **"Shift to 400"** strategy for status colors.
+
+| Semantic Token | Light Mode Primitive | Dark Mode Primitive | Rationale |
+|:---|:---|:---|:---|
+| `--surface-fg-alert-primary` | `red-600` | **`red-400`** | `600` is too dark against `grey-900`. `400` maintains 4.5:1. |
+| `--surface-fg-warning-primary` | `yellow-600` | **`yellow-400`** | `yellow-600` fails on dark. `400` pops. |
+| `--surface-fg-success-primary` | `green-600` | **`green-400`** | `green-600` blends into dark backgrounds. |
+
+### Primary Button Contrast
+Primary Brand buttons require specific overrides in dark mode to avoid "white text on light brand color" or low-contrast borders.
+
+| Semantic Token | Light Mode Value | Dark Mode Value |
+|:---|:---|:---|
+| `control-bg-theme` | `theme-700` | **`theme-800`** (Deep Brand) |
+| `control-fg-on-solid` | `white` | **`grey-50`** (Soft White) |
+| `control-border-primary` | `theme-700` | **`theme-800`** |
+
+## 3. Theme Variants
 
 | Theme | `data-theme` | Description |
 |:---|:---|:---|
-| Light | *(none)* | Default light mode |
-| Dark A | `dark-a` | Cards **lighter** than body (secondary=950, primary=900) |
-| Dark B | `dark-b` | Cards **same** as body (primary=950, secondary=900) |
-| Dark C | `dark-c` | High-fidelity greys (940→910→880→860→840) - **Default for Future Ideas** |
+| Light | *(none)* | Default light mode. |
+| Dark A | `dark-a` | **High Contrast.** Cards (`grey-900`) are lighter than body (`grey-950`). |
+| Dark B | `dark-b` | **Merged Surfaces.** Cards and Body share `grey-950`. |
+| Dark C | `dark-c` | **High Fidelity.** Granular grey scale (`940` body, `910` cards). |
 
-## 3. Reference Palette (Dark C)
+## 4. Reference Palette (Dark C)
 *Active as of Dec 2024*
 
 | Token | Hex | OKLCH L | Purpose |
@@ -24,23 +45,9 @@ In dark mode, **lighter surfaces are higher** in the elevation hierarchy. This m
 | `grey-950` | `#0A0C12` | ~6% | Deepest |
 | `grey-940` | `#0E1017` | ~8% | Dark C body |
 | `grey-910` | `#161A24` | ~14% | Dark C cards |
-| `theme-975` | `#011a42` | ~13% | Selected state base |
-
-## 4. Semantic Status Colors (OKLCH Strategy)
-To maintain consistency with light mode's "low chroma" pastels, dark mode uses specific low-saturation, low-lightness tokens.
-
-**Target:** L≈15%, C≈0.03
-
-| State | Background Token | Logic |
-|:---|:---|:---|
-| **Warning** | `yellow-900` | L≈18%, visible against grey body |
-| **Error** | `red-900` | L≈18% |
-| **Success** | `green-900` | L≈18% |
-| **Info** | `blue-900` | L≈18% |
-
-**Shadows:** Dark mode shadows are automatically strengthened (2-10x opacity) via `semantics.css` to ensure visibility against dark backgrounds.
+| `theme-800` | *(mapped)* | ~30% | Primary Action Background |
 
 ## 5. Implementation Guide
 - **File:** `src/styles/semantics.css` (Contains all `[data-theme='...']` blocks).
+- **Rule:** Never use primitives (e.g., `var(--primitives-red-400)`) directly in components. usage.
 - **Hook:** `useTheme.ts` manages persistence and DOM application. **ALWAYS use this hook, never the atom directly.**
-- **FOUC Prevention:** Blocking script in `index.html` restores theme from localStorage before paint.

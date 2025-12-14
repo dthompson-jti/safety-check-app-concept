@@ -1,0 +1,7 @@
+
+Welcome to Pa11y
+
+ > Running Pa11y on URL http://localhost:3000/safety-check-app-concept/
+
+No issues found!
+
