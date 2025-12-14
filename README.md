@@ -27,7 +27,10 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 -   **Lazy Loading:** Major application states (`AppShell`, `LoginView`) are code-split using `React.lazy()` and `Suspense` to reduce initial bundle size.
 -   **Manual Chunk Splitting:** Vendor libraries are strategically divided into separate chunks (`vendor-react`, `vendor-ui`, `vendor-heavy`) to optimize caching and reduce time-to-interactive.
--   **Font Display Strategy:** All Google Fonts use `display=swap` to prevent render-blocking and eliminate font flash.
+-   **Critical Path Assets:** The login/splash screen uses inline SVG icons (`CriticalIcons.tsx`) to render instantly without waiting for the 5MB Material Symbols font. The full icon font loads asynchronously in the background.
+-   **Font Loading Strategy:** Self-hosted fonts (`/fonts/`) with `font-display: block` for icons (prevents ligature text flash) and `font-display: swap` for text fonts.
+-   **Inline Critical CSS:** `index.html` contains inline `<style>` for background colors and dark mode detection, ensuring instant visual feedback before React hydrates.
+-   **PWA Manifest Polish:** `vite.config.ts` manifest includes matching `background_color` and `theme_color` to prevent splash screen color mismatches.
 -   **SEO & Accessibility:** Includes meta description and semantic HTML landmarks for improved discoverability and screen reader support.
 
 ## 3. Prototype Features

@@ -84,6 +84,17 @@ When implementing global visual effects that span multiple components (e.g., gla
 -   **The Default State Contract:** Components should default to their most stable, symmetric state in CSS. Modifiers (via data attributes) should only apply asymmetric changes. This prevents "Flash of Unstyled Content" (FOUC) or layout shifts during JS hydration.
 -   **The Persistent Chrome Contract:** Structural elements like Headers and Footers should generally remain mounted. Conditional rendering of these elements changes the layout viewport size, causing underlying content to jump. Use Z-index layering to hide them if necessary.
 
+#### 7. Font Loading Strategy for FOUC Prevention
+
+Fonts require careful handling to prevent Flash of Unstyled Content (FOUC), especially icon fonts which render as ligature text before loading.
+
+-   **Self-Hosted Fonts:** All fonts are served from `/public/fonts/` to enable offline PWA support.
+-   **Icon Fonts (`font-display: block`):** Material Symbols must use `block` to hide icon elements until the font loads. Otherwise, users see the word "shield" instead of the icon.
+-   **Text Fonts (`font-display: swap`):** Inter uses `swap` to allow immediate text rendering with a fallback font, swapping to the custom font when loaded.
+-   **Async Loading:** Heavy font files (Material Symbols ~5MB) use `fetchpriority="low"` preload to avoid blocking initial render.
+-   **Critical Path SVGs:** For login/splash screens, use inline SVG components (`CriticalIcons.tsx`) instead of font icons to render instantly without network dependency.
+-   **Inline Critical CSS:** Background colors and dark mode detection CSS are inlined in `index.html` to prevent white flash before React hydrates.
+
 #### 7. The Strict Transition-Navigation Pairing
 
 We enforce a strict coupling between navigation type, transition, and meaning:

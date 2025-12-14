@@ -47,10 +47,12 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Reasoning:** Ensures consistency between the Side Menu and the NFC Provisioning workflow.
 
 ### 3. Icons
-*   **Directive:** Use `Material Symbols Rounded`.
-*   **Style:**
+*   **Material Symbols Rounded:** Use for icons inside the authenticated app shell.
     *   **Small / UI Icons (24px):** Filled (`font-variation-settings: 'FILL' 1`) for active/prominent states.
-    *   **Large / Hero Icons (48px+):** Outlined (`font-variation-settings: 'FILL' 0`) for Success/Error status screens to maintain visual balance.
+    *   **Large / Hero Icons (48px+):** Outlined (`font-variation-settings: 'FILL' 0`) for Success/Error status screens.
+*   **Critical Icons (SVG):** The login screen and splash view use SVG components from `CriticalIcons.tsx` to avoid blocking on the 5MB font download.
+    *   `JournalLogo` - Brand logo with wordmark (splash/login header)
+    *   `ErrorIcon` - Form validation errors
 *   **Color:**
     *   Leading icons in lists: `var(--surface-fg-quaternary)`.
     *   Interactive icons: `var(--surface-fg-secondary)` (default) or `var(--surface-fg-primary)` (active).
@@ -138,13 +140,24 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     - `vendor-ui`: UI primitives (moderate update frequency)
     - `vendor-heavy`: Large animation/feature libraries (defer loading when possible)
 
-### Font Performance
-*   **Directive:** All external font links MUST include `&display=swap` to prevent render-blocking.
+### Font Performance & Critical Path Assets
+*   **Self-Hosted Fonts:** Fonts are served from `/public/fonts/` to enable offline PWA support.
+*   **Async Loading for Heavy Fonts:** Material Symbols (~5MB) uses `fetchpriority="low"` preload to avoid blocking initial render.
+*   **Critical Icons Pattern:** Login screen icons (`shield`, `error`) use inline SVGs from `CriticalIcons.tsx` to render instantly.
+*   **SplashView → Login Transition:** Both components share `layoutId="app-logo"` for seamless Framer Motion animated handoff.
 *   **Pattern:**
-    ```html
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    ```tsx
+    // SplashView.tsx - renders during lazy-load
+    <motion.div layoutId="app-logo">
+      <JournalLogo size={64} />
+    </motion.div>
+
+    // LoginView.tsx - logo animates from center to header position
+    <motion.div layoutId="app-logo">
+      <JournalLogo size={48} />
+    </motion.div>
     ```
-*   **Why:** Without `display=swap`, browsers block rendering until fonts load, inflating First Contentful Paint (FCP).
+*   **index.html Inline CSS:** Critical background colors and dark mode detection are inlined to prevent white flash before React hydrates.
 
 ### Dead Code Elimination
 *   **Directive:** Before adding a new dependency, verify it will be actively used. Periodically audit `package.json` for unused libraries.
@@ -222,3 +235,16 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Why It Works:** All components sync to the same 1200ms clock. Animations with different periods (badge 1.2s, border 2.4s, magma 4s) phase-lock at regular intervals, preventing drift.
 *   **Critical:** All components MUST use the same base period (1200ms) even if their animation duration is different (e.g., 2.4s animation still uses 1200ms sync base).
 *   **When to Use:** Any time you need multiple independently-mounted components to animate in perfect unison (e.g., badge pulses, card border glows, glass tint breathing).
+
+### Lint Prevention & TypeScript Hygiene
+*   **Unused Imports:** When replacing a component (e.g., `ShieldIcon` → `JournalLogo`), **always remove the obsolete import** in the same commit, or lint will fail with `'X' is defined but never used`.
+*   **Floating Promises:** If a function returns a `Promise` but you intentionally don't await it (e.g., `updateServiceWorker(true)`), mark it explicitly with `void`:
+    ```tsx
+    // WRONG - lint error: floating promise
+    onClick={() => updateServiceWorker(true)}
+    
+    // CORRECT - explicitly ignored
+    onClick={() => void updateServiceWorker(true)}
+    ```
+*   **Unnecessary Type Assertions:** Do not use `as Type` when TypeScript can already infer the type. ESLint flags this as `@typescript-eslint/no-unnecessary-type-assertion`.
+*   **Environment-Agnostic Timer Types:** Use `ReturnType<typeof setTimeout>` instead of `NodeJS.Timeout` to avoid TS2503 in browser environments.
