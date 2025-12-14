@@ -32,7 +32,7 @@ export const SplashView = () => {
                     gap: 16,
                 }}
             >
-                <JournalLogo size={64} />
+                <JournalLogo size={144} />
             </motion.div>
         </div>
     );

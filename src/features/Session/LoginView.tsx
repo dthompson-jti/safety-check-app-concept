@@ -106,7 +106,7 @@ export const LoginView = () => {
             <div className={styles.appTitle}>
               <motion.div layoutId="app-logo">
                 <JournalLogo
-                  size={48}
+                  size={144}
                   className={styles.shortcutIcon}
                   onClick={handleShortcutLogin}
                   title="Developer Shortcut Login"

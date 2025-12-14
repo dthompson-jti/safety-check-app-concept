@@ -67,6 +67,9 @@
   --surface-fg-info-primary: var(--primitives-blue-600);
   --surface-fg-info-secondary: var(--primitives-blue-500);
 
+  /* Brand Logo */
+  --brand-logo-text: #2C2829;
+
   /* Border */
   --surface-border-primary: var(--primitives-grey-300);
   --surface-border-secondary: var(--primitives-grey-200);
@@ -292,6 +295,9 @@
   --surface-fg-success-primary: var(--primitives-green-400);
   --surface-fg-success-secondary: var(--primitives-green-300);
 
+  /* Brand Logo - Pure white in dark mode */
+  --brand-logo-text: var(--primitives-base-white);
+
   /* Overlay */
   --surface-bg-overlay: #000000;
 
@@ -466,6 +472,9 @@
   --surface-fg-info-secondary: var(--primitives-blue-300);
   --surface-fg-success-primary: var(--primitives-green-400);
   --surface-fg-success-secondary: var(--primitives-green-300);
+
+  /* Brand Logo - Pure white in dark mode */
+  --brand-logo-text: var(--primitives-base-white);
 
   /* Overlay */
   --surface-bg-overlay: #000000;
@@ -642,6 +651,9 @@
   --surface-fg-warning-secondary: var(--primitives-yellow-300);
   --surface-fg-info-primary: var(--primitives-blue-400);
   --surface-fg-info-secondary: var(--primitives-blue-300);
+
+  /* Brand Logo - Pure white in dark mode */
+  --brand-logo-text: var(--primitives-base-white);
 
   /* Overlay */
   --surface-bg-overlay: #000000;
