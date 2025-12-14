@@ -14,7 +14,7 @@ In dark mode, **lighter surfaces are higher** in the elevation hierarchy. This m
 | Light | *(none)* | Default light mode |
 | Dark A | `dark-a` | Cards **lighter** than body (secondary=950, primary=900) |
 | Dark B | `dark-b` | Cards **same** as body (primary=950, secondary=900) |
-| Dark C | `dark-c` | High-fidelity greys (940→910→880→860→840) |
+| Dark C | `dark-c` | High-fidelity greys (940→910→880→860→840) - **Default for Future Ideas** |
 
 ## 3. Reference Palette (Dark C)
 *Active as of Dec 2024*
@@ -42,5 +42,5 @@ To maintain consistency with light mode's "low chroma" pastels, dark mode uses s
 
 ## 5. Implementation Guide
 - **File:** `src/styles/semantics.css` (Contains all `[data-theme='...']` blocks).
-- **Hook:** `useTheme.ts` manages persistence.
+- **Hook:** `useTheme.ts` manages persistence and DOM application. **ALWAYS use this hook, never the atom directly.**
 - **FOUC Prevention:** Blocking script in `index.html` restores theme from localStorage before paint.

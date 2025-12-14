@@ -165,6 +165,18 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Lesson:** User-facing terminology is a strict spec.
 *   **Pattern:** "Due" means "Due". Do not use "Due Now", "Due Soon", or "Due!" unless explicitly specified. Removing variations reduces cognitive load.
 
+### React Hooks vs. Raw Atoms
+*   **Lesson:** When an atom has a side-effect (like updating the DOM), **never** use the raw atom setter directly. You must use the abstraction hook.
+*   **The Bug:** `const setTheme = useSetAtom(themeAtom)` updates the state but fails to trigger the `useEffect` that applies `data-theme` to the `document.body`.
+*   **The Fix:** Always use `const { setTheme } = useTheme()`. This ensures the side-effect (DOM update) fires correctly.
+
+### Feature Flag Presets
+*   **Lesson:** For "Demo" or "Playground" modes, distinct "Unlock" and "Lock" actions are safer than individual toggles.
+*   **Pattern:**
+    *   **Unlock:** Applies a curated "Best View" preset (e.g., Dark C + Haptics + Glass Tint).
+    *   **Lock:** Performs a **strict reset** to a known safe state (Light Mode, All Flags Off).
+    *   **Implementation:** See `src/data/featureFlags.ts` -> `lock()` / `unlock()`.
+
 ### Dark Mode Token Hygiene
 *   **Directive:** When styling any themed element (badges, warnings, selected states, glows), **always use semantic tokens** from `semantics.css`, never primitive tokens directly.
 *   **Why Primitives Fail:** Tokens like `var(--primitives-yellow-100)` are optimized for light mode (L≈95%). In dark mode, they remain unchanged, creating jarring bright spots.

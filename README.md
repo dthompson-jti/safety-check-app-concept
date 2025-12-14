@@ -43,6 +43,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Film Strip (Dashboards):** The primary workspaces (Time-Sorted vs Route-Sorted) exist on a horizontal "film strip" with sliding panel animations.
     -   **Intent-Based Gestures:** A sophisticated gesture engine distinguishes between vertical scrolling and horizontal navigation swipes, allowing full-screen gestures without blocking content interaction.
     -   **Persistent Chrome:** The application header and footer remain stable during view transitions, preventing layout shifts.
+    -   **Full-Screen User Settings:** A dedicated, immersive modal for managing appearance, avatar, and app preferences, replacing standard dropdowns for a "High-Craft" feel.
 -   **Sensory Feedback System:** A decoupled, accessible feedback engine provides tangible confirmation for user actions.
     -   **Haptics:** Granular vibration patterns (success, warning, selection) triggered via `useHaptics`.
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:
@@ -63,6 +64,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.
 -   **Manual Check Workflow:** A streamlined flow where selecting a room manually bypasses the scanner and navigates directly to the check entry form, respecting user intent.
 -   **Simulated Admin Tools & Offline Mode:** Complete UI simulations for NFC tag provisioning and offline data synchronization workflows.
+-   **Future Ideas Playground:** Experimental features (Dark Mode C, Glass Tinting, Haptics) are gated behind a secure unlock (Konami Code). Unlocking applies a curated "Dave's Favorites" preset for immediate "High-Craft" demonstration, while locking performs a strict reset to defaults.
 
 ## 4. Directory Structure
 
