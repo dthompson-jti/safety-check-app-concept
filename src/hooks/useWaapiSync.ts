@@ -19,6 +19,7 @@ const SYNCABLE_ANIMATION_NAMES = [
     'card-pulse-basic',
     'card-pulse-gradient',
     'indicator-pulse',
+    'badge-pulse',
 ];
 
 interface UseWaapiSyncOptions {

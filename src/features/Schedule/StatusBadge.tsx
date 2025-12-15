@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai';
 import { SafetyCheckStatus, SafetyCheckType } from '../../types';
 import { slowTickerAtom } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
-import { useEpochSync, SYNC_BASE_MS } from '../../hooks/useEpochSync';
+import { useWaapiSync } from '../../hooks/useWaapiSync';
 import styles from './StatusBadge.module.css';
 
 
@@ -54,9 +54,11 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
   const now = useAtomValue(slowTickerAtom);
   const { feat_badge_mode, feat_invert_badge, feat_invert_card } = useAtomValue(featureFlagsAtom);
 
-  // Use centralized epoch sync for perfect animation alignment
-  const { style: syncStyle } = useEpochSync(SYNC_BASE_MS);
+  const badgeRef = React.useRef<HTMLDivElement>(null);
+  const shouldPulse = feat_badge_mode === 'pulse' && status === 'missed';
 
+  // Independent sync for the badge
+  useWaapiSync(badgeRef, { isEnabled: shouldPulse });
 
   // Upcoming items (early/pending) should NOT have a badge
   if (status === 'pending' || status === 'early') {
@@ -85,7 +87,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
   // Invert Card: white bg, red text (to contrast with red card)
   const shouldInvertBadgeOnly = status === 'missed' && feat_invert_badge && !feat_invert_card;
   const shouldInvertForCard = status === 'missed' && feat_invert_card;
-  const shouldPulse = feat_badge_mode === 'pulse' && status === 'missed';
+  // shouldPulse is calculated above
 
   const badgeClasses = [
     styles.badge,
@@ -94,11 +96,12 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
     shouldInvertForCard ? styles.badgeInvertForCard : ''
   ].filter(Boolean).join(' ');
 
-  // Apply sync delay only when pulsing
-  const badgeStyle = shouldPulse ? syncStyle : undefined;
-
   return (
-    <div className={badgeClasses} data-status={effectiveStatus} style={badgeStyle}>
+    <div
+      className={badgeClasses}
+      data-status={effectiveStatus}
+      ref={badgeRef}
+    >
       {config.icon && (
         <span className={`material-symbols-rounded ${styles.badgeIcon}`}>
           {config.icon}
