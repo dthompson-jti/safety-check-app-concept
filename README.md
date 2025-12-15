@@ -60,10 +60,10 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
     -   **NFC Simulation Controls:** Interactive buttons within the NFC workflow to force specific outcomes (Success, Network Error, Tag Locked) for edge-case testing.
 -   **Late Check Visual Language:** A comprehensive suite of ambient and micro-interaction effects that activate when checks become overdue, creating progressive urgency without overwhelming the user:
-    -   **Global Pulse Effects:** Header and footer glassmorphic surfaces pulse to indicate urgency. Supports two modes: **Basic** (subtle opacity breathing, 1.2s) and **Gradient** (flowing magma animation, 2.4s).
+    -   **Global Pulse Effects:** Header and footer glassmorphic surfaces pulse to indicate urgency, using the **WAAPI Zero-Time Protocol** for perfect synchronization.
     -   **Vignette Overlay:** A directional red glow emerges from the top of the viewport, concentrating visual attention on late items.
     -   **Card Effects:** Late cards feature visual treatments to demand attention, including **Basic Pulse** (opacity breath), **Magma Gradient** (flowing red background), and **Fluid Borders**.
-    -   **Badge Pulse:** Status badges throb in sync with a global animation clock (mount-time synchronization).
+    -   **Badge Pulse:** Status badges throb in sync with the global animation clock.
     -   **Jump FAB:** Context-aware floating action button that appears only on the main schedule list, scrolling to the first late check.
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.
 -   **Manual Check Workflow:** A streamlined flow where selecting a room manually bypasses the scanner and navigates directly to the check entry form, respecting user intent.

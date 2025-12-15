@@ -253,30 +253,18 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Verification Rule:** If you add a new semantic token pairing, you **MUST** verify it meets WCAG AA (4.5:1) in all themes (`dark-a`, `dark-b`, `dark-c`). Use the `contrast_audit.cjs` script if unsure.
 *   **Reference:** See `docs/SPEC-Dark-Mode.md` for full token mapping tables.
 
-### Animation Synchronization Patterns
-*   **Lesson:** CSS animations with constantly updating `animation-delay` values (e.g., via CSS variables updated every frame) will restart the animation on each update, causing jittery, non-periodic behavior.
-*   **Anti-Pattern:**
+### Animation Synchronization Patterns (`The Zero-Time Protocol`)
+*   **Lesson:** CSS `animation-delay` with JS-calculated offsets is unreliable due to execution latency and main-thread variance.
+*   **Directive:** Do NOT use `animation-delay` offsets for synchronization.
+*   **The Protocol:** Use the **Web Animations API (WAAPI)** to enforce absolute time alignment (`startTime = 0`).
+*   **Standard Hook:** `useWaapiSync(ref, { isEnabled: boolean })`
+*   **Pattern:**
     ```tsx
-    // WRONG - updates every 24fps, restarts animation constantly
-    useEffect(() => {
-      const interval = setInterval(() => {
-        document.body.style.setProperty('--anim-offset', `${-(Date.now() % 1200)}ms`);
-      }, 42); // 24fps
-    }, []);
+    // CORRECT - uses WAAPI to force alignment to document timeline origin
+    useWaapiSync(containerRef, { isEnabled: isPulseActive });
     ```
-    ```css
-    .badge { animation-delay: var(--anim-offset); }
-    ```
-*   **Correct Pattern (Mount-Time Sync with Unified Base):**
-    ```tsx
-    // CORRECT - use shared 1200ms base for ALL animations
-    const ANIMATION_SYNC_BASE_MS = 1200;
-    const syncDelay = useMemo(() => -(Date.now() % ANIMATION_SYNC_BASE_MS), []);
-    return <div style={{ animationDelay: `${syncDelay}ms` }} />;
-    ```
-*   **Why It Works:** All components sync to the same 1200ms clock. Animations with different periods (badge 1.2s, border 2.4s, magma 4s) phase-lock at regular intervals, preventing drift.
-*   **Critical:** All components MUST use the same base period (1200ms) even if their animation duration is different (e.g., 2.4s animation still uses 1200ms sync base).
-*   **When to Use:** Any time you need multiple independently-mounted components to animate in perfect unison (e.g., badge pulses, card border glows, glass tint breathing).
+*   **Why It Works:** `startTime = 0` aligns all animations to the exact same millisecond relative to the document origin, regardless of when they mounted or if the tab was backgrounded.
+*   **Reference:** See `docs/WAAPI-STRATEGY.md`.
 
 ### Lint Prevention & TypeScript Hygiene
 *   **Unused Imports:** When replacing a component (e.g., `ShieldIcon` → `JournalLogo`), **always remove the obsolete import** in the same commit, or lint will fail with `'X' is defined but never used`.
