@@ -105,10 +105,10 @@ export const FacilitySelectionModal = () => {
     setSelectedGroup(tempGroupId);
     setSelectedUnit(unitId);
 
-    if (!isContextRequired) {
-      // Switching context usually resets view preference or goes to dashboard
-      setAppView('dashboardTime');
-    } else {
+    // Always navigate to dashboard and close side menu upon selection/login
+    setAppView('dashboardTime');
+
+    if (isContextRequired) {
       // Login flow complete
       setIsContextRequired(false);
     }

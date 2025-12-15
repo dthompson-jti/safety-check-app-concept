@@ -1,0 +1,103 @@
+/* src/components/FacilitySelectionSkeleton.module.css */
+
+/* Replicated shimmer keyframes to decouple from AppShellSkeleton */
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--surface-bg-primary);
+}
+
+/* Skeleton Header */
+.header {
+    height: var(--modal-header-height);
+    background: var(--surface-bg-primary);
+    border-bottom: 1px solid var(--surface-border-secondary);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-4);
+    /* Header typically contains a title, center it vertically */
+}
+
+.headerTitle {
+    width: 140px;
+    height: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.4;
+    margin: 0 auto;
+    /* Center like a modal title */
+}
+
+/* Skeleton Content */
+.content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* List Item Skeleton ("Golden Row" Pattern) */
+.listItem {
+    position: relative;
+    height: 56px;
+    /* Golden Row height */
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-4);
+    border-bottom: 1px solid var(--surface-border-secondary);
+    background: var(--surface-bg-primary);
+    overflow: hidden;
+}
+
+.shimmerOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent 25%,
+            var(--surface-bg-secondary_hover) 50%,
+            transparent 75%);
+    animation: shimmer 1.5s infinite linear;
+    z-index: 1;
+}
+
+.itemIcon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface-bg-tertiary);
+    opacity: 0.3;
+    margin-right: var(--spacing-4);
+}
+
+.itemText {
+    flex: 1;
+    height: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.3;
+    max-width: 60%;
+}
+
+.itemChevron {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-xs);
+    background: var(--surface-bg-tertiary);
+    opacity: 0.2;
+    margin-left: auto;
+}

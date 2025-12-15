@@ -25,7 +25,8 @@ const MIN_SPLASH_MS = 500;
 const withMinDelay = <T,>(promise: Promise<T>, minMs: number): Promise<T> =>
   Promise.all([promise, new Promise(resolve => setTimeout(resolve, minMs))]).then(([result]) => result);
 
-const AppShell = lazy(() => import('./AppShell').then(module => ({ default: module.AppShell })));
+// AppShell: Add delay to force skeleton display (cinematic transition)
+const AppShell = lazy(() => withMinDelay(import('./AppShell').then(module => ({ default: module.AppShell })), MIN_SPLASH_MS));
 const LoginView = lazy(() => withMinDelay(import('./features/Session/LoginView').then(module => ({ default: module.LoginView })), MIN_SPLASH_MS));
 import { ToastContainer } from './components/ToastContainer';
 import { ToastMessage } from './components/Toast';
@@ -34,7 +35,9 @@ import { SoundManager } from './features/Shell/SoundManager';
 import { ReloadPrompt } from './components/ReloadPrompt';
 import { SplashView } from './components/SplashView';
 import { AppShellSkeleton } from './components/AppShellSkeleton';
+import { FacilitySelectionSkeleton } from './components/FacilitySelectionSkeleton';
 import { DelayedFallback } from './components/DelayedFallback';
+import { facilityData } from './data/mock/facilityData';
 
 
 // 24fps = approx 41.6ms
@@ -151,8 +154,13 @@ function App() {
         <AnimatePresence mode="wait">
           <Suspense fallback={
             <DelayedFallback delay={200}>
-              {/* Context-aware fallback: SplashView for boot, Skeleton for app transition */}
-              {session.isAuthenticated ? <AppShellSkeleton /> : <SplashView />}
+              {/* Context-aware fallback: 
+                  - If > 1 facility group, we'll see Facility Selection first -> Show List Skeleton
+                  - If 1 facility group, we bump straight to Dashboard -> Show App Shell Skeleton
+              */}
+              {session.isAuthenticated ? (
+                facilityData.length > 1 ? <FacilitySelectionSkeleton /> : <AppShellSkeleton />
+              ) : <SplashView />}
             </DelayedFallback>
           }>
             {session.isAuthenticated ? <AppShell /> : <LoginView />}
