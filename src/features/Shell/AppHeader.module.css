@@ -34,20 +34,14 @@ body[data-glass-tint="active"] .header::before {
 @keyframes pulse-basic {
 
   0%,
-  40% {
-    /* Resting State (Long pause) */
+  100% {
+    /* Resting State */
     background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
   }
 
   50% {
-    /* Peak Impact (Thump) */
+    /* Peak */
     background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.12));
-  }
-
-  60%,
-  100% {
-    /* Resting State (Long pause) */
-    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
   }
 }
 

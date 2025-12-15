@@ -370,6 +370,7 @@
    ========================================= */
 
 /* Basic Pulse - Subtle opacity breathing on card background */
+/* Uses --glass-sync-delay (set on body by PulseEffectsManager) to sync with header/footer */
 .cardPulseBasic {
   animation: card-pulse-basic 1.2s ease-in-out infinite;
   animation-delay: var(--glass-sync-delay, 0ms);
@@ -378,7 +379,7 @@
 @keyframes card-pulse-basic {
 
   0%,
-  40% {
+  100% {
     /* Light Mode Min: 4% */
     background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.04));
   }
@@ -386,12 +387,6 @@
   50% {
     /* Light Mode Max: 9% */
     background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.09));
-  }
-
-  60%,
-  100% {
-    /* Light Mode Min: 4% */
-    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.04));
   }
 }
 

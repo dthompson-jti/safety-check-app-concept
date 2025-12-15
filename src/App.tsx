@@ -16,7 +16,7 @@ import { useKonamiCode } from './hooks/useKonamiCode';
 
 import { VignetteOverlay } from './features/LateEffects/VignetteOverlay';
 import { JumpFAB } from './features/LateEffects/JumpFAB';
-import { GlassTintOverlay } from './features/LateEffects/PulseEffectsManager';
+import { PulseEffectsManager } from './features/LateEffects/PulseEffectsManager';
 
 // Lazy load heavy components
 // LoginView: minimum delay for cinematic boot experience
@@ -138,7 +138,7 @@ function App() {
     <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
       <LayoutOrchestrator />
       <SoundManager />
-      <GlassTintOverlay />
+      <PulseEffectsManager />
       <VignetteOverlay />
       <JumpFAB />
       {/* Persistent background wrapper prevents black flash during transitions */}

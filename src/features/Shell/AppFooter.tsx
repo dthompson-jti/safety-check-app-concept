@@ -50,11 +50,10 @@ export const AppFooter = () => {
       observer.observe(footerRef.current);
     }
 
-    window.addEventListener('resize', updateHeight);
+    // Note: ResizeObserver handles all resize cases, window listener removed
     return () => {
       observer.disconnect();
       document.documentElement.style.removeProperty('--footer-height');
-      window.removeEventListener('resize', updateHeight);
     };
   }, [appConfig.scanMode]);
 

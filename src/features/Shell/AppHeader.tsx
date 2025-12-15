@@ -1,7 +1,8 @@
 // src/features/Shell/AppHeader.tsx
-import { useLayoutEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { appViewAtom } from '../../data/atoms';
+import { headerHeightAtom } from '../../data/layoutAtoms';
+import { useLayoutRegistration } from '../../data/useLayoutRegistration';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 import { StatusBar } from './StatusBar';
@@ -10,28 +11,10 @@ import styles from './AppHeader.module.css';
 
 export const AppHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
-  const headerRef = useRef<HTMLElement>(null);
 
-  // Component Variable Contract:
-  // Measures the header's actual height and sets a CSS variable.
-  // This allows sticky headers in the list to position themselves perfectly.
-  useLayoutEffect(() => {
-    const updateHeight = () => {
-      if (headerRef.current) {
-        const height = headerRef.current.offsetHeight;
-        document.documentElement.style.setProperty('--header-height', `${height}px`);
-      }
-    };
-    updateHeight();
-    const resizeObserver = new ResizeObserver(updateHeight);
-    if (headerRef.current) {
-      resizeObserver.observe(headerRef.current);
-    }
-    return () => {
-      resizeObserver.disconnect();
-      document.documentElement.style.removeProperty('--header-height');
-    };
-  }, []);
+  // Use centralized layout registration instead of manual measurement
+  // This prevents conflicts with LayoutOrchestrator
+  const headerRef = useLayoutRegistration(headerHeightAtom);
 
   const handleMenuClick = () => {
     setAppView(appView === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
