@@ -56,6 +56,24 @@
   font-size: var(--icon-size-md);
 }
 
+/* --- Large (lg) --- */
+.btn[data-size="lg"] {
+  height: var(--control-height-lg);
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--spacing-3);
+}
+
+.btn[data-size="lg"][data-icon-only="true"] {
+  width: var(--control-height-lg);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-xl);
+  gap: 0;
+}
+
+.btn[data-size="lg"] .material-symbols-rounded {
+  font-size: var(--icon-size-lg);
+}
+
 /* --- Small (s) --- */
 .btn[data-size="s"] {
   height: var(--control-height-sm);
@@ -150,7 +168,7 @@
 /* --- Tertiary Button --- */
 .btn[data-variant="tertiary"] {
   background: none;
-  color: var(--surface-fg-secondary);
+  color: var(--control-fg-tertiary);
   border-width: 1px 1px 2px 1px;
   border-color: transparent;
 }

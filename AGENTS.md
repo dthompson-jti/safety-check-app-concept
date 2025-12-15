@@ -52,11 +52,12 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     | Token | Size | Use Case |
     |:------|:-----|:---------|
     | `xs` | 12px (0.75rem) | Hotkey hints, XS button text |
-    | `sm` | 16px (1rem) | XS button icons, toast close, menu chevrons |
-    | `md` | 20px (1.25rem) | **DEFAULT** - Standard UI icons (buttons, lists, toggles) |
-    | `lg` | 24px (1.5rem) | Header icons (menu, back buttons), prominent actions |
+    | `sm` | 16px (1rem) | XS button icons, menu chevrons |
+    | `md` | 20px (1.25rem) | **DEFAULT** - Standard UI icons (buttons, lists, toggles, toast close) |
+    | `lg` | 24px (1.5rem) | Header icons (menu, back, close buttons via `size="lg"`) |
     | `xl` | 32px (2rem) | Feature icons, status indicators |
     | `2xl` | 48px (3rem) | Hero icons, empty states |
+*   **Button Size Pairing:** Use `size="lg"` for header/navigation icon buttons (menu, back, close) to get 48px touch targets with 24px icons. Never use `size="m"` + CSS override for header buttons.
 *   **Fill Settings:**
     *   **UI Icons:** Filled (`font-variation-settings: 'FILL' 1`) for active/prominent states.
     *   **Hero Icons:** Outlined (`font-variation-settings: 'FILL' 0`) for Success/Error status screens.

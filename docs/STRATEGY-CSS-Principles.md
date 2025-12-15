@@ -305,19 +305,14 @@ Icons must use the `--icon-size-*` design tokens from `primitives.css` for consi
     | Token | Size | Use Case |
     |:------|:-----|:---------|
     | `--icon-size-xs` | 12px (0.75rem) | Hotkey hints, XS button text |
-    | `--icon-size-sm` | 16px (1rem) | XS button icons, toast close, menu chevrons |
-    | `--icon-size-md` | 20px (1.25rem) | **DEFAULT** - Standard UI icons |
-    | `--icon-size-lg` | 24px (1.5rem) | Header icons (menu, back buttons) |
+    | `--icon-size-sm` | 16px (1rem) | XS button icons, menu chevrons |
+    | `--icon-size-md` | 20px (1.25rem) | **DEFAULT** - Standard UI icons, toast close |
+    | `--icon-size-lg` | 24px (1.5rem) | Header icons via `size="lg"` buttons |
     | `--icon-size-xl` | 32px (2rem) | Feature icons, status indicators |
     | `--icon-size-2xl` | 48px (3rem) | Hero icons, empty states |
 
 -   **The Default:** The base `.material-symbols-rounded` class in `fonts.css` sets `font-size: var(--icon-size-md)`. All icons inherit 20px by default.
 
--   **Overriding for Headers:** Modal headers and app header use `--icon-size-lg` for better visibility:
-    ```css
-    .header .material-symbols-rounded {
-      font-size: var(--icon-size-lg) !important;
-    }
-    ```
+-   **Header Icon Buttons:** Use `Button size="lg"` for header navigation buttons (menu, back, close). This provides 48px touch targets with 24px icons natively—no CSS overrides needed.
 
--   **Anti-Pattern:** Never use `--font-size-*` tokens for icons—they're for typography. Use `--icon-size-*` tokens exclusively.
+-   **Anti-Pattern:** Never use `size="m"` + CSS override for header icons. Use `size="lg"` instead. Never use `--font-size-*` tokens for icons—they're for typography.

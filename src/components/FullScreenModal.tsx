@@ -76,7 +76,7 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({
             <header className={styles.header}>
               {/* LEFT ACTION: Render only if actionType is 'back' */}
               {actionType === 'back' ? (
-                <Button variant="tertiary" size="m" iconOnly onClick={onClose} aria-label="Back">
+                <Button variant="tertiary" size="lg" iconOnly onClick={onClose} aria-label="Back">
                   <span className="material-symbols-rounded">{leftIcon}</span>
                 </Button>
               ) : (
@@ -95,7 +95,7 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({
                 {rightAction ? (
                   rightAction
                 ) : actionType === 'close' ? (
-                  <Button variant="tertiary" size="m" iconOnly onClick={onClose} aria-label="Close">
+                  <Button variant="tertiary" size="lg" iconOnly onClick={onClose} aria-label="Close">
                     <span className="material-symbols-rounded">close</span>
                   </Button>
                 ) : (

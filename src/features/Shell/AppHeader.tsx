@@ -25,7 +25,7 @@ export const AppHeader = () => {
       <div className={styles.headerContent}>
         <div className={styles.leftActions}>
           <Tooltip content="Open navigation">
-            <Button variant="tertiary" size="m" iconOnly onClick={handleMenuClick} aria-label="Open navigation menu">
+            <Button variant="tertiary" size="lg" iconOnly onClick={handleMenuClick} aria-label="Open navigation menu">
               <span className="material-symbols-rounded">menu</span>
             </Button>
           </Tooltip>

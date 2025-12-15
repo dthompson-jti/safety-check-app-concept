@@ -232,7 +232,7 @@ export const ScanView = () => {
     >
       <header className={styles.header}>
         <h3>Scan Room QR Code</h3>
-        <Button variant="on-solid" size="m" iconOnly onClick={handleClose} aria-label="Close scanner">
+        <Button variant="on-solid" size="lg" iconOnly onClick={handleClose} aria-label="Close scanner">
           <span className="material-symbols-rounded">close</span>
         </Button>
       </header>

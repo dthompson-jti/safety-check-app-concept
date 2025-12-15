@@ -15,7 +15,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  padding: var(--spacing-3) var(--spacing-4);
+  /* Visual symmetry: 6px top, 5px bottom (border adds 1px visually) */
+  padding: var(--spacing-1p5) var(--spacing-4) 5px;
   background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
@@ -152,6 +153,8 @@ body[data-glass-tint="active"] .header {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+  /* Optical alignment: lift text to align with icon visual center */
+  transform: translateY(-2px);
 }
 
 .formContent {

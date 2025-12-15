@@ -83,7 +83,7 @@ export const ManualCheckSelectorSheet = () => {
 
             <div className={styles.sheetHeader}>
               <h3 className={styles.sheetTitle}>Add Manual Check</h3>
-              <Button variant="tertiary" size="s" iconOnly onClick={() => setIsOpen(false)}>
+              <Button variant="tertiary" size="lg" iconOnly onClick={() => setIsOpen(false)}>
                 <span className="material-symbols-rounded">close</span>
               </Button>
             </div>

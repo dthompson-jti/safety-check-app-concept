@@ -140,14 +140,10 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  /* Icon button - intentionally 40px not standard control height */
-  height: 40px;
+  width: var(--control-height-lg);
+  /* Icon button - match lg button size */
+  height: var(--control-height-lg);
   flex-shrink: 0;
-}
-
-.leftActions .material-symbols-rounded {
-  font-size: var(--icon-size-lg);
 }
 
 .centerContent {
@@ -163,8 +159,8 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  /* Icon button - intentionally 40px not standard control height */
-  height: 40px;
+  width: var(--control-height-lg);
+  /* Icon button - match lg button size */
+  height: var(--control-height-lg);
   flex-shrink: 0;
 }

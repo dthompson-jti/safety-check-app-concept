@@ -110,9 +110,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--control-width-toast-icon);
-  height: var(--control-width-toast-icon);
-  border-radius: var(--radius-sm);
+  width: var(--control-height-sm);
+  height: var(--control-height-sm);
+  border-radius: var(--radius-md);
   flex-shrink: 0;
   cursor: pointer;
   background: none;
@@ -127,7 +127,7 @@
 }
 
 .toast-close-button .material-symbols-rounded {
-  font-size: var(--icon-size-sm);
+  font-size: var(--icon-size-md);
 }
 
 /* --- Semantic Variants --- */

@@ -18,8 +18,8 @@
   justify-content: space-between;
   gap: var(--spacing-2);
   min-height: var(--control-min-touch);
-  /* STANDARDIZED: spacing-3 vertical, spacing-4 horizontal */
-  padding: var(--spacing-3) var(--spacing-4);
+  /* Asymmetric padding: tighter vertical for 48px lg button */
+  padding: var(--spacing-1p5) var(--spacing-4);
   background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
@@ -31,6 +31,8 @@
   /* Standard Overlay Title Size */
   font-weight: 600;
   color: var(--surface-fg-primary);
+  /* Optical alignment: lift text to align with icon visual center */
+  transform: translateY(-2px);
 }
 
 .controlsHeader {

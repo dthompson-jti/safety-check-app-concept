@@ -30,8 +30,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* STANDARDIZED: spacing-3 vertical, spacing-4 horizontal for breathing room */
-  padding: var(--spacing-3) var(--spacing-4);
+  /* STANDARDIZED: spacing-1p5 vertical, spacing-4 horizontal for compact headers */
+  padding: var(--spacing-1p5) var(--spacing-4);
   gap: var(--spacing-2);
   min-height: var(--control-min-touch);
   background-color: var(--surface-bg-tertiary);
@@ -142,6 +142,8 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   /* STRICT LEFT ALIGNMENT: Title grows to fill and aligns left */
   flex-grow: 1;
   text-align: left;
+  /* Optical alignment: lift text to align with icon visual center */
+  transform: translateY(-2px);
 }
 
 /* Ensure buttons sit above the title */
@@ -149,13 +151,6 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
 .rightActionContainer {
   position: relative;
   z-index: 1;
-}
-
-/* Header buttons use lg icons (24px) for better visibility */
-/* Higher specificity to override buttons.css size rules */
-.header>button.btn .material-symbols-rounded,
-.header .material-symbols-rounded {
-  font-size: var(--icon-size-lg) !important;
 }
 
 .rightActionContainer {

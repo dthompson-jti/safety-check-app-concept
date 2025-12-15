@@ -72,7 +72,7 @@ export const NfcWriteView = () => {
     >
       <header className={styles.header}>
         <h3>Write NFC tags</h3>
-        <Button variant="tertiary" size="m" iconOnly onClick={handleClose} aria-label="Close">
+        <Button variant="tertiary" size="lg" iconOnly onClick={handleClose} aria-label="Close">
           <span className="material-symbols-rounded">close</span>
         </Button>
       </header>

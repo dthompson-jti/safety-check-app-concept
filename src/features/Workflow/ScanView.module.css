@@ -45,7 +45,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-3) var(--spacing-4);
+  /* Asymmetric padding: tighter vertical for 48px lg button */
+  padding: var(--spacing-1p5) var(--spacing-4);
   background-color: var(--surface-bg-primary-solid);
   flex-shrink: 0;
   position: relative;
@@ -56,6 +57,8 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
+  /* Optical alignment: lift text to align with icon visual center */
+  transform: translateY(-2px);
 }
 
 .preScanAlert {

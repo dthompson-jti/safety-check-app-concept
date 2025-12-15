@@ -5,7 +5,7 @@ import { LoadingSpinner } from './LoadingSpinner';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'on-solid' | 'destructive';
-  size?: 'xs' | 's' | 'm';
+  size?: 'xs' | 's' | 'm' | 'lg';
   iconOnly?: boolean;
   asChild?: boolean;
   /** Show loading spinner and disable button */
@@ -35,7 +35,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const combinedClassName = `btn ${className || ''}`;
 
     // Icon sizes match .material-symbols-rounded in buttons.css
-    const spinnerSize = size === 'xs' ? 16 : 20;
+    const spinnerSize = size === 'xs' ? 16 : size === 'lg' ? 24 : 20;
 
     return (
       <Comp
