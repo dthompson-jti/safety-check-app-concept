@@ -36,7 +36,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--surface-fg-tertiary);
-  letter-spacing: 0.02em;
+
   /* Uppercase removed per request */
 }
 
@@ -55,7 +55,7 @@
 }
 
 .actionIcon .material-symbols-rounded {
-  font-size: 24px;
+  font-size: var(--icon-size-md);
 }
 
 /* --- INTERACTION --- */

@@ -8,7 +8,7 @@
   gap: var(--spacing-1);
   border-radius: var(--radius-sm);
   font-family: var(--font-family-sans);
-  font-size: 12px;
+  font-size: var(--font-size-2xs);
   font-style: normal;
   font-weight: 600;
   line-height: 18px;
@@ -17,7 +17,7 @@
 }
 
 .badgeIcon {
-  font-size: 14px !important;
+  font-size: var(--font-size-sm) !important;
   /* Override base icon size */
   font-variation-settings: 'opsz' 14;
 }

@@ -2,14 +2,16 @@
 
 .wrapper {
   display: flex;
-  flex: 1; /* Allows the component to fill its container */
+  flex: 1;
+  /* Allows the component to fill its container */
   align-items: center;
   gap: var(--spacing-2);
   padding: var(--spacing-1p5) var(--spacing-3);
-  border-radius: 6px;
-  border: 1px solid transparent; /* Default to transparent */
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  /* Default to transparent */
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
-  height: 38px;
+  height: var(--control-height-md);
 }
 
 /* --- Standalone Variant (Left Panel) --- */
@@ -17,11 +19,13 @@
   background-color: var(--surface-bg-primary);
   border-color: var(--surface-border-primary);
 }
+
 @media (hover: hover) {
   .wrapper[data-variant="standalone"]:hover {
     border-color: var(--control-border-tertiary-hover);
   }
 }
+
 .wrapper[data-variant="standalone"].focused {
   border-color: var(--surface-border-theme);
   box-shadow: 0 0 0 2px var(--control-focus-ring-standard);
@@ -33,6 +37,7 @@
   padding: 0;
   border-color: transparent;
 }
+
 .wrapper[data-variant="integrated"].focused {
   box-shadow: none;
   border-color: transparent;
@@ -44,7 +49,8 @@
 /* The Search Icon */
 .searchIcon {
   color: var(--surface-fg-quinary);
-  order: 3; /* Visual safety: ensure it stays on the right */
+  order: 3;
+  /* Visual safety: ensure it stays on the right */
 }
 
 .wrapper input {
@@ -53,7 +59,8 @@
   font-size: 0.9em;
   color: var(--surface-fg-primary);
   flex: 1;
-  width: 100%; /* Ensure it takes available space */
+  width: 100%;
+  /* Ensure it takes available space */
   box-sizing: border-box;
   order: 1;
 }

@@ -31,10 +31,11 @@
 }
 
 .handle {
-    width: 40px;
-    height: 4px;
+    width: var(--sheet-handle-width);
+    /* Custom wider handle for this sheet */
+    height: var(--sheet-handle-height);
     background-color: var(--surface-border-primary);
-    border-radius: 9999px;
+    border-radius: var(--radius-pill);
 }
 
 .header {
@@ -117,7 +118,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 56px;
+    min-height: var(--control-min-touch);
     background-color: var(--surface-bg-tertiary);
     border: 1px solid var(--surface-border-secondary);
     border-radius: var(--radius-md);

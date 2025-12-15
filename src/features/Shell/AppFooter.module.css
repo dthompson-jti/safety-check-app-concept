@@ -8,8 +8,8 @@
   z-index: 50;
   /* Glassmorphism base */
   background-color: var(--surface-bg-header-translucent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
   border-top: 1px solid var(--surface-border-secondary);
 
   padding: 20px 24px;
@@ -171,7 +171,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
 
 .scanButton {
   width: 100%;
-  height: 48px;
+  height: var(--footer-action-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -189,7 +189,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
   gap: var(--spacing-3);
   color: var(--surface-fg-secondary);
   width: 100%;
-  height: 48px;
+  height: var(--footer-action-height);
   /* Enforce height match with button to prevent layout shift */
 
   /* Interaction Polish: Prevent selection of status text */
@@ -200,7 +200,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
 }
 
 .nfcIcon {
-  font-size: 36px;
+  font-size: var(--font-size-4xl);
   color: var(--surface-fg-primary);
   font-variation-settings: 'FILL' 1;
   line-height: 1;
@@ -209,6 +209,6 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
 .nfcText {
   font-weight: 600;
   font-size: 1.25rem;
-  letter-spacing: 0.01em;
+
   color: var(--surface-fg-primary);
 }

@@ -296,3 +296,28 @@ For complex exit animations requiring sequential phases (e.g., slide-out THEN co
     -   **Outer div:** Controls slow/delayed properties (height, margin)
     -   **Inner div:** Controls immediate properties (x, opacity)
 -   **Reference:** See `Animation-spec.md` for full implementation details and timing values.
+
+#### 12. The Icon Size Token Contract
+
+Icons must use the `--icon-size-*` design tokens from `primitives.css` for consistent sizing. Never use inline `fontSize` or `--font-size-*` tokens for icons.
+
+-   **Token Scale:**
+    | Token | Size | Use Case |
+    |:------|:-----|:---------|
+    | `--icon-size-xs` | 12px (0.75rem) | Hotkey hints, XS button text |
+    | `--icon-size-sm` | 16px (1rem) | XS button icons, toast close, menu chevrons |
+    | `--icon-size-md` | 20px (1.25rem) | **DEFAULT** - Standard UI icons |
+    | `--icon-size-lg` | 24px (1.5rem) | Header icons (menu, back buttons) |
+    | `--icon-size-xl` | 32px (2rem) | Feature icons, status indicators |
+    | `--icon-size-2xl` | 48px (3rem) | Hero icons, empty states |
+
+-   **The Default:** The base `.material-symbols-rounded` class in `fonts.css` sets `font-size: var(--icon-size-md)`. All icons inherit 20px by default.
+
+-   **Overriding for Headers:** Modal headers and app header use `--icon-size-lg` for better visibility:
+    ```css
+    .header .material-symbols-rounded {
+      font-size: var(--icon-size-lg) !important;
+    }
+    ```
+
+-   **Anti-Pattern:** Never use `--font-size-*` tokens for icons—they're for typography. Use `--icon-size-*` tokens exclusively.

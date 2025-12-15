@@ -18,7 +18,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--surface-fg-secondary);
-  letter-spacing: 0.05em;
+
   position: sticky;
   top: 0;
   background-color: var(--surface-bg-secondary);

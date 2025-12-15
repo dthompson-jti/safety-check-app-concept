@@ -23,7 +23,7 @@
     color: var(--surface-fg-secondary);
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-    min-height: 48px;
+    min-height: var(--control-height-lg);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     /* Reset all corners - each layout sets its own */
@@ -86,13 +86,13 @@
 
 .segmentedControl .segmentedControlItem:first-child {
     margin-left: 0;
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
 }
 
 .segmentedControl .segmentedControlItem:last-child {
-    border-top-right-radius: 6px;
-    border-bottom-right-radius: 6px;
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
 }
 
 /* =========================================
@@ -114,13 +114,13 @@
 
 .columnContainer .segmentedControlItem:first-child {
     margin-top: 0;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+    border-top-left-radius: var(--radius-sm);
+    border-top-right-radius: var(--radius-sm);
 }
 
 .columnContainer .segmentedControlItem:last-child {
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
 }
 
 /* =========================================
@@ -181,12 +181,12 @@
     border: 1px solid var(--surface-border-primary);
     margin-left: -1px;
     margin-top: -1px;
-    min-height: 48px;
+    min-height: var(--control-height-lg);
     pointer-events: none;
     border-radius: 0;
 }
 
 /* Dead cell gets bottom-right corner */
 .gridContainer .deadCell:last-child {
-    border-bottom-right-radius: 6px;
+    border-bottom-right-radius: var(--radius-sm);
 }

@@ -1,8 +1,8 @@
 /* src/components/UserAvatar.module.css */
 
 .avatar {
-    width: 36px;
-    height: 36px;
+    width: var(--avatar-size-sm);
+    height: var(--avatar-size-sm);
     border-radius: 50%;
     background-color: var(--surface-bg-brand-solid);
     /* Static blue - overridden by inline style when feature flag is on */
@@ -14,7 +14,7 @@
 
     font-size: 0.875rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
+
 
     cursor: pointer;
     user-select: none;

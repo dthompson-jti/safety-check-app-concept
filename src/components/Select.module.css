@@ -7,10 +7,10 @@
   gap: var(--spacing-1);
   font-family: var(--font-family-sans);
   width: 100%;
-  height: 38px;
+  height: var(--control-height-md);
   padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--surface-border-primary);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.9em;
   background-color: var(--surface-bg-primary);
   color: var(--surface-fg-primary);
@@ -27,7 +27,7 @@
 }
 
 /* Use the standard outer box-shadow for focus. */
-.selectTrigger[data-state='open'], 
+.selectTrigger[data-state='open'],
 .selectTrigger:focus-visible,
 .selectTrigger[data-focused='true'] {
   border-color: var(--surface-border-theme);
@@ -41,6 +41,7 @@
   border-color: var(--control-border-disabled);
   cursor: not-allowed;
 }
+
 .selectTrigger[disabled] .selectIcon {
   color: var(--control-fg-disabled);
 }
@@ -70,7 +71,7 @@
 /* The decorative icon, rendered when an item is not checked */
 .selectItemIcon {
   color: var(--surface-fg-secondary);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-variation-settings: 'opsz' 18;
 }
 

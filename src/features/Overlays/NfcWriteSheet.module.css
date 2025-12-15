@@ -5,7 +5,8 @@
   position: fixed;
   inset: 0;
   background-color: rgba(10, 12, 18, 0.75);
-  z-index: 110; /* Higher than the NFC View (105) */
+  z-index: 110;
+  /* Higher than the NFC View (105) */
 }
 
 /* Content Wrapper */
@@ -23,7 +24,7 @@
 .content {
   /* Updated to Primary BG for better elevation contrast */
   background-color: var(--surface-bg-primary);
-  
+
   border-top-left-radius: var(--radius-2xl);
   border-top-right-radius: var(--radius-2xl);
   padding: 0 var(--spacing-4) var(--spacing-8);
@@ -32,7 +33,7 @@
   align-items: center;
   text-align: center;
   position: relative;
-  
+
   /* Safe area for home indicator */
   padding-bottom: calc(var(--spacing-8) + env(safe-area-inset-bottom));
 }
@@ -64,7 +65,8 @@
 }
 
 .nfcIcon {
-  font-size: 64px; /* Increased size slightly since container is gone */
+  font-size: var(--font-size-6xl);
+  /* Increased size slightly since container is gone */
   color: var(--surface-fg-primary);
   font-variation-settings: 'FILL' 0;
 }
@@ -98,7 +100,7 @@
   font-size: 1rem;
   color: var(--surface-fg-secondary);
   margin: var(--spacing-2) 0 0 0;
-  max-width: 300px;
+  max-width: var(--max-width-scanner);
   line-height: 1.5;
 }
 
@@ -133,7 +135,7 @@
 .devToolsLabel {
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+
   color: var(--surface-fg-tertiary);
   margin-bottom: var(--spacing-3);
   font-weight: 600;
@@ -152,7 +154,18 @@
 }
 
 @keyframes pulse-nfc {
-  0% { opacity: 0.5; transform: scale(0.95); }
-  50% { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 0.5; transform: scale(0.95); }
+  0% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
 }

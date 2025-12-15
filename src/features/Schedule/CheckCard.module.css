@@ -139,7 +139,7 @@
   left: 7px;
   top: 8px;
   bottom: 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background-color: var(--surface-border-primary);
   transition: background-color 0.2s, width 0.2s;
 }
@@ -235,7 +235,7 @@
   - Enforces solid fill via font-variation-settings
 */
 .warningIcon {
-  font-size: 18px;
+  font-size: var(--icon-size-sm);
   color: var(--surface-fg-primary);
   font-variation-settings: 'FILL' 1;
 }
@@ -244,7 +244,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   color: var(--surface-fg-tertiary);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -253,7 +253,7 @@
 
 /* PRD-006: Secondary time style for Dual mode (absolute time on top) */
 .dualSecondary {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   /* Inherit color from .timeDisplay so it uses the same semantic status tokens */
   margin-bottom: 2px;

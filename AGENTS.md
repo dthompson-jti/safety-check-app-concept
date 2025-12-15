@@ -48,11 +48,19 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 
 ### 3. Icons
 *   **Material Symbols Rounded:** Use for icons inside the authenticated app shell.
-    *   **Small / UI Icons (24px):** Filled (`font-variation-settings: 'FILL' 1`) for active/prominent states.
-    *   **Large / Hero Icons (48px+):** Outlined (`font-variation-settings: 'FILL' 0`) for Success/Error status screens.
-*   **Critical Icons (SVG):** The login screen and splash view use SVG components from `CriticalIcons.tsx` to avoid blocking on the 5MB font download.
-    *   `JournalLogo` - Brand logo with wordmark (splash/login header)
-    *   `ErrorIcon` - Form validation errors
+*   **Icon Size Token Scale (`--icon-size-*`):**
+    | Token | Size | Use Case |
+    |:------|:-----|:---------|
+    | `xs` | 12px (0.75rem) | Hotkey hints, XS button text |
+    | `sm` | 16px (1rem) | XS button icons, toast close, menu chevrons |
+    | `md` | 20px (1.25rem) | **DEFAULT** - Standard UI icons (buttons, lists, toggles) |
+    | `lg` | 24px (1.5rem) | Header icons (menu, back buttons), prominent actions |
+    | `xl` | 32px (2rem) | Feature icons, status indicators |
+    | `2xl` | 48px (3rem) | Hero icons, empty states |
+*   **Fill Settings:**
+    *   **UI Icons:** Filled (`font-variation-settings: 'FILL' 1`) for active/prominent states.
+    *   **Hero Icons:** Outlined (`font-variation-settings: 'FILL' 0`) for Success/Error status screens.
+*   **Critical Icons (SVG):** Login/splash use SVG components from `CriticalIcons.tsx` to avoid blocking on font download.
 *   **Color:**
     *   Leading icons in lists: `var(--surface-fg-quaternary)`.
     *   Interactive icons: `var(--surface-fg-secondary)` (default) or `var(--surface-fg-primary)` (active).
@@ -97,6 +105,18 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Anti-Pattern:** Do not add `margin-bottom` to section containers when the parent already uses `gap`. This causes double-spacing.
 *   **Section Headers:** Use the `.sectionHeader` class (0.8rem, 600 weight, `--surface-fg-secondary` color) for form section labels.
 *   **Dividers:** If a visual separator is needed, use `border-bottom: 1px solid var(--surface-border-secondary)` with symmetric `padding-bottom`. Do not add `margin-bottom`—the parent `gap` handles spacing to the next item.
+
+### 8. Typography Hierarchy for Modals/Forms
+*   **The Pattern:** Use a consistent 5-tier hierarchy in all settings modals and forms:
+    | Tier | Role | Size | Weight | Color Token |
+    |:-----|:-----|:-----|:-------|:------------|
+    | 1 | Page Title | 1rem | 600 | `--surface-fg-primary` |
+    | 2 | Section Header | 0.8rem | 600 | `--surface-fg-secondary` |
+    | 3 | Content Title | 1rem | 600 | `--surface-fg-primary` |
+    | 4 | Field Label | 1rem | 500 | `--surface-fg-primary` |
+    | 5 | Helper Text | 0.75rem | 400 | `--surface-fg-tertiary` |
+*   **Critical Rule:** Always define explicit `color` on `.itemLabel` classes. Inherited colors can cause faded text.
+*   **Anti-Pattern:** Do not use `--surface-fg-tertiary` for field labels—it's too faint.
 
 ## CSS Architecture
 *   **Directive:** Prefer CSS Modules (`*.module.css`) for feature-specific styles. Use Global CSS (`src/styles/*.css`) only for reusable design patterns (buttons, lists, inputs).

@@ -195,7 +195,7 @@ export const LoginView = () => {
               </motion.div>
 
               <motion.div variants={contentItemVariants}>
-                <Button type="submit" variant="primary" size="m" loading={isSubmitting} loadingText="Signing in..." style={{ width: '100%', marginTop: '8px' }}>
+                <Button type="submit" variant="primary" size="m" loading={isSubmitting} loadingText="Signing in..." style={{ width: '100%', marginTop: 'var(--spacing-2)' }}>
                   Log In
                 </Button>
               </motion.div>

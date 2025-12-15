@@ -1,18 +1,33 @@
 /* src/features/Workflow/ScanView.module.css */
 
 @keyframes pulse-red {
-  0% { box-shadow: 0 0 0 0px hsla(4, 85%, 55%, 0.6); }
-  100% { box-shadow: 0 0 0 10px hsla(4, 85%, 55%, 0); }
+  0% {
+    box-shadow: 0 0 0 0px hsla(4, 85%, 55%, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 0 10px hsla(4, 85%, 55%, 0);
+  }
 }
 
 @keyframes pulse-green {
-  0% { box-shadow: 0 0 0 0px hsla(145, 99%, 36%, 0.6); }
-  100% { box-shadow: 0 0 0 10px hsla(145, 99%, 36%, 0); }
+  0% {
+    box-shadow: 0 0 0 0px hsla(145, 99%, 36%, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 0 10px hsla(145, 99%, 36%, 0);
+  }
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .scanView {
@@ -45,12 +60,14 @@
 
 .preScanAlert {
   position: absolute;
-  top: 60px; /* Position below the header */
+  top: var(--modal-header-height);
+  /* Position below the header */
   left: var(--spacing-4);
   right: var(--spacing-4);
   z-index: 10;
   display: flex;
-  align-items: center; /* Center vertically */
+  align-items: center;
+  /* Center vertically */
   gap: var(--spacing-3);
   padding: var(--spacing-3);
   background: var(--surface-bg-warning-secondary);
@@ -58,20 +75,24 @@
   color: var(--surface-fg-warning-primary);
   box-shadow: var(--surface-shadow-lg);
 }
+
 .preScanAlert .material-symbols-rounded {
-  font-size: 24px;
+  font-size: var(--icon-size-md);
   font-variation-settings: 'FILL' 1;
 }
+
 .preScanAlert p {
   margin: 0;
   font-size: 1rem;
-  font-weight: 600; /* Bolder for legibility */
+  font-weight: 600;
+  /* Bolder for legibility */
   line-height: 1.5;
   color: var(--surface-fg-warning-primary);
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
 }
+
 .alertSeparator {
   font-weight: 300;
   color: var(--surface-fg-quaternary);
@@ -92,7 +113,7 @@
 
 .viewfinder {
   width: 100%;
-  max-width: 300px;
+  max-width: var(--max-width-scanner);
   aspect-ratio: 1 / 1;
   border-radius: var(--spacing-4);
   overflow: hidden;
@@ -129,8 +150,9 @@
   gap: var(--spacing-2);
   font-weight: 500;
 }
+
 .statusOverlay .material-symbols-rounded {
-  font-size: 48px;
+  font-size: var(--font-size-5xl);
   font-variation-settings: 'FILL' 1;
 }
 
@@ -138,9 +160,11 @@
 .processingState {
   color: var(--surface-fg-on-solid-faint);
 }
+
 .processingState .spinner {
   animation: spin 1.2s linear infinite;
-  font-variation-settings: 'FILL' 0 !important; /* Spinner should be an outline */
+  font-variation-settings: 'FILL' 0 !important;
+  /* Spinner should be an outline */
 }
 
 .successState {
@@ -171,12 +195,13 @@
 
 .subtlePrompt {
   margin: 0;
-  margin-bottom: -12px; /* Pull button up slightly */
+  margin-bottom: -12px;
+  /* Pull button up slightly */
   font-size: 0.9rem;
   color: var(--surface-fg-on-solid-faint);
 }
 
-.footer > button {
+.footer>button {
   width: 100%;
 }
 

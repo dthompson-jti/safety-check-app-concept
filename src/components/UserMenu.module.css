@@ -5,7 +5,7 @@
     flex-direction: column;
     gap: var(--spacing-3);
     padding: var(--spacing-2);
-    min-width: 220px;
+    min-width: var(--side-menu-min-width);
 }
 
 /* Centered Header with Secondary Background */
@@ -20,8 +20,8 @@
 }
 
 .avatarLarge {
-    width: 48px;
-    height: 48px;
+    width: var(--avatar-size-md);
+    height: var(--avatar-size-md);
     border-radius: 50%;
     /* Background set via inline style to match header avatar color */
     color: var(--surface-fg-on-solid);
@@ -52,7 +52,7 @@
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--surface-fg-secondary);
-    letter-spacing: 0.05em;
+
 }
 
 /* Divider */

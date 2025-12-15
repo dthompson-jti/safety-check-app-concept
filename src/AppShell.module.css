@@ -15,7 +15,7 @@
   top: 0;
   left: 0;
   width: 85%;
-  max-width: 400px;
+  max-width: var(--max-width-card);
   height: 100%;
   z-index: 100;
   /* Ensure menu is on top */

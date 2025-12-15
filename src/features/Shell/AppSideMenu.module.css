@@ -111,7 +111,7 @@
 }
 
 .menuItem .material-symbols-rounded {
-  font-size: 24px;
+  font-size: var(--icon-size-md);
   color: var(--surface-fg-tertiary);
   transition: color 0.2s;
 }
@@ -184,7 +184,7 @@
 }
 
 .userProfileCard .material-symbols-rounded {
-  font-size: 24px;
+  font-size: var(--icon-size-md);
 }
 
 /* Future Ideas Card */

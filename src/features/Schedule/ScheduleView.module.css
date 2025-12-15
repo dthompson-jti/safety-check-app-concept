@@ -32,7 +32,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--surface-fg-secondary);
-  letter-spacing: 0.05em;
+
   position: sticky;
   top: var(--header-height);
   padding-top: 16px;

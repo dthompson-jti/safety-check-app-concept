@@ -35,7 +35,8 @@
   display: flex;
   justify-content: center;
   padding: var(--spacing-4) 0;
-  background-color: var(--surface-bg-secondary); /* Match content bg */
+  background-color: var(--surface-bg-secondary);
+  /* Match content bg */
   border-top-left-radius: var(--radius-2xl);
   border-top-right-radius: var(--radius-2xl);
   flex-shrink: 0;
@@ -55,7 +56,8 @@
   justify-content: space-between;
   padding: 0 var(--spacing-4) var(--spacing-3);
   border-bottom: 1px solid var(--surface-border-secondary);
-  background-color: var(--surface-bg-secondary); /* Changed to secondary to blend with handle area */
+  background-color: var(--surface-bg-secondary);
+  /* Changed to secondary to blend with handle area */
   flex-shrink: 0;
 }
 
@@ -99,9 +101,10 @@
 .sectionHeader {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--surface-fg-tertiary);
+  color: var(--surface-fg-secondary);
+  /* Tier 2: Section organizer */
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+
   margin-top: var(--spacing-4);
   margin-bottom: var(--spacing-2);
   padding-left: var(--spacing-4);

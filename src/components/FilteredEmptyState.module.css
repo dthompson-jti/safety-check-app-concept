@@ -23,11 +23,11 @@
   font-size: 0.9em;
   line-height: 1.5;
   color: var(--surface-fg-tertiary);
-  max-width: 320px;
+  max-width: var(--max-width-empty-state);
 }
 
 .actionContainer {
   margin-top: var(--spacing-4);
   width: 100%;
-  max-width: 320px;
+  max-width: var(--max-width-empty-state);
 }

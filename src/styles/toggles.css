@@ -8,7 +8,7 @@
 .toggle-group {
   display: inline-flex;
   align-items: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   position: relative;
 }
@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
+  height: var(--control-height-md);
   padding: var(--spacing-2);
   background-color: var(--surface-bg-primary);
   color: var(--surface-fg-secondary);
@@ -53,6 +53,7 @@
     border-color: var(--control-border-secondary-hover);
     z-index: 1;
   }
+
   .toggle-group .toggle-group-item[aria-checked='true']:hover:not([data-disabled]) {
     background-color: var(--control-bg-selected-hover);
     color: var(--control-fg-selected);
@@ -74,7 +75,7 @@
 }
 
 .toggle-group .toggle-group-item .material-symbols-rounded {
-  font-size: 20px;
+  font-size: var(--icon-size-md);
   transition: font-variation-settings 0.2s ease;
 }
 

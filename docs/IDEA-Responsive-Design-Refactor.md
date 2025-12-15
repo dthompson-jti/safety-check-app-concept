@@ -1,8 +1,21 @@
 # IDEA: Responsive Design Refactor
 
-**Status:** Proposed
+**Status:** Partially Implemented
 **Date:** 2025-12-14
+**Last Updated:** 2025-12-14
 **Context:** The codebase currently relies heavily on hardcoded `px` units for spacing, sizing, and typography. This limits accessibility (user font scaling) and responsiveness across different devices.
+
+## Implementation Progress
+
+### ✅ Completed
+- **Icon Size Tokens:** `--icon-size-*` scale defined and applied globally (xs=12, sm=16, md=20, lg=24, xl=32, 2xl=48).
+- **Radius Tokens:** All hardcoded `border-radius` converted to `--radius-*` tokens.
+- **Default Icon Size:** Base `.material-symbols-rounded` now sets `font-size: var(--icon-size-md)`.
+- **Header Icons:** Menu and back buttons use `--icon-size-lg` for prominence.
+
+### 🔄 In Progress
+- Inline styles in TSX files still contain some hardcoded `px` values.
+- Large feature icons still use `--font-size-*` instead of dedicated tokens.
 
 ## Problem Statement
 A top-to-bottom review revealed extensive use of pixel units (`px`) in CSS modules and TSX files. To support a high-craft, accessible, and responsive experience, we need to transition to relative units (`rem`, `em`) and a robust design token system.

@@ -6,16 +6,18 @@
   justify-content: space-between;
   width: 100%;
   padding: var(--spacing-3) var(--spacing-3);
-  
+
   /* Card Spec */
   background-color: var(--surface-bg-secondary);
   border: 1px solid var(--surface-border-secondary);
   border-radius: var(--radius-lg);
-  margin-bottom: 4px; /* Gap */
-  
+  margin-bottom: 4px;
+  /* Gap */
+
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
-  min-height: 56px; /* Touch Target Spec */
+  min-height: 56px;
+  /* Touch Target Spec */
 }
 
 @media (hover: hover) {
@@ -61,5 +63,5 @@
 
 .chevron {
   color: var(--surface-fg-quaternary);
-  font-size: 20px;
+  font-size: var(--icon-size-md);
 }

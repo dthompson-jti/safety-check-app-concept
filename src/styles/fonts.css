@@ -26,6 +26,8 @@
     font-family: 'Material Symbols Rounded', sans-serif;
     font-weight: normal;
     font-style: normal;
+    font-size: var(--icon-size-md);
+    /* 24px default - CRITICAL for consistent sizing */
     line-height: 1;
     letter-spacing: normal;
     text-transform: none;

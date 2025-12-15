@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-2);
-  min-height: 56px;
+  min-height: var(--control-min-touch);
   /* STANDARDIZED: spacing-3 vertical, spacing-4 horizontal */
   padding: var(--spacing-3) var(--spacing-4);
   background-color: var(--surface-bg-tertiary);

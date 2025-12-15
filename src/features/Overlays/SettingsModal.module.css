@@ -19,7 +19,8 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--surface-fg-secondary);
-  letter-spacing: 0.05em;
+  /* Tier 2: Section organizer */
+
   padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--surface-border-secondary);
   margin: 0;
@@ -71,6 +72,7 @@
 
 .itemLabel {
   font-weight: 500;
+  color: var(--surface-fg-primary);
   cursor: pointer;
   /* For associating with controls */
 }
@@ -89,7 +91,7 @@
 }
 
 .itemValue .material-symbols-rounded {
-  font-size: 20px;
+  font-size: var(--icon-size-md);
 }
 
 /* Logout Button specific style to match width of groups */

@@ -28,7 +28,7 @@
 
 /* Icon: One step larger, now WHITE (on-solid) */
 .icon {
-  font-size: 28px;
+  font-size: var(--font-size-3xl);
   color: var(--surface-fg-on-solid) !important;
   font-variation-settings: 'FILL' 1;
 }

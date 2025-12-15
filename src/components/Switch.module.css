@@ -1,17 +1,18 @@
 /* src/components/Switch.module.css */
 
 .switchRoot {
-  width: 36px;
-  height: 20px;
-  border-radius: 10px;
+  width: var(--control-width-switch);
+  height: var(--control-height-xs);
+  border-radius: var(--radius-lg);
+  /* 10px */
   position: relative;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   transition: background-color 0.2s, border-color 0.2s;
   cursor: pointer;
   flex-shrink: 0;
-  
+
   box-sizing: border-box;
-  
+
   /* Off, Rest state for the container */
   border: 1px solid var(--control-border-tertiary);
   background: var(--control-bg-secondary);
@@ -22,9 +23,11 @@
     border-color: var(--control-border-tertiary-hover);
     background-color: var(--control-bg-secondary-hover);
   }
+
   .switchRoot[data-state='checked']:hover {
     background-color: var(--control-bg-theme-hover);
   }
+
   .switchRoot:disabled:hover {
     border-color: var(--control-border-tertiary);
   }
@@ -32,17 +35,19 @@
 
 .switchRoot[data-state='checked'] {
   background-color: var(--control-bg-theme);
-  border-color: transparent; /* Remove border in 'on' state */
+  border-color: transparent;
+  /* Remove border in 'on' state */
 }
 
 .switchThumb {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: var(--control-width-thumb);
+  height: var(--control-width-thumb);
   border-radius: 50%;
+  /* Perfectly circular thumb */
   transition: transform 0.2s ease-in-out;
   will-change: transform;
-  
+
   background-color: var(--surface-bg-secondary-solid);
   box-shadow: var(--surface-shadow-sm);
 
@@ -53,7 +58,7 @@
 .switchThumb[data-state='checked'] {
   /* REVERTED: Correct 'on' position */
   transform: translateX(12px);
-  
+
   background-color: var(--primitives-base-white);
 }
 
@@ -63,6 +68,7 @@
   background-color: var(--surface-bg-tertiary);
   border-color: var(--control-border-tertiary);
 }
+
 .switchRoot:disabled .switchThumb {
   background-color: var(--surface-bg-secondary-solid);
 }

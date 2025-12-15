@@ -179,7 +179,7 @@ export const FacilitySelectionModal = () => {
               transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
             >
               <div className={styles.contextBanner}>
-                <span className="material-symbols-rounded" style={{ fontSize: 20 }}>domain</span>
+                <span className="material-symbols-rounded">domain</span>
                 {currentGroup?.name}
               </div>
 

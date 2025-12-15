@@ -214,7 +214,10 @@
   /* ----------------------------------------- */
   /*                   RADII                   */
   /* ----------------------------------------- */
-  --radius-sm: 6px;
+  --radius-xs: 0.125rem;
+  /* 2px */
+  --radius-sm: 0.375rem;
+  /* 6px */
   --radius-md: 0.5rem;
   /* 8px */
   --radius-lg: 0.625rem;
@@ -223,4 +226,129 @@
   /* 12px */
   --radius-2xl: 1rem;
   /* 16px */
+  --radius-pill: 9999px;
+
+  /* ----------------------------------------- */
+  /*            TYPOGRAPHY SIZES               */
+  /* ----------------------------------------- */
+  --font-size-2xs: 0.75rem;
+  /* 12px - Badges, captions */
+  --font-size-xs: 0.8125rem;
+  /* 13px - Connectivity badge */
+  --font-size-sm: 0.875rem;
+  /* 14px - Secondary text, buttons-s */
+  --font-size-md: 1rem;
+  /* 16px - Body (base) */
+  --font-size-lg: 1.125rem;
+  /* 18px - Icons in lists, warnings */
+  --font-size-xl: 1.25rem;
+  /* 20px - Form icons, toggles */
+  --font-size-2xl: 1.5rem;
+  /* 24px - List icons, scan overlays */
+  --font-size-3xl: 1.75rem;
+  /* 28px - Offline banner */
+  --font-size-4xl: 2.25rem;
+  /* 36px - Footer action icons */
+  --font-size-5xl: 3rem;
+  /* 48px - Hero status icons, scan feedback */
+  --font-size-6xl: 4rem;
+  /* 64px - Empty state icons, NFC hero */
+
+  /* ----------------------------------------- */
+  /*          ICON SIZES (Material)            */
+  /* ----------------------------------------- */
+  --icon-size-xs: 0.75rem;
+  /* 12px */
+  --icon-size-sm: 1rem;
+  /* 16px */
+  --icon-size-md: 1.25rem;
+  /* 20px - DEFAULT */
+  --icon-size-lg: 1.5rem;
+  /* 24px */
+  --icon-size-xl: 2rem;
+  /* 32px */
+  --icon-size-2xl: 3rem;
+  /* 48px */
+
+  /* ----------------------------------------- */
+  /*        LOGO / BRAND SIZES                 */
+  /* ----------------------------------------- */
+  --logo-size-splash: 9rem;
+  /* 144px */
+  --logo-size-icon: 1.25rem;
+  /* 20px */
+
+  /* ----------------------------------------- */
+  /*            CONTROL HEIGHTS                */
+  /* ----------------------------------------- */
+  --control-height-xs: 1.25rem;
+  /* 20px */
+  --control-height-sm: 2.125rem;
+  /* 34px */
+  --control-height-md: 2.375rem;
+  /* 38px */
+  --control-height-lg: 3rem;
+  /* 48px */
+  --control-min-touch: 3.5rem;
+  /* 56px */
+
+  /* ----------------------------------------- */
+  /*            CONTROL WIDTHS                 */
+  /* ----------------------------------------- */
+  --control-width-switch: 2.25rem;
+  /* 36px */
+  --control-width-checkbox: 1.25rem;
+  /* 20px */
+  --control-width-thumb: 1rem;
+  /* 16px */
+  --control-width-toast-icon: 1.5rem;
+  /* 24px */
+
+  /* ----------------------------------------- */
+  /*              AVATAR SIZES                 */
+  /* ----------------------------------------- */
+  --avatar-size-sm: 2.25rem;
+  /* 36px */
+  --avatar-size-md: 3rem;
+  /* 48px */
+
+  /* ----------------------------------------- */
+  /*          LAYOUT DIMENSIONS                */
+  /* ----------------------------------------- */
+  --modal-header-height: 3.75rem;
+  /* 60px */
+  --footer-action-height: 3rem;
+  /* 48px */
+  --list-leading-width: 3rem;
+  /* 48px */
+  --side-menu-min-width: 13.75rem;
+  /* 220px */
+  --sheet-handle-width: 2rem;
+  /* 32px */
+  --sheet-handle-height: 0.25rem;
+  /* 4px */
+
+  /* ----------------------------------------- */
+  /*     MAX WIDTHS (Content Constraints)      */
+  /* ----------------------------------------- */
+  --max-width-card: 25rem;
+  /* 400px */
+  --max-width-content: 25rem;
+  /* 400px */
+  --max-width-scanner: 18.75rem;
+  /* 300px */
+  --max-width-empty-state: 20rem;
+  /* 320px */
+
+  /* ----------------------------------------- */
+  /*              BLUR VALUES                  */
+  /* ----------------------------------------- */
+  --blur-glass: 0.5rem;
+  /* 8px */
+
+  /* ----------------------------------------- */
+  /*         STROKE / RING WIDTHS              */
+  /* ----------------------------------------- */
+  --ring-width-focus: 2px;
+  --ring-width-underline: 2px;
 }

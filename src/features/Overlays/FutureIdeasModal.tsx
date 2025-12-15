@@ -36,7 +36,7 @@ export const FutureIdeasModal = () => {
                     border: '1px solid var(--color-control-tertiary-border)',
                     borderRadius: 'var(--radius-3)',
                     fontSize: 'var(--font-size-sm)',
-                    color: 'var(--color-text-secondary)',
+                    color: 'var(--surface-fg-primary)',
                     lineHeight: '1.4'
                 }}>
                     <strong>Experimental Features</strong><br />
@@ -97,12 +97,12 @@ export const FutureIdeasModal = () => {
                 </div>
 
                 {/* Pulse Effects */}
-                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 500, color: 'var(--surface-fg-tertiary)' }}>
+                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--surface-fg-secondary)' }}>
                     Pulse Effects
                 </h4>
                 <div className={styles.settingsGroup}>
                     <div style={{ padding: 'var(--spacing-3) 0' }}>
-                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', color: 'var(--surface-fg-secondary)' }}>Glass Pulse Style</label>
+                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', fontWeight: 500, color: 'var(--surface-fg-primary)' }}>Glass Pulse Style</label>
                         <SegmentedControl
                             id="glass-pulse-style"
                             options={[
@@ -118,7 +118,7 @@ export const FutureIdeasModal = () => {
                         />
                     </div>
                     <div style={{ padding: 'var(--spacing-3) 0' }}>
-                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', color: 'var(--surface-fg-secondary)' }}>Card Pulse Style</label>
+                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', fontWeight: 500, color: 'var(--surface-fg-primary)' }}>Card Pulse Style</label>
                         <SegmentedControl
                             id="card-pulse-style"
                             options={[
@@ -136,7 +136,7 @@ export const FutureIdeasModal = () => {
                 </div>
 
                 {/* Card Visuals (Legacy) */}
-                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 500, color: 'var(--surface-fg-tertiary)' }}>
+                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--surface-fg-secondary)' }}>
                     Other Card Effects
                 </h4>
                 <div className={styles.settingsGroup}>

@@ -44,7 +44,7 @@ export const JumpFAB = () => {
             onClick={handleClick}
             aria-label={`Jump to ${lateCount} late check${lateCount > 1 ? 's' : ''}`}
         >
-            <span className="material-symbols-rounded" style={{ fontSize: '24px' }}>
+            <span className="material-symbols-rounded">
                 arrow_upward
             </span>
             <span className={styles.fabLabel}>

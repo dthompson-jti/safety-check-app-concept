@@ -21,7 +21,9 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+  /* Full width on mobile - CRITICAL: No max-width constraint */
   background-color: var(--surface-bg-secondary);
+  /* Section headers should be fg-primary for prominence */
 }
 
 .header {
@@ -31,7 +33,7 @@
   /* STANDARDIZED: spacing-3 vertical, spacing-4 horizontal for breathing room */
   padding: var(--spacing-3) var(--spacing-4);
   gap: var(--spacing-2);
-  min-height: 56px;
+  min-height: var(--control-min-touch);
   background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
@@ -152,6 +154,13 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
 .rightActionContainer {
   position: relative;
   z-index: 1;
+}
+
+/* Header buttons use lg icons (24px) for better visibility */
+/* Higher specificity to override buttons.css size rules */
+.header>button.btn .material-symbols-rounded,
+.header .material-symbols-rounded {
+  font-size: var(--icon-size-lg) !important;
 }
 
 .rightActionContainer {

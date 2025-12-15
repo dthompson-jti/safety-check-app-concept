@@ -16,7 +16,7 @@
     background-color: var(--surface-bg-error-solid);
     color: var(--control-fg-on-solid);
     border: none;
-    border-radius: 9999px;
+    border-radius: var(--radius-pill);
     /* Fully rounded */
 
     box-shadow: var(--surface-shadow-xl);

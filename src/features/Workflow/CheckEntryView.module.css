@@ -151,6 +151,8 @@ body[data-glass-tint="active"] .header {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
+  color: var(--surface-fg-primary);
+  /* Tier 1: Page title */
   text-transform: capitalize;
   display: flex;
   align-items: center;
@@ -172,7 +174,8 @@ body[data-glass-tint="active"] .header {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--surface-fg-secondary);
+  color: var(--surface-fg-primary);
+  /* Tier 3: Card/content  title (room name) */
   width: 100%;
   display: flex;
   align-items: center;
@@ -203,9 +206,9 @@ body[data-glass-tint="active"] .header {
   /* 12px */
   font-weight: 600;
   /* Removed text-transform: uppercase per user feedback */
-  letter-spacing: 0.02em;
 
-  border-radius: 4px;
+
+  border-radius: var(--radius-sm);
   white-space: nowrap;
 }
 
@@ -241,7 +244,7 @@ body[data-glass-tint="active"] .header {
 .warningBlock .material-symbols-rounded {
   color: var(--surface-fg-info-primary);
   font-variation-settings: 'FILL' 1;
-  font-size: 20px;
+  font-size: var(--icon-size-md);
   flex-shrink: 0;
 }
 
@@ -253,7 +256,8 @@ body[data-glass-tint="active"] .header {
 
 .sectionHeader {
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
+  /* Tier 4: Field label (not 600) */
   color: var(--surface-fg-secondary);
   margin-bottom: var(--spacing-2);
 }
@@ -299,8 +303,8 @@ body[data-glass-tint="active"] .header {
   margin: 0;
   font: inherit;
   color: currentColor;
-  width: 20px;
-  height: 20px;
+  width: var(--control-width-checkbox);
+  height: var(--control-width-checkbox);
   border: 1px solid var(--control-border-tertiary);
   border-radius: var(--radius-sm);
   background-color: var(--control-bg-secondary);
@@ -350,8 +354,8 @@ body[data-glass-tint="active"] .header {
   z-index: 50;
   padding: 20px 24px;
   background-color: var(--surface-bg-header-translucent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
   border-top: 1px solid var(--surface-border-secondary);
   display: flex;
   /* SCROLL AFFORDANCE: Add transition for the shadow */
@@ -365,5 +369,5 @@ body[data-glass-tint="active"] .header {
 
 .footer button {
   width: 100%;
-  height: 48px;
+  height: var(--footer-action-height);
 }

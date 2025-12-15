@@ -21,7 +21,7 @@ export const ManualCheckSelectorSheet = () => {
   const [isOpen, setIsOpen] = useAtom(isManualCheckModalOpenAtom);
   const [searchQuery, setSearchQuery] = useAtom(manualSearchQueryAtom);
   const [isGlobalSearch, setIsGlobalSearch] = useAtom(isGlobalSearchActiveAtom);
-  
+
   const results = useAtomValue(manualSelectionResultsAtom);
   const globalResults = useAtomValue(globalManualSearchResultsAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
@@ -38,7 +38,7 @@ export const ManualCheckSelectorSheet = () => {
 
   const handleSelectCheck = (check: SafetyCheck) => {
     setIsOpen(false);
-    
+
     // Delay transition slightly to allow sheet to close smoothly
     setTimeout(() => {
       setWorkflowState({
@@ -55,15 +55,15 @@ export const ManualCheckSelectorSheet = () => {
 
   const renderResidents = (residents: { name: string; id: string }[], specialClassifications?: { residentId: string }[]) => {
     const classifiedIds = new Set(specialClassifications?.map(sc => sc.residentId));
-    
+
     return (
-      <span style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
+      <span style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-1)', alignItems: 'center' }}>
         {residents.map((r, i) => (
           <span key={r.id} style={{ display: 'inline-flex', alignItems: 'center', color: 'inherit' }}>
-             {classifiedIds.has(r.id) && (
-               <span className="material-symbols-rounded" style={{ fontSize: '14px', marginRight: '2px', fontVariationSettings: "'FILL' 1", color: 'var(--surface-fg-primary)' }}>warning</span>
-             )}
-             {r.name}{i < residents.length - 1 ? ',' : ''}
+            {classifiedIds.has(r.id) && (
+              <span className="material-symbols-rounded" style={{ marginRight: 'var(--spacing-0p5)', fontVariationSettings: "'FILL' 1", color: 'var(--surface-fg-primary)' }}>warning</span>
+            )}
+            {r.name}{i < residents.length - 1 ? ',' : ''}
           </span>
         ))}
       </span>
@@ -89,10 +89,10 @@ export const ManualCheckSelectorSheet = () => {
             </div>
 
             <div className={styles.searchContainer}>
-              <SearchInput 
-                placeholder="Search room or resident..." 
-                value={searchQuery} 
-                onChange={setSearchQuery} 
+              <SearchInput
+                placeholder="Search room or resident..."
+                value={searchQuery}
+                onChange={setSearchQuery}
                 variant="standalone"
               />
             </div>
@@ -112,17 +112,17 @@ export const ManualCheckSelectorSheet = () => {
                     ))}
                   </>
                 ) : (
-                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 0', textAlign: 'center', color: 'var(--surface-fg-tertiary)' }}>
-                      <span className="material-symbols-rounded" style={{ fontSize: '48px', marginBottom: '8px', opacity: 0.5 }}>search_off</span>
-                      <p>No rooms found.</p>
-                      {!isGlobalSearch && searchQuery && (
-                         <div style={{ marginTop: '16px' }}>
-                            <Button variant="secondary" size="s" onClick={() => setIsGlobalSearch(true)}>
-                               Search All Facilities ({globalResults.count})
-                            </Button>
-                         </div>
-                      )}
-                   </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 'var(--spacing-8) 0', textAlign: 'center', color: 'var(--surface-fg-secondary)' }}>
+                    <span className="material-symbols-rounded" style={{ marginBottom: 'var(--spacing-2)', opacity: 0.5 }}>search_off</span>
+                    <p>No rooms found.</p>
+                    {!isGlobalSearch && searchQuery && (
+                      <div style={{ marginTop: 'var(--spacing-4)' }}>
+                        <Button variant="secondary" size="s" onClick={() => setIsGlobalSearch(true)}>
+                          Search All Facilities ({globalResults.count})
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

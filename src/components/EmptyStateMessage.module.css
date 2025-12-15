@@ -10,7 +10,7 @@
 }
 
 .placeholderIcon {
-  font-size: 64px !important;
+  font-size: var(--font-size-6xl) !important;
   margin-bottom: var(--spacing-3);
   color: var(--surface-fg-quinary);
   opacity: 0.5;

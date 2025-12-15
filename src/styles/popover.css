@@ -3,7 +3,7 @@
 .popover-content {
   background-color: var(--surface-bg-primary);
   color: var(--surface-fg-primary);
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   border: 1px solid var(--surface-border-secondary);
   box-shadow: var(--surface-shadow-xl);
   z-index: 1100;
@@ -14,7 +14,7 @@
 .popover-content-tooltip {
   background-color: var(--primitives-grey-900);
   color: var(--surface-fg-white);
-  border-radius: 8px;
+  border-radius: var(--spacing-2);
   padding: 8px 12px;
   font-size: 0.85em;
   font-weight: 500;
