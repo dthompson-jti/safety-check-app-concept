@@ -327,3 +327,31 @@ To achieve high-craft optical alignment in headers (where text sits adjacent to 
     -   Use the utility class `.text-trim` or the token `var(--line-height-trim: 1)`.
     -   **Never** use manual transforms (`translateY`) or asymmetric padding to correct this alignment.
 -   **Exceptions:** If a header title must wrap (multi-line), standard leading is permitted, but the container alignment strategy may need to shift from `center` to `flex-start` with a top offset.
+
+#### 14. The Typography Token Contract
+
+We enforce a strict token-based typography system to ensure legibility and consistent hierarchy.
+
+*   **Size Scale:**
+    | Token | Size | Use Case |
+    |:------|:-----|:---------|
+    | `--font-size-2xs` | 12px | Badges, Captions, Metadata |
+    | `--font-size-sm`  | 14px | Buttons (XS/S), Secondary Text, Menu Items |
+    | `--font-size-md`  | 16px | **Body Base (Default)**, Inputs, Form Labels |
+    | `--font-size-lg`  | 18px | Section Headers |
+    | `--font-size-2xl` | 24px | Screen Titles (e.g., Side Menu Header) |
+
+*   **The Rule:** never use hardcoded `px` or `rem` for font sizes. Always use the token.
+
+#### 15. The Font Weight Simplification Principle
+
+To reduce visual noise and rendering fatigue, we use a simplified weight palette:
+
+1.  **400 (Regular):** The default. Used for standard text, resident lists, and timestamps.
+2.  **500 (Medium):** The "Functional" weight. Used for UI elements like Badges, Field Labels, and "Quiet" headers.
+3.  **600 (Semi-Bold):** The "Emphasis" weight. Used for Buttons (`.btn`), Screen Titles, Section Headers, and "Loud" data states (e.g., "Due" timestamps).
+
+**Deprecated:**
+-   **300 (Light):** Too thin for accessible mobile reading.
+-   **700 (Bold):** Too heavy/distracting in the Inter variable font; 600 provides sufficient contrast.
+

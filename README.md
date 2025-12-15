@@ -92,8 +92,11 @@ The project uses a **systematic CSS architecture** organized into layers to cont
     -   **Navigation (100):** Side Menu and Backdrops.
     -   **Overlays (105):** Full-screen tools (Scanner, NFC Writer, Forms) that must cover everything.
     -   **Sheets (110+):** Bottom sheet modals that must sit atop overlays.
+    -   **Sheets (110+):** Bottom sheet modals that must sit atop overlays.
 -   **Mobile-First Interaction States:** The application differentiates between touch and mouse-based interactions. `:active` provides immediate feedback for touch, while `:hover` is treated as a progressive enhancement for pointers.
 -   **Unified List Patterns:** The application uses a strict "Golden Row" pattern (`list.css`) for all selectable lists, ensuring consistent touch targets (56px) and full-width separators.
+-   **Typography enforcement:** Relies on a strict token contract (`--font-size-*`) and specific weight system (400/600 primarily) to maintain a clean, high-DPI friendly hierarchy.
+
 
 ## 6. State Management
 

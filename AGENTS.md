@@ -291,6 +291,7 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Unnecessary Type Assertions:** Do not use `as Type` when TypeScript can already infer the type. ESLint flags this as `@typescript-eslint/no-unnecessary-type-assertion`.
 *   **Environment-Agnostic Timer Types:** Use `ReturnType<typeof setTimeout>` instead of `NodeJS.Timeout` to avoid TS2503 in browser environments.
 
+
 ### Pulse Effects Pattern (Global Visuals)
 *   **Lesson:** For continuous, global animations (like glass breathing or urgency gradients), avoid React render cycles.
 *   **Pattern:**
@@ -298,3 +299,16 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     2.  **Data Attribute:** Sets `body[data-glass-pulse="basic|gradient"]` based on state.
     3.  **CSS Subscription:** Components (`.header`, `.footer`) subscribe to the body attribute via CSS selectors.
 *   **Why:** Allows a single state update to trigger high-performance, synchronized animations across multiple DOM nodes without re-rendering the component tree.
+
+### 11. Typography Hygiene & Token Handling
+*   **Directive:** Do not valid hardcoded `px` or `rem` values for font-sizes in component CSS.
+*   **The Contract:**
+    *   **Scale:** 16px (`--font-size-md`) is the base. 14px (`--font-size-sm`) is the minimum for standard UI. 12px (`--font-size-2xs`) is strictly for badges/captions.
+    *   **Weights:**
+        *   **400 (Regular):** Standard body text, resident lists.
+        *   **500 (Medium):** Badges, Labels, "Quiet" Headers.
+        *   **600 (Semi-Bold):** Buttons, Screen Titles, Section Headers, "Loud" Data.
+        *   **Avoid:** 300 (Too thin) and 700 (Too bold, use 600).
+*   **Anti-Pattern:** `font-size: 15px` (Off-grid), `font-weight: bold` (Vague, usually maps to 700).
+*   **Resident Lists:** Use tighter spacing (`gap: 2px` / `--spacing-0p5`) for multiple residents to group them visually distinct from the room name.
+
