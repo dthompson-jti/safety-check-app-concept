@@ -14,13 +14,13 @@
   box-sizing: border-box;
 
   /* Off, Rest state for the container */
-  border: 1px solid var(--control-border-tertiary);
+  border: 1px solid var(--control-border-secondary);
   background: var(--control-bg-secondary);
 }
 
 @media (hover: hover) {
   .switchRoot:hover:not([data-state='checked']) {
-    border-color: var(--control-border-tertiary-hover);
+    border-color: var(--control-border-secondary-hover);
     background-color: var(--control-bg-secondary-hover);
   }
 
@@ -29,7 +29,7 @@
   }
 
   .switchRoot:disabled:hover {
-    border-color: var(--control-border-tertiary);
+    border-color: var(--control-border-secondary);
   }
 }
 
@@ -48,16 +48,12 @@
   transition: transform 0.2s ease-in-out;
   will-change: transform;
 
-  background-color: var(--surface-bg-secondary-solid);
+  /* Use semantic token that adapts per theme: grey-600 (light), grey-400 (dark) */
+  background-color: var(--control-fg-tertiary);
   box-shadow: var(--surface-shadow-sm);
 
   /* REVERTED: Correct 'off' position */
   transform: translateX(-4px);
-}
-
-/* Dark mode: Brighter thumb when OFF for visibility against dark track */
-body[data-theme^='dark'] .switchThumb:not([data-state='checked']) {
-  background-color: var(--primitives-grey-400);
 }
 
 .switchThumb[data-state='checked'] {
@@ -71,7 +67,7 @@ body[data-theme^='dark'] .switchThumb:not([data-state='checked']) {
   opacity: 0.5;
   cursor: not-allowed;
   background-color: var(--surface-bg-tertiary);
-  border-color: var(--control-border-tertiary);
+  border-color: var(--control-border-secondary);
 }
 
 .switchRoot:disabled .switchThumb {
