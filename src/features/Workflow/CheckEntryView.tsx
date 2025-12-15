@@ -11,6 +11,7 @@ import {
 import { dispatchActionAtom, safetyChecksAtom } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useWaapiSync } from '../../hooks/useWaapiSync';
 import { useScrollToFocused } from '../../data/useScrollToFocused';
 import { draftFormsAtom, saveDraftAtom, clearDraftAtom } from '../../data/formAtoms';
 import { Button } from '../../components/Button';
@@ -139,7 +140,11 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
   const footerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const [showScrollShadow, setShowScrollShadow] = useState(false);
+
+  // Sync Header Animations (Glass Tint)
+  useWaapiSync(headerRef, { isEnabled: true });
 
   // Layout Stability: Ensure focused inputs are not hidden by the sticky footer
   useScrollToFocused({
@@ -315,7 +320,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       exit={{ x: '100%' }}
       transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
-      <header className={styles.header}>
+      <header className={styles.header} ref={headerRef}>
         <Button variant="tertiary" size="lg" iconOnly onClick={handleBack} aria-label="Back">
           <span className="material-symbols-rounded">arrow_back</span>
         </Button>

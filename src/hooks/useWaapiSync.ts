@@ -20,6 +20,7 @@ const SYNCABLE_ANIMATION_NAMES = [
     'card-pulse-gradient',
     'indicator-pulse',
     'badge-pulse',
+    'glass-tint-pulse',
 ];
 
 interface UseWaapiSyncOptions {
