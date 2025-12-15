@@ -1,8 +1,9 @@
 // src/features/Shell/SoundManager.tsx
 import { useEffect } from 'react';
 import useSound from 'use-sound';
-import { useSetAtom } from 'jotai';
+import { useSetAtom, useAtomValue } from 'jotai';
 import { playSoundDispatcherAtom, SoundId, PlaySoundOptions } from '../../data/audioAtoms';
+import { appConfigAtom } from '../../data/atoms';
 
 // Use Vite's base URL to ensure assets load correctly in subpath deployments (e.g. GitHub Pages)
 const BASE_URL = import.meta.env.BASE_URL;
@@ -25,6 +26,7 @@ interface ExposedSound {
  */
 export const SoundManager = () => {
     const setPlaySoundDispatcher = useSetAtom(playSoundDispatcherAtom);
+    const appConfig = useAtomValue(appConfigAtom);
 
     /* eslint-disable @typescript-eslint/no-unsafe-assignment */
     const [playSuccess, { sound: successSound }] = useSound(SUCCESS_URL, { volume: 1.0 });
@@ -33,6 +35,7 @@ export const SoundManager = () => {
 
     useEffect(() => {
         const playFunction = (id: SoundId, options?: PlaySoundOptions) => {
+            if (!appConfig.audioEnabled) return;
             const volume = options?.volume ?? 1.0;
 
             switch (id) {
@@ -48,7 +51,7 @@ export const SoundManager = () => {
         };
 
         setPlaySoundDispatcher(() => playFunction);
-    }, [setPlaySoundDispatcher, playSuccess, playError, successSound, errorSound]);
+    }, [setPlaySoundDispatcher, playSuccess, playError, successSound, errorSound, appConfig.audioEnabled]);
 
     return null;
 };
