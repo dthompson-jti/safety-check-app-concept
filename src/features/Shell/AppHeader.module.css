@@ -38,14 +38,20 @@ body[data-glass-tint="active"] .header::before {
 @keyframes pulse-basic {
 
   0%,
-  100% {
-    /* Light Mode Min: 5% (Tuned additive) */
+  40% {
+    /* Resting State (Long pause) */
     background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
   }
 
   50% {
-    /* Light Mode Max: 12% (Tuned additive) */
+    /* Peak Impact (Thump) */
     background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.12));
+  }
+
+  60%,
+  100% {
+    /* Resting State (Long pause) */
+    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
   }
 }
 
@@ -60,18 +66,20 @@ body[data-theme^='dark'] .header {
 /* Gradient Pulse - Flowing magma effect (4.8s cycle, 4x sync base) */
 body[data-glass-pulse="gradient"] .header {
   /* Emulate Card Magma Colors (+ Boost) */
-  /* Light Min: 6% -> 7%, Mid: 12% -> 14% */
-  --magma-start: rgba(255, 59, 48, 0.07);
-  --magma-mid: rgba(255, 80, 40, 0.14);
-  --magma-end: rgba(255, 59, 48, 0.07);
+  /* Phase Shift: Flip Stops to Mid-Start-Mid */
+  /* Light: Mid 0.15, Start 0.04 */
+  --magma-start: rgba(255, 80, 40, 0.15);
+  --magma-mid: rgba(255, 59, 48, 0.04);
+  --magma-end: rgba(255, 80, 40, 0.15);
 
   background:
     linear-gradient(135deg,
       var(--magma-start) 0%,
       var(--magma-mid) 50%,
       var(--magma-end) 100%),
+    linear-gradient(rgba(255, 59, 48, 0.10), rgba(255, 59, 48, 0.10)),
     var(--surface-bg-header-translucent);
-  background-size: 200% 200%, auto;
+  background-size: 200% 200%, auto, auto;
   animation: pulse-gradient 4.8s ease-in-out infinite;
   animation-delay: var(--glass-sync-delay, 0ms);
 }
@@ -79,11 +87,27 @@ body[data-glass-pulse="gradient"] .header {
 /* Dark Mode Overrides for Gradient Pulse */
 body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   /* Emulate Dark Mode + Min 13% opacity request */
-  /* Dark Min: 25% (Boost), Mid: 65% (Boost) */
-  --magma-start: rgba(255, 59, 48, 0.25);
-  --magma-mid: rgba(255, 59, 48, 0.65);
-  /* Slightly higher than min */
-  --magma-end: rgba(255, 59, 48, 0.25);
+  /* Phase Shift: Flip Stops to Mid-Start-Mid */
+  /* Dark: Mid 0.64, Start 0.23 */
+  --magma-start: rgba(255, 59, 48, 0.64);
+  --magma-mid: rgba(255, 59, 48, 0.23);
+  --magma-end: rgba(255, 59, 48, 0.64);
+
+  /* 
+     Fix for "faintness": Inject Red Base Tint (0.25 now) to match Card's red background.
+     Layering: 
+     1. Pulse Gradient (Top)
+     2. Red Tint (Middle - ensures redness even when pulse is low)
+     3. Translucent Grey Base (Bottom - from variable)
+  */
+  background:
+    linear-gradient(135deg,
+      var(--magma-start) 0%,
+      var(--magma-mid) 50%,
+      var(--magma-end) 100%),
+    linear-gradient(rgba(255, 59, 48, 0.25), rgba(255, 59, 48, 0.25)),
+    var(--surface-bg-header-translucent);
+  background-size: 200% 200%, auto, auto;
 }
 
 @keyframes pulse-gradient {

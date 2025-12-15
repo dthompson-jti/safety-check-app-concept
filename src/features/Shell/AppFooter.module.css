@@ -91,7 +91,9 @@ body[data-theme^='dark'] .footer {
 /* Gradient Pulse - Flowing magma effect (4.8s cycle, 4x sync base) */
 /* Uses ::before pseudo-element to avoid conflicts with safe-area padding */
 body[data-glass-pulse="gradient"] .footer {
-  position: relative;
+  /* CRITICAL FIX: Do NOT set position: relative here. 
+     It overrides the sticky/fixed positioning of the footer. 
+     The footer is already positioned correctly. */
 }
 
 body[data-glass-pulse="gradient"] .footer::before {
@@ -100,12 +102,13 @@ body[data-glass-pulse="gradient"] .footer::before {
   inset: 0;
   z-index: -1;
   /* Emulate Card Magma Colors (+ Boost) */
-  /* Light Min: 6% -> 7%, Mid: 12% -> 14% */
-  --magma-start: rgba(255, 59, 48, 0.07);
-  --magma-mid: rgba(255, 80, 40, 0.14);
-  --magma-end: rgba(255, 59, 48, 0.07);
+  /* Phase Shift: Flip Stops to Mid-Start-Mid */
+  /* Light: Mid 0.15, Start 0.04 */
+  --magma-start: rgba(255, 80, 40, 0.15);
+  --magma-mid: rgba(255, 59, 48, 0.04);
+  --magma-end: rgba(255, 80, 40, 0.15);
 
-  /* Add Red Tint Base */
+  /* Add Red Tint Base (Base layer of the Pulse stack, not the glass bg) */
   --magma-base: rgba(255, 59, 48, 0.10);
 
   background:
@@ -115,16 +118,39 @@ body[data-glass-pulse="gradient"] .footer::before {
       var(--magma-end) 100%),
     var(--magma-base);
   background-size: 200% 200%;
-  animation: pulse-gradient-footer 4.8s linear infinite;
+  /* Fix: Sync with Header/Card (ease-in-out + ping-pong) */
+  animation: pulse-gradient-footer 4.8s ease-in-out infinite;
+}
+
+/* Dark Mode Overrides for Gradient Pulse */
+body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
+  /* Emulate Dark Mode + Min 13% opacity request */
+  /* Phase Shift: Flip Stops to Mid-Start-Mid */
+  /* Dark: Mid 0.64, Start 0.23 */
+  --magma-start: rgba(255, 59, 48, 0.64);
+  --magma-mid: rgba(255, 59, 48, 0.23);
+  --magma-end: rgba(255, 59, 48, 0.64);
+
+  /* 
+     Fix for "faintness": Inject Red Base Tint (0.25 now) 
+  */
+  background:
+    linear-gradient(135deg,
+      var(--magma-start) 0%,
+      var(--magma-mid) 50%,
+      var(--magma-end) 100%),
+    linear-gradient(rgba(255, 59, 48, 0.25), rgba(255, 59, 48, 0.25));
 }
 
 @keyframes pulse-gradient-footer {
-  0% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
 
-  100% {
-    background-position: 200% 50%;
+  50% {
+    background-position: 100% 50%;
   }
 }
 

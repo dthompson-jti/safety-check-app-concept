@@ -19,6 +19,108 @@
   background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
+  position: relative;
+  /* Needed for stacking */
+}
+
+/* =========================================
+   Glass Pulse Effects (Ported from AppHeader)
+   ========================================= */
+
+/* Basic Pulse */
+body[data-glass-pulse="basic"] .header {
+  background-color: var(--surface-bg-header-translucent);
+  /* Switch to glass base */
+}
+
+body[data-glass-pulse="basic"] .header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  animation: pulse-basic 1.2s ease-in-out infinite;
+  animation-delay: var(--glass-sync-delay, 0ms);
+}
+
+@keyframes pulse-basic {
+
+  0%,
+  40% {
+    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
+  }
+
+  50% {
+    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.12));
+  }
+
+  60%,
+  100% {
+    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.05));
+  }
+}
+
+/* Dark Mode Overrides for Basic Pulse */
+body[data-theme^='dark'] .header {
+  --surface-bg-pulse-min: rgba(255, 59, 48, 0.08);
+  --surface-bg-pulse-max: rgba(255, 59, 48, 0.15);
+}
+
+/* Gradient Pulse */
+body[data-glass-pulse="gradient"] .header {
+  /* Emulate Card Magma Colors (Matches AppHeader Round 6) */
+  /* Light: Mid 0.15, Start 0.04 */
+  --magma-start: rgba(255, 80, 40, 0.15);
+  --magma-mid: rgba(255, 59, 48, 0.04);
+  --magma-end: rgba(255, 80, 40, 0.15);
+
+  background:
+    linear-gradient(135deg,
+      var(--magma-start) 0%,
+      var(--magma-mid) 50%,
+      var(--magma-end) 100%),
+    linear-gradient(rgba(255, 59, 48, 0.10), rgba(255, 59, 48, 0.10)),
+    var(--surface-bg-header-translucent);
+  background-size: 200% 200%, auto, auto;
+  animation: pulse-gradient 4.8s ease-in-out infinite;
+  animation-delay: var(--glass-sync-delay, 0ms);
+}
+
+/* Dark Mode Overrides for Gradient Pulse */
+body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
+  /* Dark: Mid 0.64, Start 0.23 */
+  --magma-start: rgba(255, 59, 48, 0.64);
+  --magma-mid: rgba(255, 59, 48, 0.23);
+  --magma-end: rgba(255, 59, 48, 0.64);
+
+  background:
+    linear-gradient(135deg,
+      var(--magma-start) 0%,
+      var(--magma-mid) 50%,
+      var(--magma-end) 100%),
+    linear-gradient(rgba(255, 59, 48, 0.25), rgba(255, 59, 48, 0.25)),
+    var(--surface-bg-header-translucent);
+  background-size: 200% 200%, auto, auto;
+}
+
+@keyframes pulse-gradient {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Reduce Motion */
+@media (prefers-reduced-motion: reduce) {
+  body[data-glass-pulse="gradient"] .header {
+    animation: none;
+    background: var(--surface-bg-pulse-static, rgba(255, 59, 48, 0.1));
+  }
 }
 
 /* Glass Tint Pulse - Late Check warning effect */

@@ -280,7 +280,8 @@
 .cardGradient {
   /* LIGHT MODE (Default): Subtler to avoid overpowering, with slight warmth to fix flatness */
   --magma-start: rgba(255, 59, 48, 0.06);
-  --magma-mid: rgba(255, 80, 40, 0.12);
+  /* Light Mid: 0.12 -> Boosted to 0.14 */
+  --magma-mid: rgba(255, 80, 40, 0.14);
   /* Slight orange tint for depth */
   --magma-end: rgba(255, 59, 48, 0.06);
 
@@ -371,19 +372,26 @@
 /* Basic Pulse - Subtle opacity breathing on card background */
 .cardPulseBasic {
   animation: card-pulse-basic 1.2s ease-in-out infinite;
-  animation-delay: var(--card-sync-delay, 0ms);
+  animation-delay: var(--glass-sync-delay, 0ms);
 }
 
 @keyframes card-pulse-basic {
 
   0%,
-  100% {
-    /* Light Mode Min: 3% -> 6% */
-    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.06));
+  40% {
+    /* Light Mode Min: 4% */
+    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.04));
   }
 
   50% {
-    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.08));
+    /* Light Mode Max: 9% */
+    background-color: var(--surface-bg-pulse-max, rgba(255, 59, 48, 0.09));
+  }
+
+  60%,
+  100% {
+    /* Light Mode Min: 4% */
+    background-color: var(--surface-bg-pulse-min, rgba(255, 59, 48, 0.04));
   }
 }
 

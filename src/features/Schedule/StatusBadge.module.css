@@ -83,9 +83,11 @@
 }
 
 /* Sync to Bio-Sync timing when active (slower, synchronized 2.5s) */
-body[data-late-state="active"] .badge.badgePulse {
+/* Sync to Bio-Sync timing when active (slower, synchronized 2.5s) */
+/* REMOVED: Caused desync with global 1.2s pulse. Badge now runs on strict 1.2s beat. */
+/* body[data-late-state="active"] .badge.badgePulse {
   animation: badge-pulse 2.5s ease-in-out infinite;
-}
+} */
 
 @media (prefers-reduced-motion: reduce) {
   .badge.badgePulse {
