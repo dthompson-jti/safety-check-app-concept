@@ -55,7 +55,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type, dueDate 
   const { feat_badge_mode, feat_invert_badge, feat_invert_card } = useAtomValue(featureFlagsAtom);
 
   // Use centralized epoch sync for perfect animation alignment
-  const syncStyle = useEpochSync(SYNC_BASE_MS);
+  const { style: syncStyle } = useEpochSync(SYNC_BASE_MS);
 
 
   // Upcoming items (early/pending) should NOT have a badge

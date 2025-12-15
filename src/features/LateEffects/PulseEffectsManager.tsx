@@ -1,5 +1,5 @@
 // src/features/LateEffects/PulseEffectsManager.tsx
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { lateCheckCountAtom } from '../../data/appDataAtoms';
 import { featureFlagsAtom, PulseStyle } from '../../data/featureFlags';
@@ -28,20 +28,35 @@ export const PulseEffectsManager = () => {
         ? feat_glass_pulse
         : (feat_glass_tint ? 'basic' : 'none');
 
-    // Calculate sync using the SAME epoch as cards
-    // - Basic pulse: 1.2s period (same as badge)
-    // - Gradient pulse: 4.8s period (same as card magma gradient)
-    const period = pulseStyle === 'gradient' ? SYNC_BASE_MS * 4 : SYNC_BASE_MS;
-    const syncStyle = useEpochSync(period);
-
     const shouldActivate = pulseStyle !== 'none' && lateCount > 0;
 
-    useEffect(() => {
+    // Calculate sync using the SAME epoch as cards
+    // CRITICAL: Pass [shouldActivate] as dependency. 
+    // This forces the hook to capture a FRESH 'currentTime' exactly when the animation starts (shouldActivate=true).
+    // Without this, 'phase' is stale (captured at mount), causing drift because the animation starts LATER than mount.
+    const period = pulseStyle === 'gradient' ? SYNC_BASE_MS * 4 : SYNC_BASE_MS;
+    const syncResult = useEpochSync(period, [shouldActivate]);
+
+    useLayoutEffect(() => {
         if (shouldActivate) {
+            // FORCE RESTART:
+            // 1. Remove attribute (stops animation)
+            document.body.removeAttribute('data-glass-pulse');
+            
+            // 2. Force Reflow (calculates styles without animation)
+            // This ensures the browser sees the "stop" state
+            void document.body.offsetHeight; 
+            
+            // 3. Set Variable (calculated for T=Now)
+            console.log(`[PulseManager] Activating ${pulseStyle} | Phase: ${syncResult.phase}ms`);
+            document.body.style.setProperty('--glass-sync-delay', `${syncResult.phase}ms`);
+            
+            // 4. Re-add attribute (restarts animation)
+            // The animation starts at T=Now, using the delay derived for T=Now.
             document.body.setAttribute('data-glass-pulse', pulseStyle);
-            // Set sync delay CSS variable for header/footer animations
-            document.body.style.setProperty('--glass-sync-delay', syncStyle.animationDelay || '0ms');
+
         } else {
+            console.log(`[PulseManager] Deactivating`);
             document.body.removeAttribute('data-glass-pulse');
             document.body.style.removeProperty('--glass-sync-delay');
         }
@@ -50,7 +65,7 @@ export const PulseEffectsManager = () => {
             document.body.removeAttribute('data-glass-pulse');
             document.body.style.removeProperty('--glass-sync-delay');
         };
-    }, [shouldActivate, pulseStyle, syncStyle.animationDelay]);
+    }, [shouldActivate, pulseStyle, syncResult.phase]);
 
     // No DOM elements - effect is handled via body attribute + CSS
     return null;

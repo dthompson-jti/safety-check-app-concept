@@ -56,7 +56,12 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
     (isLate && feat_card_pulse === 'basic') ? SYNC_BASE_MS
       : (isLate && feat_card_pulse === 'gradient') ? SYNC_BASE_MS * 4
         : SYNC_BASE_MS * 2;
-  const syncStyle = useEpochSync(effectivePeriod);
+  const { style: syncStyle, phase: debugPhase } = useEpochSync(effectivePeriod);
+
+  // Debug log for card sync
+  if (isLate) {
+    console.log(`[CheckCard ${check.id}] Mounting Late Card | Period: ${effectivePeriod} | Calculated Phase: ${debugPhase}ms`);
+  }
 
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
