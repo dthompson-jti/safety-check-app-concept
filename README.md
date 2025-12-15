@@ -68,7 +68,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.
 -   **Manual Check Workflow:** A streamlined flow where selecting a room manually bypasses the scanner and navigates directly to the check entry form, respecting user intent.
 -   **Simulated Admin Tools & Offline Mode:** Complete UI simulations for NFC tag provisioning and offline data synchronization workflows.
--   **Future Ideas Playground:** Experimental features (Haptics, Enhanced Avatar, Visual Effects) are gated behind a secure unlock (Konami Code or 7-tap on logo). Unlocking applies a curated -   **Future Ideas Playground:** Experimental features (Haptics, Enhanced Avatar, Visual Effects) are gated behind a secure unlock (Konami Code or 7-tap on logo). Unlocking applies a curated "Dave's Favorites" preset: **Light Mode** with Haptics, Audio, Enhanced Avatar, and Invert Badge **ON**; pulse effects **OFF**. Locking performs a strict reset to defaults. preset: **Light Mode** with Haptics, Audio, Enhanced Avatar, and Invert Badge **ON**; pulse effects **OFF**. Locking performs a strict reset to defaults.
+-   **Future Ideas Playground:** Experimental features (Haptics, Enhanced Avatar, Visual Effects) are gated behind a secure unlock (Konami Code or 7-tap on logo). Unlocking applies a curated "Dave's Favorites" preset: **Light Mode** with Haptics, Audio, Enhanced Avatar, and Invert Badge **ON**; pulse effects **OFF**. Locking performs a strict reset to defaults.
 
 
 ## 4. Directory Structure
