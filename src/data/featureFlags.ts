@@ -79,7 +79,7 @@ export const useFutureIdeas = () => {
         setUnlocked(true);
         // Apply "Dave's Favorites" preset when unlocking
         setTimeout(() => {
-            setTheme('dark-c');
+            setTheme('light');
             setAppConfig(cur => ({
                 ...cur,
                 showStatusIndicators: true,
@@ -88,13 +88,24 @@ export const useFutureIdeas = () => {
             }));
             setFeatureFlags(cur => ({
                 ...cur,
+                // ON: Haptics, Audio, Enhanced Avatar, Invert Badge
                 enableEnhancedAvatarDropdown: true,
                 useHapticsEnabled: true,
                 useSoundEnabled: true,
-                enableDarkMode: true,
-                feat_glass_pulse: 'gradient',
-                feat_card_pulse: 'gradient',
                 feat_invert_badge: true,
+                // OFF: Dark mode, Pulse effects, everything else
+                enableDarkMode: false,
+                feat_glass_pulse: 'none',
+                feat_card_pulse: 'none',
+                feat_vignette: false,
+                feat_desaturation: false,
+                feat_glass_tint: false,
+                feat_card_gradient: false,
+                feat_card_border: false,
+                feat_hazard_texture: false,
+                feat_invert_card: false,
+                feat_badge_mode: 'none',
+                feat_jump_fab: false,
             }));
         }, 0);
     }, [setUnlocked, setTheme, setAppConfig, setFeatureFlags]);

@@ -16,7 +16,7 @@
 }
 
 .sectionTitle {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--surface-fg-secondary);
   /* Tier 2: Section organizer */

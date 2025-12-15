@@ -17,7 +17,7 @@
 
 .sectionHeader {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--surface-fg-secondary);
   /* Tier 2: Section organizer */
@@ -29,7 +29,7 @@
 /* Subsection Header (No border, tighter spacing) - for h4-level groupings */
 .subsectionHeader {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--surface-fg-secondary);
   /* Tier 2.5: Sub-grouping within a section */

@@ -173,7 +173,7 @@
   text-align: center;
   padding: var(--spacing-4) 0 var(--spacing-4);
   color: var(--surface-fg-tertiary);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   flex-shrink: 0;
   /* Never shrink the footer text */
 }

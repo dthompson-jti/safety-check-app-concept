@@ -105,18 +105,18 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 ### 7. Form Sections & Spacing
 *   **Directive:** When adding new sections to forms (like `CheckEntryView`), rely on the parent container's `gap` property for inter-section spacing.
 *   **Anti-Pattern:** Do not add `margin-bottom` to section containers when the parent already uses `gap`. This causes double-spacing.
-*   **Section Headers:** Use the `.sectionHeader` class (0.8rem, 600 weight, `--surface-fg-secondary` color) for form section labels.
+*   **Section Headers:** Use the `.sectionHeader` class (`--font-size-sm` / 14px, 600 weight, `--surface-fg-secondary` color) for form section labels.
 *   **Dividers:** If a visual separator is needed, use `border-bottom: 1px solid var(--surface-border-secondary)` with symmetric `padding-bottom`. Do not add `margin-bottom`—the parent `gap` handles spacing to the next item.
 
 ### 8. Typography Hierarchy for Modals/Forms
 *   **The Pattern:** Use a consistent 5-tier hierarchy in all settings modals and forms:
     | Tier | Role | Size | Weight | Color Token |
     |:-----|:-----|:-----|:-------|:------------|
-    | 1 | Page Title | 1rem | 600 | `--surface-fg-primary` |
-    | 2 | Section Header | 0.8rem | 600 | `--surface-fg-secondary` |
-    | 3 | Content Title | 1rem | 600 | `--surface-fg-primary` |
-    | 4 | Field Label | 1rem | 500 | `--surface-fg-primary` |
-    | 5 | Helper Text | 0.75rem | 400 | `--surface-fg-tertiary` |
+    | 1 | Page Title | `--font-size-md` (16px) | 600 | `--surface-fg-primary` |
+    | 2 | Section Header (h3) | `--font-size-sm` (14px) | 600 | `--surface-fg-secondary` |
+    | 3 | Content Title | `--font-size-md` (16px) | 600 | `--surface-fg-primary` |
+    | 4 | Field Label | `--font-size-md` (16px) | 500 | `--surface-fg-primary` |
+    | 5 | Helper Text | `--font-size-2xs` (12px) | 400 | `--surface-fg-tertiary` |
 *   **Critical Rule:** Always define explicit `color` on `.itemLabel` classes. Inherited colors can cause faded text.
 *   **Anti-Pattern:** Do not use `--surface-fg-tertiary` for field labels—it's too faint.
 

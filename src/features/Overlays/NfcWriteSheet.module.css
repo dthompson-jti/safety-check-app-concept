@@ -149,7 +149,7 @@
 
 .devButtons button {
   flex: 1;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   padding: 0 var(--spacing-2);
 }
 
