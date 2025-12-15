@@ -19,7 +19,7 @@
 
 .residentName {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--surface-fg-secondary);
   display: flex;
@@ -50,7 +50,7 @@
 /* FIX: Removed empty .classificationDetails ruleset to resolve linter warning. */
 .classificationDetails p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.5;
   color: var(--surface-fg-warning-primary);

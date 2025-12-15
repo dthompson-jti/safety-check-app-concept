@@ -145,7 +145,7 @@ body[data-glass-tint="active"] .header {
 
 .headerTitle {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--surface-fg-primary);
   /* Tier 1: Page title */
@@ -170,7 +170,7 @@ body[data-glass-tint="active"] .header {
 
 .roomHeader {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-weight: 600;
   color: var(--surface-fg-primary);
   /* Tier 3: Card/content  title (room name) */
@@ -200,9 +200,9 @@ body[data-glass-tint="active"] .header {
   /* Slightly compact */
   padding: 0 8px;
 
-  font-size: 0.75rem;
-  /* 12px */
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  /* 14px - Match StatusBadge */
+  font-weight: 500;
   /* Removed text-transform: uppercase per user feedback */
 
 
@@ -235,7 +235,7 @@ body[data-glass-tint="active"] .header {
   border-radius: var(--radius-md);
   color: var(--surface-fg-info-primary);
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   line-height: 1.5;
 }
 
@@ -253,7 +253,7 @@ body[data-glass-tint="active"] .header {
 }
 
 .sectionHeader {
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   /* Tier 4: Field label (not 600) */
   color: var(--surface-fg-secondary);
@@ -335,7 +335,7 @@ body[data-glass-tint="active"] .header {
 }
 
 .attestationLabel {
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.5;
   color: var(--surface-fg-secondary);

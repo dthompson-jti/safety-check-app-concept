@@ -88,13 +88,13 @@
 
 .appTitle h3 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
   color: var(--surface-fg-primary);
 }
 
 .shortcutIcon {
-  font-size: 4rem !important;
+  font-size: var(--font-size-6xl) !important;
   color: var(--surface-fg-tertiary);
   /* Was quinary, failed contrast */
   opacity: 1;
@@ -119,7 +119,7 @@
 
 .supportLink {
   margin-top: var(--spacing-2);
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   color: var(--surface-fg-secondary);
   text-align: left;
 }
@@ -140,7 +140,7 @@
 
 .errorMessage {
   color: var(--surface-fg-alert-primary);
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   padding: 0 var(--spacing-1);
 }
@@ -148,7 +148,7 @@
 .formError {
   background-color: var(--surface-bg-error-primary);
   color: var(--surface-fg-alert-primary);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   padding: var(--spacing-3);
   border-radius: var(--radius-md);
@@ -212,7 +212,7 @@
 .modalTextContent h3 {
   margin-top: 0;
   margin-bottom: var(--spacing-2);
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   color: var(--surface-fg-primary);
 }
 
@@ -232,14 +232,14 @@
   margin-top: 0;
   margin-bottom: var(--spacing-2);
   color: var(--surface-fg-primary);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
 }
 
 .infoNote ul {
   margin: 0;
   padding-left: var(--spacing-5);
   color: var(--surface-fg-secondary);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   line-height: 1.6;
 }
 

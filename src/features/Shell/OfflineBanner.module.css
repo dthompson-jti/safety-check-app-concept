@@ -46,7 +46,7 @@
 
 /* Row 1: Status - Now WHITE (on-solid) */
 .statusText {
-  font-size: 0.95rem;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--surface-fg-on-solid);
   font-variant-numeric: tabular-nums;
@@ -60,7 +60,7 @@
 
 /* Row 2: Queue Info - Already White */
 .queueText {
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   color: var(--surface-fg-on-solid);
   /* High contrast white */
   line-height: 1.2;
@@ -75,7 +75,7 @@
 
   font-family: var(--font-family-sans);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   color: var(--surface-fg-on-solid);
   text-decoration: underline;
   cursor: pointer;

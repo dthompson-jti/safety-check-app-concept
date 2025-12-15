@@ -29,8 +29,8 @@
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
   margin: 0;
   user-select: none;
   -webkit-user-select: none;
@@ -39,7 +39,7 @@
 }
 
 .version {
-  font-size: 0.75rem;
+  font-size: var(--font-size-2xs);
   font-weight: 500;
   color: var(--surface-fg-tertiary);
   user-select: none;
@@ -47,7 +47,7 @@
 }
 
 .subtitle {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 400;
   color: var(--surface-fg-secondary);
   margin: 0;
@@ -81,7 +81,7 @@
   width: 100%;
   padding: var(--spacing-3) var(--spacing-3);
   text-align: left;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   font-weight: 500;
   font-family: var(--font-family-sans);
   color: var(--surface-fg-secondary);
@@ -174,12 +174,12 @@
 
 .userName {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   color: var(--surface-fg-primary);
 }
 
 .userRole {
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   color: var(--surface-fg-secondary);
 }
 
@@ -197,7 +197,7 @@
 
 .futureIdeasHeader {
   margin: 0 0 var(--spacing-3) 0;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--surface-fg-primary);
 }
@@ -227,7 +227,7 @@
 }
 
 .toggleItem label {
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--surface-fg-secondary);
 }

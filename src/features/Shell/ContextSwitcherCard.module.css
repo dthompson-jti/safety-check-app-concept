@@ -33,7 +33,7 @@
 }
 
 .label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-2xs);
   font-weight: 600;
   color: var(--surface-fg-tertiary);
 
@@ -41,7 +41,7 @@
 }
 
 .value {
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--surface-fg-primary);
 }

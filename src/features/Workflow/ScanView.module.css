@@ -55,7 +55,7 @@
 
 .header h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   /* Optical alignment: lift text to align with icon visual center */
   transform: translateY(calc(var(--spacing-0p5) * -1));
@@ -86,7 +86,7 @@
 
 .preScanAlert p {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   font-weight: 600;
   /* Bolder for legibility */
   line-height: 1.5;
@@ -200,7 +200,7 @@
   margin: 0;
   margin-bottom: calc(var(--spacing-3) * -1);
   /* Pull button up slightly */
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   color: var(--surface-fg-on-solid-faint);
 }
 
@@ -221,7 +221,7 @@
 .devControlsHeader {
   text-align: center;
   color: var(--surface-fg-tertiary);
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
   margin: 0;
 }
 
