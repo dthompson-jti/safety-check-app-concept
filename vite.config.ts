@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['favicon.svg', 'favicon-32x32.png', 'apple-touch-icon.png', 'maskable-icon.png'],
+      includeAssets: ['favicon-v0.svg', 'favicon-32x32.png', 'apple-touch-icon.png', 'maskable-icon-v0.png'],
       manifest: {
         name: 'Safety Check App',
         short_name: 'SafetyCheck',
@@ -19,17 +19,17 @@ export default defineConfig({
         orientation: 'portrait',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'pwa-192x192-v0.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'pwa-512x512-v0.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: 'maskable-icon.png',
+            src: 'maskable-icon-v0.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
