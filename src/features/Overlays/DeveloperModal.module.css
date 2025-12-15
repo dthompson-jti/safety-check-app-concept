@@ -26,6 +26,30 @@
   border-bottom: 1px solid var(--surface-border-secondary);
 }
 
+/* Subsection Header (No border, tighter spacing) - for h4-level groupings */
+.subsectionHeader {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-fg-secondary);
+  /* Tier 2.5: Sub-grouping within a section */
+}
+
+/* Warning/Intro Block - for informational callouts */
+.warningBlock {
+  padding: var(--spacing-3);
+  background-color: var(--surface-bg-tertiary);
+  border: 1px solid var(--surface-border-secondary);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--surface-fg-primary);
+  line-height: 1.5;
+}
+
+.warningBlock strong {
+  font-weight: 600;
+}
+
 .settingsGroup {
   display: flex;
   flex-direction: column;

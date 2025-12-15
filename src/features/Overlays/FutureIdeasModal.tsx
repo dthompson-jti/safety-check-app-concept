@@ -29,16 +29,8 @@ export const FutureIdeasModal = () => {
         >
             {/* Future Ideas Section */}
             <div className={styles.settingSection}>
-                <div className={styles.warningBlock} style={{
-                    padding: 'var(--spacing-3)',
-                    marginBottom: 'var(--spacing-3)',
-                    backgroundColor: 'var(--color-surface-tertiary)',
-                    border: '1px solid var(--color-control-tertiary-border)',
-                    borderRadius: 'var(--radius-3)',
-                    fontSize: 'var(--font-size-sm)',
-                    color: 'var(--surface-fg-primary)',
-                    lineHeight: '1.4'
-                }}>
+                {/* Intro Warning Block */}
+                <div className={styles.warningBlock}>
                     <strong>Experimental Features</strong><br />
                     These are just conceptual ideas for a potential future version.  Nothing here is expected for v1.
                 </div>
@@ -80,9 +72,7 @@ export const FutureIdeasModal = () => {
                 </div>
 
                 {/* Late Check Concepts */}
-                <h3 style={{ marginTop: 'var(--spacing-5)', marginBottom: 'var(--spacing-3)', fontSize: '0.875rem', fontWeight: 600, color: 'var(--surface-fg-secondary)' }}>
-                    Late Check Concepts
-                </h3>
+                <h3 className={styles.sectionHeader}>Late Check Concepts</h3>
 
                 {/* Global Atmosphere */}
                 <div className={styles.settingsGroup}>
@@ -97,12 +87,10 @@ export const FutureIdeasModal = () => {
                 </div>
 
                 {/* Pulse Effects */}
-                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--surface-fg-secondary)' }}>
-                    Pulse Effects
-                </h4>
+                <h4 className={styles.subsectionHeader}>Pulse Effects</h4>
                 <div className={styles.settingsGroup}>
-                    <div style={{ padding: 'var(--spacing-3) 0' }}>
-                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', fontWeight: 500, color: 'var(--surface-fg-primary)' }}>Glass Pulse Style</label>
+                    <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+                        <label className={styles.itemLabel}>Glass Pulse Style</label>
                         <SegmentedControl
                             id="glass-pulse-style"
                             options={[
@@ -117,8 +105,8 @@ export const FutureIdeasModal = () => {
                             }}
                         />
                     </div>
-                    <div style={{ padding: 'var(--spacing-3) 0' }}>
-                        <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: '0.875rem', fontWeight: 500, color: 'var(--surface-fg-primary)' }}>Card Pulse Style</label>
+                    <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+                        <label className={styles.itemLabel}>Card Pulse Style</label>
                         <SegmentedControl
                             id="card-pulse-style"
                             options={[
@@ -136,9 +124,7 @@ export const FutureIdeasModal = () => {
                 </div>
 
                 {/* Card Visuals (Legacy) */}
-                <h4 style={{ marginTop: 'var(--spacing-4)', marginBottom: 'var(--spacing-2)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--surface-fg-secondary)' }}>
-                    Other Card Effects
-                </h4>
+                <h4 className={styles.subsectionHeader}>Other Card Effects</h4>
                 <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
                         <label htmlFor="feat-card-border-switch" className={styles.itemLabel}>Fluid Borders</label>
@@ -175,7 +161,7 @@ export const FutureIdeasModal = () => {
                 </div>
 
                 {/* Badge Pulse - Simple Toggle */}
-                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
+                <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
                         <label htmlFor="feat-badge-pulse-switch" className={styles.itemLabel}>Badge Pulse</label>
                         <Switch
@@ -187,7 +173,7 @@ export const FutureIdeasModal = () => {
                 </div>
 
                 {/* Navigation */}
-                <div className={styles.settingsGroup} style={{ marginTop: 'var(--spacing-4)' }}>
+                <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
                         <label htmlFor="feat-jump-fab-switch" className={styles.itemLabel}>Jump FAB</label>
                         <Switch
