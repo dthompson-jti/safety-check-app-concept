@@ -35,7 +35,7 @@
 
   position: sticky;
   top: var(--header-height);
-  padding-top: 16px;
+  padding-top: var(--spacing-4);
   margin-left: calc(-1 * var(--spacing-4));
   margin-right: calc(-1 * var(--spacing-4));
   padding-left: var(--spacing-4);

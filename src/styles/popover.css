@@ -15,7 +15,7 @@
   background-color: var(--primitives-grey-900);
   color: var(--surface-fg-white);
   border-radius: var(--spacing-2);
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   font-size: 0.85em;
   font-weight: 500;
   line-height: 1.4;

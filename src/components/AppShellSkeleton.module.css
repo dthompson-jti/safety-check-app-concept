@@ -21,7 +21,7 @@
 
 /* Skeleton Header */
 .header {
-    height: 60px;
+    height: var(--modal-header-height);
     background: var(--surface-bg-primary);
     border-bottom: 1px solid var(--surface-border-secondary);
     display: flex;
@@ -31,8 +31,8 @@
 }
 
 .headerIcon {
-    width: 38px;
-    height: 38px;
+    width: var(--control-height-md);
+    height: var(--control-height-md);
     border-radius: var(--radius-xl);
     background: var(--surface-bg-tertiary);
     opacity: 0.4;
@@ -47,8 +47,8 @@
 }
 
 .headerAvatar {
-    width: 38px;
-    height: 38px;
+    width: var(--control-height-md);
+    height: var(--control-height-md);
     border-radius: 50%;
     background: var(--surface-bg-tertiary);
     opacity: 0.4;
@@ -59,7 +59,7 @@
     flex: 1;
     overflow: hidden;
     padding: var(--spacing-4);
-    padding-top: calc(var(--spacing-4) + 60px);
+    padding-top: calc(var(--spacing-4) + var(--modal-header-height));
     /* Account for header */
     display: flex;
     flex-direction: column;
@@ -102,10 +102,10 @@
 
 .cardIndicator {
     position: absolute;
-    left: 7px;
-    top: 8px;
-    bottom: 8px;
-    width: 2px;
+    left: var(--spacing-2);
+    top: var(--spacing-2);
+    bottom: var(--spacing-2);
+    width: var(--ring-width-underline);
     border-radius: var(--radius-xs);
     background: var(--surface-bg-tertiary);
     opacity: 0.5;
@@ -144,7 +144,7 @@
 
 /* Skeleton Footer */
 .footer {
-    height: 96px;
+    height: var(--spacing-24);
     background: var(--surface-bg-primary);
     border-top: 1px solid var(--surface-border-secondary);
     display: flex;
@@ -155,8 +155,8 @@
 }
 
 .footerButton {
-    width: 64px;
-    height: 48px;
+    width: var(--spacing-16);
+    height: var(--control-action-height);
     border-radius: var(--radius-lg);
     background: var(--surface-bg-tertiary);
     opacity: 0.3;

@@ -150,27 +150,27 @@
 
 /* Top-left: always item 1 */
 .gridContainer .segmentedControlItem:nth-child(1) {
-    border-top-left-radius: 6px;
+    border-top-left-radius: var(--radius-sm);
 }
 
 /* Top-right: always item 2 */
 .gridContainer .segmentedControlItem:nth-child(2) {
-    border-top-right-radius: 6px;
+    border-top-right-radius: var(--radius-sm);
 }
 
 /* Bottom-left: second-to-last when in left column (odd position) */
 .gridContainer .segmentedControlItem:nth-last-child(2):nth-child(odd) {
-    border-bottom-left-radius: 6px;
+    border-bottom-left-radius: var(--radius-sm);
 }
 
 /* Bottom-left: last item when in left column (odd position, no dead cell) */
 .gridContainer .segmentedControlItem:last-child:nth-child(odd) {
-    border-bottom-left-radius: 6px;
+    border-bottom-left-radius: var(--radius-sm);
 }
 
 /* Bottom-right: last item when in right column (even position) */
 .gridContainer .segmentedControlItem:last-child:nth-child(even) {
-    border-bottom-right-radius: 6px;
+    border-bottom-right-radius: var(--radius-sm);
 }
 
 /* =========================================

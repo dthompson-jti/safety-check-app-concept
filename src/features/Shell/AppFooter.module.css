@@ -12,10 +12,10 @@
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border-top: 1px solid var(--surface-border-secondary);
 
-  padding: 20px 24px;
+  padding: var(--spacing-5) var(--spacing-6);
 
   /* Safe area handling for modern mobile devices (iPhone Home Indicator) */
-  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--spacing-5) + env(safe-area-inset-bottom));
 }
 
 /* =========================================

@@ -32,7 +32,7 @@
   font-weight: 600;
   color: var(--surface-fg-primary);
   /* Optical alignment: lift text to align with icon visual center */
-  transform: translateY(-2px);
+  transform: translateY(calc(var(--spacing-0p5) * -1));
 }
 
 .controlsHeader {

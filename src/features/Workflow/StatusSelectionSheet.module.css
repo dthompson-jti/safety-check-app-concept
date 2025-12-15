@@ -56,7 +56,7 @@
     -webkit-overflow-scrolling: touch;
     flex: 1;
     /* Safe zone for focus rings */
-    padding: 2px;
+    padding: var(--spacing-0p5);
 }
 
 /* Column Layout */
@@ -90,7 +90,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 56px;
+    min-height: var(--control-min-touch);
     padding: var(--spacing-3) var(--spacing-4);
     background-color: var(--control-bg-secondary);
     border: 1px solid var(--control-border-secondary);

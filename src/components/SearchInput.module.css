@@ -28,7 +28,7 @@
 
 .wrapper[data-variant="standalone"].focused {
   border-color: var(--surface-border-theme);
-  box-shadow: 0 0 0 2px var(--control-focus-ring-standard);
+  box-shadow: 0 0 0 var(--ring-width-focus) var(--control-focus-ring-standard);
 }
 
 /* --- Integrated Variant (Popovers) --- */

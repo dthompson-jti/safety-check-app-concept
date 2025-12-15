@@ -11,12 +11,12 @@
   background-color: var(--surface-bg-secondary);
   border: 1px solid var(--surface-border-secondary);
   border-radius: var(--radius-lg);
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
   /* Gap */
 
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
-  min-height: 56px;
+  min-height: var(--control-min-touch);
   /* Touch Target Spec */
 }
 
@@ -44,8 +44,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
   border-radius: 50%;
   background-color: var(--surface-bg-tertiary);
   color: var(--surface-fg-tertiary);

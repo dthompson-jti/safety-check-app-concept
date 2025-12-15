@@ -58,7 +58,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   /* Optical alignment: lift text to align with icon visual center */
-  transform: translateY(-2px);
+  transform: translateY(calc(var(--spacing-0p5) * -1));
 }
 
 .preScanAlert {
@@ -198,7 +198,7 @@
 
 .subtlePrompt {
   margin: 0;
-  margin-bottom: -12px;
+  margin-bottom: calc(var(--spacing-3) * -1);
   /* Pull button up slightly */
   font-size: 0.9rem;
   color: var(--surface-fg-on-solid-faint);

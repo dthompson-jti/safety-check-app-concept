@@ -44,11 +44,11 @@
 
 .indicator {
   position: absolute;
-  left: 7px;
-  top: 5px;
-  bottom: 5px;
+  left: var(--spacing-2);
+  top: var(--spacing-2);
+  bottom: var(--spacing-2);
   border-radius: var(--radius-sm);
-  width: 2px;
+  width: var(--ring-width-underline);
   background-color: var(--surface-bg-tertiary);
 }
 

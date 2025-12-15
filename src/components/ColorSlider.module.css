@@ -17,14 +17,14 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-3);
-    padding: 12px 0;
+    padding: var(--spacing-3) 0;
     /* Space for thumb overflow */
 }
 
 /* Track wrapper - provides the 1px border around gradient */
 .trackWrapper {
     flex: 1;
-    height: 6px;
+    height: var(--spacing-1p5);
     /* 4px gradient + 1px border each side */
     border-radius: var(--radius-pill);
     border: 1px solid var(--surface-border-primary);
@@ -53,12 +53,12 @@
 .thumb {
     position: absolute;
     top: 50%;
-    width: 24px;
-    height: 24px;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
     border-radius: 50%;
     background: var(--surface-bg-primary);
-    border: 2px solid var(--surface-border-primary);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    border: var(--ring-width-focus) solid var(--surface-border-primary);
+    box-shadow: var(--surface-shadow-sm);
     transform: translate(-50%, -50%);
     cursor: grab;
     touch-action: none;
@@ -66,7 +66,7 @@
 }
 
 .thumb:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--surface-shadow-md);
 }
 
 .thumb:active,
@@ -75,14 +75,14 @@
 }
 
 .thumb:focus-visible {
-    outline: 2px solid var(--surface-border-focus);
+    outline: var(--ring-width-focus) solid var(--surface-border-focus);
     outline-offset: 2px;
 }
 
 /* Color swatch preview with 1px border */
 .swatch {
     width: 52px;
-    height: 32px;
+    height: var(--spacing-8);
     border-radius: var(--radius-sm);
     border: 1px solid var(--surface-border-primary);
     flex-shrink: 0;

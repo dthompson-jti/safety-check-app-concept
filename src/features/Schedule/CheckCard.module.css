@@ -136,9 +136,9 @@
 
 .statusIndicator {
   position: absolute;
-  left: 7px;
-  top: 8px;
-  bottom: 8px;
+  left: var(--spacing-2);
+  top: var(--spacing-2);
+  bottom: var(--spacing-2);
   border-radius: var(--radius-sm);
   background-color: var(--surface-border-primary);
   transition: background-color 0.2s, width 0.2s;
