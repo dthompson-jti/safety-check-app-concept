@@ -1,60 +1,43 @@
 // src/features/Shell/AppHeader.tsx
-import { useAtom } from 'jotai';
+import { useRef, useCallback } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import { appViewAtom } from '../../data/atoms';
 import { headerHeightAtom } from '../../data/layoutAtoms';
+import { lateCheckCountAtom } from '../../data/appDataAtoms';
 import { useLayoutRegistration } from '../../data/useLayoutRegistration';
+import { useWaapiSync } from '../../hooks/useWaapiSync';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 import { StatusBar } from './StatusBar';
 import { UserAvatar } from '../../components/UserAvatar';
 import styles from './AppHeader.module.css';
-import { useRef, useEffect } from 'react'; // Added useEffect and useRef
-import { sessionAtom } from '../../data/atoms'; // Added sessionAtom
 
 export const AppHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
-  const [session] = useAtom(sessionAtom); // Added session atom usage
-  const user = session.user; // Added user declaration
+  const lateCount = useAtomValue(lateCheckCountAtom);
 
   // Use centralized layout registration instead of manual measurement
   // This prevents conflicts with LayoutOrchestrator
-  const layoutRef = useLayoutRegistration(headerHeightAtom); // Renamed headerRef to layoutRef to avoid conflict
+  const layoutRef = useLayoutRegistration(headerHeightAtom);
 
-  const debugHeaderRef = useRef<HTMLDivElement>(null); // Added a separate ref for debugging
+  // Separate ref for WAAPI sync (animating element)
+  const animRef = useRef<HTMLElement | null>(null);
 
-  // Combine refs: one for layout registration, one for debugging
-  const combinedHeaderRef = (node: HTMLDivElement | null) => {
-    // Assign to layoutRef (which is a callback ref from useLayoutRegistration)
-    if (typeof layoutRef === 'function') {
-      layoutRef(node);
-    } else if (layoutRef) {
-      (layoutRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    }
-    // Assign to debugHeaderRef
-    debugHeaderRef.current = node;
-  };
+  // Combine refs: layout needs the header, WAAPI sync needs the header
+  const combinedRef = useCallback((node: HTMLElement | null) => {
+    layoutRef.current = node;
+    animRef.current = node;
+  }, [layoutRef]);
 
-  // Debug: Check what the header actually sees
-  useEffect(() => {
-    const checkStyle = () => {
-      if (debugHeaderRef.current) { // Using debugHeaderRef here
-        const computed = window.getComputedStyle(debugHeaderRef.current);
-        const beforeComputed = window.getComputedStyle(debugHeaderRef.current, '::before');
-        console.log(`[AppHeader] Computed Delay: ${computed.animationDelay} | Before Delay: ${beforeComputed.animationDelay} | Var: ${computed.getPropertyValue('--glass-sync-delay')}`);
-      }
-    };
-    // Check initially and periodically
-    checkStyle();
-    const interval = setInterval(checkStyle, 2000);
-    return () => clearInterval(interval);
-  }, []); // Added useEffect for logging
+  // Sync pulse animations when late checks exist
+  useWaapiSync(animRef, { isEnabled: lateCount > 0 });
 
   const handleMenuClick = () => {
     setAppView(appView === 'sideMenu' ? 'dashboardTime' : 'sideMenu');
   };
 
   return (
-    <header className={styles.header} ref={combinedHeaderRef}>
+    <header className={styles.header} ref={combinedRef}>
       <div className={styles.headerContent}>
         <div className={styles.leftActions}>
           <Tooltip content="Open navigation">

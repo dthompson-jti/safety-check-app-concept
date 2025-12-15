@@ -8,10 +8,12 @@ import {
   hardwareSimulationAtom
 } from '../../data/atoms';
 import {
-  timeSortedChecksAtom
+  timeSortedChecksAtom,
+  lateCheckCountAtom
 } from '../../data/appDataAtoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
+import { useWaapiSync } from '../../hooks/useWaapiSync';
 import { Button } from '../../components/Button';
 import { useCompleteCheck } from '../Workflow/useCompleteCheck';
 import styles from './AppFooter.module.css';
@@ -26,6 +28,7 @@ import styles from './AppFooter.module.css';
 export const AppFooter = () => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const appConfig = useAtomValue(appConfigAtom);
+  const lateCount = useAtomValue(lateCheckCountAtom);
 
   // State needed for Smart NFC Simulation
   const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
@@ -35,6 +38,9 @@ export const AppFooter = () => {
   const footerRef = useRef<HTMLElement>(null);
   const { trigger: triggerHaptic } = useHaptics();
   const { completeCheck } = useCompleteCheck();
+
+  // Sync pulse animations when late checks exist
+  useWaapiSync(footerRef, { isEnabled: lateCount > 0 });
 
   useLayoutEffect(() => {
     const updateHeight = () => {

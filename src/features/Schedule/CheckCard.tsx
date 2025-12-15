@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion, Transition } from 'framer-motion';
 import { SafetyCheck, Resident } from '../../types';
@@ -9,7 +9,7 @@ import {
 } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
 import { useCountdown } from '../../data/useCountdown';
-import { useEpochSync, SYNC_BASE_MS } from '../../hooks/useEpochSync';
+import { useWaapiSync } from '../../hooks/useWaapiSync';
 import { StatusBadge } from './StatusBadge';
 import styles from './CheckCard.module.css';
 
@@ -46,23 +46,14 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   const { feat_card_pulse, feat_card_gradient, feat_card_border, feat_hazard_texture, feat_invert_card } = useAtomValue(featureFlagsAtom);
 
   const isPulsing = recentlyCompletedCheckId === check.id;
-
-  // Determine the animation period BEFORE calling useEpochSync
-  // - Basic pulse: 1.2s (SYNC_BASE_MS)
-  // - Gradient pulse: 4.8s (SYNC_BASE_MS * 4)
-  // - Other effects (border, hazard): 2.4s (SYNC_BASE_MS * 2)
   const isLate = check.status === 'missed';
-  const effectivePeriod =
-    (isLate && feat_card_pulse === 'basic') ? SYNC_BASE_MS
-      : (isLate && feat_card_pulse === 'gradient') ? SYNC_BASE_MS * 4
-        : SYNC_BASE_MS * 2;
-  const { style: syncStyle, phase: debugPhase } = useEpochSync(effectivePeriod);
 
-  // Debug log for card sync
-  if (isLate) {
-    console.log(`[CheckCard ${check.id}] Mounting Late Card | Period: ${effectivePeriod} | Calculated Phase: ${debugPhase}ms`);
-  }
+  // Ref for WAAPI sync on the animated card element
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
+  // Sync animations when card has animated effects
+  const hasAnimatedEffects = isLate && (feat_card_pulse !== 'none' || feat_card_gradient || feat_card_border || feat_hazard_texture);
+  useWaapiSync(cardRef, { isEnabled: hasAnimatedEffects });
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
@@ -98,7 +89,6 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
   // Legacy: feat_card_gradient still works if feat_card_pulse is 'none'
   const legacyGradient = isLate && feat_card_pulse === 'none' && feat_card_gradient ? styles.cardGradient : '';
 
-  const hasAnimatedEffects = isLate && (feat_card_pulse !== 'none' || feat_card_gradient || feat_card_border || feat_hazard_texture);
   const cardEffectClasses = [
     styles.checkCard,
     isPulsing ? styles.isCompleting : '',
@@ -108,9 +98,6 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
     isLate && feat_hazard_texture ? styles.cardHazard : '',
     isLate && feat_invert_card ? styles.cardInvert : ''
   ].filter(Boolean).join(' ');
-
-  // Apply sync delay only when animated effects are active
-  const cardStyle = hasAnimatedEffects ? syncStyle : undefined;
 
 
 
@@ -139,6 +126,7 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
     >
       <motion.div
         // INNER: Slide and fade animation - starts immediately
+        ref={cardRef}
         transition={transition}
         initial={{ opacity: 0, x: 0 }}
         animate={{ opacity: 1, x: 0 }}
@@ -152,7 +140,6 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
           }
         }}
         className={cardEffectClasses}
-        style={cardStyle}
         data-status={check.status}
         data-check-id={check.id}
         data-indicators-visible={showStatusIndicators}

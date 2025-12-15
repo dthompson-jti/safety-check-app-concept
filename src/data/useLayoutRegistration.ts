@@ -13,7 +13,7 @@ import { useSetAtom, PrimitiveAtom } from 'jotai';
  */
 export const useLayoutRegistration = (heightAtom: PrimitiveAtom<number>) => {
     const setHeight = useSetAtom(heightAtom);
-    const elementRef = useRef<HTMLDivElement>(null);
+    const elementRef = useRef<HTMLElement>(null);
     // Track the last value to prevent redundant updates (which trigger the loop)
     const lastHeight = useRef<number>(0);
     const frameId = useRef<number>(0);
