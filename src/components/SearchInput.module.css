@@ -12,6 +12,8 @@
   /* Default to transparent */
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
   height: var(--control-height-md);
+  min-height: var(--control-height-md);
+  /* Enforce minimum height */
 }
 
 /* --- Standalone Variant (Left Panel) --- */

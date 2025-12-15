@@ -7,8 +7,19 @@ The project aims for **WCAG 2.1 Level AA** compliance. Accessibility is not an a
 *   **Contrast:** Minimum **4.5:1** for normal text, **3:1** for large text and UI components (borders, icons).
 *   **Keyboard:** Full navigability without a mouse.
 *   **Semantics:** Proper ARIA roles and landmarks for screen reader support.
+*   **Touch Targets:** Minimum **44x44 CSS pixels** for interactive controls (WCAG 2.5.5).
 
----
+### Touch Target Implementation
+The application uses design tokens to enforce touch target minimums:
+
+| Token | Size | Use Case |
+|:------|:-----|:---------|
+| `--control-height-md` | 44px (2.75rem) | **Standard controls** (buttons, inputs) |
+| `--control-height-sm` | 36px (2.25rem) | Secondary controls (with padding expansion) |
+| `--control-height-lg` | 48px (3rem) | Navigation buttons (header icons) |
+| `--control-min-touch` | 56px (3.5rem) | "Golden Row" list items |
+
+**Micro-Interaction Pattern:** For visually small elements (chip close buttons, inline actions), use CSS `::after` pseudo-element to expand the invisible hit area to 44px while keeping the visual size compact.
 
 ## 2. Tooling & Auditing
 

@@ -129,6 +129,11 @@
   flex-direction: column;
 }
 
+/* Icon Promotion: User requested 1-step larger icons for menu items */
+.menuList :global(.material-symbols-rounded) {
+  font-size: var(--icon-size-lg);
+}
+
 .footer {
   flex-shrink: 0;
   padding: var(--spacing-4);
@@ -185,7 +190,8 @@
 }
 
 .userProfileCard .material-symbols-rounded {
-  font-size: var(--icon-size-md);
+  font-size: var(--icon-size-lg);
+  /* Promoted for visibility */
 }
 
 /* Future Ideas Card */

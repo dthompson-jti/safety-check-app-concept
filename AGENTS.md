@@ -50,13 +50,14 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Material Symbols Rounded:** Use for icons inside the authenticated app shell.
 *   **Icon Size Token Scale (`--icon-size-*`):**
     | Token | Size | Use Case |
-    |:------|:-----|:---------|
+    |:------|:-----|:---------:|
     | `xs` | 12px (0.75rem) | Hotkey hints, XS button text |
     | `sm` | 16px (1rem) | XS button icons, menu chevrons |
     | `md` | 20px (1.25rem) | **DEFAULT** - Standard UI icons (buttons, lists, toggles, toast close) |
-    | `lg` | 24px (1.5rem) | Header icons (menu, back, close buttons via `size="lg"`) |
+    | `lg` | 24px (1.5rem) | Header icons, **Navigation icons (Side Menu, Switchers)** |
     | `xl` | 32px (2rem) | Feature icons, status indicators |
     | `2xl` | 48px (3rem) | Hero icons, empty states |
+*   **Navigation Icon Promotion:** Side Menu list items, User Profile card icons, and Facility Switcher icons use `--icon-size-lg` (24px) for improved touch confidence. This is applied via contextual CSS overrides in `AppSideMenu.module.css` and `ContextSwitcherCard.module.css`.
 *   **Button Size Pairing:** Use `size="lg"` for header/navigation icon buttons (menu, back, close) to get 48px touch targets with 24px icons. Never use `size="m"` + CSS override for header buttons.
 *   **Fill Settings:**
     *   **UI Icons:** Filled (`font-variation-settings: 'FILL' 1`) for active/prominent states.

@@ -63,7 +63,8 @@
 .notesInput {
   font-family: var(--font-family-sans);
   width: 100%;
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-3);
+  /* Optical centering for 44px height */
   border: 1px solid var(--surface-border-secondary);
   border-radius: var(--radius-sm);
   font-size: 0.9em;
@@ -72,7 +73,8 @@
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   resize: vertical;
-  min-height: 40px;
+  min-height: var(--control-height-md);
+  /* WCAG touch target */
   /* Intentionally smaller than touch target - not a tappable button */
   overflow: hidden;
 }

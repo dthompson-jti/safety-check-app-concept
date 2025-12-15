@@ -31,4 +31,16 @@
 
 .clearButton {
   color: var(--control-fg-quaternary);
+  position: relative;
+}
+
+/* Invisible touch target expansion for WCAG compliance.
+   Keeps visual size small (chip-like) but expands hit area to 44px. */
+.clearButton::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
 }

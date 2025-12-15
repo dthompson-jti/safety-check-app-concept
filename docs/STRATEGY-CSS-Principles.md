@@ -356,3 +356,34 @@ To reduce visual noise and rendering fatigue, we use a simplified weight palette
 -   **700 (Bold):** Too heavy/distracting in the Inter variable font; 600 provides sufficient contrast.
 -   **800 (ExtraBold):** Reserved for branding only, but generally avoid in UI (prefer 600).
 
+#### 16. The Control Height Token Contract (WCAG Touch Targets)
+
+Interactive controls must meet WCAG 2.1 AA minimum touch target requirements (44x44 CSS pixels).
+
+*   **Token Scale:**
+    | Token | Size | Use Case |
+    |:------|:-----|:---------|
+    | `--control-height-xs` | 20px (1.25rem) | Micro-interactions (visual only, expand via `::after`) |
+    | `--control-height-sm` | 36px (2.25rem) | Secondary controls (with padding expansion) |
+    | `--control-height-md` | 44px (2.75rem) | **Standard controls** - Buttons, Inputs, Textareas |
+    | `--control-height-lg` | 48px (3rem) | Navigation buttons (header icons via `size="lg"`) |
+    | `--control-min-touch` | 56px (3.5rem) | "Golden Row" list items |
+
+*   **The Rule:** All `<input>`, `<button>`, and `<textarea>` elements at the "medium" size must use `height: var(--control-height-md)` and `min-height: var(--control-height-md)` to ensure consistent 44px targets.
+
+*   **Micro-Interaction Pattern:** For visually compact elements (chip close buttons, inline clear icons), use the `::after` pseudo-element expansion:
+    ```css
+    .microButton {
+      position: relative;
+    }
+    .microButton::after {
+      content: '';
+      position: absolute;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+    }
+    ```
+
+*   **Anti-Pattern:** Never use hardcoded `height: 38px` or `height: 40px` for interactive controls. Use tokens.

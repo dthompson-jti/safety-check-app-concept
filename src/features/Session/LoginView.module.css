@@ -117,9 +117,7 @@
   text-align: left;
 }
 
-.usernameInput {
-  text-transform: lowercase;
-}
+/* Username input: no text-transform needed, validation is case-insensitive */
 
 .supportLink {
   margin-top: var(--spacing-2);

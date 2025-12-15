@@ -55,7 +55,8 @@
 }
 
 .actionIcon .material-symbols-rounded {
-  font-size: var(--icon-size-md);
+  font-size: var(--icon-size-lg);
+  /* Promoted for visibility */
 }
 
 /* --- INTERACTION --- */
