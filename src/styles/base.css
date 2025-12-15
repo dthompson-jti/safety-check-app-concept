@@ -31,10 +31,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* --- NEW: Global Weight Reset --- */
+b,
+strong {
+  font-weight: var(--font-weight-semibold);
+}
+
 /* --- NEW: Global Link Styles --- */
 a {
   color: var(--surface-fg-theme-primary);
-  font-weight: 500;
+  color: var(--surface-fg-theme-primary);
+  font-weight: var(--font-weight-medium);
+  text-decoration: underline;
   text-decoration: underline;
   text-underline-offset: 3px;
   transition: color 0.2s;

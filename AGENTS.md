@@ -288,6 +288,11 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     3.  **CSS Subscription:** Components (`.header`, `.footer`) subscribe to the body attribute via CSS selectors.
 *   **Why:** Allows a single state update to trigger high-performance, synchronized animations across multiple DOM nodes without re-rendering the component tree.
 
+### Font Weight Rendering ("Fake Bold" Pitfall)
+*   **The Bug:** Text looks "suspiciously thin" (800 rendering as 400) or "super thick" (600 rendering as fake-bold).
+*   **The Cause:** Using a **Static Font File** (e.g., Regular-only) while requesting different weights (600, 800). The browser synthesizes the weight, often poorly.
+*   **The Fix:** Ensure the **Variable Font file** (`Inter-roman.var.woff2`) is loaded, which supports the full 100-900 axis. Verify file size is >200KB (Static files are typicaly <30KB).
+
 ### 11. Typography Hygiene & Token Handling
 *   **Directive:** Do not valid hardcoded `px` or `rem` values for font-sizes in component CSS.
 *   **The Contract:**
@@ -295,8 +300,8 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   **Weights:**
         *   **400 (Regular):** Standard body text, resident lists.
         *   **500 (Medium):** Badges, Labels, "Quiet" Headers.
-        *   **600 (Semi-Bold):** Buttons, Screen Titles, Section Headers, "Loud" Data.
-        *   **Avoid:** 300 (Too thin) and 700 (Too bold, use 600).
+        *   **600 (Semi-Bold):** Buttons, Section Headers, Screen Titles ("Safeguard").
+        *   **Avoid:** 300 (Too thin), 700 (Use 600), and 800 (Use 600 for titles to reduce visual weight).
 *   **Anti-Pattern:** `font-size: 15px` (Off-grid), `font-weight: bold` (Vague, usually maps to 700).
 *   **Resident Lists:** Use tighter spacing (`gap: 2px` / `--spacing-0p5`) for multiple residents to group them visually distinct from the room name.
 

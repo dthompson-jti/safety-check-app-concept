@@ -30,7 +30,8 @@
 
 .title {
   font-size: var(--font-size-2xl);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
+  color: var(--brand-logo-text);
   margin: 0;
   user-select: none;
   -webkit-user-select: none;

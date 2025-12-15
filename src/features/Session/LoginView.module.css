@@ -89,8 +89,8 @@
 .appTitle h3 {
   margin: 0;
   font-size: var(--font-size-2xl);
-  font-weight: 600;
-  color: var(--surface-fg-primary);
+  font-weight: var(--font-weight-semibold);
+  color: var(--brand-logo-text);
 }
 
 .shortcutIcon {

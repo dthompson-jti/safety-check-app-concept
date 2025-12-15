@@ -91,7 +91,7 @@
 
 .title {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-semibold);
   color: var(--surface-fg-primary);
   margin: 0;
 }

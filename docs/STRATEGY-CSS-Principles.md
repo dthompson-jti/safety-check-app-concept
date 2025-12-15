@@ -90,7 +90,7 @@ Fonts require careful handling to prevent Flash of Unstyled Content (FOUC), espe
 
 -   **Self-Hosted Fonts:** All fonts are served from `/public/fonts/` to enable offline PWA support.
 -   **Icon Fonts (`font-display: block`):** Material Symbols must use `block` to hide icon elements until the font loads. Otherwise, users see the word "shield" instead of the icon.
--   **Text Fonts (`font-display: swap`):** Inter uses `swap` to allow immediate text rendering with a fallback font, swapping to the custom font when loaded.
+-   **Text Fonts (`font-display: swap`):** Inter (`Inter-roman.var.woff2`) uses `swap` to allow immediate text rendering with a fallback font, swapping to the custom font when loaded. We use the full **Variable Font** (~352KB) to support all weights (100-900) correctly with a single HTTP request, rather than multiple static files.
 -   **Async Loading:** Heavy font files (Material Symbols ~5MB) use `fetchpriority="low"` preload to avoid blocking initial render.
 -   **Critical Path SVGs:** For login/splash screens, use inline SVG components (`CriticalIcons.tsx`) instead of font icons to render instantly without network dependency.
 -   **Inline Critical CSS:** Background colors and dark mode detection CSS are inlined in `index.html` to prevent white flash before React hydrates.
@@ -349,9 +349,10 @@ To reduce visual noise and rendering fatigue, we use a simplified weight palette
 
 1.  **400 (Regular):** The default. Used for standard text, resident lists, and timestamps.
 2.  **500 (Medium):** The "Functional" weight. Used for UI elements like Badges, Field Labels, and "Quiet" headers.
-3.  **600 (Semi-Bold):** The "Emphasis" weight. Used for Buttons (`.btn`), Screen Titles, Section Headers, and "Loud" data states (e.g., "Due" timestamps).
+3.  **600 (Semi-Bold):** The "Emphasis" weight. Used for Buttons (`.btn`), Screen Titles ("Safeguard"), Section Headers, and "Loud" data states.
 
 **Deprecated:**
 -   **300 (Light):** Too thin for accessible mobile reading.
 -   **700 (Bold):** Too heavy/distracting in the Inter variable font; 600 provides sufficient contrast.
+-   **800 (ExtraBold):** Reserved for branding only, but generally avoid in UI (prefer 600).
 

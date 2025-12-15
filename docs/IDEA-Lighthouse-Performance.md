@@ -26,7 +26,7 @@
 | `index.js` | 73 KB | App bundle |
 | `error.mp3` | 38 KB | Audio feedback |
 | `vendor-ui.js` | 31 KB | Radix UI |
-| `Inter.woff2` | 23 KB | Text font |
+| `Inter-roman.var.woff2` | 352 KB | Variable Font (100-900) |
 
 ### Main Thread Work: 2,390ms
 
