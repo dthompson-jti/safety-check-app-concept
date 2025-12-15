@@ -176,6 +176,12 @@ export const LoginView = () => {
                   onChange={(e) => handleUsernameChange(e.target.value)}
                   isInvalid={!!usernameError}
                   autoFocus
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  autoComplete="username"
+                  enterKeyHint="next"
+                  className={styles.usernameInput}
                 />
                 {usernameError && <div className={styles.errorMessage}>{usernameError}</div>}
               </motion.div>
@@ -190,6 +196,10 @@ export const LoginView = () => {
                   value={password}
                   onChange={(e) => handlePasswordChange(e.target.value)}
                   isInvalid={!!passwordError}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  autoComplete="current-password"
+                  enterKeyHint="go"
                 />
                 {passwordError && <div className={styles.errorMessage}>{passwordError}</div>}
               </motion.div>
