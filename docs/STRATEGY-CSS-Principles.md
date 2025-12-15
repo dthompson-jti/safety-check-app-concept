@@ -316,3 +316,14 @@ Icons must use the `--icon-size-*` design tokens from `primitives.css` for consi
 -   **Header Icon Buttons:** Use `Button size="lg"` for header navigation buttons (menu, back, close). This provides 48px touch targets with 24px icons natively—no CSS overrides needed.
 
 -   **Anti-Pattern:** Never use `size="m"` + CSS override for header icons. Use `size="lg"` instead. Never use `--font-size-*` tokens for icons—they're for typography.
+
+#### 13. The Typography Alignment Contract
+
+To achieve high-craft optical alignment in headers (where text sits adjacent to icon buttons), we handle line-height explicitly to remove vertical whitespace.
+
+-   **The Problem:** Default line-heights (1.2, 1.5) add invisible space above and below the text cap-height. In a flex container centered with buttons, this causes the text to appear "shifted up" relative to the button icons.
+-   **The Contract:** Single-line headers adjacent to fixed-height controls **must** remove this leading.
+-   **The Implementation:**
+    -   Use the utility class `.text-trim` or the token `var(--line-height-trim: 1)`.
+    -   **Never** use manual transforms (`translateY`) or asymmetric padding to correct this alignment.
+-   **Exceptions:** If a header title must wrap (multi-line), standard leading is permitted, but the container alignment strategy may need to shift from `center` to `flex-start` with a top offset.

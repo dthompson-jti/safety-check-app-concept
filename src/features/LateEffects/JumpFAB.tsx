@@ -2,7 +2,8 @@
 import { useAtomValue } from 'jotai';
 import { lateCheckCountAtom, timeSortedChecksAtom } from '../../data/appDataAtoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
-import { workflowStateAtom } from '../../data/atoms';
+// Use centralized overlay state to prevent floating over other UI elements
+import { useGlobalOverlayState } from '../../hooks/useGlobalOverlayState';
 import styles from './JumpFAB.module.css';
 
 /**
@@ -11,18 +12,16 @@ import styles from './JumpFAB.module.css';
  * Only appears when:
  * - Feature flag is enabled
  * - There are late checks
- * - User is on main schedule list (not drilled into form views)
+ * - User is on main schedule list (i.e. not obscured by modals, menus, or workflow forms)
  */
 export const JumpFAB = () => {
     const lateCount = useAtomValue(lateCheckCountAtom);
     const checks = useAtomValue(timeSortedChecksAtom);
     const { feat_jump_fab } = useAtomValue(featureFlagsAtom);
-    const workflowState = useAtomValue(workflowStateAtom);
+    const { isOverlayActive } = useGlobalOverlayState();
 
-    // Hide FAB when drilled into other views (form, provisioning, nfc-write)
-    const isInMainList = workflowState.view === 'none';
-
-    if (!feat_jump_fab || lateCount === 0 || !isInMainList) {
+    // Hide FAB when drilled into other views or when any overlay is active
+    if (!feat_jump_fab || lateCount === 0 || isOverlayActive) {
         return null;
     }
 

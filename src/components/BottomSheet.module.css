@@ -49,4 +49,5 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--surface-fg-primary);
+  line-height: var(--line-height-trim);
 }

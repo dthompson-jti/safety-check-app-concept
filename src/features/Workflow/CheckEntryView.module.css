@@ -153,8 +153,8 @@ body[data-glass-tint="active"] .header {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  /* Optical alignment: lift text to align with icon visual center */
-  transform: translateY(-2px);
+  /* Optical alignment: line-height 1 trims leading, allowing flexbox to center cap-height */
+  line-height: var(--line-height-trim);
 }
 
 .formContent {

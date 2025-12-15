@@ -19,8 +19,10 @@
   This is the correct use case for !important.
 */
 .large-feature-icon.material-symbols-rounded {
-  font-size: 4rem !important; /* 64px */
-  line-height: 1; /* Ensure line height does not constrain the icon */
+  font-size: 4rem !important;
+  /* 64px */
+  line-height: 1;
+  /* Ensure line height does not constrain the icon */
   color: var(--surface-fg-quinary);
   opacity: 0.5;
   /* Also override the optical size to match the new font size */
@@ -37,4 +39,12 @@
 */
 .material-symbols-rounded[data-fill="true"] {
   font-variation-settings: 'FILL' 1;
+}
+
+/*
+  Architecture: Typography Alignment Contract
+  Enforces cap-height centering for text adjacent to controls.
+*/
+.text-trim {
+  line-height: var(--line-height-trim);
 }

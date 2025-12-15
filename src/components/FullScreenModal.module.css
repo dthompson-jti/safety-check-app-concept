@@ -142,8 +142,8 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   /* STRICT LEFT ALIGNMENT: Title grows to fill and aligns left */
   flex-grow: 1;
   text-align: left;
-  /* Optical alignment: lift text to align with icon visual center */
-  transform: translateY(-2px);
+  /* Optical alignment: line-height 1 trims leading, allowing flexbox to center cap-height */
+  line-height: var(--line-height-trim);
 }
 
 /* Ensure buttons sit above the title */
