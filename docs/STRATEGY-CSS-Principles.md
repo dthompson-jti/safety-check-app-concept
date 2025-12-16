@@ -208,6 +208,17 @@ To prevent visual bleeding during full-screen transitions, we adhere to a strict
 4.  **Overlays (105):** Full-screen tools (Scanner, NFC Writer, Forms) that must cover everything.
 5.  **Sheets (110+):** Bottom sheet modals (Vaul) that sit on top of full-screen overlays.
 
+#### The Layout Density Contract ("Split Density")
+
+We use a split spacing model to maximize screen real estate while maintaining readability:
+
+-   **Chrome (Headers/Nav):** Use **Compact Density** (`padding-inline: var(--spacing-2)` / 8px).
+    -   *Why:* Headers mostly contain icons and short titles. 8px padding creates an "Edge-to-Edge" feel that maximizes the available width for center-aligned titles.
+-   **Content (Lists/Cards):** Use **Comfortable Density** (`padding-inline: var(--spacing-4)` / 16px).
+    -   *Why:* Dense text and data needs breathing room to be legible.
+-   **Footer Actions:** Use **Content Density** (`padding: var(--spacing-4)` / 16px).
+    -   *Why:* The primary action button mimics the width of the cards above it to create a cohesive vertical alignment line.
+
 #### Interaction State Philosophy (`:hover` vs. `:active`)
 
 1.  **`:active` is for Universal Feedback:** Applied universally to provide immediate confirmation on tap or click.

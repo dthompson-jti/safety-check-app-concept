@@ -202,6 +202,16 @@
   margin: 0 var(--spacing-1);
 }
 
+.versionDisplay {
+  opacity: 0.3;
+  margin-top: var(--spacing-6) !important;
+  padding: 2px 0;
+  width: 100%;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs) !important;
+  user-select: none;
+}
+
 /* Modal Styles */
 .modalBodyLayout {
   text-align: left;

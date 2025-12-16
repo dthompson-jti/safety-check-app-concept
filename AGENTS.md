@@ -102,7 +102,14 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   Content: Scrollable area with `padding: 0` if containing a list (to allow edge-to-edge separators).
     *   Footer: Fixed/Sticky at bottom if containing actions.
 
-### 7. Form Sections & Spacing
+### 7. Layout Density Hygiene
+*   **The Rule:** Choose padding based on the "Split Density" contract:
+    *   **Headers/Nav (Chrome):** Use `var(--spacing-2)` (8px).
+    *   **Cards/Lists (Content):** Use `var(--spacing-4)` (16px).
+    *   **Footers:** Use `var(--spacing-4)` (16px) to align with content.
+*   **Anti-Pattern:** Do not use `spacing-4` for Headers or `spacing-2` for text-heavy content.
+
+### 8. Form Sections & Spacing
 *   **Directive:** When adding new sections to forms (like `CheckEntryView`), rely on the parent container's `gap` property for inter-section spacing.
 *   **Anti-Pattern:** Do not add `margin-bottom` to section containers when the parent already uses `gap`. This causes double-spacing.
 *   **Section Headers:** Use the `.sectionHeader` class (`--font-size-sm` / 14px, 600 weight, `--surface-fg-secondary` color) for form section labels.

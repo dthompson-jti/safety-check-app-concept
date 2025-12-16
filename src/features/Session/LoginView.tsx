@@ -10,6 +10,7 @@ import { TextInput } from '../../components/TextInput';
 import { Modal } from '../../components/Modal';
 import { useScrollToFocused } from '../../data/useScrollToFocused';
 import { JournalLogo, ErrorIcon } from '../../components/CriticalIcons';
+import { APP_VERSION } from '../../config';
 import styles from './LoginView.module.css';
 
 export const LoginView = () => {
@@ -222,6 +223,9 @@ export const LoginView = () => {
               <span className={styles.footerSeparator}>&middot;</span>
               <a href="#" onClick={(e) => e.preventDefault()}>Terms of Use</a>
             </p>
+            <div className={styles.versionDisplay}>
+              v{APP_VERSION.replace('v', '')}
+            </div>
           </footer>
         </div>
       </motion.div>
