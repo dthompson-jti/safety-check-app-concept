@@ -1,2 +1,2 @@
 // src/config.ts
-export const APP_VERSION = 'v4.20';
+export const APP_VERSION = 'v4.22';
