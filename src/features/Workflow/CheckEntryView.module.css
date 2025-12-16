@@ -16,7 +16,7 @@
   align-items: center;
   gap: var(--spacing-2);
   /* Visual symmetry: 6px top, 5px bottom (border adds 1px visually) */
-  padding: var(--spacing-1p5) var(--spacing-4) calc(var(--spacing-1p5) - 1px);
+  padding: var(--spacing-1p5) var(--spacing-2) calc(var(--spacing-1p5) - 1px);
   background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;

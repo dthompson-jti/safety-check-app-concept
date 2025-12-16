@@ -19,7 +19,7 @@
   gap: var(--spacing-2);
   min-height: var(--control-min-touch);
   /* Asymmetric padding: tighter vertical for 48px lg button */
-  padding: var(--spacing-1p5) var(--spacing-4);
+  padding: var(--spacing-1p5) var(--spacing-2);
   background-color: var(--surface-bg-tertiary);
   border-bottom: 1px solid var(--surface-border-secondary);
   flex-shrink: 0;
