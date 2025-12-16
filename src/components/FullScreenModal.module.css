@@ -30,8 +30,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* STANDARDIZED: spacing-1p5 vertical, spacing-4 horizontal for compact headers */
-  padding: var(--spacing-1p5) var(--spacing-4);
+  /* STANDARDIZED: spacing-1p5 vertical, spacing-2 horizontal for compact headers */
+  padding: var(--spacing-1p5) var(--spacing-2);
   gap: var(--spacing-2);
   min-height: var(--control-min-touch);
   background-color: var(--surface-bg-tertiary);

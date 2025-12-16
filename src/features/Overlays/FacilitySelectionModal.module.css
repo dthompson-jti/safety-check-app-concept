@@ -6,7 +6,7 @@
   height: 100%;
   background-color: var(--surface-bg-secondary);
   position: relative;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 /* Context Banner (Sticky Header for Step 2) */
@@ -14,12 +14,12 @@
   /* Selected Token Styling */
   background-color: var(--control-bg-selected);
   color: var(--control-fg-selected);
-  
+
   /* Borders on top and bottom */
   border-top: 1px solid var(--control-border-selected);
   border-bottom: 1px solid var(--control-border-selected);
-  
-  padding: var(--spacing-3) var(--spacing-4);
+
+  padding: var(--spacing-3) var(--spacing-2);
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -37,7 +37,7 @@
   display: flex;
   flex-direction: column;
   background-color: var(--surface-bg-secondary);
-  overflow-y: auto; 
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 

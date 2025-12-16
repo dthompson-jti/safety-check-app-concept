@@ -129,7 +129,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   justify-content: space-between;
   gap: var(--spacing-3);
   height: var(--modal-header-height);
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-2);
   position: relative;
   z-index: 1;
   /* Ensure content sits above pulse layer */

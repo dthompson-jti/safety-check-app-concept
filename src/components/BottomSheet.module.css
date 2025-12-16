@@ -19,7 +19,7 @@
   border-top-left-radius: var(--radius-2xl);
   border-top-right-radius: var(--radius-2xl);
   outline: none;
-  padding: 0 var(--spacing-4);
+  padding: 0 var(--spacing-2);
   max-height: 90vh;
   --vaul-transition-duration: 400ms;
   --vaul-easing: cubic-bezier(0.16, 1, 0.3, 1);

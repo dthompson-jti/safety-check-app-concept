@@ -216,7 +216,7 @@ export const LoginView = () => {
           </motion.div>
 
           <footer className={styles.pageFooter}>
-            <p>&copy; Journal Technologies 2025.</p>
+            <p>&copy; Journal Technologies Inc2025.</p>
             <p>
               <a href="#" onClick={(e) => e.preventDefault()}>Privacy Policy</a>
               <span className={styles.footerSeparator}>&middot;</span>
