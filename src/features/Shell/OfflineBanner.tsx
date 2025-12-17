@@ -1,9 +1,11 @@
 // src/features/Shell/OfflineBanner.tsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import { connectionStatusAtom, offlineTimestampAtom } from '../../data/atoms';
 import { queuedChecksCountAtom, dispatchActionAtom } from '../../data/appDataAtoms';
+import { bannerHeightAtom } from '../../data/layoutAtoms';
+import { useLayoutRegistration } from '../../data/useLayoutRegistration';
 import { useHaptics } from '../../data/useHaptics';
 import { useAppSound } from '../../data/useAppSound';
 import styles from './OfflineBanner.module.css';
@@ -24,7 +26,8 @@ export const OfflineBanner = () => {
   const { play: playSound } = useAppSound();
 
   const [duration, setDuration] = useState('0:00');
-  const bannerRef = useRef<HTMLDivElement>(null);
+  // Use centralized layout registration
+  const bannerRef = useLayoutRegistration(bannerHeightAtom);
 
   // Audio/Haptic Feedback on State Change
   useEffect(() => {
@@ -53,28 +56,6 @@ export const OfflineBanner = () => {
     return () => clearInterval(intervalId);
   }, [status, offlineTimestamp]);
 
-  useEffect(() => {
-    const updateHeight = () => {
-      if (bannerRef.current) {
-        const height = bannerRef.current.offsetHeight;
-        document.documentElement.style.setProperty('--offline-banner-height', `${height}px`);
-      } else {
-        document.documentElement.style.removeProperty('--offline-banner-height');
-      }
-    };
-
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    if (bannerRef.current) {
-      observer.observe(bannerRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.removeProperty('--offline-banner-height');
-    };
-  }, [status]);
-
   if (status === 'online') {
     return null;
   }
@@ -100,7 +81,7 @@ export const OfflineBanner = () => {
     <AnimatePresence>
       <motion.div
         className={styles.banner}
-        ref={bannerRef}
+        ref={bannerRef as React.RefObject<HTMLDivElement>}
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: 'auto', opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
