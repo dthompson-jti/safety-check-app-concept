@@ -84,27 +84,19 @@ const ScanningVisualizer = () => {
                     {isScanning && (
                         <>
                             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
-                                <motion.circle
+                                <circle
                                     key={`ring-${i}`}
                                     cx="100"
                                     cy="100"
-                                    r="11" // Spec: Initial radius 11u = 33px visual r = 64px diameter
+                                    r="8"
                                     fill="none"
                                     stroke={IDLE_RING_COLOR}
-                                    strokeWidth="2" // Spec: +2px visual (~0.5 more SVG) = 2
+                                    strokeWidth="2"
                                     vectorEffect="non-scaling-stroke"
-                                    initial={{ r: 11, opacity: 0 }}
-                                    animate={{
-                                        r: [11, 80], // Start larger, expand to edge
-                                        opacity: [0, 0.6, 0], // Fade in, peak, fade out
-                                    }}
-                                    transition={{
-                                        duration: 20, // Spec: Super slow (20s)
-                                        ease: "linear",
-                                        repeat: Infinity,
-                                        delay: i * 2, // Spec: Spacing 1.2x -> 2s
-                                        // Keyframe timing: quick fade-in (10%), long fade-out (90%)
-                                        times: [0, 0.1, 1],
+                                    className={styles.pulseRing}
+                                    style={{
+                                        // Negative delay starts animation mid-cycle for steady-state
+                                        animationDelay: `${-i * 2}s`,
                                     }}
                                 />
                             ))}
@@ -156,7 +148,7 @@ const ScanningVisualizer = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, filter: 'blur(8px)' }}
                     >
-                        Ready to scan
+                        Ready to Scan
                     </motion.div>
                 )}
             </AnimatePresence>

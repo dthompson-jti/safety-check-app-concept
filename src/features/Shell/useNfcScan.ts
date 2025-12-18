@@ -170,10 +170,25 @@ export const useNfcScan = () => {
                     },
                 });
 
-                // Back to idle (or scanning if continuous loop is desired here)
-                // For now, idle, and UI will restart if needed
-                setScanState('idle');
+                // Continuous loop: restart scanning after success
+                setScanState('scanning');
+                setScanStartTime(Date.now());
+
+                // Reset timeout if enabled
+                if (appConfig.nfcTimeoutEnabled) {
+                    timeoutRef.current = setTimeout(() => {
+                        setScanState('timeout');
+                        setScanStartTime(null);
+                        triggerHaptic('warning');
+                        addToast({
+                            message: 'Scan timed out.\nNo tag detected.',
+                            icon: 'timer_off',
+                            variant: 'neutral',
+                        });
+                    }, appConfig.nfcScanTimeout);
+                }
             } else {
+                // Open form view when simple submit is disabled
                 setScanState('idle');
                 setWorkflowState({
                     view: 'form',

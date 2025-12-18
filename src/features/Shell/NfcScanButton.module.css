@@ -132,9 +132,8 @@
 }
 
 .visualizerContainer {
-  position: relative;
-  width: 200px;
-  height: 200px;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,17 +152,46 @@
 }
 
 .scanningLabel {
+  /* Use parent flexbox for centering */
   position: relative;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--surface-fg-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--surface-fg-secondary);
+  text-align: center;
+  white-space: nowrap;
 
-  /* Spec: text shadow (4px, no offset, same 'secondary' token, 100% opacity) */
-  /* Spec: text shadow using background color for legibility halo */
-  text-shadow: 0 0 4px var(--surface-bg-secondary), 0 0 8px var(--surface-bg-secondary);
+  /* Spec: text shadow using background color for legibility halo - no xy offset */
+  text-shadow:
+    0 0 8px var(--surface-bg-secondary),
+    0 0 16px var(--surface-bg-secondary),
+    0 0 24px var(--surface-bg-secondary);
 
   letter-spacing: -0.01em;
   z-index: 10;
+}
+
+/* Pulse ring animation - CSS for negative delay support */
+.pulseRing {
+  animation: pulseRingExpand 20s linear infinite;
+  transform-origin: center center;
+}
+
+@keyframes pulseRingExpand {
+  0% {
+    r: 8;
+    opacity: 0;
+  }
+
+  20% {
+    r: 22.4;
+    /* 8 + 0.2 * 72 */
+    opacity: 0.6;
+  }
+
+  100% {
+    r: 80;
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
