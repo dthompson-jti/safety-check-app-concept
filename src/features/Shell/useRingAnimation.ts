@@ -28,19 +28,19 @@ export interface RingAnimationParams {
 }
 
 export const DEFAULT_RING_PARAMS: RingAnimationParams = {
-    ringCount: 10,
-    conveyorDuration: 60,
+    ringCount: 15,
+    conveyorDuration: 40,
     minRadius: 8,
     maxRadius: 80,
     baseOpacity: 0.3,
-    fadeInPercent: 0.15,
-    fadeOutPercent: 0.15,
+    fadeInPercent: 0.2,
+    fadeOutPercent: 0.3,
     baseStrokeWidth: 2,
 
-    shimmerPeriod: 5,
-    shimmerDuration: 2,
-    shimmerOpacityBoost: 0.5,
-    shimmerStrokeBoost: 1.5,
+    shimmerPeriod: 4,
+    shimmerDuration: 1,
+    shimmerOpacityBoost: 0.55,
+    shimmerStrokeBoost: 1,
 };
 
 interface RingState {
@@ -55,7 +55,7 @@ interface RingState {
  */
 function createConveyorKeyframes(
     params: RingAnimationParams,
-    ringIndex: number
+    _ringIndex: number
 ): Keyframe[] {
     const { minRadius, maxRadius, baseOpacity, fadeInPercent, fadeOutPercent, baseStrokeWidth } = params;
 
@@ -111,7 +111,6 @@ export function useRingAnimation(
         if (!svgRef.current) return;
 
         const rings = svgRef.current.querySelectorAll('circle.ring');
-        const delayPerRing = (params.shimmerDuration * 1000) / params.ringCount;
 
         // Calculate current time in the conveyor cycle to sync shimmer start
         const now = performance.now();
@@ -129,17 +128,31 @@ export function useRingAnimation(
             }
 
             // Calculate this ring's current position in the conveyor (0 = innermost, 1 = outermost)
-            // Ring i has phase offset of i/ringCount, so at time t:
-            // position = ((t + i/ringCount * conveyorDuration) % conveyorDuration) / conveyorDuration
             const ringPhaseOffset = (i / params.ringCount);
             const currentPhase = ((elapsedSinceMount / conveyorCycleMs) + ringPhaseOffset) % 1;
 
-            // Shimmer should start from innermost ring (phase ~0) and sweep outward
-            // Delay = how far through the conveyor this ring is * shimmerDuration
+            // Shimmer delay based on current phase
             const shimmerDelay = currentPhase * params.shimmerDuration * 1000;
 
+            // Attenuation: reduce shimmer boost in the fade-out zone
+            // Phase 0 to (1 - fadeOut) = full boost
+            // Phase (1 - fadeOut) to 1 = linear fade to 0
+            const fadeOutStart = 1 - params.fadeOutPercent;
+            let attenuation = 1;
+            if (currentPhase > fadeOutStart) {
+                // Linear fade from 1 to 0 across the fade-out zone
+                attenuation = 1 - ((currentPhase - fadeOutStart) / params.fadeOutPercent);
+            }
+            // Also attenuate in fade-in zone for consistency
+            if (currentPhase < params.fadeInPercent) {
+                attenuation = currentPhase / params.fadeInPercent;
+            }
+
+            const attenuatedOpacityBoost = params.shimmerOpacityBoost * attenuation;
+            const attenuatedStrokeBoost = params.shimmerStrokeBoost * attenuation;
+
             const opacityAnim = ring.animate(
-                createShimmerOpacityKeyframes(params.shimmerOpacityBoost),
+                createShimmerOpacityKeyframes(attenuatedOpacityBoost),
                 {
                     duration: 800, // Single pulse duration
                     easing: 'ease-in-out',
@@ -150,7 +163,7 @@ export function useRingAnimation(
             );
 
             const strokeAnim = ring.animate(
-                createShimmerStrokeKeyframes(params.shimmerStrokeBoost),
+                createShimmerStrokeKeyframes(attenuatedStrokeBoost),
                 {
                     duration: 800,
                     easing: 'ease-in-out',
@@ -180,7 +193,7 @@ export function useRingAnimation(
         const rings = svg.querySelectorAll('circle.ring');
 
         // Capture mount time for sync
-        mountTimeRef.current = document.timeline?.currentTime ?? performance.now();
+        mountTimeRef.current = Number(document.timeline?.currentTime ?? performance.now());
         console.log('[RingAnimation] Mount time:', mountTimeRef.current);
 
         // Initialize ring states
