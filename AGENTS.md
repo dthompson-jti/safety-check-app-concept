@@ -417,3 +417,33 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     *   `nfcFails`: "Tag not read. Hold phone steady against the tag."
 *   **Anti-Pattern:** Handling simulation state in UI components—keep it in hooks.
 *   **Reference:** See `docs/SPEC-NFC-Interaction.md`, `src/features/Shell/useNfcScan.ts`.
+
+### 18. AnimatePresence Coordination & CSS Animation Interference
+*   **The Problem:** Multiple uncoordinated `AnimatePresence` blocks can cause elements to appear during transitions. Continuous CSS animations (e.g., `animation: pulse 2s infinite`) create compositing layers that remain visible during Framer Motion's exit animations.
+*   **Symptoms:**
+    *   Elements briefly flash or become visible during transitions
+    *   Exit animations show remnants of CSS animations
+    *   Timing mismatches between separate AnimatePresence blocks
+*   **Root Cause Analysis:**
+    1.  CSS `animation` property continues running on exiting elements
+    2.  Independent AnimatePresence blocks don't coordinate timing
+    3.  `mode="wait"` can cause delayed mounting/unmounting issues
+*   **Solution Pattern:**
+    ```tsx
+    // Disable CSS animation during Framer Motion control
+    <motion.div
+        className={styles.animatedElement}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15, ease: 'easeOut' }}
+        style={{ animation: 'none' }} // Override CSS animation
+    >
+    ```
+*   **AnimatePresence Best Practices:**
+    *   Avoid `mode="wait"` unless you specifically need sequential enter/exit
+    *   Keep related animations in the same AnimatePresence block for coordination
+    *   Use explicit `transition` props on exit animations (don't rely on MotionConfig)
+*   **Case Study:** NFC scanning label had `z-index: 10` and `animation: labelPulse 2s infinite`. During success transition, the CSS pulse created a flash. Fix: `style={{ animation: 'none' }}` + remove `mode="wait"` + lower z-index.
+*   **Reference:** See `src/features/Shell/NfcScanButton.tsx`, Section 12 (CSS Animation Negative Delay).
+

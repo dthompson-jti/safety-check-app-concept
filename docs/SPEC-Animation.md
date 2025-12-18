@@ -241,3 +241,54 @@ For looping animations that should appear "already running" at steady-state on m
 -   **The Pattern:** Use CSS `@keyframes` with **negative `animation-delay`** to start each element mid-cycle.
 -   **Why Not Framer Motion:** Framer Motion keyframe arrays always start from the first value, ignoring `initial`, causing all elements to "bunch up" at the center.
 -   **Reference:** See `STRATEGY-CSS-Principles.md` Section 17 and `SPEC-NFC-Scan-Animation.md` for detailed implementation.
+
+## 10. AnimatePresence Coordination & Interference Prevention
+
+### The Problem
+Multiple uncoordinated `AnimatePresence` blocks or continuous CSS animations can cause visual artifacts during Framer Motion transitions.
+
+### Common Issues
+1.  **CSS Animation Interference:** CSS `animation` property continues running during Framer Motion's exit, creating compositing layer flash
+2.  **Uncoordinated Transitions:** Separate AnimatePresence blocks don't communicate timing
+3.  **mode="wait" Delays:** Can cause unexpected mounting/unmounting behavior
+
+### Solution Patterns
+
+#### Disable CSS Animation During Framer Control
+```tsx
+<motion.div
+    className={styles.labelWithPulse}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.15 }}
+    style={{ animation: 'none' }} // Override CSS animation
+>
+```
+
+#### Coordinate Related Animations
+```tsx
+// BAD: Separate blocks, uncoordinated timing
+<AnimatePresence>
+    {showSuccess && <SuccessElements />}
+</AnimatePresence>
+<AnimatePresence mode="wait">
+    {showLabel && <ScanningLabel />}
+</AnimatePresence>
+
+// GOOD: Single block with mode coordination
+<AnimatePresence mode="wait">
+    {showSuccess && <motion.div key="success">...</motion.div>}
+    {showLabel && <motion.div key="label">...</motion.div>}
+</AnimatePresence>
+```
+
+#### Explicit Exit Transitions
+```tsx
+// Always specify transition on exit animations
+exit={{ opacity: 0, scale: 0.95 }}
+transition={{ duration: 0.15, ease: 'easeOut' }}
+// Don't rely on parent MotionConfig for exit timing
+```
+
+### Reference Implementation
+See `src/features/Shell/NfcScanButton.tsx` for case study of resolving label flash during success animation.
+
