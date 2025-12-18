@@ -19,6 +19,7 @@ import { SegmentedControl } from '../../components/SegmentedControl';
 import { ResidentCheckControl } from './ResidentCheckControl';
 import { StatusSelectionSheet } from './StatusSelectionSheet';
 import { useCompleteCheck } from './useCompleteCheck';
+import { useNfcScan } from '../Shell/useNfcScan';
 import styles from './CheckEntryView.module.css';
 
 type CheckEntryViewProps = {
@@ -109,6 +110,7 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
 
   const { trigger: triggerHaptic } = useHaptics();
   const { completeCheck } = useCompleteCheck();
+  const { startScan } = useNfcScan();
 
   // PRD-07: State for status selection sheet
   const [isStatusSheetOpen, setIsStatusSheetOpen] = useState(false);
@@ -240,6 +242,9 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
   }, []);
 
   const handleBack = () => {
+    if (checkData.type === 'scheduled' && checkData.method === 'scan') {
+      startScan();
+    }
     setWorkflowState({ view: 'none' });
   };
 
@@ -305,6 +310,9 @@ export const CheckEntryView = ({ checkData }: CheckEntryViewProps) => {
       if (connectionStatus !== 'offline') {
         addToast({ message: `Supplemental check for ${checkData.roomName} saved.`, icon: 'task_alt', variant: 'success' });
       }
+    }
+    if (checkData.type === 'scheduled' && checkData.method === 'scan') {
+      startScan();
     }
   };
 

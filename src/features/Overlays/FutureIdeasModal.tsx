@@ -2,6 +2,7 @@
 import { useAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { featureFlagsAtom, PulseStyle } from '../../data/featureFlags';
+import { appConfigAtom } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
 import { SegmentedControl } from '../../components/SegmentedControl';
@@ -9,6 +10,7 @@ import styles from './DeveloperModal.module.css';
 
 export const FutureIdeasModal = () => {
     const [featureFlags, setFeatureFlags] = useAtom(featureFlagsAtom);
+    const [appConfig, setAppConfig] = useAtom(appConfigAtom);
     const { trigger: triggerHaptic } = useHaptics();
 
     // NOTE: Theme reset is now handled by the Future Ideas lock/unlock callbacks
@@ -35,7 +37,7 @@ export const FutureIdeasModal = () => {
                     These are just conceptual ideas for a potential future version.  Nothing here is expected for v1.
                 </div>
 
-                {/* Original Features */}
+                {/* Sound & Haptics */}
                 <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
                         <label htmlFor="use-sound-switch" className={styles.itemLabel}>Use Sound</label>
@@ -53,6 +55,49 @@ export const FutureIdeasModal = () => {
                             onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, useHapticsEnabled: c })))}
                         />
                     </div>
+
+                    {/* Haptic Pattern Controls - only show when haptics enabled */}
+                    {featureFlags.useHapticsEnabled && (
+                        <>
+                            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+                                <label className={styles.itemLabel}>Success pattern</label>
+                                <SegmentedControl
+                                    id="haptic-success-toggle"
+                                    options={[
+                                        { value: 'light', label: 'Light' },
+                                        { value: 'medium', label: 'Medium' },
+                                        { value: 'heavy', label: 'Heavy' },
+                                    ]}
+                                    value={appConfig.hapticPatternSuccess}
+                                    onValueChange={(val) => {
+                                        setAppConfig((c) => ({ ...c, hapticPatternSuccess: val }));
+                                        setTimeout(() => { triggerHaptic('success'); }, 50);
+                                    }}
+                                />
+                            </div>
+                            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+                                <label className={styles.itemLabel}>Error pattern</label>
+                                <SegmentedControl
+                                    id="haptic-error-toggle"
+                                    options={[
+                                        { value: 'simple', label: 'Simple' },
+                                        { value: 'double', label: 'Double' },
+                                        { value: 'grind', label: 'Grind' },
+                                        { value: 'stutter', label: 'Stutter' },
+                                    ]}
+                                    value={appConfig.hapticPatternError}
+                                    onValueChange={(val) => {
+                                        setAppConfig((c) => ({ ...c, hapticPatternError: val }));
+                                        setTimeout(() => { triggerHaptic('error'); }, 50);
+                                    }}
+                                />
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                {/* Other Features */}
+                <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
                         <label htmlFor="enable-dark-mode-switch" className={styles.itemLabel}>Enable Dark Mode</label>
                         <Switch
@@ -184,6 +229,6 @@ export const FutureIdeasModal = () => {
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </motion.div >
     );
 };

@@ -46,3 +46,10 @@ export interface SafetyCheck {
 export type ScheduleFilter = 'all' | 'due' | 'missed' | 'queued';
 
 export type HistoryFilter = 'all' | 'missed' | 'supplemental';
+
+// =================================================================
+//                     NFC Scan Activation Types
+// =================================================================
+
+/** State machine states for NFC scanning */
+export type NfcScanState = 'idle' | 'scanning' | 'success' | 'timeout';

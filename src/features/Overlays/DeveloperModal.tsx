@@ -191,60 +191,7 @@ export const DeveloperModal = () => {
       </div>
 
 
-      {/* 5. Haptics (Only visible when useHapticsEnabled feature flag is on) */}
-      {featureFlags.useHapticsEnabled && (
-        <div className={styles.settingSection}>
-          <h3 className={styles.sectionHeader}>Haptics</h3>
-          <div className={styles.settingsGroup}>
-            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-              <label className={styles.itemLabel}>Success pattern</label>
-              <SegmentedControl
-                id="haptic-success-toggle"
-                options={[
-                  { value: 'light', label: 'Light (50ms)' },
-                  { value: 'medium', label: 'Medium (100ms)' },
-                  { value: 'heavy', label: 'Heavy (150ms)' },
-                ]}
-                value={appConfig.hapticPatternSuccess}
-                onValueChange={(val) => {
-                  // Preview: Set the pattern and trigger it so user can feel it
-                  setAppConfig((c) => ({ ...c, hapticPatternSuccess: val }));
-
-                  // Small delay to let state update, then trigger
-                  setTimeout(() => {
-                    triggerHaptic('success');
-                  }, 50);
-                }}
-              />
-            </div>
-
-            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-              <label className={styles.itemLabel}>Error pattern</label>
-              <SegmentedControl
-                id="haptic-error-toggle"
-                options={[
-                  { value: 'simple', label: 'Simple' },
-                  { value: 'double', label: 'Double' },
-                  { value: 'grind', label: 'Grind' },
-                  { value: 'stutter', label: 'Stutter' },
-                ]}
-                value={appConfig.hapticPatternError}
-                onValueChange={(val) => {
-                  // Preview: Set the pattern and trigger it so user can feel it
-                  setAppConfig((c) => ({ ...c, hapticPatternError: val }));
-
-                  // Small delay to let state update, then trigger
-                  setTimeout(() => {
-                    triggerHaptic('error');
-                  }, 50);
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 6. Simulation */}
+      {/* 5. Simulation */}
       <div className={styles.settingSection}>
         <h3 className={styles.sectionHeader}>Simulation</h3>
         <div className={styles.settingsGroup}>
@@ -280,6 +227,49 @@ export const DeveloperModal = () => {
               onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcFails: checked })))}
             />
           </div>
+
+          {/* NFC Scan Concept Style */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>NFC scan style</label>
+            <SegmentedControl
+              id="nfc-concept-toggle"
+              options={[
+                { value: 'lite', label: 'Lite' },
+                { value: 'pulse', label: 'Pulse' },
+                { value: 'slide', label: 'Slide' },
+              ]}
+              value={appConfig.nfcScanConcept}
+              onValueChange={(val) => {
+                triggerHaptic('selection');
+                setAppConfig((c) => ({ ...c, nfcScanConcept: val }));
+              }}
+            />
+          </div>
+
+          {/* NFC Scan Timeout Duration */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Scan timeout</label>
+            <SegmentedControl
+              id="nfc-timeout-toggle"
+              options={[
+                { value: 'off', label: 'Off' },
+                { value: '5000', label: '5s' },
+                { value: '10000', label: '10s' },
+                { value: '15000', label: '15s' },
+                { value: '30000', label: '30s' },
+              ]}
+              value={appConfig.nfcTimeoutEnabled ? String(appConfig.nfcScanTimeout) : 'off'}
+              onValueChange={(val) => {
+                triggerHaptic('selection');
+                if (val === 'off') {
+                  setAppConfig((c) => ({ ...c, nfcTimeoutEnabled: false }));
+                } else {
+                  setAppConfig((c) => ({ ...c, nfcTimeoutEnabled: true, nfcScanTimeout: Number(val) }));
+                }
+              }}
+            />
+          </div>
+
           <div className={styles.settingsItem}>
             <label htmlFor="slow-load-switch" className={styles.itemLabel}>Simulate slow loading</label>
             <Switch

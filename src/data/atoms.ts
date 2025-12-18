@@ -1,7 +1,7 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification } from '../types';
+import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification, NfcScanState } from '../types';
 
 // =================================================================
 //                      Global Time State (Heartbeat)
@@ -103,6 +103,16 @@ export type WorkflowState =
 export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 
 // =================================================================
+//                    NFC Scan Activation State
+// =================================================================
+
+/** Current NFC scan state (idle → scanning → timeout → idle) */
+export const nfcScanStateAtom = atom<NfcScanState>('idle');
+
+/** Timestamp when scan started (for countdown calculation) */
+export const nfcScanStartTimeAtom = atom<number | null>(null);
+
+// =================================================================
 //                  Global UI & Layout State
 // =================================================================
 
@@ -163,8 +173,12 @@ interface AppConfig {
   markMultipleEnabled: boolean;
   simpleSubmitEnabled: boolean;
   showStatusIndicators: boolean;
-  residentStatusSet: 'set-2' | 'set-3' | 'set-4' | 'set-5' | 'set-6' | 'set-7'; // PRD-07: Expanded to support 2-7 status options
-  markMultipleLayout: 'row' | 'column' | 'grid'; // PRD-07: Layout for status selection
+  residentStatusSet: 'set-2' | 'set-3' | 'set-4' | 'set-5' | 'set-6' | 'set-7';
+  markMultipleLayout: 'row' | 'column' | 'grid';
+  // NFC Scan Activation Config
+  nfcScanTimeout: number; // ms
+  nfcTimeoutEnabled: boolean; // if false, scan stays active indefinitely
+  nfcShowCountdown: boolean;
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
@@ -178,8 +192,12 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   markMultipleEnabled: false,
   simpleSubmitEnabled: false,
   showStatusIndicators: false,
-  residentStatusSet: 'set-3', // PRD-02: Default to 3 options (Awake, Sleeping, Refused)
-  markMultipleLayout: 'row', // PRD-07: Default to row layout
+  residentStatusSet: 'set-3',
+  markMultipleLayout: 'row',
+  // NFC Scan Activation Defaults
+  nfcScanTimeout: 15000,
+  nfcTimeoutEnabled: true,
+  nfcShowCountdown: true,
 });
 
 // =================================================================

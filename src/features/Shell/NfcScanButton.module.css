@@ -1,0 +1,173 @@
+/* src/features/Shell/NfcScanButton.module.css */
+
+.nfcWrapper {
+  width: 100%;
+  height: var(--footer-action-height);
+  width: 100%;
+  height: var(--footer-action-height);
+  /* position: relative; Removed so visualizer positions relative to AppFooter */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonContainer {
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  /* Added based on instruction */
+}
+
+/* =================================================================
+   Simulate FAB - Simple round NFC icon
+   ================================================================= */
+
+.simulateFab {
+  position: fixed;
+  bottom: calc(var(--footer-height, 80px) + var(--spacing-4));
+  right: var(--spacing-4);
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+
+  background-color: rgba(15, 23, 42, 0.8);
+  /* Slate 900 translucent */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg);
+
+  color: white;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.simulateFab:hover {
+  background-color: rgba(15, 23, 42, 0.9);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.simulateFab:active {
+  transform: scale(0.92);
+}
+
+.simulateFab .material-symbols-rounded {
+  font-size: 28px;
+  font-variation-settings: 'FILL' 0, 'wght' 300;
+}
+
+/* =================================================================
+   Start & Timeout Buttons
+   ================================================================= */
+
+.startButton,
+.timeoutButton {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  border-radius: var(--spacing-3);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  border: none;
+  user-select: none;
+  transition: all 150ms ease-out;
+}
+
+.startButton {
+  background-color: var(--control-bg-theme);
+  color: var(--control-fg-on-solid);
+  box-shadow: var(--surface-shadow-scan-button);
+}
+
+.startButton:active {
+  transform: scale(0.98);
+  filter: brightness(0.95);
+}
+
+.timeoutButton {
+  background-color: var(--control-bg-warning);
+  color: var(--control-fg-warning);
+  border: 1px solid var(--control-border-warning);
+}
+
+.startButton .material-symbols-rounded,
+.timeoutButton .material-symbols-rounded {
+  font-size: var(--icon-size-lg);
+  font-variation-settings: 'FILL' 1;
+}
+
+/* =================================================================
+   Scanning Visualizer
+   ================================================================= */
+
+.visualizerWrapper {
+  position: absolute;
+  /* Spec: Fill the entire glass footer */
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+  z-index: 0;
+  /* Behind buttons (z-10) */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Spec: Cropping box must be entire glass footer */
+  overflow: hidden;
+  border-radius: inherit;
+  /* Inherit footer radius if present */
+}
+
+.visualizerContainer {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ringsSvg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  /* Large enough to fill screen width if needed */
+  height: 600px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.scanningLabel {
+  position: relative;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--surface-fg-primary);
+
+  /* Spec: text shadow (4px, no offset, same 'secondary' token, 100% opacity) */
+  /* Spec: text shadow using background color for legibility halo */
+  text-shadow: 0 0 4px var(--surface-bg-secondary), 0 0 8px var(--surface-bg-secondary);
+
+  letter-spacing: -0.01em;
+  z-index: 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ringsSvg {
+    display: none;
+  }
+}

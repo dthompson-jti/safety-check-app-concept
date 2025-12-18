@@ -79,6 +79,26 @@ export const SettingsModal = () => {
             />
           </div>
 
+          {/* NFC Scan Concept: Only visible when NFC mode is selected */}
+          {appConfig.scanMode === 'nfc' && (
+            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+              <label className={styles.itemLabel}>NFC Scan Style</label>
+              <SegmentedControl
+                id="nfc-concept-toggle"
+                options={[
+                  { value: 'lite', label: 'Lite' },
+                  { value: 'pulse', label: 'Pulse' },
+                  { value: 'slide', label: 'Slide' },
+                ]}
+                value={appConfig.nfcScanConcept}
+                onValueChange={(concept) => {
+                  triggerHaptic('selection');
+                  setAppConfig((c) => ({ ...c, nfcScanConcept: concept }));
+                }}
+              />
+            </div>
+          )}
+
           {/* Haptics: Only visible when useHapticsEnabled feature flag is on */}
           {featureFlags.useHapticsEnabled && (
             <div className={styles.settingsItem}>

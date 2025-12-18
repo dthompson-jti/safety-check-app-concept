@@ -1,21 +1,15 @@
 // src/features/Shell/AppFooter.tsx
 import { useLayoutEffect, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
-import { motion } from 'framer-motion';
 import {
   workflowStateAtom,
   appConfigAtom,
-  hardwareSimulationAtom
 } from '../../data/atoms';
-import {
-  timeSortedChecksAtom,
-  lateCheckCountAtom
-} from '../../data/appDataAtoms';
-import { addToastAtom } from '../../data/toastAtoms';
+import { lateCheckCountAtom } from '../../data/appDataAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useWaapiSync } from '../../hooks/useWaapiSync';
 import { Button } from '../../components/Button';
-import { useCompleteCheck } from '../Workflow/useCompleteCheck';
+import { NfcScanButton } from './NfcScanButton';
 import styles from './AppFooter.module.css';
 
 /**
@@ -30,14 +24,8 @@ export const AppFooter = () => {
   const appConfig = useAtomValue(appConfigAtom);
   const lateCount = useAtomValue(lateCheckCountAtom);
 
-  // State needed for Smart NFC Simulation
-  const timeSortedChecks = useAtomValue(timeSortedChecksAtom);
-  const simulation = useAtomValue(hardwareSimulationAtom);
-  const addToast = useSetAtom(addToastAtom);
-
   const footerRef = useRef<HTMLElement>(null);
   const { trigger: triggerHaptic } = useHaptics();
-  const { completeCheck } = useCompleteCheck();
 
   // Sync pulse animations when late checks exist
   useWaapiSync(footerRef, { isEnabled: lateCount > 0 });
@@ -69,74 +57,10 @@ export const AppFooter = () => {
     setWorkflowState({ view: 'scanning', isManualSelectionOpen: false });
   };
 
-  // Handler for NFC Simulation Shortcut
-  // Simulates an instant tag read of the top-most relevant check.
-  const handleNfcClick = () => {
-    // Check if NFC failure simulation is active
-    if (simulation.nfcFails) {
-      triggerHaptic('error');
-      addToast({
-        message: 'Tag not read.\nHold phone steady against the tag.',
-        icon: 'wifi_tethering_error',
-        variant: 'alert'
-      });
-      return;
-    }
-
-    // Always use timeSortedChecks since we only have one view now
-    const targetCheck = timeSortedChecks.find(c =>
-      c.status !== 'complete' && c.type !== 'supplemental'
-    );
-
-    if (targetCheck) {
-      triggerHaptic('success');
-
-      if (appConfig.simpleSubmitEnabled) {
-        const defaultStatuses = targetCheck.residents.reduce((acc, resident) => {
-          acc[resident.id] = 'Awake';
-          return acc;
-        }, {} as Record<string, string>);
-
-        completeCheck({
-          checkId: targetCheck.id,
-          statuses: defaultStatuses,
-          notes: '',
-          onSuccess: () => {
-            addToast({ message: 'Check completed', icon: 'check_circle', variant: 'success' });
-          }
-        });
-        return;
-      }
-
-      setWorkflowState({
-        view: 'form',
-        type: 'scheduled',
-        method: 'scan',
-        checkId: targetCheck.id,
-        roomName: targetCheck.residents[0].location,
-        residents: targetCheck.residents,
-        specialClassifications: targetCheck.specialClassifications,
-      });
-    } else {
-      triggerHaptic('warning');
-      addToast({ message: 'No incomplete checks found in current list.', icon: 'info', variant: 'neutral' });
-    }
-  };
-
   return (
     <footer className={styles.footer} ref={footerRef}>
       {appConfig.scanMode === 'nfc' ? (
-        <motion.div
-          className={styles.nfcContainer}
-          animate={{ opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          onClick={handleNfcClick}
-        >
-          <span className={`material-symbols-rounded ${styles.nfcIcon}`}>
-            sensors
-          </span>
-          <span className={styles.nfcText}>Ready to scan</span>
-        </motion.div>
+        <NfcScanButton />
       ) : (
         <Button variant="primary" className={styles.scanButton} onClick={handleQrClick}>
           <span className="material-symbols-rounded">qr_code_scanner</span>
@@ -146,3 +70,4 @@ export const AppFooter = () => {
     </footer>
   );
 };
+
