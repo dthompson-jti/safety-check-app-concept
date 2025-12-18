@@ -5,7 +5,6 @@ import {
   appConfigAtom,
   hardwareSimulationAtom,
   connectionStatusAtom,
-  isRingAnimationTestOpenAtom,
 } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
@@ -42,7 +41,7 @@ export const DeveloperModal = () => {
   const addToast = useSetAtom(addToastAtom);
   const activeToasts = useAtomValue(toastsAtom);
   const { trigger: triggerHaptic } = useHaptics();
-  const setIsRingTestOpen = useSetAtom(isRingAnimationTestOpenAtom);
+
 
 
   const handleSwitch = (setter: (val: boolean) => void) => (checked: boolean) => {
@@ -104,10 +103,6 @@ export const DeveloperModal = () => {
           Reset Application Data
         </Button>
         <span className={styles.shortcutHint}>Shortcut: Ctrl+Backspace</span>
-        <Button variant="secondary" onClick={() => { triggerHaptic('light'); setIsRingTestOpen(true); }}>
-          <span className="material-symbols-rounded">animation</span>
-          Ring Animation Test
-        </Button>
       </div>
 
       {/* 2. Workflow Section */}
@@ -229,6 +224,22 @@ export const DeveloperModal = () => {
               id="nfc-fail-switch"
               checked={simulation.nfcFails}
               onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcFails: checked })))}
+            />
+          </div>
+          <div className={styles.settingsItem}>
+            <label htmlFor="nfc-blocked-switch" className={styles.itemLabel}>Force NFC Blocked</label>
+            <Switch
+              id="nfc-blocked-switch"
+              checked={simulation.nfcBlocked}
+              onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcBlocked: checked })))}
+            />
+          </div>
+          <div className={styles.settingsItem}>
+            <label htmlFor="nfc-off-switch" className={styles.itemLabel}>Force NFC Turned Off</label>
+            <Switch
+              id="nfc-off-switch"
+              checked={simulation.nfcTurnedOff}
+              onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcTurnedOff: checked })))}
             />
           </div>
 

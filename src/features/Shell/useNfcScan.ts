@@ -47,6 +47,28 @@ export const useNfcScan = () => {
     const startScan = useCallback(() => {
         if (scanState !== 'idle') return;
 
+        // Check for NFC blocked simulation
+        if (simulation.nfcBlocked) {
+            triggerHaptic('warning');
+            addToast({
+                message: 'NFC Blocked\nAllow NFC in app settings',
+                icon: 'block',
+                variant: 'warning',
+            });
+            return;
+        }
+
+        // Check for NFC turned off simulation
+        if (simulation.nfcTurnedOff) {
+            triggerHaptic('warning');
+            addToast({
+                message: 'NFC is turned off\nOpen NFC Settings to turn on',
+                icon: 'nfc',
+                variant: 'warning',
+            });
+            return;
+        }
+
         triggerHaptic('light');
         setScanState('scanning');
         setScanStartTime(Date.now());
@@ -64,7 +86,7 @@ export const useNfcScan = () => {
                 });
             }, appConfig.nfcScanTimeout);
         }
-    }, [scanState, appConfig.nfcScanTimeout, appConfig.nfcTimeoutEnabled, setScanState, setScanStartTime, triggerHaptic, addToast]);
+    }, [scanState, simulation.nfcBlocked, simulation.nfcTurnedOff, appConfig.nfcScanTimeout, appConfig.nfcTimeoutEnabled, setScanState, setScanStartTime, triggerHaptic, addToast]);
 
     // Stop scanning (cancel)
     const stopScan = useCallback(() => {

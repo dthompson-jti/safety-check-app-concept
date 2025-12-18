@@ -171,7 +171,7 @@
   font-style: italic;
 }
 
-/* Ring Animation Test Sheet */
+/* Ring Animation Sandbox */
 .ringTestContainer {
   position: fixed;
   inset: 0;
@@ -183,6 +183,8 @@
 
 .ringTestPreview {
   flex: 1;
+  min-height: 40vh;
+  /* Ensure preview is always visible */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -206,14 +208,16 @@
   background-color: var(--surface-bg-secondary);
   border-top: 1px solid var(--surface-border-primary);
   padding: var(--spacing-3) var(--spacing-4);
-  max-height: 40vh;
+  padding-bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom));
+  max-height: 50vh;
+  /* More room on mobile */
   overflow-y: auto;
 }
 
 .ringTestHeader {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--spacing-2);
   margin-bottom: var(--spacing-3);
 }
 
@@ -226,13 +230,38 @@
 
 .ringTestActions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--spacing-2);
+}
+
+/* On larger screens, header is row layout */
+@media (min-width: 480px) {
+  .ringTestHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .ringTestSliders {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: 1fr;
+  /* Single column on mobile */
   gap: var(--spacing-3);
+}
+
+/* Two columns on tablet+ */
+@media (min-width: 480px) {
+  .ringTestSliders {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Three columns on larger screens */
+@media (min-width: 768px) {
+  .ringTestSliders {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
 }
 
 .ringTestSlider {

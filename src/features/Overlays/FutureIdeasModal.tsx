@@ -1,16 +1,18 @@
 // src/features/Overlays/FutureIdeasModal.tsx
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { featureFlagsAtom, PulseStyle } from '../../data/featureFlags';
-import { appConfigAtom } from '../../data/atoms';
+import { appConfigAtom, isRingAnimationTestOpenAtom } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
 import { SegmentedControl } from '../../components/SegmentedControl';
+import { Button } from '../../components/Button';
 import styles from './DeveloperModal.module.css';
 
 export const FutureIdeasModal = () => {
     const [featureFlags, setFeatureFlags] = useAtom(featureFlagsAtom);
     const [appConfig, setAppConfig] = useAtom(appConfigAtom);
+    const setIsRingTestOpen = useSetAtom(isRingAnimationTestOpenAtom);
     const { trigger: triggerHaptic } = useHaptics();
 
     // NOTE: Theme reset is now handled by the Future Ideas lock/unlock callbacks
@@ -36,6 +38,25 @@ export const FutureIdeasModal = () => {
                     <strong>Experimental Features</strong><br />
                     These are just conceptual ideas for a potential future version.  Nothing here is expected for v1.
                 </div>
+
+                {/* Ring Animation */}
+                <h3 className={styles.sectionHeader}>Ring Animation</h3>
+                <div className={styles.settingsGroup}>
+                    <div className={styles.settingsItem}>
+                        <label htmlFor="ring-animation-switch" className={styles.itemLabel}>Enable Ring Animation</label>
+                        <Switch
+                            id="ring-animation-switch"
+                            checked={featureFlags.feat_ring_animation}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_ring_animation: c })))}
+                        />
+                    </div>
+                </div>
+                {featureFlags.feat_ring_animation && (
+                    <Button variant="secondary" onClick={() => { triggerHaptic('light'); setIsRingTestOpen(true); }}>
+                        <span className="material-symbols-rounded">animation</span>
+                        Ring Animation Sandbox
+                    </Button>
+                )}
 
                 {/* Sound & Haptics */}
                 <div className={styles.settingsGroup}>

@@ -363,3 +363,57 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     ```
 *   **The Fix:** For pre-seeded looping animations, use CSS `@keyframes` with negative `animation-delay` instead (see Section 12).
 *   **When This Works:** Framer Motion keyframes are fine for one-shot entrance/exit animations where starting from the first value is expected.
+
+### 15. NFC Ring Animation Architecture (WAAPI Conveyor Belt)
+*   **Pattern:** High-frequency looping animations (NFC scan rings) should use WAAPI directly, not Framer Motion or CSS keyframes.
+*   **Architecture:**
+    1.  **Hook (`useRingAnimation`):** Orchestrates all ring animations, generates keyframes, manages lifecycle.
+    2.  **Visualizer (`WaapiRingVisualizer`):** Pure rendering component, binds WAAPI animations to SVG circles.
+    3.  **Feature Flag (`feat_ring_animation`):** Controls visibility, default OFF.
+*   **Key Techniques:**
+    *   **Phase Offset via `iterationStart`:** Each ring starts at `(index / ringCount)` to create equidistant spacing.
+    *   **Radial Attenuation:** Outer rings fade to 30% opacity for visual softness.
+    *   **Semantic Color:** Use `--surface-border-info` for scanning state (semantic blue).
+*   **Anti-Pattern:** Using Framer Motion for 12+ concurrent looping animations—causes thrashing.
+*   **Reference:** See `docs/SPEC-NFC-Scan-Animation.md`, `src/features/Shell/useRingAnimation.ts`.
+
+### 16. Future Ideas Feature Flag Pattern
+*   **The Structure:** Experimental features are gated behind `featureFlagsAtom` with `atomWithStorage` for persistence.
+*   **Unlock Behavior:**
+    *   Triggered by Konami code or 7-tap on logo.
+    *   Applies "Dave's Favorites" preset (curated defaults for demonstration).
+    *   Sets `futureIdeasUnlockedAtom = true`.
+*   **Lock Behavior:**
+    *   Triggered by re-activating Konami/7-tap while unlocked.
+    *   Performs strict reset: all flags to `DEFAULT_FEATURE_FLAGS`, theme to light.
+    *   Ring animation and other persistent flags are cleared.
+*   **Feature Flag Persistence:**
+    *   Flags persist across page reloads via `atomWithStorage`.
+    *   Some flags (like ring animation) may require explicit reset paths if they shouldn't survive lock/unlock cycles.
+*   **Modal Integration:**
+    *   **Developer Tools:** Core debugging tools (NFC simulation, network status, toasts).
+    *   **Future Ideas:** Experimental UI features and playground tools.
+*   **Anti-Pattern:** Putting experimental playground features in Developer Tools—separate concerns.
+*   **Reference:** See `src/data/featureFlags.ts`, `src/features/Overlays/FutureIdeasModal.tsx`.
+
+### 17. Hardware Simulation State Pattern
+*   **The Atom:** `hardwareSimulationAtom` in `src/data/atoms.ts` controls simulated hardware failures.
+*   **Properties:**
+    ```typescript
+    interface HardwareSimulation {
+      nfcFails: boolean;      // Tag reads fail
+      nfcBlocked: boolean;    // NFC permission denied
+      nfcTurnedOff: boolean;  // Device NFC is disabled
+      cameraFails: boolean;   // Camera startup fails
+    }
+    ```
+*   **Usage Pattern:**
+    1.  Toggle simulation state in Developer Tools modal.
+    2.  Hardware hooks (`useNfcScan`, `useCamera`) check simulation state before operations.
+    3.  If simulated failure, show appropriate toast and abort operation.
+*   **Toast Messages:**
+    *   `nfcBlocked`: "NFC Blocked / Allow NFC in app settings"
+    *   `nfcTurnedOff`: "NFC is turned off / Open NFC Settings to turn on"
+    *   `nfcFails`: "Tag not read. Hold phone steady against the tag."
+*   **Anti-Pattern:** Handling simulation state in UI components—keep it in hooks.
+*   **Reference:** See `docs/SPEC-NFC-Interaction.md`, `src/features/Shell/useNfcScan.ts`.

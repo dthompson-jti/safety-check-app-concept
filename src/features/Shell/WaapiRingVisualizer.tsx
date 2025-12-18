@@ -36,7 +36,7 @@ export const WaapiRingVisualizer: React.FC<WaapiRingVisualizerProps> = ({
     // Run WAAPI animations if not reduced motion
     useRingAnimation(svgRef, params, isEnabled && !prefersReducedMotion);
 
-    const RING_COLOR = 'var(--surface-border-primary)';
+    const RING_COLOR = 'var(--surface-border-info)';
 
     return (
         <svg

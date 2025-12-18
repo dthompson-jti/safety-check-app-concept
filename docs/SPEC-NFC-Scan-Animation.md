@@ -1,63 +1,115 @@
-# NFC Animation Specification
-**Status:** Approved for Implementation
-**Concept:** "High-Fidelity Radar Pulse"
-**Reference:** `src/features/Shell/NfcScanButton.tsx` (ScanningVisualizer)
+# NFC Scan Animation Specification
+**Status:** Implemented
+**Architecture:** WAAPI-based Conveyor Belt + Shimmer System
+**Reference:** `src/features/Shell/useRingAnimation.ts`, `WaapiRingVisualizer.tsx`
 
-## 1. Global Setup
-- **Tooling:** CSS Keyframes (for negative delay support) + Framer Motion (for success state)
-- **Rendering:** SVG inside a fixed container.
-- **Scaling:** 
-  - **Container Width:** `600px` (Rendered absolute center of footer)
-  - **SVG ViewBox:** `0 0 200 200`
-  - **Scale Factor:** ~3x (1 SVG unit = 3 rendered pixels)
-- **Cropping:** Strictly cropped to the `AppFooter` bounds (`overflow: hidden`).
+## 1. Architecture Overview
 
-## 2. Scanning State ("Radar Pulse")
-The scanning state consists of a dense array of concentric circles expanding linearly to create a continuous "wave" effect.
+The NFC scan animation uses a dual-layer WAAPI-based system for high-performance, synchronized ring expansion:
 
-### Ring Parameters
-| Parameter | Value | Visual Calc | Notes |
-|:---|:---|:---|:---|
-| **Ring Count** | `12` | - | High density to prevent gaps. |
-| **Duration** | `20s` | - | Extremely slow "breathing" radar. |
-| **Initial Radius** | `r: 8` | `24px` | Starts at 48px Diameter. |
-| **Final Radius** | `r: 80` | `240px` | Fills footer width. |
-| **Stagger Delay** | `-i * 2s` | - | **Negative delay for steady-state start.** |
-| **Easing** | `linear` | - | Maintains equidistant spacing. |
-| **Thickness** | `2` | ~6px | Thicker, more visible lines. |
-| **Color** | `surface-border-primary` | - | Lighter/Subtler Grey. |
-| **Opacity Peak** | `0 → 0.6 → 0` | @ 20% | Fade in, peak early, fade out. |
+### Conveyor Belt Layer
+- **Concept**: Rings expand outward in a continuous "conveyor belt" pattern
+- **Ring Count**: 12 rings (configurable) for dense, gap-free coverage
+- **Duration**: 4 seconds per full cycle
+- **Stagger**: Rings are phase-offset by `(index / ringCount) * duration`
+- **Timing**: Linear easing maintains equidistant ring spacing
 
-### Steady-State Pattern
-Uses CSS animation with **negative `animation-delay`** to spread rings across the animation cycle on mount, avoiding the "bunched up at center" problem that occurs with Framer Motion keyframes.
+### Shimmer Overlay (Deprecated)
+- Originally provided opacity and stroke-width modulation
+- Now simplified: shimmer effects removed in favor of radial attenuation
 
-## 3. Success State ("Check Snap")
-The transition creates a "snap" effect where the disorganized radar converges into a solid confirmation token.
+## 2. Visual Parameters
 
-### Checkmark Parameters
-| Parameter | Value | Visual Calc | Notes |
-|:---|:---|:---|:---|
-| **Target Size** | `Diameter: 11px` | ~33px | Standard icon size. |
-| **Target Radius** | `r: 5.5` | ~16.5px | Half of target size. |
-| **Ring Converge** | `0.2s` | - | Fast spring to center. |
-| **Check Draw** | `0.2s` | - | Fast "signature" stroke. |
-| **Stroke Width** | `1.5` | ~4.5px | Slightly thinner than rings. |
-| **Path** | `M 97 100 L 99 102 L 103 98` | - | Proportionate to check circle. |
+### Ring Properties
+| Parameter | Value | Notes |
+|:----------|:------|:------|
+| **Ring Count** | 12 | High density for smooth wave effect |
+| **Duration** | 4000ms | Slow, "breathing" radar feel |
+| **Min Radius** | 8 | Starting size (24px rendered) |
+| **Max Radius** | 80 | Fills footer width (240px rendered) |
+| **Stroke Width** | 2 | ~6px rendered |
+| **Color** | `--surface-border-info` | Semantic blue for scanning state |
+| **Base Opacity** | 0.5 | With radial attenuation |
 
-### Transition Logic
-1.  **User Tap/Event:** `scanState` → `'success'`
-2.  **Ring Converge:** A new ring spawns at `r: 20` and springs to `r: 5.5` (Duration: 0.2s).
-3.  **Check Draw:** Path draws `pathLength: 0 → 1` (Duration: 0.2s, no delay).
-4.  **Hold:** Wait `300ms` (animation time + brief visibility).
-5.  **Finalize:** Trigger Toast, then auto-restart to `scanning` state (continuous loop).
+### Radial Attenuation
+Outer rings fade to 30% of base opacity as they expand, creating a natural visual falloff:
+- Inner rings (at fadeInPercent): 100% of base opacity
+- Outer rings (at 1-fadeOutPercent): 30% of base opacity
+- Softens the overall visual intensity, especially in light mode
 
-## 4. Continuous Loop Behavior
-When `simpleSubmitEnabled` is **ON**, after a successful scan:
-1. Success animation plays (0.3s total)
-2. Toast shows completion
-3. Scanner **automatically restarts** (no need to press Start again)
-4. Timeout is reset if enabled
+### "Ready to Scan" Label
+- **Color**: `--surface-fg-info-primary` (semantic dark blue)
+- **Font Size**: `--font-size-xl`
+- **Animation**: Subtle opacity pulse (0.85 → 1.0, 2 second cycle)
+- **Text Shadow**: Background-colored halo for ring separation
+- **Reduced Motion**: Label animation disabled when `prefers-reduced-motion: reduce`
 
-When `simpleSubmitEnabled` is **OFF**:
-- Opens CheckEntryView form instead of auto-completing
-- Returns to idle state after form submission
+## 3. Feature Flag Control
+
+The ring animation is controlled by a Future Ideas feature flag:
+
+```typescript
+// In featureFlagsAtom
+feat_ring_animation: boolean // Default: false
+```
+
+**Behavior:**
+- **Default OFF**: No ring animation during NFC scan (just the label)
+- **Enabled via Future Ideas**: Toggle "Enable Ring Animation" to show rings
+- **Persistence**: Flag persists until manually disabled or Future Ideas is locked
+
+## 4. Synchronization Strategy
+
+Uses the "Zero-Time Protocol" documented in `WAAPI-STRATEGY.md`:
+
+1. All ring animations share `startTime = 0` (document.timeline origin)
+2. Phase offsets are applied via `iterationStart` property
+3. Mathematically impossible for rings to drift out of sync
+4. Tab-backgrounding is handled gracefully (jumps to correct frame on resume)
+
+## 5. Success State Animation
+
+When NFC tag is detected:
+
+1. **Scanning rings fade out** (200ms)
+2. **Success ring spawns** at expanded size
+3. **Ring converges** to `r: 5.5` (spring animation, 200ms)
+4. **Checkmark draws** via `pathLength` animation (200ms)
+5. **Hold** for 300ms visibility
+6. **Finalize**: Toast + auto-restart or form view
+
+### Success Ring Parameters
+- **Color**: `--surface-fg-success-primary` (green)
+- **Final Radius**: 5.5 (matches checkmark container)
+- **Stroke Width**: 1.5 (thinner than scan rings)
+
+## 6. Interaction Model
+
+### Scanning State
+- **Tap footer area**: Simulates NFC tag read (for dev testing)
+- **Back button/gesture**: Cancels scan, returns to idle
+
+### Timeout State
+- Displays "Timed out — Tap to retry" button
+- Tapping restarts the scan with fresh timeout
+
+## 7. Ring Animation Sandbox
+
+A developer playground for tuning animation parameters:
+
+- **Location**: Future Ideas → Enable Ring Animation → Ring Animation Sandbox
+- **Features**:
+  - Real-time parameter adjustment (ring count, duration, opacity, etc.)
+  - Phase visualization showing ring timing
+  - Preset "recipes" for common configurations
+  - Mobile-optimized responsive layout
+
+## 8. Implementation Files
+
+| File | Purpose |
+|:-----|:--------|
+| `useRingAnimation.ts` | WAAPI animation orchestration, keyframe generation |
+| `WaapiRingVisualizer.tsx` | SVG ring rendering, animation binding |
+| `NfcScanButton.tsx` | State machine, label rendering, feature flag check |
+| `NfcScanButton.module.css` | Label styling, pulse animation |
+| `RingAnimationTestSheet.tsx` | Developer sandbox UI |

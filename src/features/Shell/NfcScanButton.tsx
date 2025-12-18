@@ -1,32 +1,12 @@
 // src/features/Shell/NfcScanButton.tsx
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
+import { useAtomValue } from 'jotai';
 import { useNfcScan } from './useNfcScan';
 import { WaapiRingVisualizer } from './WaapiRingVisualizer';
+import { featureFlagsAtom } from '../../data/featureFlags';
 import styles from './NfcScanButton.module.css';
 
-/**
- * Floating simulate button - simplified to a round NFC icon.
- * Positioned fixed above the footer.
- */
-const SimulateFab = () => {
-    const { scanState, simulateTagRead } = useNfcScan();
-
-    if (scanState !== 'scanning') return null;
-
-    return (
-        <button
-            className={styles.simulateFab}
-            onClick={(e) => {
-                e.stopPropagation();
-                simulateTagRead();
-            }}
-            aria-label="Simulate NFC Tag Read"
-        >
-            <span className="material-symbols-rounded">contactless</span>
-        </button>
-    );
-};
 
 /**
  * Shared Start Button - Blue "Scan" button.
@@ -46,7 +26,9 @@ const StartButton = ({ onClick }: { onClick: () => void }) => {
  */
 const ScanningVisualizer = () => {
     const { scanState, finalizeSuccess } = useNfcScan();
+    const featureFlags = useAtomValue(featureFlagsAtom);
     const isScanning = scanState === 'scanning';
+    const showRingAnimation = featureFlags.feat_ring_animation;
 
     // Animation constants for success state
     const CHECK_RADIUS = 5.5;
@@ -61,15 +43,15 @@ const ScanningVisualizer = () => {
         if (scanState === 'success') {
             const timer = setTimeout(() => {
                 finalizeSuccessRef.current();
-            }, 700); // 400ms ring + 400ms check + 100ms delay = 500ms animation, + buffer
+            }, 850); // 400ms ring + (100ms delay + 400ms check) + 350ms breathing room = 850ms
             return () => clearTimeout(timer);
         }
     }, [scanState]);
 
     return (
         <div className={styles.visualizerContainer}>
-            {/* WAAPI Ring Visualizer for scanning state */}
-            {isScanning && (
+            {/* WAAPI Ring Visualizer for scanning state - controlled by Future Ideas flag */}
+            {isScanning && showRingAnimation && (
                 <WaapiRingVisualizer isEnabled={true} />
             )}
 
@@ -80,7 +62,7 @@ const ScanningVisualizer = () => {
                         className={styles.successBackground}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        exit={{ opacity: 0, scale: 1.05 }}
                         transition={{ duration: 0.4, ease: 'easeOut' }}
                     >
                         <svg className={styles.ringsSvg} viewBox="0 0 200 200">
@@ -119,14 +101,16 @@ const ScanningVisualizer = () => {
                 )}
             </AnimatePresence>
 
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {scanState === 'scanning' && (
                     <motion.div
                         key="scanning-label"
                         className={styles.scanningLabel}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, filter: 'blur(8px)' }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.15, ease: 'easeOut' }}
+                        style={{ animation: 'none' }} // Override CSS labelPulse during Framer Motion control
                     >
                         Ready to Scan
                     </motion.div>
@@ -137,7 +121,8 @@ const ScanningVisualizer = () => {
 };
 
 export const NfcScanButton = () => {
-    const { scanState, startScan, stopScan } = useNfcScan();
+    const { scanState, startScan, stopScan, simulateTagRead } = useNfcScan();
+    const isScanning = scanState === 'scanning';
 
     return (
         <div className={styles.nfcWrapper}>
@@ -163,6 +148,8 @@ export const NfcScanButton = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.5, ease: 'easeOut' }}
+                            onClick={isScanning ? simulateTagRead : undefined}
+                            style={{ cursor: isScanning ? 'pointer' : 'default', pointerEvents: isScanning ? 'auto' : 'none' }}
                         >
                             <ScanningVisualizer />
                         </motion.div>
@@ -190,8 +177,6 @@ export const NfcScanButton = () => {
                     )}
                 </AnimatePresence>
             </MotionConfig>
-
-            <SimulateFab />
         </div>
     );
 };

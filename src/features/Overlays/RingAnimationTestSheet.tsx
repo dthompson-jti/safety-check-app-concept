@@ -228,7 +228,7 @@ export const RingAnimationTestSheet: React.FC<RingAnimationTestSheetProps> = ({ 
                     isEnabled={true}
                     params={params}
                 />
-                <div className={styles.ringTestLabel}>Ring Animation Test</div>
+                <div className={styles.ringTestLabel}>Ring Animation Sandbox</div>
             </div>
 
             {/* Controls Panel */}

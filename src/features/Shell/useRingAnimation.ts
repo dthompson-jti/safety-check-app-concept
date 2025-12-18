@@ -4,9 +4,29 @@ import { useLayoutEffect, useRef, RefObject, useCallback } from 'react';
 /**
  * WAAPI-based Ring Animation System
  * 
- * Two-layer architecture:
- * 1. Conveyor Belt: Rings flow from center to edge with fade in/out
- * 2. Shimmer Overlay: Periodic ripple that propagates outward
+ * ## Architecture Overview
+ * Two-layer animation architecture for NFC scan state visualization:
+ * 
+ * ### Layer 1: Conveyor Belt (Position + Base Opacity)
+ * - Rings flow continuously from center (minRadius) to edge (maxRadius)
+ * - Each ring evenly phased across the conveyorDuration cycle
+ * - Fade-in zone at start, fade-out zone at end for smooth transitions
+ * - Runs infinitely with linear timing
+ * 
+ * ### Layer 2: Shimmer Overlay (Additive Opacity + Stroke)
+ * - Periodic "pulse wave" that propagates outward across all rings
+ * - Uses WAAPI `composite: 'add'` to layer on top of conveyor
+ * - Attenuated in fade zones to prevent visual artifacts
+ * - Triggered on interval (shimmerPeriod) for rhythmic effect
+ * 
+ * ## Synchronization Strategy
+ * - All rings sync to mount time via `document.timeline.currentTime`
+ * - Shimmer waves respect current conveyor phase for proper visual flow
+ * - Label pulse animation (CSS) runs at 2x shimmer rate for complementary rhythm
+ * 
+ * ## Color Semantics
+ * - Ring stroke: `--surface-border-info` (semantic blue)
+ * - Label text: `--surface-fg-info-primary` (semantic blue, darker)
  */
 
 export interface RingAnimationParams {
@@ -52,6 +72,7 @@ interface RingState {
 /**
  * Creates keyframes for the conveyor belt animation
  * Ring fades in during first fadeInPercent, fades out during last fadeOutPercent
+ * Radial attenuation: opacity decreases as ring moves outward for softer outer rings
  */
 function createConveyorKeyframes(
     params: RingAnimationParams,
@@ -59,16 +80,18 @@ function createConveyorKeyframes(
 ): Keyframe[] {
     const { minRadius, maxRadius, baseOpacity, fadeInPercent, fadeOutPercent, baseStrokeWidth } = params;
 
-    // Phase offset for this ring (evenly distributed across cycle)
-    // Not used here since we apply it via animation delay
+    // Radial attenuation: outer rings are more transparent
+    // At fadeInPercent: full baseOpacity
+    // At (1 - fadeOutPercent): 30% of baseOpacity (softer outer rings)
+    const outerOpacity = baseOpacity * 0.3;
 
     return [
         // Start: small radius, invisible
         { r: minRadius, opacity: 0, strokeWidth: baseStrokeWidth, offset: 0 },
-        // After fade in: visible
+        // After fade in: visible at full opacity
         { r: minRadius + (maxRadius - minRadius) * fadeInPercent, opacity: baseOpacity, strokeWidth: baseStrokeWidth, offset: fadeInPercent },
-        // Before fade out: still visible
-        { r: minRadius + (maxRadius - minRadius) * (1 - fadeOutPercent), opacity: baseOpacity, strokeWidth: baseStrokeWidth, offset: 1 - fadeOutPercent },
+        // Before fade out: attenuated to softer opacity
+        { r: minRadius + (maxRadius - minRadius) * (1 - fadeOutPercent), opacity: outerOpacity, strokeWidth: baseStrokeWidth, offset: 1 - fadeOutPercent },
         // End: large radius, invisible
         { r: maxRadius, opacity: 0, strokeWidth: baseStrokeWidth, offset: 1 },
     ];

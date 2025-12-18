@@ -285,11 +285,15 @@
   --surface-border-success: var(--primitives-green-600);
   --surface-border-info: var(--primitives-blue-600);
 
-  /* Status Foregrounds - Lighter for dark mode */
-  --surface-fg-alert-primary: var(--primitives-red-400);
-  --surface-fg-alert-secondary: var(--primitives-red-300);
-  --surface-fg-warning-primary: var(--primitives-yellow-400);
-  --surface-fg-warning-secondary: var(--primitives-yellow-300);
+  /* Status Foregrounds - OKLCH high-chromacity for dark mode vibrancy */
+  --surface-fg-alert-primary: #FF5C50;
+  /* oklch(0.70 0.26 22) - vivid red */
+  --surface-fg-alert-secondary: #FF8478;
+  /* oklch(0.76 0.22 20) */
+  --surface-fg-warning-primary: #FFAA2E;
+  /* oklch(0.78 0.18 75) - vibrant amber */
+  --surface-fg-warning-secondary: #FFC05C;
+  /* oklch(0.82 0.15 80) */
   --surface-fg-info-primary: var(--primitives-blue-400);
   --surface-fg-info-secondary: var(--primitives-blue-300);
   --surface-fg-success-primary: var(--primitives-green-400);
@@ -342,13 +346,17 @@
   --control-fg-placeholder: var(--primitives-grey-500);
   --control-fg-disabled: var(--primitives-grey-600);
 
-  /* Status Control Foregrounds */
-  --control-fg-alert: var(--primitives-red-400);
-  --control-fg-alert-hover: var(--primitives-red-300);
-  --control-fg-alert-pressed: var(--primitives-red-300);
-  --control-fg-warning: var(--primitives-yellow-400);
-  --control-fg-warning-hover: var(--primitives-yellow-300);
-  --control-fg-warning-pressed: var(--primitives-yellow-300);
+  /* Status Control Foregrounds - OKLCH high-chromacity */
+  --control-fg-alert: #FF5C50;
+  /* oklch(0.70 0.26 22) */
+  --control-fg-alert-hover: #FF8478;
+  /* oklch(0.76 0.22 20) */
+  --control-fg-alert-pressed: #FF8478;
+  --control-fg-warning: #FFAA2E;
+  /* oklch(0.78 0.18 75) */
+  --control-fg-warning-hover: #FFC05C;
+  /* oklch(0.82 0.15 80) */
+  --control-fg-warning-pressed: #FFC05C;
   --control-fg-success: var(--primitives-green-400);
   --control-fg-success-hover: var(--primitives-green-300);
   --control-fg-success-pressed: var(--primitives-green-300);
@@ -463,11 +471,15 @@
   --surface-border-success: var(--primitives-green-600);
   --surface-border-info: var(--primitives-blue-600);
 
-  /* Status Foregrounds - Lighter for dark mode */
-  --surface-fg-alert-primary: var(--primitives-red-400);
-  --surface-fg-alert-secondary: var(--primitives-red-300);
-  --surface-fg-warning-primary: var(--primitives-yellow-400);
-  --surface-fg-warning-secondary: var(--primitives-yellow-300);
+  /* Status Foregrounds - OKLCH high-chromacity for dark mode vibrancy */
+  --surface-fg-alert-primary: #FF5C50;
+  /* oklch(0.70 0.26 22) - vivid red */
+  --surface-fg-alert-secondary: #FF8478;
+  /* oklch(0.76 0.22 20) */
+  --surface-fg-warning-primary: #FFAA2E;
+  /* oklch(0.78 0.18 75) - vibrant amber */
+  --surface-fg-warning-secondary: #FFC05C;
+  /* oklch(0.82 0.15 80) */
   --surface-fg-info-primary: var(--primitives-blue-400);
   --surface-fg-info-secondary: var(--primitives-blue-300);
   --surface-fg-success-primary: var(--primitives-green-400);
@@ -521,13 +533,17 @@
   --control-fg-placeholder: var(--primitives-grey-500);
   --control-fg-disabled: var(--primitives-grey-600);
 
-  /* Status Control Foregrounds */
-  --control-fg-alert: var(--primitives-red-400);
-  --control-fg-alert-hover: var(--primitives-red-300);
-  --control-fg-alert-pressed: var(--primitives-red-300);
-  --control-fg-warning: var(--primitives-yellow-400);
-  --control-fg-warning-hover: var(--primitives-yellow-300);
-  --control-fg-warning-pressed: var(--primitives-yellow-300);
+  /* Status Control Foregrounds - OKLCH high-chromacity */
+  --control-fg-alert: #FF5C50;
+  /* oklch(0.70 0.26 22) */
+  --control-fg-alert-hover: #FF8478;
+  /* oklch(0.76 0.22 20) */
+  --control-fg-alert-pressed: #FF8478;
+  --control-fg-warning: #FFAA2E;
+  /* oklch(0.78 0.18 75) */
+  --control-fg-warning-hover: #FFC05C;
+  /* oklch(0.82 0.15 80) */
+  --control-fg-warning-pressed: #FFC05C;
   --control-fg-success: var(--primitives-green-400);
   --control-fg-success-hover: var(--primitives-green-300);
   --control-fg-success-pressed: var(--primitives-green-300);
@@ -644,11 +660,15 @@
   --surface-border-success: var(--primitives-green-700);
   --surface-border-info: var(--primitives-blue-700);
 
-  /* Status Foregrounds - Lighter for dark mode */
-  --surface-fg-alert-primary: var(--primitives-red-400);
-  --surface-fg-alert-secondary: var(--primitives-red-300);
-  --surface-fg-warning-primary: var(--primitives-yellow-400);
-  --surface-fg-warning-secondary: var(--primitives-yellow-300);
+  /* Status Foregrounds - OKLCH high-chromacity for dark mode vibrancy */
+  --surface-fg-alert-primary: #FF5C50;
+  /* oklch(0.70 0.26 22) - vivid red */
+  --surface-fg-alert-secondary: #FF8478;
+  /* oklch(0.76 0.22 20) */
+  --surface-fg-warning-primary: #FFAA2E;
+  /* oklch(0.78 0.18 75) - vibrant amber */
+  --surface-fg-warning-secondary: #FFC05C;
+  /* oklch(0.82 0.15 80) */
   --surface-fg-info-primary: var(--primitives-blue-400);
   --surface-fg-info-secondary: var(--primitives-blue-300);
 
@@ -698,13 +718,17 @@
   --control-fg-placeholder: var(--primitives-grey-500);
   --control-fg-disabled: var(--primitives-grey-600);
 
-  /* Status Control Foregrounds */
-  --control-fg-alert: var(--primitives-red-400);
-  --control-fg-alert-hover: var(--primitives-red-300);
-  --control-fg-alert-pressed: var(--primitives-red-300);
-  --control-fg-warning: var(--primitives-yellow-400);
-  --control-fg-warning-hover: var(--primitives-yellow-300);
-  --control-fg-warning-pressed: var(--primitives-yellow-300);
+  /* Status Control Foregrounds - OKLCH high-chromacity */
+  --control-fg-alert: #FF5C50;
+  /* oklch(0.70 0.26 22) */
+  --control-fg-alert-hover: #FF8478;
+  /* oklch(0.76 0.22 20) */
+  --control-fg-alert-pressed: #FF8478;
+  --control-fg-warning: #FFAA2E;
+  /* oklch(0.78 0.18 75) */
+  --control-fg-warning-hover: #FFC05C;
+  /* oklch(0.82 0.15 80) */
+  --control-fg-warning-pressed: #FFC05C;
   --control-fg-success: var(--primitives-green-400);
   --control-fg-success-hover: var(--primitives-green-300);
   --control-fg-success-pressed: var(--primitives-green-300);

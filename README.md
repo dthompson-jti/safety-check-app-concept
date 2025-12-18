@@ -52,13 +52,15 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Haptics:** Granular vibration patterns (success, warning, selection) triggered via `useHaptics`.
 -   **Developer Simulation Tools:** A suite of tools to simulate various conditions for testing:
     -   **Hardware Failure:** Simulate Camera or NFC reader failures.
-    -   **Simulation Toggles:**
-        -   Force Camera Failure (`HardwareSimulation`): Intercepts camera startup to display error overlays.
-        -   Force NFC Failure (`HardwareSimulation`): Intercepts NFC scans to trigger error feedback.
-    -   **Lifecycle Stress Test (A-Wing):** The A-Wing mock data is specifically configured with staggered checks (30s intervals) to test every lifecycle boundary (Early->Pending, Pending->Due, Due->Missed, Missed Rollover) in under 60 seconds.
+    -   **NFC Simulation Controls:**
+        -   Force NFC Failure: Tag reads fail, shows error toast, timeout restarts.
+        -   Force NFC Blocked: Scan cannot start, shows "Allow NFC in app settings" toast.
+        -   Force NFC Turned Off: Scan cannot start, shows "Open NFC Settings to turn on" toast.
+    -   **Camera Simulation:** Force Camera Failure intercepts camera startup to display error overlays.
+    -   **Lifecycle Stress Test (A-Wing):** The A-Wing mock data is specifically configured with staggered checks (30s intervals) to test every lifecycle boundary (Early→Pending, Pending→Due, Due→Missed, Missed Rollover) in under 60 seconds.
     -   **Network Status:** Toggle between Online, Offline, and Syncing states.
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
-    -   **NFC Simulation Controls:** Interactive buttons within the NFC workflow to force specific outcomes (Success, Network Error, Tag Locked) for edge-case testing.
+    -   **Scan Simulation:** Tap the footer area during NFC scanning to simulate a successful tag read.
 -   **Late Check Visual Language:** A comprehensive suite of ambient and micro-interaction effects that activate when checks become overdue, creating progressive urgency without overwhelming the user:
     -   **Global Pulse Effects:** Header and footer glassmorphic surfaces pulse to indicate urgency, using the **WAAPI Zero-Time Protocol** for perfect synchronization.
     -   **Vignette Overlay:** A directional red glow emerges from the top of the viewport, concentrating visual attention on late items.
@@ -68,7 +70,13 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 -   **Core Scan-to-Save Workflow:** An end-to-end flow for recording check outcomes with context-aware simulation logic for rapid testing.
 -   **Manual Check Workflow:** A streamlined flow where selecting a room manually bypasses the scanner and navigates directly to the check entry form, respecting user intent.
 -   **Simulated Admin Tools & Offline Mode:** Complete UI simulations for NFC tag provisioning and offline data synchronization workflows.
--   **Future Ideas Playground:** Experimental features (Haptics, Enhanced Avatar, Visual Effects) are gated behind a secure unlock (Konami Code or 7-tap on logo). Unlocking applies a curated "Dave's Favorites" preset: **Light Mode** with Haptics, Audio, Enhanced Avatar, and Invert Badge **ON**; pulse effects **OFF**. Locking performs a strict reset to defaults.
+-   **Future Ideas Playground:** Experimental features are gated behind a secure unlock (Konami Code or 7-tap on logo). Includes:
+    -   **Ring Animation Toggle:** Enable WAAPI-based expanding ring animation during NFC scanning.
+    -   **Ring Animation Sandbox:** Developer playground for tuning ring animation parameters.
+    -   **Haptics & Sound:** Experimental audio and haptic feedback patterns.
+    -   **Enhanced Avatar Dropdown:** Clickable avatar with color customization.
+    -   **Late Check Effects:** Various visual urgency indicators for overdue checks.
+    -   **Unlock/Lock Behavior:** Unlocking applies "Dave's Favorites" preset (Light Mode, Haptics ON, Audio ON, Enhanced Avatar ON, Invert Badge ON, pulse effects OFF). Locking performs a strict reset to defaults.
 
 
 ## 4. Directory Structure

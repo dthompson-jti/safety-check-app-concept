@@ -1,5 +1,5 @@
 // src/AppShell.tsx
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAtomValue, useAtom } from 'jotai';
 import { motion, AnimatePresence, useTransform, animate } from 'framer-motion';
 import {
@@ -12,6 +12,7 @@ import {
   connectionStatusAtom,
   appViewAtom,
 } from './data/atoms';
+
 import { MainLayout } from './layouts/MainLayout';
 import { AppSideMenu } from './features/Shell/AppSideMenu';
 import { AppHeader } from './features/Shell/AppHeader';
@@ -52,6 +53,12 @@ const AppShellContent = () => {
   const [isFutureIdeasOpen, setIsFutureIdeasOpen] = useAtom(isFutureIdeasModalOpenAtom);
   const [isUserSettingsOpen, setIsUserSettingsOpen] = useAtom(isUserSettingsModalOpenAtom);
   const [isRingTestOpen, setIsRingTestOpen] = useAtom(isRingAnimationTestOpenAtom);
+
+  // Handler to close Future Ideas - ring animation persists until manually disabled
+  // or Future Ideas is locked (which resets all feature flags via useFutureIdeas.lock())
+  const handleCloseFutureIdeas = useCallback(() => {
+    setIsFutureIdeasOpen(false);
+  }, [setIsFutureIdeasOpen]);
 
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
@@ -292,7 +299,7 @@ const AppShellContent = () => {
 
       <FullScreenModal
         isOpen={isFutureIdeasOpen}
-        onClose={() => setIsFutureIdeasOpen(false)}
+        onClose={handleCloseFutureIdeas}
         title="Future Ideas"
         transitionType="slide-horizontal"
         actionType="back"

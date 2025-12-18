@@ -141,10 +141,14 @@ export const offlineTimestampAtom = atom<number | null>(null);
 export interface HardwareSimulation {
   cameraFails: boolean;
   nfcFails: boolean;
+  nfcBlocked: boolean;
+  nfcTurnedOff: boolean;
 }
 export const hardwareSimulationAtom = atom<HardwareSimulation>({
   cameraFails: false,
   nfcFails: false,
+  nfcBlocked: false,
+  nfcTurnedOff: false,
 });
 
 export const connectionStatusAtom = atom(

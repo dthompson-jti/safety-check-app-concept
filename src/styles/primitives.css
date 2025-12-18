@@ -81,7 +81,7 @@
   --primitives-gray-tint-900: #181D274C;
   --primitives-gray-tint-950: #0A0D124C;
 
-  /* Red */
+  /* Red - OKLCH-optimized for high chromacity */
   --primitives-red-25: #FEFAFA;
   --primitives-red-50: #FFF3F2;
   --primitives-red-100: #FEE3E1;
@@ -89,9 +89,12 @@
   --primitives-red-200: #FFCEC9;
   --primitives-red-250: #FFB8B1;
   --primitives-red-300: #FFA298;
-  --primitives-red-400: #FD7E73;
-  --primitives-red-500: #FD6157;
-  --primitives-red-600: #E3403A;
+  --primitives-red-400: #FF6B5E;
+  /* oklch(0.68 0.24 22) - vivid for dark mode */
+  --primitives-red-500: #F04940;
+  /* oklch(0.60 0.25 24) - punchy mid-tone */
+  --primitives-red-600: #D63230;
+  /* oklch(0.54 0.24 25) - slightly darker, high chroma */
   --primitives-red-700: #BB2E28;
   --primitives-red-800: #9A271F;
   /* L≈28% */
@@ -104,7 +107,7 @@
   --primitives-red-975: #2A0A07;
   /* L≈8%  */
 
-  /* Yellow */
+  /* Yellow/Orange - OKLCH-optimized for warning visibility */
   --primitives-yellow-25: #FFFCF4;
   --primitives-yellow-50: #FFF9EB;
   --primitives-yellow-100: #FEEFC6;
@@ -112,10 +115,13 @@
   --primitives-yellow-200: #FFDF84;
   --primitives-yellow-250: #F2CF63;
   --primitives-yellow-300: #F4C04B;
-  --primitives-yellow-400: #EFA82B;
-  --primitives-yellow-500: #E08518;
-  --primitives-yellow-600: #CD6000;
-  --primitives-yellow-700: #B04100;
+  --primitives-yellow-400: #F5A623;
+  /* oklch(0.76 0.17 70) - vibrant amber for dark mode */
+  --primitives-yellow-500: #E58D0A;
+  /* oklch(0.68 0.18 65) - richer orange */
+  --primitives-yellow-600: #C45500;
+  /* oklch(0.55 0.17 55) - darker burnt orange, better contrast */
+  --primitives-yellow-700: #A84000;
   --primitives-yellow-800: #7A3005;
   /* L≈28% */
   --primitives-yellow-850: #5E2504;
