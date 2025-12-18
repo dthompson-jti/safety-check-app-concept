@@ -313,3 +313,53 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Anti-Pattern:** `font-size: 15px` (Off-grid), `font-weight: bold` (Vague, usually maps to 700).
 *   **Resident Lists:** Use tighter spacing (`gap: 2px` / `--spacing-0p5`) for multiple residents to group them visually distinct from the room name.
 
+### 12. CSS Animation Negative Delay Pattern (Pre-Seeded Loops)
+*   **The Problem:** Framer Motion keyframe arrays always start from the first value, ignoring the `initial` prop. This causes all rings/elements to "bunch up" at the start of a looping animation.
+*   **The Solution:** Use **CSS @keyframes with negative `animation-delay`** to start each element mid-cycle.
+*   **Pattern:**
+    ```css
+    .pulseRing {
+      animation: pulseRingExpand 20s linear infinite;
+    }
+    ```
+    ```tsx
+    // Negative delay starts animation mid-cycle for steady-state appearance
+    <circle
+      className={styles.pulseRing}
+      style={{ animationDelay: `${-i * 2}s` }}
+    />
+    ```
+*   **Why It Works:** Negative `animation-delay` in CSS tells the browser to start the animation as if it had already been running for that duration, achieving instant "steady-state" spread.
+*   **When to Use:** Radar/pulse effects, wave animations, any looping effect that should appear "already running" on mount.
+*   **Reference:** See `src/features/Shell/NfcScanButton.tsx` and `NfcScanButton.module.css`.
+
+### 13. Stale Closure Prevention in useEffect Timers
+*   **The Problem:** When a callback function (like `finalizeSuccess`) is in a `useEffect` dependency array, and that function is regenerated on each render (due to upstream atom changes), the effect re-runs, resetting timers.
+*   **The Symptom:** A 300ms timeout becomes seconds-long because the timer keeps restarting.
+*   **The Solution:** Use a ref to store the latest callback, updating it outside the effect:
+    ```tsx
+    // Store current callback in ref to prevent timer resets
+    const callbackRef = useRef(callback);
+    callbackRef.current = callback;
+    
+    useEffect(() => {
+      if (shouldRun) {
+        const timer = setTimeout(() => {
+          callbackRef.current(); // Always calls latest version
+        }, 300);
+        return () => clearTimeout(timer);
+      }
+    }, [shouldRun]); // Only depend on trigger, not callback
+    ```
+*   **Anti-Pattern:** Including regenerating callbacks directly in dependency arrays.
+*   **Reference:** See `src/features/Shell/NfcScanButton.tsx` `ScanningVisualizer` component.
+
+### 14. Framer Motion Keyframe Arrays Always Start from First Value
+*   **The Pitfall:** When using keyframe arrays in Framer Motion, the animation **always starts from the first value in the array**, regardless of what `initial` is set to.
+    ```tsx
+    // initial={{ r: 50 }} is IGNORED - animation starts at r: 10
+    initial={{ r: 50, opacity: 0.5 }}
+    animate={{ r: [10, 80], opacity: [0, 1, 0] }}
+    ```
+*   **The Fix:** For pre-seeded looping animations, use CSS `@keyframes` with negative `animation-delay` instead (see Section 12).
+*   **When This Works:** Framer Motion keyframes are fine for one-shot entrance/exit animations where starting from the first value is expected.

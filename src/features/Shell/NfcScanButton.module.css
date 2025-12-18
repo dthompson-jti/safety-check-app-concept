@@ -170,27 +170,49 @@
   z-index: 10;
 }
 
-/* Pulse ring animation - CSS for negative delay support */
+/* Pulse ring animation - Dual-wave system for high-craft effect */
+/* 72s physical wave, 8s shimmer cycle (2s active + 6s rest) */
+/* WAAPI sync ensures consistent t=0 start on mount */
 .pulseRing {
-  animation: pulseRingExpand 20s linear infinite;
+  animation:
+    pulseRingExpand 72s linear infinite,
+    shimmerOpacity 8s ease-in-out infinite;
   transform-origin: center center;
 }
 
+/* Physical wave: slow, meditative expansion */
 @keyframes pulseRingExpand {
   0% {
     r: 8;
-    opacity: 0;
-  }
-
-  20% {
-    r: 22.4;
-    /* 8 + 0.2 * 72 */
-    opacity: 0.6;
   }
 
   100% {
     r: 80;
-    opacity: 0;
+  }
+}
+
+/* Opacity shimmer: smoothed wave with gradual transitions */
+/* Active: 0-35% (~2.8s), Rest: 35-100% (~5.2s) */
+/* Gradual rise to peak, gradual fall to baseline, then rest */
+@keyframes shimmerOpacity {
+  0% {
+    opacity: 0.25;
+    stroke-width: 1.5;
+  }
+
+  10% {
+    opacity: 0.85;
+    stroke-width: 3;
+  }
+
+  35% {
+    opacity: 0.25;
+    stroke-width: 1.5;
+  }
+
+  100% {
+    opacity: 0.25;
+    stroke-width: 1.5;
   }
 }
 

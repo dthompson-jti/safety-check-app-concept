@@ -1,7 +1,8 @@
 // src/features/Shell/NfcScanButton.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useNfcScan } from './useNfcScan';
+import { useWaapiSync } from '../../hooks/useWaapiSync';
 import styles from './NfcScanButton.module.css';
 
 /**
@@ -42,10 +43,15 @@ const StartButton = ({ onClick }: { onClick: () => void }) => {
 /**
  * The core visualizer for the "Ready to scan" and "Success" states.
  * Uses radially growing circles and a checkmark animation.
+ * WAAPI sync ensures consistent starting conditions on mount.
  */
 const ScanningVisualizer = () => {
     const { scanState, finalizeSuccess } = useNfcScan();
     const isScanning = scanState === 'scanning';
+
+    // Ref for WAAPI sync - ensures animations start at t=0 on mount
+    const svgRef = useRef<SVGSVGElement>(null);
+    useWaapiSync(svgRef, { isEnabled: isScanning });
 
     // Animation constants
     // SVG is 600px wide, viewBox is 200px. Scale factor is 3x.
@@ -75,7 +81,7 @@ const ScanningVisualizer = () => {
 
     return (
         <div className={styles.visualizerContainer}>
-            <svg className={styles.ringsSvg} viewBox="0 0 200 200">
+            <svg className={styles.ringsSvg} viewBox="0 0 200 200" ref={svgRef}>
                 <AnimatePresence>
                     {/* Refine: Fixed staggered rings for perfectly even spacing */
                         /* Visual Spacing ~20px. Scale 3x -> 6.6 units. */
@@ -95,8 +101,11 @@ const ScanningVisualizer = () => {
                                     vectorEffect="non-scaling-stroke"
                                     className={styles.pulseRing}
                                     style={{
-                                        // Negative delay starts animation mid-cycle for steady-state
-                                        animationDelay: `${-i * 2}s`,
+                                        // Physical: negative delay for steady-state (72s / 12 = 6s stagger)
+                                        // Shimmer: smoothed active window 2.8s (35% of 8s)
+                                        // Stagger = 2.8s / 11 ≈ 0.255s per ring
+                                        // Outer peaks first, wave propagates inward visually
+                                        animationDelay: `${-i * 6}s, ${-(11 - i) * (2.8 / 11)}s`,
                                     }}
                                 />
                             ))}
@@ -182,6 +191,7 @@ export const NfcScanButton = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
                         >
                             <ScanningVisualizer />
                         </motion.div>

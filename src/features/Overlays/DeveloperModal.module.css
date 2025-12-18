@@ -170,3 +170,178 @@
   color: var(--surface-fg-tertiary);
   font-style: italic;
 }
+
+/* Ring Animation Test Sheet */
+.ringTestContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: var(--surface-bg-secondary);
+  display: flex;
+  flex-direction: column;
+}
+
+.ringTestPreview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--surface-bg-primary);
+}
+
+.ringTestLabel {
+  position: absolute;
+  bottom: var(--spacing-4);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--surface-fg-secondary);
+  text-shadow: 0 0 8px var(--surface-bg-secondary);
+}
+
+.ringTestControls {
+  background-color: var(--surface-bg-secondary);
+  border-top: 1px solid var(--surface-border-primary);
+  padding: var(--spacing-3) var(--spacing-4);
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.ringTestHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.ringTestHeader h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--surface-fg-primary);
+}
+
+.ringTestActions {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.ringTestSliders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-3);
+}
+
+.ringTestSlider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.ringTestSlider label {
+  font-size: var(--font-size-sm);
+  color: var(--surface-fg-secondary);
+  font-weight: 500;
+}
+
+.ringTestSlider input[type="range"] {
+  width: 100%;
+  accent-color: var(--control-bg-theme);
+}
+
+/* Phase Visualization */
+.phaseViz {
+  background-color: var(--surface-bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
+.phaseVizLabel {
+  font-size: var(--font-size-xs);
+  color: var(--surface-fg-tertiary);
+  margin-bottom: var(--spacing-2);
+  font-weight: 500;
+}
+
+.phaseVizGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+}
+
+.phaseVizRing {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  flex: 1 1 80px;
+}
+
+.phaseVizIndex {
+  font-size: var(--font-size-xs);
+  color: var(--surface-fg-tertiary);
+  width: 16px;
+  text-align: right;
+}
+
+.phaseVizBar {
+  flex: 1;
+  height: 6px;
+  background-color: var(--surface-bg-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.phaseVizConveyor {
+  height: 100%;
+  background-color: var(--surface-fg-tertiary);
+  transition: width 0.1s linear;
+}
+
+.phaseVizShimmer {
+  height: 100%;
+  background-color: var(--control-bg-theme);
+  transition: width 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+/* Sync Recipes */
+.recipeSection {
+  margin-bottom: var(--spacing-3);
+}
+
+.recipeLabel {
+  font-size: var(--font-size-xs);
+  color: var(--surface-fg-tertiary);
+  margin-bottom: var(--spacing-2);
+  font-weight: 500;
+}
+
+.recipeGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.recipeButton {
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border-primary);
+  background-color: var(--surface-bg-secondary);
+  color: var(--surface-fg-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.recipeButton:hover {
+  background-color: var(--surface-bg-tertiary);
+  border-color: var(--control-bg-theme);
+}
+
+.recipeButton:active {
+  transform: scale(0.97);
+}

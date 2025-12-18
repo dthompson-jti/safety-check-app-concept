@@ -398,3 +398,34 @@ Interactive controls must meet WCAG 2.1 AA minimum touch target requirements (44
     ```
 
 *   **Anti-Pattern:** Never use hardcoded `height: 38px` or `height: 40px` for interactive controls. Use tokens.
+
+#### 17. The CSS Animation Negative Delay Pattern
+
+For looping animations that should appear "already running" at steady-state on mount (e.g., radar pulses, wave effects):
+
+-   **The Problem:** Framer Motion keyframe arrays always start from the first value, causing all elements to "bunch up" at the center on initial render.
+-   **The Solution:** Use CSS `@keyframes` with **negative `animation-delay`** to start each element mid-cycle.
+-   **Pattern:**
+    ```css
+    .pulseRing {
+      animation: pulseRingExpand 20s linear infinite;
+    }
+    
+    @keyframes pulseRingExpand {
+      0% { r: 8; opacity: 0; }
+      20% { r: 22; opacity: 0.6; }
+      100% { r: 80; opacity: 0; }
+    }
+    ```
+    ```tsx
+    // Negative delay starts animation mid-cycle
+    {[0, 1, 2, 3, 4, 5].map((i) => (
+      <circle
+        className={styles.pulseRing}
+        style={{ animationDelay: `${-i * 2}s` }}
+      />
+    ))}
+    ```
+-   **How It Works:** A negative `animation-delay` tells the browser to start the animation as if it had already been running for that duration.
+-   **When to Use:** NFC radar effects, audio visualizers, breathing indicators, any continuous effect that should look "settled" on mount.
+-   **Reference:** See `NfcScanButton.tsx` and `NfcScanButton.module.css`.

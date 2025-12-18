@@ -6,6 +6,7 @@ import {
   workflowStateAtom,
   isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
+  isRingAnimationTestOpenAtom,
   isFutureIdeasModalOpenAtom,
   isUserSettingsModalOpenAtom,
   connectionStatusAtom,
@@ -26,6 +27,7 @@ import { DeveloperModal } from './features/Overlays/DeveloperModal';
 import { FutureIdeasModal } from './features/Overlays/FutureIdeasModal';
 import { UserSettingsModal } from './features/Overlays/UserSettingsModal';
 import { FacilitySelectionModal } from './features/Overlays/FacilitySelectionModal';
+import { RingAnimationTestSheet } from './features/Overlays/RingAnimationTestSheet';
 import { GestureProvider } from './data/GestureProvider';
 import { useGestureContext } from './data/GestureContext';
 import { useVisualViewport } from './data/useVisualViewport';
@@ -49,6 +51,7 @@ const AppShellContent = () => {
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
   const [isFutureIdeasOpen, setIsFutureIdeasOpen] = useAtom(isFutureIdeasModalOpenAtom);
   const [isUserSettingsOpen, setIsUserSettingsOpen] = useAtom(isUserSettingsModalOpenAtom);
+  const [isRingTestOpen, setIsRingTestOpen] = useAtom(isRingAnimationTestOpenAtom);
 
   const [sideMenuWidth, setSideMenuWidth] = useState(0);
   const sideMenuRef = useRef<HTMLDivElement>(null);
@@ -306,6 +309,12 @@ const AppShellContent = () => {
       >
         <UserSettingsModal />
       </FullScreenModal>
+
+      <AnimatePresence>
+        {isRingTestOpen && (
+          <RingAnimationTestSheet onClose={() => setIsRingTestOpen(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

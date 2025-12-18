@@ -4,7 +4,7 @@
 **Reference:** `src/features/Shell/NfcScanButton.tsx` (ScanningVisualizer)
 
 ## 1. Global Setup
-- **Tooling:** Framer Motion (`framer-motion`)
+- **Tooling:** CSS Keyframes (for negative delay support) + Framer Motion (for success state)
 - **Rendering:** SVG inside a fixed container.
 - **Scaling:** 
   - **Container Width:** `600px` (Rendered absolute center of footer)
@@ -20,13 +20,16 @@ The scanning state consists of a dense array of concentric circles expanding lin
 |:---|:---|:---|:---|
 | **Ring Count** | `12` | - | High density to prevent gaps. |
 | **Duration** | `20s` | - | Extremely slow "breathing" radar. |
-| **Expansion** | `r: 11 -> 80` | `33px -> 240px` | Starts at 64px Diameter. |
-| **Stagger Delay** | `2s` | - | Matches 1.2x spacing at 20s duration. |
-| **Spacing** | ~7.6 units | ~23px | **User Refined (1.2x previous)** |
+| **Initial Radius** | `r: 8` | `24px` | Starts at 48px Diameter. |
+| **Final Radius** | `r: 80` | `240px` | Fills footer width. |
+| **Stagger Delay** | `-i * 2s` | - | **Negative delay for steady-state start.** |
 | **Easing** | `linear` | - | Maintains equidistant spacing. |
 | **Thickness** | `2` | ~6px | Thicker, more visible lines. |
 | **Color** | `surface-border-primary` | - | Lighter/Subtler Grey. |
-| **Opacity** | `0.5 -> 0` | - | Fade out as it expands. |
+| **Opacity Peak** | `0 → 0.6 → 0` | @ 20% | Fade in, peak early, fade out. |
+
+### Steady-State Pattern
+Uses CSS animation with **negative `animation-delay`** to spread rings across the animation cycle on mount, avoiding the "bunched up at center" problem that occurs with Framer Motion keyframes.
 
 ## 3. Success State ("Check Snap")
 The transition creates a "snap" effect where the disorganized radar converges into a solid confirmation token.
@@ -36,13 +39,25 @@ The transition creates a "snap" effect where the disorganized radar converges in
 |:---|:---|:---|:---|
 | **Target Size** | `Diameter: 11px` | ~33px | Standard icon size. |
 | **Target Radius** | `r: 5.5` | ~16.5px | Half of target size. |
-| **Drawing Speed** | `0.4s` | - | Fast "signature" stroke. |
-| **Stroke Width** | `2` | ~6px | Thicker than rings for hierarchy. |
-| **Path** | `M 96 100...` | - | Custom micro-path centered @ 100,100. |
+| **Ring Converge** | `0.2s` | - | Fast spring to center. |
+| **Check Draw** | `0.2s` | - | Fast "signature" stroke. |
+| **Stroke Width** | `1.5` | ~4.5px | Slightly thinner than rings. |
+| **Path** | `M 97 100 L 99 102 L 103 98` | - | Proportionate to check circle. |
 
 ### Transition Logic
-1.  **User Tap/Event:** `scanState` -> `'success'`
-2.  **Ring Converge:** A new ring spawns at `r: 20` and springs to `r: 5.5` (Duration: 0.6s).
-3.  **Check Draw:** Path draws `pathLength: 0 -> 1` (Delay: 0.1s, Duration: 0.4s).
-4.  **Hold:** Wait `0ms` (Instant).
-5.  **Finalize:** Trigger App Navigation / Toast.
+1.  **User Tap/Event:** `scanState` → `'success'`
+2.  **Ring Converge:** A new ring spawns at `r: 20` and springs to `r: 5.5` (Duration: 0.2s).
+3.  **Check Draw:** Path draws `pathLength: 0 → 1` (Duration: 0.2s, no delay).
+4.  **Hold:** Wait `300ms` (animation time + brief visibility).
+5.  **Finalize:** Trigger Toast, then auto-restart to `scanning` state (continuous loop).
+
+## 4. Continuous Loop Behavior
+When `simpleSubmitEnabled` is **ON**, after a successful scan:
+1. Success animation plays (0.3s total)
+2. Toast shows completion
+3. Scanner **automatically restarts** (no need to press Start again)
+4. Timeout is reset if enabled
+
+When `simpleSubmitEnabled` is **OFF**:
+- Opens CheckEntryView form instead of auto-completing
+- Returns to idle state after form submission

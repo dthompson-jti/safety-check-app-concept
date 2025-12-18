@@ -21,6 +21,9 @@ const SYNCABLE_ANIMATION_NAMES = [
     'indicator-pulse',
     'badge-pulse',
     'glass-tint-pulse',
+    // NFC scan animations
+    'pulseRingExpand',
+    'shimmerOpacity',
 ];
 
 interface UseWaapiSyncOptions {
@@ -36,7 +39,7 @@ interface UseWaapiSyncOptions {
  * @param ref - React ref to the animated element
  * @param options - { isEnabled: boolean }
  */
-export function useWaapiSync<T extends HTMLElement>(
+export function useWaapiSync<T extends Element>(
     ref: RefObject<T | null>,
     options: UseWaapiSyncOptions
 ): void {
@@ -95,10 +98,11 @@ export function useWaapiSync<T extends HTMLElement>(
             }
         };
 
-        element.addEventListener('animationstart', handleAnimationStart);
+        // Cast needed because Element type doesn't include animationstart in its event map
+        element.addEventListener('animationstart', handleAnimationStart as EventListener);
 
         return () => {
-            element.removeEventListener('animationstart', handleAnimationStart);
+            element.removeEventListener('animationstart', handleAnimationStart as EventListener);
         };
     }, [isEnabled, ref, animationNames]);
 }

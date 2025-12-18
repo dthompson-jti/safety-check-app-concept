@@ -233,3 +233,11 @@ const LoginView = lazy(() => withMinDelay(
  1.  **Execution Latency:** JS calculated the offset, but the Paint happened 16-50ms later.
  2.  **Tab Sleep:** CSS `animation-delay` pauses in background tabs, while `Date.now()` continues, causing immediate desync on resume.
  3.  **WAAPI Fix:** `currentTime` is relative to the document timeline, which accounts for all of this automatically.
+
+## 9. CSS Animation Negative Delay (Pre-Seeded Loops)
+
+For looping animations that should appear "already running" at steady-state on mount (e.g., NFC radar pulses):
+
+-   **The Pattern:** Use CSS `@keyframes` with **negative `animation-delay`** to start each element mid-cycle.
+-   **Why Not Framer Motion:** Framer Motion keyframe arrays always start from the first value, ignoring `initial`, causing all elements to "bunch up" at the center.
+-   **Reference:** See `STRATEGY-CSS-Principles.md` Section 17 and `SPEC-NFC-Scan-Animation.md` for detailed implementation.

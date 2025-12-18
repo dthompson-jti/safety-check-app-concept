@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import {
   appConfigAtom,
   hardwareSimulationAtom,
-  connectionStatusAtom
+  connectionStatusAtom,
+  isRingAnimationTestOpenAtom,
 } from '../../data/atoms';
-import { featureFlagsAtom } from '../../data/featureFlags';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
@@ -42,7 +42,7 @@ export const DeveloperModal = () => {
   const addToast = useSetAtom(addToastAtom);
   const activeToasts = useAtomValue(toastsAtom);
   const { trigger: triggerHaptic } = useHaptics();
-  const featureFlags = useAtomValue(featureFlagsAtom);
+  const setIsRingTestOpen = useSetAtom(isRingAnimationTestOpenAtom);
 
 
   const handleSwitch = (setter: (val: boolean) => void) => (checked: boolean) => {
@@ -104,6 +104,10 @@ export const DeveloperModal = () => {
           Reset Application Data
         </Button>
         <span className={styles.shortcutHint}>Shortcut: Ctrl+Backspace</span>
+        <Button variant="secondary" onClick={() => { triggerHaptic('light'); setIsRingTestOpen(true); }}>
+          <span className="material-symbols-rounded">animation</span>
+          Ring Animation Test
+        </Button>
       </div>
 
       {/* 2. Workflow Section */}
@@ -225,24 +229,6 @@ export const DeveloperModal = () => {
               id="nfc-fail-switch"
               checked={simulation.nfcFails}
               onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcFails: checked })))}
-            />
-          </div>
-
-          {/* NFC Scan Concept Style */}
-          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-            <label className={styles.itemLabel}>NFC scan style</label>
-            <SegmentedControl
-              id="nfc-concept-toggle"
-              options={[
-                { value: 'lite', label: 'Lite' },
-                { value: 'pulse', label: 'Pulse' },
-                { value: 'slide', label: 'Slide' },
-              ]}
-              value={appConfig.nfcScanConcept}
-              onValueChange={(val) => {
-                triggerHaptic('selection');
-                setAppConfig((c) => ({ ...c, nfcScanConcept: val }));
-              }}
             />
           </div>
 
