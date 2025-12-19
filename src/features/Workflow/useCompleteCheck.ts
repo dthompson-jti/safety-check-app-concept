@@ -5,6 +5,7 @@ import {
     connectionStatusAtom,
     recentlyCompletedCheckIdAtom,
     appConfigAtom,
+    nfcScanStateAtom,
 } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useAppSound } from '../../data/useAppSound';
@@ -19,6 +20,7 @@ type CompleteCheckOptions = {
 export const useCompleteCheck = () => {
     const dispatch = useSetAtom(dispatchActionAtom);
     const setRecentlyCompletedCheckId = useSetAtom(recentlyCompletedCheckIdAtom);
+    const setNfcScanState = useSetAtom(nfcScanStateAtom);
 
     const connectionStatus = useAtomValue(connectionStatusAtom);
     const appConfig = useAtomValue(appConfigAtom);
@@ -45,6 +47,12 @@ export const useCompleteCheck = () => {
         //    - QR or Manual: 2000ms (preserve animation for better UX feedback)
         const delay = isRapidMode ? 0 : 1000;
 
+        // Simple Scan OFF: Go directly to 'scanning' (Ready to Scan) after form submit
+        // No "Room X Complete" feedback - just return to scan mode
+        if (appConfig.scanMode === 'nfc' && !appConfig.simpleSubmitEnabled) {
+            setNfcScanState('scanning');
+        }
+
         setTimeout(() => {
             const payload = {
                 checkId,
@@ -61,6 +69,7 @@ export const useCompleteCheck = () => {
 
             // Cleanup
             setRecentlyCompletedCheckId(null);
+
             onSuccess?.();
         }, delay);
     };

@@ -1,12 +1,12 @@
 // src/features/Shell/NfcScanButton.tsx
-import React, { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useAtomValue } from 'jotai';
 import { useNfcScan } from './useNfcScan';
 import { WaapiRingVisualizer } from './WaapiRingVisualizer';
 import { featureFlagsAtom } from '../../data/featureFlags';
+import { appConfigAtom } from '../../data/atoms';
 import styles from './NfcScanButton.module.css';
-
 
 /**
  * Shared Start Button - Blue "Scan" button.
@@ -21,100 +21,239 @@ const StartButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 /**
- * The core visualizer for the "Ready to scan" and "Success" states.
- * Uses WAAPI for conveyor belt + shimmer animation system.
+ * Unified feedback icon with animated ring and path.
  */
-const ScanningVisualizer = () => {
-    const { scanState, finalizeSuccess } = useNfcScan();
-    const featureFlags = useAtomValue(featureFlagsAtom);
-    const isScanning = scanState === 'scanning';
-    const showRingAnimation = featureFlags.feat_ring_animation;
+const AnimatedIcon = ({ type }: { type: 'success' | 'alert' | 'warning' | 'info' }) => {
+    const RING_COLOR = {
+        success: 'var(--surface-fg-success-primary)',
+        alert: 'var(--surface-fg-alert-primary)',
+        warning: 'var(--surface-fg-warning-primary)',
+        info: 'var(--surface-fg-info-primary)',
+    }[type];
 
-    // Animation constants for success state
-    const CHECK_RADIUS = 5.5;
-    const SUCCESS_RING_COLOR = 'var(--surface-fg-success-primary)';
-    const IDLE_RING_COLOR = 'var(--surface-border-primary)';
-
-    // Handle success finalization delay
-    const finalizeSuccessRef = React.useRef(finalizeSuccess);
-    finalizeSuccessRef.current = finalizeSuccess;
-
-    useEffect(() => {
-        if (scanState === 'success') {
-            const timer = setTimeout(() => {
-                finalizeSuccessRef.current();
-            }, 850); // 400ms ring + (100ms delay + 400ms check) + 350ms breathing room = 850ms
-            return () => clearTimeout(timer);
-        }
-    }, [scanState]);
+    const PATH = {
+        success: "M 97 100 L 99 102 L 103 98",
+        alert: "M 100 96.9 L 100 100.1 M 100 103 L 100 103.1", // Exclamation adjusted
+        warning: "M 100 96.9 L 100 100.1 M 100 103 L 100 103.1", // Exclamation adjusted
+        info: "M 100 104 L 100 99 M 100 96 L 100 96.1", // Info 'i'
+    }[type];
 
     return (
-        <div className={styles.visualizerContainer}>
-            {/* WAAPI Ring Visualizer for scanning state - controlled by Future Ideas flag */}
-            {isScanning && showRingAnimation && (
-                <WaapiRingVisualizer isEnabled={true} />
+        <svg className={styles.ringsSvg} viewBox="0 0 200 200">
+            <motion.g>
+                <motion.circle
+                    cx="100"
+                    cy="100"
+                    initial={{ r: 20, stroke: 'var(--surface-border-primary)', opacity: 0.5 }}
+                    animate={{
+                        r: 5.5,
+                        stroke: RING_COLOR,
+                        opacity: 1,
+                        strokeWidth: 3
+                    }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    fill="none"
+                    style={{ vectorEffect: 'non-scaling-stroke' }}
+                />
+
+                <motion.path
+                    d={PATH}
+                    fill="none"
+                    stroke={RING_COLOR}
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+                />
+            </motion.g>
+        </svg>
+    );
+};
+
+/**
+ * Unified feedback text with staggered 1-2 line layout.
+ */
+const FeedbackText = ({ primary, secondary }: { primary: string, secondary?: string }) => {
+    return (
+        <div className={styles.feedbackTextContainer}>
+            <motion.div
+                className={styles.primaryText}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: 0.7 }}
+            >
+                {primary}
+            </motion.div>
+            {secondary && (
+                <motion.div
+                    className={styles.secondaryText}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, delay: 0.7 }}
+                >
+                    {secondary}
+                </motion.div>
             )}
+        </div>
+    );
+};
 
-            {/* Success state with background fade and SVG */}
-            <AnimatePresence>
-                {scanState === 'success' && (
-                    <motion.div
-                        className={styles.successBackground}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, scale: 1.05 }}
-                        transition={{ duration: 0.4, ease: 'easeOut' }}
-                    >
-                        <svg className={styles.ringsSvg} viewBox="0 0 200 200">
-                            <motion.g>
-                                {/* Converging Success Ring */}
-                                <motion.circle
-                                    cx="100"
-                                    cy="100"
-                                    initial={{ r: 20, stroke: IDLE_RING_COLOR, opacity: 0.5 }}
-                                    animate={{
-                                        r: CHECK_RADIUS,
-                                        stroke: SUCCESS_RING_COLOR,
-                                        opacity: 1,
-                                        strokeWidth: 3
-                                    }}
-                                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                    fill="none"
-                                    style={{ vectorEffect: 'non-scaling-stroke' }}
-                                />
+/**
+ * Unified Feedback Visualizer handles all post-initiation states.
+ */
+const FeedbackVisualizer = () => {
+    const { scanState, finalizeSuccess, targetRoom, startScan } = useNfcScan();
+    const featureFlags = useAtomValue(featureFlagsAtom);
+    const appConfig = useAtomValue(appConfigAtom);
 
-                                {/* Checkmark drawing animation - slowed down */}
-                                <motion.path
-                                    d="M 97 100 L 99 102 L 103 98"
-                                    fill="none"
-                                    stroke={SUCCESS_RING_COLOR}
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    initial={{ pathLength: 0 }}
-                                    animate={{ pathLength: 1 }}
-                                    transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-                                />
-                            </motion.g>
-                        </svg>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+    // Capture and lock the room name when we hit success state
+    // This prevents "room jumping" if the underlying data updates during the animation
+    const capturedRoomRef = useRef<string>(targetRoom);
+    useEffect(() => {
+        if (scanState === 'success') {
+            capturedRoomRef.current = targetRoom;
+        }
+    }, [scanState, targetRoom]);
 
-            <AnimatePresence>
+    // Simple Scan OFF = form is coming after checkmark, so isPreFormPhase = true
+    // Simple Scan ON = auto-complete, no form, so isPreFormPhase = false
+    const isPreFormPhase = !appConfig.simpleSubmitEnabled;
+
+    // Use ref to store the latest finalizeSuccess to avoid re-triggering effect on callback changes
+    const finalizeSuccessRef = useRef(finalizeSuccess);
+    useEffect(() => {
+        finalizeSuccessRef.current = finalizeSuccess;
+    }, [finalizeSuccess]);
+
+    // Auto-finalize success - timing varies by workflow
+    // IMPORTANT: Only depend on scanState to prevent timer resets from other dependency changes
+    useEffect(() => {
+        console.log('[NFC Debug] useEffect triggered:', { scanState, isPreFormPhase, simpleSubmitEnabled: appConfig.simpleSubmitEnabled });
+
+        if (scanState === 'success') {
+            const delay = isPreFormPhase ? 800 : 2000;
+            console.log('[NFC Debug] SUCCESS state - setting timer:', { delay, isPreFormPhase });
+            const timer = setTimeout(() => {
+                console.log('[NFC Debug] SUCCESS timer fired - calling finalizeSuccess');
+                finalizeSuccessRef.current();
+            }, delay);
+            return () => {
+                console.log('[NFC Debug] SUCCESS timer cleared');
+                clearTimeout(timer);
+            };
+        }
+        if (scanState === 'formComplete') {
+            console.log('[NFC Debug] FORMCOMPLETE state - setting timer: 1700ms');
+            const timer = setTimeout(() => {
+                console.log('[NFC Debug] FORMCOMPLETE timer fired - calling finalizeSuccess');
+                finalizeSuccessRef.current();
+            }, 1700);
+            return () => {
+                console.log('[NFC Debug] FORMCOMPLETE timer cleared');
+                clearTimeout(timer);
+            };
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scanState]);
+
+    const isScanning = scanState === 'scanning';
+    const showRings = featureFlags.feat_ring_animation && isScanning;
+
+    const renderFeedback = (primary: string, secondary?: string, iconType: 'success' | 'alert' | 'warning' = 'success') => {
+        const bgClass = iconType === 'success' ? styles.feedbackBackgroundSuccess : styles.feedbackBackgroundError;
+        return (
+            <motion.div
+                key={`feedback-${iconType}`}
+                className={styles.feedbackWrapper}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{
+                    opacity: 0,
+                    scale: 0.98,
+                    y: -4,
+                    transition: { duration: isPreFormPhase ? 0 : 0.2, ease: 'easeIn' }
+                }}
+            >
+                <div className={`${styles.feedbackBackground} ${bgClass}`} />
+                <motion.div
+                    animate={isPreFormPhase ? { opacity: 1 } : { opacity: [1, 1, 0] }}
+                    transition={isPreFormPhase ? {} : { times: [0, 0.6, 1], duration: 1.0, ease: 'easeInOut' }}
+                >
+                    <AnimatedIcon type={iconType} />
+                </motion.div>
+                <FeedbackText primary={primary} secondary={secondary} />
+            </motion.div>
+        );
+    };
+
+    // Render form completion feedback - NO checkmark, just green bg + text
+    const renderFormComplete = () => {
+        return (
+            <motion.div
+                key="formComplete"
+                className={styles.feedbackWrapper}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 0.98, y: -4, transition: { duration: 0.2, ease: 'easeIn' } }}
+            >
+                <div className={`${styles.feedbackBackground} ${styles.feedbackBackgroundSuccess}`} />
+                <FeedbackText primary={`${capturedRoomRef.current} Complete`} />
+            </motion.div>
+        );
+    };
+
+    // Render toast-like error for blocked/hardwareOff states
+    const renderErrorToast = (iconName: string, primary: string, secondary: string) => {
+        return (
+            <motion.div
+                key={`errorToast-${iconName}`}
+                className={styles.errorToast}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4, transition: { duration: 0.2, ease: 'easeIn' } }}
+            >
+                <span className={`material-symbols-rounded ${styles.errorToastIcon}`}>{iconName}</span>
+                <div className={styles.errorToastContent}>
+                    <span className={styles.errorToastPrimary}>{primary}</span>
+                    <span className={styles.errorToastSecondary}>{secondary}</span>
+                </div>
+            </motion.div>
+        );
+    };
+
+    return (
+        <div
+            className={styles.visualizerContainer}
+            onClick={scanState === 'readError' ? startScan : undefined}
+            style={{ cursor: scanState === 'readError' ? 'pointer' : 'default' }}
+        >
+            {showRings && <WaapiRingVisualizer isEnabled={true} />}
+
+            <AnimatePresence mode="wait">
                 {scanState === 'scanning' && (
                     <motion.div
-                        key="scanning-label"
+                        key="scanning"
                         className={styles.scanningLabel}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.15, ease: 'easeOut' }}
-                        style={{ animation: 'none' }} // Override CSS labelPulse during Framer Motion control
+                        transition={{ duration: 0.15 }}
                     >
                         Ready to Scan
                     </motion.div>
                 )}
+
+                {scanState === 'success' && renderFeedback(
+                    isPreFormPhase ? '' : `${capturedRoomRef.current} Complete`,
+                    undefined,
+                    'success'
+                )}
+                {scanState === 'formComplete' && renderFormComplete()}
+                {scanState === 'readError' && renderFeedback("Tag not read", "Tap to retry", 'alert')}
+                {scanState === 'blocked' && renderErrorToast("block", "NFC Blocked", "Allow in app settings")}
+                {scanState === 'hardwareOff' && renderErrorToast("sensors_off", "NFC is turned off", "Open NFC Settings to turn on")}
             </AnimatePresence>
         </div>
     );
@@ -122,7 +261,6 @@ const ScanningVisualizer = () => {
 
 export const NfcScanButton = () => {
     const { scanState, startScan, stopScan, simulateTagRead } = useNfcScan();
-    const isScanning = scanState === 'scanning';
 
     return (
         <div className={styles.nfcWrapper}>
@@ -140,18 +278,17 @@ export const NfcScanButton = () => {
                         </motion.div>
                     )}
 
-                    {(scanState === 'scanning' || scanState === 'success') && (
+                    {scanState !== 'idle' && scanState !== 'timeout' && (
                         <motion.div
-                            key="active"
+                            key="visualizer"
                             className={styles.visualizerWrapper}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5, ease: 'easeOut' }}
-                            onClick={isScanning ? simulateTagRead : undefined}
-                            style={{ cursor: isScanning ? 'pointer' : 'default', pointerEvents: isScanning ? 'auto' : 'none' }}
+                            onClick={scanState === 'scanning' ? simulateTagRead : undefined}
+                            style={{ cursor: scanState === 'scanning' ? 'pointer' : 'default', pointerEvents: 'auto' }}
                         >
-                            <ScanningVisualizer />
+                            <FeedbackVisualizer />
                         </motion.div>
                     )}
 

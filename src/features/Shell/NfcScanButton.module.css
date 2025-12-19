@@ -95,14 +95,98 @@
   justify-content: center;
 }
 
-.successBackground {
+.feedbackWrapper {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--surface-bg-success);
   border-radius: inherit;
+  z-index: 10;
+}
+
+.feedbackBackground {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.feedbackBackgroundSuccess {
+  background-color: var(--surface-bg-success);
+}
+
+.feedbackBackgroundError {
+  background-color: var(--surface-bg-error-primary);
+}
+
+/* Toast-like error feedback (blocked, hardwareOff) */
+.errorToast {
+  position: absolute;
+  inset: var(--spacing-3);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-bg-error-primary);
+  border: 2px solid var(--surface-border-alert);
+  z-index: 10;
+}
+
+.errorToastIcon {
+  font-size: var(--icon-size-md);
+  color: var(--surface-fg-alert-primary);
+  flex-shrink: 0;
+}
+
+.errorToastContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-px);
+}
+
+.errorToastPrimary {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--surface-fg-primary);
+  text-align: left;
+}
+
+.errorToastSecondary {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--surface-fg-secondary);
+  opacity: 0.8;
+  text-align: left;
+}
+
+
+.feedbackTextContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-px);
+  z-index: 1;
+}
+
+.primaryText {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--surface-fg-secondary);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.secondaryText {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--surface-fg-tertiary);
+  text-align: center;
+  white-space: nowrap;
 }
 
 .ringsSvg {
@@ -134,7 +218,6 @@
 
   letter-spacing: -0.01em;
   z-index: 1;
-  /* Lowered from 10 to prevent flash above success elements */
 
   /* Gentle pulse animation synced to shimmer (4s shimmer period / 2 = 2s pulse) */
   animation: labelPulse 2s ease-in-out infinite;
@@ -198,6 +281,7 @@
     opacity: 1;
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .ringsSvg {

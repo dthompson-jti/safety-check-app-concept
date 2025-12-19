@@ -27,37 +27,59 @@ idle → scanning → success → idle (loop)
 Located in Developer Tools modal, these controls simulate NFC hardware states:
 
 | Control | Behavior | Toast Message |
-|:--------|:---------|:--------------|
-| **Force NFC Failure** | Tag read fails, timeout restarts | "Tag not read. Hold phone steady against the tag." |
-| **Force NFC Blocked** | Scan cannot start | "NFC Blocked / Allow NFC in app settings" |
-| **Force NFC Turned Off** | Scan cannot start | "NFC is turned off / Open NFC Settings to turn on" |
-| **Scanner Timeout** | Configurable timeout duration | (Uses configured timeout) |
+| Control | Behavior |
+|:--------|:---------|
+| **Force NFC Failure** | Tag read fails, timeout restarts |
+| **Force NFC Blocked** | Scan cannot start |
+| **Force NFC Turned Off** | Scan cannot start |
+| **Scanner Timeout** | Configurable timeout duration |
 
 ### Scan Simulation
 - **Tap footer area during scan**: Simulates successful NFC tag read
 - Previously used a floating FAB button, now integrated into the footer itself
 
-## 4. Visual States
+## 4. Feedback System
 
-### 4.1 Idle State
+All NFC feedback is integrated directly into the footer area, replacing toast notifications.
+
+### 4.1. Success Feedback
+- **Display**: Green background fade + Animated Checkmark.
+- **Message**: Dynamic room name (e.g., "Room 101 Complete").
+- **Behavior**: Auto-fades after 2.5 seconds.
+- **Continuous Loop**: If `simpleSubmitEnabled` is active, the scanner automatically restarts after the success delay.
+
+### 4.2. Error & Blocked States
+- **Read Error**: "Tag not read" / "Hold phone steady". Replaces simulation/read failure toasts.
+- **NFC Blocked**: "NFC Blocked" / "Allow in app settings". Persists until resolved or retried.
+- **Hardware Off**: "NFC is turned off" / "Open NFC Settings". Persists until resolved or retried.
+- **Action**: Most error states are actionable via "Tap to retry" (clicking the feedback area restarts the scan).
+
+### 4.3. Timeout
+- **Behavior**: Scanner stops after `nfcScanTimeout`.
+- **UI**: Shows "Timed out — Tap to retry" button.
+- **Sound/Haptic**: Triggers `warning` haptic.
+
+## 5. Visual States
+
+### 5.1 Idle State
 - **Visual**: Blue "Scan" button with sensors icon
 - **Tap**: Transitions to scanning state
 
-### 4.2 Scanning State ("Ready to scan")
+### 5.2 Scanning State ("Ready to scan")
 - **Label**: "Ready to Scan" (centered, semantic blue)
 - **Ring Animation**: Optional (controlled by Future Ideas flag)
   - When enabled: Expanding blue rings with radial attenuation
   - When disabled: Just the label, no rings
 - **Interaction**: Tap anywhere on footer to simulate tag read
 
-### 4.3 Success State
+### 5.3 Success State
 - **Visual**: Green ring converging with animated checkmark
 - **Duration**: ~700ms total
 - **Behavior**:
   - If `simpleSubmitEnabled`: Auto-complete check, show toast, restart scanning
   - If `simpleSubmitEnabled` is off: Open `CheckEntryView` form
 
-### 4.4 Timeout State
+### 5.4 Timeout State
 - **Visual**: Warning button with timer_off icon
 - **Label**: "Timed out — Tap to retry"
 - **Tap**: Restarts scanning with fresh timeout

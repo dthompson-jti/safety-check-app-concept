@@ -106,11 +106,12 @@ export const workflowStateAtom = atom<WorkflowState>({ view: 'none' });
 //                    NFC Scan Activation State
 // =================================================================
 
-/** Current NFC scan state (idle → scanning → timeout → idle) */
+/** Current NFC scan state (idle → scanning → success → idle) */
 export const nfcScanStateAtom = atom<NfcScanState>('idle');
 
 /** Timestamp when scan started (for countdown calculation) */
 export const nfcScanStartTimeAtom = atom<number | null>(null);
+
 
 // =================================================================
 //                  Global UI & Layout State

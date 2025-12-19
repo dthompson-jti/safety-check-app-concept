@@ -51,5 +51,13 @@ export type HistoryFilter = 'all' | 'missed' | 'supplemental';
 //                     NFC Scan Activation Types
 // =================================================================
 
-/** State machine states for NFC scanning */
-export type NfcScanState = 'idle' | 'scanning' | 'success' | 'timeout';
+/** State machine states for NFC scanning and feedback */
+export type NfcScanState =
+  | 'idle'
+  | 'scanning'
+  | 'success'
+  | 'formComplete'
+  | 'readError'
+  | 'timeout'
+  | 'blocked'
+  | 'hardwareOff';
