@@ -127,8 +127,8 @@
   inset: var(--spacing-3);
   display: flex;
   align-items: center;
-  gap: var(--spacing-6);
-  padding: var(--spacing-3) var(--spacing-6);
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
   background-color: var(--surface-bg-error-primary);
   border: 2px solid var(--surface-border-alert);

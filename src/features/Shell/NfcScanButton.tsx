@@ -130,30 +130,14 @@ const FeedbackVisualizer = () => {
     // Auto-finalize success - timing varies by workflow
     // IMPORTANT: Only depend on scanState to prevent timer resets from other dependency changes
     useEffect(() => {
-        console.log('[NFC Debug] useEffect triggered:', { scanState, isPreFormPhase, simpleSubmitEnabled: appConfig.simpleSubmitEnabled });
-
         if (scanState === 'success') {
             const delay = isPreFormPhase ? 800 : 2000;
-            console.log('[NFC Debug] SUCCESS state - setting timer:', { delay, isPreFormPhase });
-            const timer = setTimeout(() => {
-                console.log('[NFC Debug] SUCCESS timer fired - calling finalizeSuccess');
-                finalizeSuccessRef.current();
-            }, delay);
-            return () => {
-                console.log('[NFC Debug] SUCCESS timer cleared');
-                clearTimeout(timer);
-            };
+            const timer = setTimeout(() => finalizeSuccessRef.current(), delay);
+            return () => clearTimeout(timer);
         }
         if (scanState === 'formComplete') {
-            console.log('[NFC Debug] FORMCOMPLETE state - setting timer: 1700ms');
-            const timer = setTimeout(() => {
-                console.log('[NFC Debug] FORMCOMPLETE timer fired - calling finalizeSuccess');
-                finalizeSuccessRef.current();
-            }, 1700);
-            return () => {
-                console.log('[NFC Debug] FORMCOMPLETE timer cleared');
-                clearTimeout(timer);
-            };
+            const timer = setTimeout(() => finalizeSuccessRef.current(), 1700);
+            return () => clearTimeout(timer);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [scanState]);

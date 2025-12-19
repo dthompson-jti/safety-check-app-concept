@@ -233,6 +233,42 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **The Bug:** `const setTheme = useSetAtom(themeAtom)` updates the state but fails to trigger the `useEffect` that applies `data-theme` to the `document.body`.
 *   **The Fix:** Always use `const { setTheme } = useTheme()`. This ensures the side-effect (DOM update) fires correctly.
 
+### Timer Stability Pattern (useRef for Callbacks)
+*   **Lesson:** When a `useEffect` timer should only respond to state changes (not callback reference changes), store the callback in a ref.
+*   **The Bug:** Including a `useCallback` in a `useEffect` dependency array causes the timer to reset whenever the callback's dependencies change, even if the state hasn't changed.
+*   **The Pattern:**
+    ```tsx
+    // Store callback in ref to avoid resetting timer on callback changes
+    const callbackRef = useRef(finalizeSuccess);
+    useEffect(() => {
+        callbackRef.current = finalizeSuccess;
+    }, [finalizeSuccess]);
+
+    // Timer only triggers on scanState change, not callback changes
+    useEffect(() => {
+        if (scanState === 'success') {
+            const timer = setTimeout(() => callbackRef.current(), 1700);
+            return () => clearTimeout(timer);
+        }
+    }, [scanState]); // Callback NOT in deps
+    ```
+*   **When to Use:** Any timed state transition where the callback has complex dependencies (e.g., `finalizeSuccess` in NFC scan flow).
+*   **Reference:** See `NfcScanButton.tsx` success timer implementation.
+
+### NFC Simple Scan Setting Logic
+*   **Lesson:** The `simpleSubmitEnabled` setting controls whether the check form is shown after an NFC scan.
+*   **The Mapping:**
+    | Setting | `simpleSubmitEnabled` | Behavior |
+    |:--------|:----------------------|:---------|
+    | **Simple Scan ON** | `true` | Auto-complete check, skip form, show "Room X Complete" (2s), restart scan |
+    | **Simple Scan OFF** | `false` | Show checkmark (800ms), open form, user submits, return to "Ready to Scan" |
+*   **Key Variable:** `isPreFormPhase = !simpleSubmitEnabled`
+    -   `true` = Form is coming after checkmark (800ms quick transition)
+    -   `false` = No form, full feedback (2000ms with text)
+*   **Anti-Pattern:** Do not conflate "Simple" with "Simple Submit". Simple Scan ON means *skip* the form (auto-complete), not *show* it.
+*   **Reference:** See `useNfcScan.ts` and `NfcScanButton.tsx`.
+
+
 ### Feature Flag Presets
 *   **Lesson:** For "Demo" or "Playground" modes, distinct "Unlock" and "Lock" actions are safer than individual toggles.
 *   **Pattern:**

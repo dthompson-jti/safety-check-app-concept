@@ -108,7 +108,6 @@ export const useNfcScan = () => {
             });
         }
 
-        console.log('[NFC Debug] handleTagRead - setting scanState to success');
         setScanState('success');
         setScanStartTime(null);
         triggerHaptic('success');
@@ -149,7 +148,6 @@ export const useNfcScan = () => {
 
     // Direct restart for success loop
     const restartScan = useCallback(() => {
-        console.log('[NFC Debug] restartScan called - setting to scanning');
 
         // Check for simulation states first
         if (simulation.nfcBlocked) {
@@ -192,29 +190,20 @@ export const useNfcScan = () => {
 
     // Finalize the success state - now just handles the loop/exit
     const finalizeSuccess = useCallback(() => {
-        console.log('[NFC Debug] finalizeSuccess called:', { scanState, simpleSubmitEnabled: appConfig.simpleSubmitEnabled, workflowView: workflowState.view });
-
         // Handle formComplete - ALWAYS restart scan to return to Ready to Scan
         if (scanState === 'formComplete') {
-            console.log('[NFC Debug] formComplete path - restarting scan');
             restartScan();
             return;
         }
 
-        if (scanState !== 'success') {
-            console.log('[NFC Debug] NOT in success state, exiting early');
-            return;
-        }
+        if (scanState !== 'success') return;
 
         if (appConfig.simpleSubmitEnabled) {
             // Simple Scan ON = auto-complete mode, restart scan for next check
-            console.log('[NFC Debug] Path A: Simple Scan ON - restarting scan');
             restartScan();
         } else {
             // Simple Scan OFF = show form for manual entry
-            console.log('[NFC Debug] Path B: Simple Scan OFF - opening form');
             if (workflowState.view === 'form') {
-                console.log('[NFC Debug] Already in form view - just clearing to idle');
                 setScanState('idle');
                 return;
             }
@@ -237,6 +226,7 @@ export const useNfcScan = () => {
             }
         }
     }, [
+
         scanState,
         appConfig.simpleSubmitEnabled,
         setScanState,
