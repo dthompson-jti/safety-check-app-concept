@@ -15,7 +15,7 @@
     height: 28px;
     background: transparent;
     border: none;
-    border-radius: var(--spacing-1);
+    border-radius: var(--radius-xs);
     color: var(--surface-fg-tertiary);
     cursor: pointer;
     transition: background-color 0.15s, color 0.15s;
@@ -47,7 +47,7 @@ tr:hover .trigger,
     min-width: 180px;
     background-color: var(--surface-bg-primary);
     border: 1px solid var(--surface-border-primary);
-    border-radius: var(--spacing-3);
+    border-radius: var(--radius-md);
     box-shadow: var(--surface-shadow-xl);
     padding: var(--spacing-1);
     display: flex;
@@ -62,7 +62,7 @@ tr:hover .trigger,
     width: 100%;
     padding: var(--spacing-2) var(--spacing-3);
     border: none;
-    border-radius: var(--spacing-2);
+    border-radius: var(--radius-sm);
     background: transparent;
     font-size: var(--font-size-sm);
     font-weight: 500;
@@ -73,7 +73,7 @@ tr:hover .trigger,
 }
 
 .menuItem .material-symbols-rounded {
-    font-size: 18px;
+    font-size: var(--icon-size-md);
     color: var(--surface-fg-secondary);
 }
 

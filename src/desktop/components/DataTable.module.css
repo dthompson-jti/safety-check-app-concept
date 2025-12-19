@@ -158,6 +158,16 @@
     color: var(--surface-fg-alert-primary);
 }
 
+.statusLozenge.pending {
+    background: var(--surface-bg-secondary);
+    color: var(--surface-fg-secondary);
+}
+
+.statusLozenge.due {
+    background: var(--surface-bg-warning-secondary);
+    color: var(--surface-fg-warning-primary);
+}
+
 /* Action button */
 .actionButton {
     display: inline-flex;
@@ -237,7 +247,7 @@
 }
 
 .checkbox .material-symbols-rounded {
-    font-size: 16px;
+    font-size: var(--icon-size-sm);
 }
 
 /* Checkmark container (replaces HTML checkbox) */
@@ -253,7 +263,37 @@
 }
 
 .checkmarkContainer .material-symbols-rounded {
-    font-size: 18px;
+    font-size: var(--icon-size-md);
+}
+
+/* Small icon button for row actions */
+.iconButtonSmall {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--surface-fg-tertiary);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    opacity: 0;
+}
+
+tr:hover .iconButtonSmall,
+.iconButtonSmall:focus {
+    opacity: 1;
+}
+
+.iconButtonSmall:hover {
+    background-color: var(--control-bg-tertiary-hover);
+    color: var(--surface-fg-secondary);
+}
+
+.iconButtonSmall .material-symbols-rounded {
+    font-size: var(--icon-size-md);
 }
 
 /* Empty state */

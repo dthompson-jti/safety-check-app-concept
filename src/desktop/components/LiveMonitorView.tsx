@@ -121,10 +121,10 @@ export const LiveMonitorView = () => {
                     <div className={styles.residentCell}>
                         {row.original.hasHighRisk && (
                             <span
-                                className={styles.riskIcon}
+                                className={`material-symbols-rounded ${styles.riskIcon}`}
                                 title={row.original.riskType || 'High Risk'}
                             >
-                                ⚠️
+                                warning
                             </span>
                         )}
                         <span>{row.original.residents.map((r) => r.name).join(', ')}</span>

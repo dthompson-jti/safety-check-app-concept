@@ -32,7 +32,7 @@
 }
 
 .searchContainer .material-symbols-rounded {
-    font-size: 18px;
+    font-size: var(--icon-size-md);
     color: var(--surface-fg-tertiary);
 }
 
@@ -65,7 +65,7 @@
 }
 
 .clearButton .material-symbols-rounded {
-    font-size: 16px;
+    font-size: var(--icon-size-sm);
 }
 
 /* Icon Button */
@@ -89,7 +89,7 @@
 }
 
 .iconButton .material-symbols-rounded {
-    font-size: 18px;
+    font-size: var(--icon-size-md);
 }
 
 /* Filter Chips (Right aligned) */
@@ -117,7 +117,7 @@
 }
 
 .filterChip .material-symbols-rounded {
-    font-size: 16px;
+    font-size: var(--icon-size-sm);
     color: var(--surface-fg-tertiary);
 }
 
@@ -171,7 +171,7 @@
 }
 
 .viewButton .material-symbols-rounded {
-    font-size: 16px;
+    font-size: var(--icon-size-sm);
 }
 
 /* Chip Divider */

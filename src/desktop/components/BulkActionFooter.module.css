@@ -13,7 +13,7 @@
 
     background-color: var(--surface-bg-brand-solid);
     color: var(--control-fg-on-solid);
-    border-radius: var(--spacing-3);
+    border-radius: var(--radius-md);
     padding: var(--spacing-2);
     box-shadow: var(--surface-shadow-lg);
     z-index: 50;
@@ -50,7 +50,7 @@
     height: 24px;
     background: transparent;
     border: none;
-    border-radius: var(--spacing-1);
+    border-radius: var(--radius-xs);
     color: var(--control-fg-on-solid);
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -84,7 +84,7 @@
     background: var(--control-bg-on-solid-hover);
     color: var(--control-fg-on-solid);
     border: none;
-    border-radius: var(--spacing-2);
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-sm);
     font-weight: 500;
     cursor: pointer;
@@ -96,17 +96,17 @@
 }
 
 .actionButton .material-symbols-rounded {
-    font-size: 18px;
+    font-size: var(--icon-size-md);
 }
 
 /* Primary action variant */
 .actionButton.primary {
-    background: var(--primitives-base-white);
+    background: white;
     color: var(--surface-bg-brand-solid);
 }
 
 .actionButton.primary:hover {
-    background: var(--primitives-grey-100);
+    background: var(--surface-bg-secondary);
 }
 
 /* Overflow menu button */
@@ -118,7 +118,7 @@
     height: 32px;
     background: transparent;
     border: none;
-    border-radius: var(--spacing-2);
+    border-radius: var(--radius-sm);
     color: var(--control-fg-on-solid);
     cursor: pointer;
     transition: background-color 0.15s ease;

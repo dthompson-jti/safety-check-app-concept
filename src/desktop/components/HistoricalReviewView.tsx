@@ -78,8 +78,9 @@ export const HistoricalReviewView = () => {
                 id: 'select',
                 header: ({ table }) => (
                     <div
-                        className={styles.checkmarkContainer}
+                        className={styles.checkbox}
                         onClick={table.getToggleAllRowsSelectedHandler()}
+                        data-state={table.getIsAllRowsSelected() ? 'checked' : 'unchecked'}
                     >
                         {table.getIsAllRowsSelected() && (
                             <span className="material-symbols-rounded">check</span>
@@ -88,8 +89,9 @@ export const HistoricalReviewView = () => {
                 ),
                 cell: ({ row }) => (
                     <div
-                        className={styles.checkmarkContainer}
+                        className={styles.checkbox}
                         onClick={row.getToggleSelectedHandler()}
+                        data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
                     >
                         {row.getIsSelected() && (
                             <span className="material-symbols-rounded">check</span>
@@ -147,13 +149,19 @@ export const HistoricalReviewView = () => {
                 cell: ({ row }) => (
                     <div className={styles.notesCell}>
                         {row.original.officerNote && (
-                            <span className={styles.noteIcon} title={row.original.officerNote}>
-                                📝
+                            <span
+                                className={`material-symbols-rounded ${styles.noteIcon}`}
+                                title={row.original.officerNote}
+                            >
+                                description
                             </span>
                         )}
                         {row.original.supervisorNote && (
-                            <span className={styles.noteIcon} title={row.original.supervisorNote}>
-                                💬
+                            <span
+                                className={`material-symbols-rounded ${styles.noteIcon}`}
+                                title={row.original.supervisorNote}
+                            >
+                                comment
                             </span>
                         )}
                     </div>

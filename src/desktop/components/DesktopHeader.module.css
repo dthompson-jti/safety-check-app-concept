@@ -59,7 +59,7 @@
 }
 
 .viewButton .material-symbols-rounded {
-    font-size: 16px;
+    font-size: var(--icon-size-sm);
 }
 
 .actions {
@@ -117,7 +117,7 @@
 }
 
 .iconButton .material-symbols-rounded {
-    font-size: 20px;
+    font-size: var(--icon-size-md);
 }
 
 /* Overflow menu */
@@ -140,7 +140,7 @@
     min-width: 180px;
     background-color: var(--surface-bg-primary);
     border: 1px solid var(--surface-border-primary);
-    border-radius: var(--spacing-3);
+    border-radius: var(--radius-md);
     box-shadow: var(--surface-shadow-xl);
     padding: var(--spacing-1);
     display: flex;
@@ -155,7 +155,7 @@
     width: 100%;
     padding: var(--spacing-2) var(--spacing-3);
     border: none;
-    border-radius: var(--spacing-2);
+    border-radius: var(--radius-sm);
     background: transparent;
     font-size: var(--font-size-sm);
     font-weight: 500;
@@ -166,7 +166,7 @@
 }
 
 .menuItem .material-symbols-rounded {
-    font-size: 18px;
+    font-size: var(--icon-size-md);
     color: var(--surface-fg-secondary);
 }
 
