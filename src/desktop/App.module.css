@@ -1,0 +1,33 @@
+/* src/desktop/App.module.css */
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-bg-secondary);
+}
+
+.main {
+    flex: 1;
+    padding: var(--spacing-4);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.contentArea {
+    flex: 1;
+    display: flex;
+    gap: 0;
+    min-height: 0;
+    background: var(--surface-bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--surface-border-secondary);
+    overflow: hidden;
+}
+
+.tableSection {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+}

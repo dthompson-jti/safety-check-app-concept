@@ -1,0 +1,13 @@
+/* src/desktop/components/HistoricalReviewView.module.css */
+
+.layout {
+    display: flex;
+    height: 100%;
+    gap: 0;
+}
+
+.tableSection {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+}

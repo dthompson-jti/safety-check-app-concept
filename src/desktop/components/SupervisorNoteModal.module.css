@@ -1,0 +1,147 @@
+/* src/desktop/components/SupervisorNoteModal.module.css */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+.content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 480px;
+    background: var(--surface-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--surface-shadow-xl);
+    z-index: 101;
+    outline: none;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-4) var(--spacing-5);
+    border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin: 0;
+    color: var(--surface-fg-primary);
+}
+
+.closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    color: var(--surface-fg-tertiary);
+    cursor: pointer;
+}
+
+.closeButton:hover {
+    background: var(--surface-bg-secondary);
+    color: var(--surface-fg-secondary);
+}
+
+.body {
+    padding: var(--spacing-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--surface-fg-primary);
+}
+
+.select,
+.textarea {
+    width: 100%;
+    padding: var(--spacing-3);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-md);
+    background: var(--surface-bg-primary);
+    font-size: var(--font-size-sm);
+    color: var(--surface-fg-primary);
+    outline: none;
+}
+
+.select:focus,
+.textarea:focus {
+    border-color: var(--surface-border-info);
+    box-shadow: 0 0 0 2px var(--surface-bg-info-secondary);
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+}
+
+.hint {
+    font-size: var(--font-size-2xs);
+    color: var(--surface-fg-tertiary);
+    margin: 0;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4) var(--spacing-5);
+    border-top: 1px solid var(--surface-border-secondary);
+}
+
+.cancelButton {
+    padding: var(--spacing-2) var(--spacing-4);
+    border: 1px solid var(--surface-border-secondary);
+    background: transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--surface-fg-secondary);
+    cursor: pointer;
+}
+
+.cancelButton:hover {
+    background: var(--surface-bg-secondary);
+}
+
+.saveButton {
+    padding: var(--spacing-2) var(--spacing-4);
+    border: none;
+    background: var(--surface-fg-info);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+}
+
+.saveButton:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.saveButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

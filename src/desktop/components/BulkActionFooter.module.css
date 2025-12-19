@@ -1,0 +1,129 @@
+/* src/desktop/components/BulkActionFooter.module.css */
+/* Floating action bar following Reference II pattern */
+
+.footer {
+    position: fixed;
+    bottom: var(--spacing-6);
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+
+    background-color: var(--surface-bg-brand-solid);
+    color: var(--control-fg-on-solid);
+    border-radius: var(--spacing-3);
+    padding: var(--spacing-2);
+    box-shadow: var(--surface-shadow-lg);
+    z-index: 50;
+
+    animation: fadeIn 0.15s ease-out;
+    white-space: nowrap;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Count text with dismiss button */
+.countSection {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: 0 var(--spacing-2);
+}
+
+.dismissButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    border-radius: var(--spacing-1);
+    color: var(--control-fg-on-solid);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.dismissButton:hover {
+    background-color: var(--control-bg-on-solid-hover);
+}
+
+.count {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--control-fg-on-solid);
+}
+
+/* Divider between count and actions */
+.divider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--surface-border-theme);
+    margin: 0 var(--spacing-2);
+    opacity: 0.5;
+}
+
+/* Action buttons */
+.actionButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1p5) var(--spacing-3);
+    background: var(--control-bg-on-solid-hover);
+    color: var(--control-fg-on-solid);
+    border: none;
+    border-radius: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.actionButton:hover {
+    background-color: var(--control-bg-on-solid-pressed);
+}
+
+.actionButton .material-symbols-rounded {
+    font-size: 18px;
+}
+
+/* Primary action variant */
+.actionButton.primary {
+    background: var(--primitives-base-white);
+    color: var(--surface-bg-brand-solid);
+}
+
+.actionButton.primary:hover {
+    background: var(--primitives-grey-100);
+}
+
+/* Overflow menu button */
+.overflowButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: var(--spacing-2);
+    color: var(--control-fg-on-solid);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.overflowButton:hover {
+    background-color: var(--control-bg-on-solid-hover);
+}

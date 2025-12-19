@@ -1,97 +1,62 @@
+// src/desktop/App.tsx
+
+import { useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { sessionAtom } from '../data/atoms';
-import { APP_VERSION } from '../config';
+import * as ToastPrimitive from '@radix-ui/react-toast';
+import { AnimatePresence } from 'framer-motion';
+import { toastsAtom } from '../data/toastAtoms';
+import { desktopViewAtom } from './atoms';
+import { DesktopHeader } from './components/DesktopHeader';
+import { DesktopToolbar } from './components/DesktopToolbar';
+import { LiveMonitorView } from './components/LiveMonitorView';
+import { HistoricalReviewView } from './components/HistoricalReviewView';
+import { SupervisorNoteModal } from './components/SupervisorNoteModal';
+import { DetailPanel } from './components/DetailPanel';
+import { ToastContainer } from '../components/ToastContainer';
+import { ToastMessage } from '../components/Toast';
+import styles from './App.module.css';
 
 /**
  * Desktop Application Root
- * Focuses on a wider, dashboard-style layout while reusing the mobile design system.
+ * Supervisor dashboard with Live Monitor and Historical Review views.
  */
 export default function App() {
-    const session = useAtomValue(sessionAtom);
+    const view = useAtomValue(desktopViewAtom);
+    const toasts = useAtomValue(toastsAtom);
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            background: 'var(--surface-bg-secondary)'
-        }}>
-            {/* Basic Desktop Header */}
-            <header style={{
-                height: '64px',
-                background: 'var(--surface-bg-primary)',
-                borderBottom: '1px solid var(--surface-border-secondary)',
-                padding: '0 var(--spacing-6)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
-                    <span className="material-symbols-rounded" style={{ color: 'var(--surface-fg-info)', fontSize: '24px' }}>
-                        desktop_windows
-                    </span>
-                    <h1 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, margin: 0 }}>
-                        SafetyCheck <span style={{ opacity: 0.5, fontWeight: 400 }}>Station</span>
-                    </h1>
-                </div>
+        <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
+            <div className={styles.app}>
+                <DesktopHeader
+                    onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
+                    isPanelOpen={isPanelOpen}
+                />
+                <DesktopToolbar />
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-4)' }}>
-                    <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 500 }}>{session.user?.displayName || 'Guest'}</div>
-                        <div style={{ fontSize: 'var(--font-size-2xs)', color: 'var(--surface-fg-tertiary)' }}>{session.isAuthenticated ? 'Authenticated' : 'Unauthenticated'}</div>
+                <main className={styles.main}>
+                    <div className={styles.contentArea}>
+                        <div className={styles.tableSection}>
+                            {view === 'live' && <LiveMonitorView />}
+                            {view === 'historical' && <HistoricalReviewView />}
+                        </div>
+
+                        {isPanelOpen && (
+                            <DetailPanel onClose={() => setIsPanelOpen(false)} />
+                        )}
                     </div>
-                    <div style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'var(--surface-bg-info-secondary)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'var(--surface-fg-info)',
-                        fontSize: 'var(--font-size-sm)',
-                        fontWeight: 600
-                    }}>
-                        {session.user?.initials?.[0] || '?'}
-                    </div>
-                </div>
-            </header>
+                </main>
 
-            {/* Main Desktop Content Area */}
-            <main style={{
-                flex: 1,
-                padding: 'var(--spacing-8)',
-                maxWidth: '1200px',
-                margin: '0 auto',
-                width: '100%'
-            }}>
-                <div style={{
-                    background: 'var(--surface-bg-primary)',
-                    borderRadius: 'var(--radius-lg)',
-                    padding: 'var(--spacing-10)',
-                    border: '1px solid var(--surface-border-secondary)',
-                    boxShadow: 'var(--surface-shadow-md)',
-                    textAlign: 'center'
-                }}>
-                    <h2 style={{ fontSize: 'var(--font-size-2xl)', marginBottom: 'var(--spacing-4)' }}>Desktop Experience Prototype</h2>
-                    <p style={{ color: 'var(--surface-fg-secondary)', maxWidth: '600px', margin: '0 auto var(--spacing-8)' }}>
-                        This is the companion desktop experience for SafetyCheck. It leverages the same design tokens, atoms, and state logic as the mobile PWA, but is optimized for large displays and workstation use cases.
-                    </p>
+                <SupervisorNoteModal />
+            </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-                        <button className="btn btn-primary" style={{ height: 'var(--control-height-md)', padding: '0 var(--spacing-6)' }}>
-                            Explore Facility Dashboard
-                        </button>
-                        <button className="btn btn-secondary" style={{ height: 'var(--control-height-md)', padding: '0 var(--spacing-6)' }}>
-                            System Logs
-                        </button>
-                    </div>
-                </div>
-
-                <footer style={{ marginTop: 'var(--spacing-8)', textAlign: 'center', color: 'var(--surface-fg-quaternary)', fontSize: 'var(--font-size-2xs)' }}>
-                    SafetyCheck {APP_VERSION} &bull; Shared Design System v1.0
-                </footer>
-            </main>
-        </div>
+            {/* Toast System */}
+            <AnimatePresence>
+                {toasts.map((toast) => (
+                    <ToastMessage key={toast.id} {...toast} />
+                ))}
+            </AnimatePresence>
+            <ToastContainer />
+        </ToastPrimitive.Provider>
     );
 }

@@ -1,0 +1,105 @@
+/* src/desktop/components/RowContextMenu.module.css */
+
+.container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: none;
+    border-radius: var(--spacing-1);
+    color: var(--surface-fg-tertiary);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    opacity: 0;
+}
+
+/* Show on row hover */
+tr:hover .trigger,
+.trigger:focus {
+    opacity: 1;
+}
+
+.trigger:hover {
+    background-color: var(--control-bg-tertiary-hover);
+    color: var(--surface-fg-secondary);
+}
+
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+}
+
+.menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 101;
+    min-width: 180px;
+    background-color: var(--surface-bg-primary);
+    border: 1px solid var(--surface-border-primary);
+    border-radius: var(--spacing-3);
+    box-shadow: var(--surface-shadow-xl);
+    padding: var(--spacing-1);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    width: 100%;
+    padding: var(--spacing-2) var(--spacing-3);
+    border: none;
+    border-radius: var(--spacing-2);
+    background: transparent;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--surface-fg-primary);
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.15s;
+}
+
+.menuItem .material-symbols-rounded {
+    font-size: 18px;
+    color: var(--surface-fg-secondary);
+}
+
+.menuItem:hover {
+    background-color: var(--control-bg-tertiary-hover);
+}
+
+.menuItem.destructive {
+    color: var(--surface-fg-alert-primary);
+}
+
+.menuItem.destructive .material-symbols-rounded {
+    color: var(--surface-fg-alert-primary);
+}
+
+.menuItem.destructive:hover {
+    background-color: var(--control-bg-alert-hover);
+    color: var(--control-fg-on-solid);
+}
+
+.menuItem.destructive:hover .material-symbols-rounded {
+    color: var(--control-fg-on-solid);
+}
+
+.separator {
+    height: 1px;
+    background-color: var(--surface-border-secondary);
+    margin: var(--spacing-1) 0;
+}

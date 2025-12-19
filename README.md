@@ -79,9 +79,27 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
     -   **Unlock/Lock Behavior:** Unlocking applies "Dave's Favorites" preset (Light Mode, Haptics ON, Audio ON, Enhanced Avatar ON, Invert Badge ON, pulse effects OFF). Locking performs a strict reset to defaults.
 
 
-## 4. Directory Structure
+## 4. Desktop Supervisor Dashboard
+
+The project includes a **companion desktop experience** (`desktop.html` → `src/desktop/`) for supervisors monitoring facility-wide compliance. It reuses the shared design system and Jotai atoms.
+
+### Entry Point
+- **Mobile PWA:** `index.html` → `src/main.tsx`
+- **Desktop Dashboard:** `desktop.html` → `src/desktop/main.tsx`
+
+### Desktop Views
+-   **Live Monitor:** Real-time triage view showing all active checks sorted by urgency (Missed → Due → Upcoming). Includes "Alert" action buttons.
+-   **Historical Review:** Audit view of yesterday's checks with variance display, status lozenges, and bulk supervisor note workflow.
+
+### Key Technologies
+-   **TanStack Table:** Headless data grid library (~15KB) for sorting, filtering, and row selection.
+-   **Shared Atoms:** Desktop reads from `safetyChecksAtom` for live data sync with mobile.
+-   **Mock Historical Data:** `src/desktop/mockHistoricalData.ts` provides 25 test scenarios.
+
+## 5. Directory Structure
 
 -   **/src**: Contains the application entry point, root container, global styles, and global types.
+-   **/src/desktop**: Desktop supervisor dashboard (separate entry point, shared design system).
 -   **/src/features**: Contains the major, user-facing areas of the application, organized into "vertical slices" of functionality.
 -   **/src/components**: Contains only **truly generic and reusable** UI primitives that are application-agnostic.
 -   **/src/data**: A consolidated directory for all non-visual logic and definitions (Jotai atoms, custom hooks, contexts).
@@ -89,7 +107,7 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
 
 **Import Rule:** Always use relative paths (`./`, `../`). This project does not use TypeScript path aliases.
 
-## 5. Styling Architecture
+## 6. Styling Architecture
 
 The project uses a **systematic CSS architecture** organized into layers to control specificity and promote a cohesive design language.
 
@@ -108,7 +126,7 @@ The project uses a **systematic CSS architecture** organized into layers to cont
 -   **Typography enforcement:** Relies on a strict token contract (`--font-size-*`) and specific weight system (400/600 primarily) to maintain a clean, high-DPI friendly hierarchy.
 
 
-## 6. State Management
+## 7. State Management
 
 The project uses **Jotai** for its minimal, atomic state management model. State is divided into four logical tiers:
 

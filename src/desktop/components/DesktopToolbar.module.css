@@ -1,0 +1,183 @@
+/* src/desktop/components/DesktopToolbar.module.css */
+
+.toolbar {
+    height: 48px;
+    background: var(--surface-bg-primary);
+    border-bottom: 1px solid var(--surface-border-secondary);
+    padding: 0 var(--spacing-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+}
+
+/* Left section: Search + Advanced */
+.leftSection {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+/* Search */
+.searchContainer {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    background: var(--surface-bg-secondary);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-md);
+    padding: 0 var(--spacing-3);
+    height: 36px;
+    width: 220px;
+}
+
+.searchContainer .material-symbols-rounded {
+    font-size: 18px;
+    color: var(--surface-fg-tertiary);
+}
+
+.searchInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: var(--font-size-sm);
+    color: var(--surface-fg-primary);
+    outline: none;
+}
+
+.searchInput::placeholder {
+    color: var(--surface-fg-tertiary);
+}
+
+.clearButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--surface-fg-tertiary);
+    cursor: pointer;
+}
+
+.clearButton:hover {
+    color: var(--surface-fg-secondary);
+}
+
+.clearButton .material-symbols-rounded {
+    font-size: 16px;
+}
+
+/* Icon Button */
+.iconButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--surface-fg-tertiary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.iconButton:hover {
+    background: var(--surface-bg-secondary);
+    color: var(--surface-fg-secondary);
+}
+
+.iconButton .material-symbols-rounded {
+    font-size: 18px;
+}
+
+/* Filter Chips (Right aligned) */
+.filterChips {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.filterChip {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    height: 32px;
+    padding: 0 var(--spacing-3);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-md);
+    background: var(--surface-bg-primary);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--surface-fg-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.filterChip .material-symbols-rounded {
+    font-size: 16px;
+    color: var(--surface-fg-tertiary);
+}
+
+.filterChip:hover {
+    background: var(--surface-bg-secondary);
+    border-color: var(--surface-border-primary);
+}
+
+.filterChip.active {
+    background: var(--control-bg-selected);
+    border-color: var(--control-border-selected);
+    color: var(--control-fg-selected);
+}
+
+.filterChip.active .material-symbols-rounded {
+    color: var(--control-fg-selected);
+}
+
+/* View Toggle */
+.viewToggle {
+    display: flex;
+    background: var(--surface-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 2px;
+    gap: 2px;
+}
+
+.viewButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1p5) var(--spacing-3);
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--surface-fg-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.viewButton:hover {
+    color: var(--surface-fg-primary);
+}
+
+.viewButton.active {
+    background: var(--surface-bg-primary);
+    color: var(--surface-fg-primary);
+    box-shadow: var(--surface-shadow-sm);
+}
+
+.viewButton .material-symbols-rounded {
+    font-size: 16px;
+}
+
+/* Chip Divider */
+.chipDivider {
+    width: 1px;
+    height: 20px;
+    background: var(--surface-border-secondary);
+    margin: 0 var(--spacing-2);
+}

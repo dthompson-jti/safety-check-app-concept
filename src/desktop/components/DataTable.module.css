@@ -1,0 +1,255 @@
+/* src/desktop/components/DataTable.module.css */
+
+.tableContainer {
+    background: var(--surface-bg-primary);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.thead {
+    background: var(--surface-bg-primary);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.th {
+    text-align: left;
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--surface-fg-secondary);
+    border-bottom: 1px solid var(--surface-border-secondary);
+    user-select: none;
+}
+
+.th[data-sortable="true"] {
+    cursor: pointer;
+}
+
+.th[data-sortable="true"]:hover {
+    color: var(--surface-fg-secondary);
+}
+
+.thContent {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+}
+
+.sortIndicator {
+    font-size: var(--font-size-2xs);
+    opacity: 0.7;
+}
+
+.tbody {
+    background: var(--surface-bg-primary);
+}
+
+.tr {
+    border-bottom: 1px solid var(--surface-border-secondary);
+    transition: background-color 0.1s ease;
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.tr:hover:not([data-state="checked"]) {
+    background: var(--surface-bg-secondary);
+}
+
+/* Selected state using data-state attribute */
+.tr[data-state="checked"] {
+    background: var(--control-bg-selected);
+}
+
+.tr[data-state="checked"]:hover {
+    background: var(--control-bg-selected-hover);
+}
+
+.td {
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    color: var(--surface-fg-primary);
+    vertical-align: middle;
+    min-height: 56px;
+}
+
+/* Status indicators */
+.statusIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.statusIcon.missed {
+    color: var(--surface-fg-alert-primary);
+}
+
+.statusIcon.due {
+    color: var(--surface-fg-warning-primary);
+}
+
+.statusIcon.pending {
+    color: var(--surface-fg-tertiary);
+}
+
+/* Timer cell */
+.timerCell {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.timerCell.alert {
+    color: var(--surface-fg-alert-primary);
+}
+
+.timerCell.warning {
+    color: var(--surface-fg-warning-primary);
+}
+
+.timerCell.neutral {
+    color: var(--surface-fg-tertiary);
+}
+
+/* Resident cell */
+.residentCell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.riskIcon {
+    color: var(--surface-fg-warning-primary);
+    font-size: var(--icon-size-sm);
+}
+
+/* Status lozenge */
+.statusLozenge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-2xs);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.statusLozenge.done {
+    background: var(--surface-bg-success-secondary);
+    color: var(--surface-fg-success-primary);
+}
+
+.statusLozenge.late {
+    background: var(--surface-bg-warning-secondary);
+    color: var(--surface-fg-warning-primary);
+}
+
+.statusLozenge.missed {
+    background: var(--surface-bg-error-secondary);
+    color: var(--surface-fg-alert-primary);
+}
+
+/* Action button */
+.actionButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1) var(--spacing-3);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font-size: var(--font-size-2xs);
+    font-weight: 500;
+    color: var(--surface-fg-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.actionButton:hover {
+    background: var(--surface-bg-secondary);
+    border-color: var(--surface-border-primary);
+}
+
+/* Link action */
+.linkAction {
+    color: var(--surface-fg-info);
+    font-weight: 500;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: var(--font-size-sm);
+}
+
+.linkAction:hover {
+    text-decoration: underline;
+}
+
+/* Verified status */
+.verifiedStatus {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    color: var(--surface-fg-success-primary);
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+}
+
+/* Notes icons */
+.notesCell {
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.noteIcon {
+    font-size: var(--icon-size-sm);
+    cursor: help;
+}
+
+/* Checkmark container (replaces HTML checkbox) */
+.checkmarkContainer {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--control-fg-selected);
+    cursor: pointer;
+}
+
+.checkmarkContainer .material-symbols-rounded {
+    font-size: 18px;
+}
+
+/* Empty state */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-10);
+    color: var(--surface-fg-tertiary);
+    gap: var(--spacing-2);
+}
+
+/* Table Footer */
+.tableFooter {
+    height: 36px;
+    padding: 0 var(--spacing-4);
+    display: flex;
+    align-items: center;
+    border-top: 1px solid var(--surface-border-secondary);
+    background: var(--surface-bg-primary);
+    font-size: var(--font-size-sm);
+    color: var(--surface-fg-tertiary);
+}
