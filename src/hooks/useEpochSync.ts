@@ -48,7 +48,7 @@ export const useEpochSync = (duration: number, deps: React.DependencyList = []):
             style: { '--card-sync-delay': `${phase}ms` } as React.CSSProperties,
             phase,
         };
-    }, [duration, ...deps]);
+    }, [duration, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Log AFTER memo calculation to see what's happening
     // if (typeof console !== 'undefined') { ... } // Removed to reduce noise

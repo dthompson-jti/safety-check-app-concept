@@ -75,8 +75,7 @@ interface RingState {
  * Radial attenuation: opacity decreases as ring moves outward for softer outer rings
  */
 function createConveyorKeyframes(
-    params: RingAnimationParams,
-    _ringIndex: number
+    params: RingAnimationParams
 ): Keyframe[] {
     const { minRadius, maxRadius, baseOpacity, fadeInPercent, fadeOutPercent, baseStrokeWidth } = params;
 
@@ -229,7 +228,7 @@ export function useRingAnimation(
 
             // Create conveyor animation
             const conveyorAnim = ring.animate(
-                createConveyorKeyframes(params, i),
+                createConveyorKeyframes(params),
                 {
                     duration: params.conveyorDuration * 1000,
                     iterations: Infinity,

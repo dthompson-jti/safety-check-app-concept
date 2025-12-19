@@ -1,0 +1,12 @@
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\src\features\Overlays\RingAnimationTestSheet.tsx
+  212:9  error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\src\features\Shell\useRingAnimation.ts
+  79:5  error  '_ringIndex' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\src\hooks\useEpochSync.ts
+  51:19  warning  React Hook useMemo has a spread element in its dependency array. This means we can't statically verify whether you've passed the correct dependencies  react-hooks/exhaustive-deps
+
+Γ£û 3 problems (2 errors, 1 warning)
+

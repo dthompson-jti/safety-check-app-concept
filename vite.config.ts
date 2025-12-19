@@ -1,6 +1,10 @@
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+
+const __dirname = resolve(fileURLToPath(new URL('.', import.meta.url)))
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -43,6 +47,10 @@ export default defineConfig({
   base: '/safety-check-app-concept/',
   build: {
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        desktop: resolve(__dirname, 'desktop.html'),
+      },
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'jotai'],

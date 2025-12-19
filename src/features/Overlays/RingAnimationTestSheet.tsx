@@ -209,7 +209,7 @@ export const RingAnimationTestSheet: React.FC<RingAnimationTestSheetProps> = ({ 
 
     const handleCopyConfig = useCallback(() => {
         const config = JSON.stringify(params, null, 2);
-        navigator.clipboard.writeText(config);
+        void navigator.clipboard.writeText(config);
         console.log('[RingAnimationTest] Config copied:', config);
     }, [params]);
 

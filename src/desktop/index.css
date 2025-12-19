@@ -1,0 +1,47 @@
+/* src/desktop/index.css */
+
+/* 
+  Imports the global design system layers for the Desktop experience.
+  This ensures the same tokens, base styles, and themed components are available.
+*/
+
+@layer tokens, base, themes, components, utilities;
+
+/* Layer 1: Design Tokens */
+@import url('../styles/primitives.css') layer(tokens);
+@import url('../styles/utility.css') layer(tokens);
+@import url('../styles/semantics.css') layer(tokens);
+
+/* Layer 2: Base Styles */
+@import url('../styles/fonts.css') layer(base);
+@import url('../styles/base.css') layer(base);
+@import url('../styles/forms.css') layer(base);
+@import url('../styles/scrollbars.css') layer(base);
+
+/* Layer 3: Themes for Radix Primitives */
+@import url('../styles/modal.css') layer(themes);
+@import url('../styles/bottom-sheet.css') layer(themes);
+@import url('../styles/popover.css') layer(themes);
+@import url('../styles/accordion.css') layer(themes);
+@import url('../styles/tooltip.css') layer(themes);
+@import url('../styles/toast.css') layer(themes);
+
+/* Layer 4: Reusable Component Patterns */
+@import url('../styles/buttons.css') layer(components);
+@import url('../styles/menu.css') layer(components);
+@import url('../styles/tabs.css') layer(components);
+@import url('../styles/toggles.css') layer(components);
+@import url('../styles/appearance.css') layer(components);
+@import url('../styles/list.css') layer(components);
+
+/* Layer 5: Utility Classes */
+@import url('../styles/animations.css') layer(utilities);
+@import url('../styles/utilities.css') layer(utilities);
+
+/* Desktop Specific Base Adjustments */
+body {
+    background-color: var(--surface-bg-primary);
+    color: var(--surface-fg-primary);
+    overflow: auto;
+    /* Desktop often needs standard scrollbars */
+}

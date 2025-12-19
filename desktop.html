@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon-v1.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SafetyCheck Desktop - Companion experience for safety check management.">
+
+    <!-- Critical CSS: Inline to prevent FOUC and ensure instant background -->
+    <style>
+        /* Match these values to your CSS tokens for consistency */
+        :root {
+            --splash-bg: #f0f1f3;
+            --splash-fg: #1a1a2e;
+        }
+
+        /* Dark mode detection - matches stored theme OR system preference */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme]) {
+                --splash-bg: #16161d;
+                --splash-fg: #e0e0e0;
+            }
+        }
+
+        [data-theme^="dark"] {
+            --splash-bg: #16161d;
+            --splash-fg: #e0e0e0;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: var(--splash-bg);
+            color: var(--splash-fg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        #root {
+            height: 100%;
+        }
+    </style>
+
+    <!-- Async font loading: Low priority, non-blocking -->
+    <link rel="preload" href="/fonts/Inter-roman.var.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Material Symbols: Load async (low priority) since we use SVGs for critical path -->
+    <link rel="preload" href="/fonts/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin
+        fetchpriority="low">
+
+    <title>Safety Check Desktop</title>
+</head>
+
+<body>
+    <!-- Theme detection: Apply stored theme before paint to prevent flash -->
+    <script>
+        (function () {
+            try {
+                const stored = localStorage.getItem('app-theme');
+                if (stored === 'dark-a' || stored === 'dark-b' || stored === 'dark-c') {
+                    document.documentElement.setAttribute('data-theme', stored);
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <div id="root"></div>
+
+    <script type="module" src="/src/desktop/main.tsx"></script>
+</body>
+
+</html>
