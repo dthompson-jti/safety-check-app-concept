@@ -2,7 +2,7 @@
 
 .toolbar {
     height: 48px;
-    background: var(--surface-bg-primary);
+    background: var(--surface-bg-secondary);
     border-bottom: 1px solid var(--surface-border-secondary);
     padding: 0 var(--spacing-4);
     display: flex;

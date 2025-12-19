@@ -17,6 +17,7 @@ const createLiveCheck = (
         hasHighRisk?: boolean;
         riskType?: string;
         lastCheckTime?: string;
+        supervisorNote?: string;
     } = {}
 ): LiveCheckRow => {
     const timerSeverity = status === 'missed' ? 'alert' : status === 'due' ? 'warning' : 'neutral';
@@ -32,7 +33,8 @@ const createLiveCheck = (
         riskType: options.riskType,
         lastCheckTime: options.lastCheckTime || null,
         lastCheckOfficer: 'Brett Corbin',
-        originalCheck: null as never, // Mock doesn't need original check
+        supervisorNote: options.supervisorNote,
+        originalCheck: null as never,
     };
 };
 
@@ -40,59 +42,54 @@ const createLiveCheck = (
 const now = new Date();
 const minutesAgo = (mins: number) => new Date(now.getTime() - mins * 60000).toISOString();
 
-export const mockLiveChecks: LiveCheckRow[] = [
-    // Missed checks (highest priority)
-    createLiveCheck('live-1', 'Jeff Siemens', '102', 'missed', 'Overdue 5m', {
+const generateData = (): LiveCheckRow[] => {
+    const data: LiveCheckRow[] = [];
+
+    // 1. Critical Missed Checks (Some with supervisor notes)
+    data.push(createLiveCheck('live-1', 'Jeff Siemens', '102', 'missed', 'Overdue 5m', {
         lastCheckTime: minutesAgo(35),
-    }),
-    createLiveCheck('live-2', 'Brett Corbin', '102', 'missed', 'Overdue 3m', {
+    }));
+    data.push(createLiveCheck('live-2', 'Brett Corbin', '102', 'missed', 'Overdue 3m', {
         hasHighRisk: true,
         riskType: 'Suicide Watch',
         lastCheckTime: minutesAgo(33),
-    }),
-    createLiveCheck('live-3', 'Dave Thompson', '101', 'missed', 'Overdue 1m', {
+    }));
+    data.push(createLiveCheck('live-3', 'Dave Thompson', '101', 'missed', 'Overdue 1m', {
         lastCheckTime: minutesAgo(31),
-    }),
+        supervisorNote: 'Unit Lockdown - shift lead notified',
+    }));
 
-    // Due checks (warning state)
-    createLiveCheck('live-4', 'Dave Thompson', '101', 'due', 'Due in 2m', {
-        lastCheckTime: minutesAgo(28),
-    }),
-    createLiveCheck('live-5', 'Dave Thompson', '101', 'due', 'Due in 2m', {
-        lastCheckTime: minutesAgo(28),
-    }),
+    // 2. Due Checks
+    for (let i = 4; i <= 10; i++) {
+        data.push(createLiveCheck(`live-${i}`, `Resident ${i}`, `20${i}`, 'due', 'Due in 2m', {
+            lastCheckTime: minutesAgo(28),
+        }));
+    }
 
-    // Upcoming checks (pending state)
-    createLiveCheck('live-6', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-7', 'Jalpa Mazmudar', '101', 'pending', 'Due in 14m', {
-        hasHighRisk: true,
-        riskType: 'Suicide Watch',
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-8', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-9', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-10', 'Aggressive Andy', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-11', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-12', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-13', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-14', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-    createLiveCheck('live-15', 'Dave Thompson', '101', 'pending', 'Due in 14m', {
-        lastCheckTime: minutesAgo(16),
-    }),
-];
+    // 3. Pending Checks (Large dataset for loading simulation)
+    const names = ['Jalpa Mazmudar', 'Aggressive Andy', 'Michael Scott', 'Jim Halpert', 'Pam Beesly', 'Dwight Schrute', 'Angela Martin', 'Kevin Malone', 'Oscar Martinez', 'Stanley Hudson'];
+    const rooms = ['101', '102', '201', '202', '301', '302', '401', '402'];
+
+    for (let i = 11; i <= 124; i++) {
+        const name = names[i % names.length];
+        const room = rooms[i % rooms.length];
+        const isHighRisk = i % 15 === 0;
+
+        data.push(createLiveCheck(
+            `live-${i}`,
+            `${name} ${Math.floor(i / 10)}`,
+            `${room}`,
+            'pending',
+            `Due in ${10 + (i % 50)}m`,
+            {
+                lastCheckTime: minutesAgo(16),
+                hasHighRisk: isHighRisk,
+                riskType: isHighRisk ? 'Random Assessment' : undefined
+            }
+        ));
+    }
+
+    return data;
+};
+
+export const mockLiveChecks: LiveCheckRow[] = generateData();

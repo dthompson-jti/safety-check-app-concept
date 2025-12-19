@@ -97,35 +97,28 @@ export const LiveMonitorView = () => {
                         className={styles.checkbox}
                         onClick={table.getToggleAllRowsSelectedHandler()}
                         data-state={table.getIsAllRowsSelected() ? 'checked' : 'unchecked'}
-                    >
-                        {table.getIsAllRowsSelected() && (
-                            <span className="material-symbols-rounded">check</span>
-                        )}
-                    </div>
+                    />
                 ),
                 cell: ({ row }) => (
                     <div
                         className={styles.checkbox}
                         onClick={row.getToggleSelectedHandler()}
                         data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
-                    >
-                        {row.getIsSelected() && (
-                            <span className="material-symbols-rounded">check</span>
-                        )}
-                    </div>
+                    />
                 ),
                 size: 48,
             },
             {
                 id: 'resident',
                 header: 'Resident',
+                size: 240, // Name can be long
                 accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
                 cell: ({ row }) => (
                     <div className={styles.residentCell}>
                         {row.original.hasHighRisk && (
                             <span
-                                className={`material-symbols-rounded ${styles.riskIcon}`}
-                                title={row.original.riskType || 'High Risk'}
+                                className={`material-symbols-rounded ${styles.specialStatusIcon}`}
+                                title={row.original.riskType || 'Special Status'}
                             >
                                 warning
                             </span>
@@ -138,7 +131,7 @@ export const LiveMonitorView = () => {
                 id: 'location',
                 header: 'Room',
                 accessorKey: 'location',
-                size: 80,
+                size: 100,
             },
             {
                 id: 'scheduled',
@@ -184,23 +177,30 @@ export const LiveMonitorView = () => {
             {
                 id: 'checkedBy',
                 header: 'Checked by',
-                size: 120,
-                accessorFn: (row) => row.lastCheckOfficer || 'Brett Corbin',
+                size: 140,
+                accessorFn: (row) => row.lastCheckOfficer || '—',
             },
             {
                 id: 'comments',
                 header: 'Supervisor Comments',
-                size: 160,
-                accessorFn: () => '',
-                cell: () => (
-                    <button className={styles.linkAction}>+</button>
+                size: 250,
+                accessorFn: (row) => row.supervisorNote || '',
+                cell: ({ row }) => (
+                    <div className={styles.commentsCell}>
+                        {row.original.supervisorNote ? (
+                            <span className={styles.supervisorComment}>
+                                {row.original.supervisorNote}
+                            </span>
+                        ) : (
+                            <button className={styles.linkAction}>+</button>
+                        )}
+                    </div>
                 ),
             },
             {
                 id: 'actions',
                 header: '',
-                size: 40,
-                enableResizing: false,
+                size: 48,
                 enableSorting: false,
                 cell: ({ row }) => (
                     <RowContextMenu

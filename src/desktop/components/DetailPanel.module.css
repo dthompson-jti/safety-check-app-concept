@@ -2,13 +2,16 @@
 /* Side panel following Reference II PropertiesPanel pattern */
 
 .panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
     background-color: var(--surface-bg-primary);
-    height: 100%;
     border-left: 1px solid var(--surface-border-secondary);
     width: 320px;
-    flex-shrink: 0;
+    z-index: 100;
 }
 
 .header {
@@ -18,6 +21,7 @@
     padding: var(--spacing-3) var(--spacing-4);
     border-bottom: 1px solid var(--surface-border-secondary);
     min-height: 48px;
+    background: var(--surface-bg-tertiary);
 }
 
 .title {

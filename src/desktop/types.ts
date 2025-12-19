@@ -41,6 +41,7 @@ export interface LiveCheckRow {
     riskType?: string;
     lastCheckTime: string | null;
     lastCheckOfficer: string | null;
+    supervisorNote?: string;
     originalCheck: SafetyCheck;
 }
 

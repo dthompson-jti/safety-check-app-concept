@@ -40,12 +40,12 @@ export default function App() {
                             {view === 'live' && <LiveMonitorView />}
                             {view === 'historical' && <HistoricalReviewView />}
                         </div>
-
-                        {isPanelOpen && (
-                            <DetailPanel onClose={() => setIsPanelOpen(false)} />
-                        )}
                     </div>
                 </main>
+
+                {isPanelOpen && (
+                    <DetailPanel onClose={() => setIsPanelOpen(false)} />
+                )}
 
                 <SupervisorNoteModal />
             </div>

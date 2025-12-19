@@ -83,22 +83,14 @@ export const HistoricalReviewView = () => {
                         className={styles.checkbox}
                         onClick={table.getToggleAllRowsSelectedHandler()}
                         data-state={table.getIsAllRowsSelected() ? 'checked' : 'unchecked'}
-                    >
-                        {table.getIsAllRowsSelected() && (
-                            <span className="material-symbols-rounded">check</span>
-                        )}
-                    </div>
+                    />
                 ),
                 cell: ({ row }) => (
                     <div
                         className={styles.checkbox}
                         onClick={row.getToggleSelectedHandler()}
                         data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
-                    >
-                        {row.getIsSelected() && (
-                            <span className="material-symbols-rounded">check</span>
-                        )}
-                    </div>
+                    />
                 ),
                 size: 48,
             },
@@ -106,7 +98,7 @@ export const HistoricalReviewView = () => {
                 id: 'scheduled',
                 header: 'Scheduled',
                 accessorFn: (row) => formatTime(row.scheduledTime),
-                size: 90,
+                size: 110,
             },
             {
                 id: 'actual',
@@ -114,12 +106,12 @@ export const HistoricalReviewView = () => {
                 accessorFn: (row) => row.actualTime ? formatTime(row.actualTime) : '',
                 cell: ({ row }) =>
                     row.original.actualTime ? formatTime(row.original.actualTime) : '—',
-                size: 90,
+                size: 110,
             },
             {
                 id: 'variance',
                 header: 'Variance',
-                size: 100,
+                size: 120,
                 accessorKey: 'varianceMinutes',
                 cell: ({ row }) => {
                     const variance = row.original.varianceMinutes;
@@ -134,7 +126,7 @@ export const HistoricalReviewView = () => {
             {
                 id: 'status',
                 header: 'Status',
-                size: 90,
+                size: 100,
                 accessorKey: 'status',
                 cell: ({ row }) => (
                     <StatusBadge status={row.original.status as StatusBadgeType} />
@@ -143,6 +135,7 @@ export const HistoricalReviewView = () => {
             {
                 id: 'resident',
                 header: 'Resident',
+                size: 240,
                 accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
             },
             {
@@ -174,7 +167,7 @@ export const HistoricalReviewView = () => {
             {
                 id: 'review',
                 header: 'Review',
-                size: 100,
+                size: 120,
                 accessorKey: 'reviewStatus',
                 cell: ({ row }) => {
                     if (row.original.reviewStatus === 'verified') {
@@ -198,8 +191,7 @@ export const HistoricalReviewView = () => {
             {
                 id: 'actions',
                 header: '',
-                size: 40,
-                enableResizing: false,
+                size: 48,
                 enableSorting: false,
                 cell: ({ row }) => (
                     <RowContextMenu

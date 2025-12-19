@@ -2,15 +2,26 @@
 
 .tableContainer {
     background: var(--surface-bg-primary);
-    border: 1px solid var(--surface-border-secondary);
-    border-radius: var(--radius-lg);
-    overflow: auto;
-    /* Allow both horizontal and vertical scroll */
+    overflow: hidden;
+    /* Container doesn't scroll, scrollArea does */
     position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.scrollArea {
+    flex: 1;
+    overflow: auto;
+    min-height: 0;
+    background: var(--surface-bg-primary);
+    /* Fill deadspace with white */
 }
 
 .table {
     width: 100%;
+    min-width: 100%;
     border-collapse: separate;
     /* Required for sticky borders to work correctly in some browsers */
     border-spacing: 0;
@@ -55,16 +66,13 @@
 }
 
 .tbody {
-    background: var(--surface-bg-primary);
+    background: var(--surface-bg-secondary_subtle);
 }
 
 .tr {
-    border-bottom: 1px solid var(--surface-border-secondary);
+    background: var(--surface-bg-secondary_subtle);
+    border-bottom: 1px solid var(--surface-border-tertiary);
     transition: background-color 0.1s ease;
-}
-
-.tr:last-child {
-    border-bottom: none;
 }
 
 .tr:hover:not([data-state="checked"]) {
@@ -135,6 +143,19 @@
 .riskIcon {
     color: var(--surface-fg-warning-primary);
     font-size: var(--icon-size-sm);
+}
+
+.specialStatusIcon {
+    color: var(--surface-fg-on-solid);
+    background-color: var(--surface-bg-warning-solid);
+    border-radius: var(--radius-xs);
+    font-size: var(--icon-size-sm);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variation-settings: 'FILL' 1;
 }
 
 /* Status lozenge */
@@ -230,7 +251,22 @@
     cursor: help;
 }
 
-/* Checkbox - visible border for empty state */
+.commentsCell {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.supervisorComment {
+    font-style: italic;
+    color: var(--surface-fg-secondary);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Checkbox - styled to match Reference II project */
 .checkbox {
     width: 20px;
     height: 20px;
@@ -238,21 +274,35 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border: 2px solid var(--surface-border-primary);
-    border-radius: var(--radius-sm);
-    background: transparent;
+    border: 1px solid var(--control-border-secondary);
+    border-radius: 6px;
+    background: var(--surface-bg-primary);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.1s ease-in-out;
+}
+
+.checkbox:hover {
+    border: 1.5px solid var(--control-border-secondary-hover);
+    background: var(--control-bg-secondary-hover);
 }
 
 .checkbox[data-state="checked"] {
-    background: var(--control-bg-selected);
-    border-color: var(--control-bg-selected);
-    color: white;
+    background: var(--control-bg-theme);
+    border: 1.5px solid transparent;
 }
 
-.checkbox .material-symbols-rounded {
-    font-size: var(--icon-size-sm);
+.checkbox[data-state="checked"]:hover {
+    background: var(--control-bg-theme-pressed);
+}
+
+/* SVG Checkmark for checked state */
+.checkbox[data-state="checked"]::before {
+    content: "";
+    width: 12px;
+    height: 9px;
+    background-image: url("data:image/svg+xml,%3csvg width='12' height='9' viewBox='0 0 12 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M10.6666 1.5L4.24992 7.91667L1.33325 5' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 /* Checkmark container (replaces HTML checkbox) */
@@ -271,7 +321,7 @@
     font-size: var(--icon-size-md);
 }
 
-/* Small icon button for row actions */
+/* Small icon button for row actions - always visible */
 .iconButtonSmall {
     display: flex;
     align-items: center;
@@ -284,12 +334,6 @@
     color: var(--surface-fg-tertiary);
     cursor: pointer;
     transition: background-color 0.15s, color 0.15s;
-    opacity: 0;
-}
-
-tr:hover .iconButtonSmall,
-.iconButtonSmall:focus {
-    opacity: 1;
 }
 
 .iconButtonSmall:hover {
@@ -316,9 +360,18 @@ tr:hover .iconButtonSmall,
 .stickyColumn {
     position: sticky !important;
     right: 0;
-    background: var(--surface-bg-primary);
+    background: inherit;
+    /* Ensure it matches row background */
     z-index: 5;
     border-left: 1px solid var(--surface-border-secondary) !important;
+    overflow: visible !important;
+    /* Ensure children like popovers aren't cut off */
+}
+
+/* Ensure header sticky column has primary bg to cover scroll underline */
+.th.stickyColumn {
+    background: var(--surface-bg-primary);
+    z-index: 15;
 }
 
 /* Add shadow to pinned column when scrolling */
@@ -340,19 +393,28 @@ tr:hover .iconButtonSmall,
     right: 0;
     top: 0;
     height: 100%;
-    width: 4px;
-    background: transparent;
+    width: 8px;
+    /* Hit area width */
     cursor: col-resize;
     user-select: none;
     touch-action: none;
-    z-index: 11;
-    /* Above header text */
-    transition: background-color 0.2s;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
 }
 
-.resizer:hover,
-.resizer.isResizing {
-    background: var(--surface-border-primary);
+.resizer::after {
+    content: '';
+    width: 1px;
+    height: 100%;
+    background-color: var(--surface-border-secondary);
+    transition: background-color 0.2s, width 0.2s;
+}
+
+.resizer:hover::after,
+.resizer.isResizing::after {
+    background-color: var(--surface-bg-brand-solid);
+    width: 2px;
 }
 
 .tableFooter {
