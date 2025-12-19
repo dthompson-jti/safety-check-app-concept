@@ -8,6 +8,7 @@ import { LiveCheckRow } from '../types';
 import { mockLiveChecks } from '../mockLiveData';
 import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
+import { RowContextMenu } from './RowContextMenu';
 import { addToastAtom } from '../../data/toastAtoms';
 import styles from './DataTable.module.css';
 
@@ -117,6 +118,7 @@ export const LiveMonitorView = () => {
             {
                 id: 'resident',
                 header: 'Resident',
+                accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
                 cell: ({ row }) => (
                     <div className={styles.residentCell}>
                         {row.original.hasHighRisk && (
@@ -141,8 +143,11 @@ export const LiveMonitorView = () => {
                 id: 'scheduled',
                 header: 'Scheduled',
                 size: 140,
+                accessorFn: () => {
+                    // Constant date for mock sorting/display
+                    return new Date().toISOString();
+                },
                 cell: () => {
-                    // Mock scheduled time
                     const now = new Date();
                     return now.toLocaleString('en-US', {
                         month: '2-digit',
@@ -158,6 +163,7 @@ export const LiveMonitorView = () => {
                 id: 'actual',
                 header: 'Actual',
                 size: 100,
+                accessorFn: (row) => row.timerText,
                 cell: ({ row }) => {
                     if (row.original.status === 'missed') return 'No check';
                     return row.original.timerText;
@@ -167,6 +173,7 @@ export const LiveMonitorView = () => {
                 id: 'status',
                 header: 'Status',
                 size: 100,
+                accessorKey: 'status',
                 cell: ({ row }) => {
                     const statusLabels = {
                         missed: 'Missed',
@@ -184,12 +191,13 @@ export const LiveMonitorView = () => {
                 id: 'checkedBy',
                 header: 'Checked by',
                 size: 120,
-                cell: ({ row }) => row.original.lastCheckOfficer || 'Brett Corbin',
+                accessorFn: (row) => row.lastCheckOfficer || 'Brett Corbin',
             },
             {
                 id: 'comments',
                 header: 'Supervisor Comments',
                 size: 160,
+                accessorFn: () => '',
                 cell: () => (
                     <button className={styles.linkAction}>+</button>
                 ),
@@ -198,14 +206,13 @@ export const LiveMonitorView = () => {
                 id: 'actions',
                 header: '',
                 size: 40,
+                enableResizing: false,
+                enableSorting: false,
                 cell: ({ row }) => (
-                    <button
-                        className={styles.iconButtonSmall}
-                        onClick={() => handleAlert(row.original)}
-                        aria-label="More options"
-                    >
-                        <span className="material-symbols-rounded">more_vert</span>
-                    </button>
+                    <RowContextMenu
+                        onAddNote={() => handleAlert(row.original)}
+                        isVerified={false}
+                    />
                 ),
             },
         ],

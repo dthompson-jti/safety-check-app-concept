@@ -11,6 +11,7 @@ import {
 import { HistoricalCheck } from '../types';
 import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
+import { RowContextMenu } from './RowContextMenu';
 import styles from './DataTable.module.css';
 
 const formatTime = (isoString: string): string => {
@@ -109,6 +110,7 @@ export const HistoricalReviewView = () => {
             {
                 id: 'actual',
                 header: 'Actual',
+                accessorFn: (row) => row.actualTime ? formatTime(row.actualTime) : '',
                 cell: ({ row }) =>
                     row.original.actualTime ? formatTime(row.original.actualTime) : '—',
                 size: 90,
@@ -117,6 +119,7 @@ export const HistoricalReviewView = () => {
                 id: 'variance',
                 header: 'Variance',
                 size: 100,
+                accessorKey: 'varianceMinutes',
                 cell: ({ row }) => {
                     const variance = row.original.varianceMinutes;
                     let className = styles.timerCell;
@@ -131,6 +134,7 @@ export const HistoricalReviewView = () => {
                 id: 'status',
                 header: 'Status',
                 size: 90,
+                accessorKey: 'status',
                 cell: ({ row }) => (
                     <span className={`${styles.statusLozenge} ${styles[row.original.status]}`}>
                         {row.original.status}
@@ -146,6 +150,7 @@ export const HistoricalReviewView = () => {
                 id: 'notes',
                 header: 'Notes',
                 size: 80,
+                accessorFn: (row) => `${row.officerNote || ''} ${row.supervisorNote || ''}`,
                 cell: ({ row }) => (
                     <div className={styles.notesCell}>
                         {row.original.officerNote && (
@@ -171,6 +176,7 @@ export const HistoricalReviewView = () => {
                 id: 'review',
                 header: 'Review',
                 size: 100,
+                accessorKey: 'reviewStatus',
                 cell: ({ row }) => {
                     if (row.original.reviewStatus === 'verified') {
                         return (
@@ -189,6 +195,19 @@ export const HistoricalReviewView = () => {
                         </button>
                     );
                 },
+            },
+            {
+                id: 'actions',
+                header: '',
+                size: 40,
+                enableResizing: false,
+                enableSorting: false,
+                cell: ({ row }) => (
+                    <RowContextMenu
+                        onAddNote={() => handleOpenNoteModal(row.original.id)}
+                        isVerified={row.original.reviewStatus === 'verified'}
+                    />
+                ),
             },
         ],
         [handleOpenNoteModal]

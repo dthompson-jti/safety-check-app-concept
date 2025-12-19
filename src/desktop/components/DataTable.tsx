@@ -9,6 +9,8 @@ import {
     ColumnDef,
     SortingState,
     RowSelectionState,
+    ColumnSizingState,
+    ColumnPinningState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import styles from './DataTable.module.css';
@@ -31,6 +33,10 @@ export function DataTable<T>({
     getRowId,
 }: DataTableProps<T>) {
     const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
+    const [columnPinning] = useState<ColumnPinningState>({
+        right: ['actions'],
+    });
 
     const table = useReactTable({
         data,
@@ -38,8 +44,12 @@ export function DataTable<T>({
         state: {
             sorting,
             rowSelection,
+            columnSizing,
+            columnPinning,
         },
         onSortingChange: setSorting,
+        onColumnSizingChange: setColumnSizing,
+        columnResizeMode: 'onChange',
         onRowSelectionChange: onRowSelectionChange as (updater: RowSelectionState | ((prev: RowSelectionState) => RowSelectionState)) => void,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -54,29 +64,45 @@ export function DataTable<T>({
                 <thead className={styles.thead}>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <th
-                                    key={header.id}
-                                    className={styles.th}
-                                    style={{ width: header.column.getSize() }}
-                                    onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
-                                    data-sortable={header.column.getCanSort()}
-                                >
-                                    <div className={styles.thContent}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
-                                        {header.column.getCanSort() && (
-                                            <span className={styles.sortIndicator}>
-                                                {{
-                                                    asc: '↑',
-                                                    desc: '↓',
-                                                }[header.column.getIsSorted() as string] ?? ''}
-                                            </span>
+                            {headerGroup.headers.map((header) => {
+                                const isPinned = header.column.getIsPinned();
+                                return (
+                                    <th
+                                        key={header.id}
+                                        className={`${styles.th} ${isPinned ? styles.stickyColumn : ''}`}
+                                        style={{
+                                            width: header.getSize(),
+                                            position: isPinned ? 'sticky' : undefined,
+                                            right: isPinned === 'right' ? 0 : undefined,
+                                            left: isPinned === 'left' ? 0 : undefined,
+                                        }}
+                                        onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
+                                        data-sortable={header.column.getCanSort()}
+                                    >
+                                        <div className={styles.thContent}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(header.column.columnDef.header, header.getContext())}
+                                            {header.column.getCanSort() && (
+                                                <span className={styles.sortIndicator}>
+                                                    {{
+                                                        asc: '↑',
+                                                        desc: '↓',
+                                                    }[header.column.getIsSorted() as string] ?? ''}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {header.column.getCanResize() && (
+                                            <div
+                                                onMouseDown={header.getResizeHandler()}
+                                                onTouchStart={header.getResizeHandler()}
+                                                className={`${styles.resizer} ${header.column.getIsResizing() ? styles.isResizing : ''
+                                                    }`}
+                                            />
                                         )}
-                                    </div>
-                                </th>
-                            ))}
+                                    </th>
+                                );
+                            })}
                         </tr>
                     ))}
                 </thead>
@@ -87,11 +113,23 @@ export function DataTable<T>({
                             className={styles.tr}
                             data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
                         >
-                            {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className={styles.td}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                            ))}
+                            {row.getVisibleCells().map((cell) => {
+                                const isPinned = cell.column.getIsPinned();
+                                return (
+                                    <td
+                                        key={cell.id}
+                                        className={`${styles.td} ${isPinned ? styles.stickyColumn : ''}`}
+                                        style={{
+                                            width: cell.column.getSize(),
+                                            position: isPinned ? 'sticky' : undefined,
+                                            right: isPinned === 'right' ? 0 : undefined,
+                                            left: isPinned === 'left' ? 0 : undefined,
+                                        }}
+                                    >
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                );
+                            })}
                         </tr>
                     ))}
                 </tbody>
