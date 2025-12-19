@@ -11,7 +11,6 @@ import {
 import { HistoricalCheck } from '../types';
 import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
-import { RowContextMenu } from './RowContextMenu';
 import styles from './DataTable.module.css';
 
 const formatTime = (isoString: string): string => {
@@ -66,12 +65,12 @@ export const HistoricalReviewView = () => {
         setSelectedRows(new Set<string>());
     };
 
-    const handleOpenNoteModal = (checkId: string) => {
+    const handleOpenNoteModal = useCallback((checkId: string) => {
         setModalState({
             isOpen: true,
             selectedIds: [checkId],
         });
-    };
+    }, [setModalState]);
 
     const columns: ColumnDef<HistoricalCheck>[] = useMemo(
         () => [
@@ -161,18 +160,30 @@ export const HistoricalReviewView = () => {
                 ),
             },
             {
-                id: 'actions',
-                header: '',
-                size: 60,
-                cell: ({ row }) => (
-                    <RowContextMenu
-                        onAddNote={() => handleOpenNoteModal(row.original.id)}
-                        isVerified={row.original.reviewStatus === 'verified'}
-                    />
-                ),
+                id: 'review',
+                header: 'Review',
+                size: 100,
+                cell: ({ row }) => {
+                    if (row.original.reviewStatus === 'verified') {
+                        return (
+                            <span className={styles.verifiedStatus}>
+                                <span className="material-symbols-rounded">check_circle</span>
+                                Verified
+                            </span>
+                        );
+                    }
+                    return (
+                        <button
+                            className={styles.linkAction}
+                            onClick={() => handleOpenNoteModal(row.original.id)}
+                        >
+                            Add Note
+                        </button>
+                    );
+                },
             },
         ],
-        []
+        [handleOpenNoteModal]
     );
 
     return (

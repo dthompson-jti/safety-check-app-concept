@@ -140,7 +140,7 @@
     border-radius: var(--radius-full);
     font-size: var(--font-size-2xs);
     font-weight: 600;
-    text-transform: uppercase;
+    text-transform: capitalize;
 }
 
 .statusLozenge.done {
@@ -213,6 +213,31 @@
 .noteIcon {
     font-size: var(--icon-size-sm);
     cursor: help;
+}
+
+/* Checkbox - visible border for empty state */
+.checkbox {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid var(--surface-border-primary);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.checkbox[data-state="checked"] {
+    background: var(--control-bg-selected);
+    border-color: var(--control-bg-selected);
+    color: white;
+}
+
+.checkbox .material-symbols-rounded {
+    font-size: 16px;
 }
 
 /* Checkmark container (replaces HTML checkbox) */

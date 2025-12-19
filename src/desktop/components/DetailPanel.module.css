@@ -68,8 +68,7 @@
     font-size: var(--font-size-2xs);
     font-weight: 500;
     color: var(--surface-fg-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
 }
 
 .value {

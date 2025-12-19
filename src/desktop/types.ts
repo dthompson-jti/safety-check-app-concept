@@ -26,6 +26,7 @@ export interface DesktopFilter {
     unit: string;      // 'all' or unit ID
     search: string;    // Resident name search
     showMissedOnly: boolean;
+    statusFilter: 'all' | 'missed' | 'late';  // Status filter for historical view
 }
 
 /** Derived live check for table display */

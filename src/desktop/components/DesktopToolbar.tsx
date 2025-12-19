@@ -4,6 +4,21 @@ import { useAtom, useAtomValue } from 'jotai';
 import { desktopViewAtom, desktopFilterAtom } from '../atoms';
 import styles from './DesktopToolbar.module.css';
 
+type StatusFilterValue = 'all' | 'missed' | 'late';
+
+const STATUS_OPTIONS: { value: StatusFilterValue; label: string }[] = [
+    { value: 'all', label: 'All Status' },
+    { value: 'missed', label: 'Missed Only' },
+    { value: 'late', label: 'Late Only' },
+];
+
+const UNIT_OPTIONS = [
+    { value: 'all', label: 'All Units' },
+    { value: 'A', label: 'Unit A' },
+    { value: 'B', label: 'Unit B' },
+    { value: 'C', label: 'Unit C' },
+];
+
 export const DesktopToolbar = () => {
     const view = useAtomValue(desktopViewAtom);
     const [filter, setFilter] = useAtom(desktopFilterAtom);
@@ -12,9 +27,19 @@ export const DesktopToolbar = () => {
         setFilter((prev) => ({ ...prev, search: e.target.value }));
     };
 
-    const handleMissedOnlyChange = () => {
-        setFilter((prev) => ({ ...prev, showMissedOnly: !prev.showMissedOnly }));
+    const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setFilter((prev) => ({
+            ...prev,
+            statusFilter: e.target.value as StatusFilterValue
+        }));
     };
+
+    const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setFilter((prev) => ({ ...prev, unit: e.target.value }));
+    };
+
+    const currentStatusLabel = STATUS_OPTIONS.find(o => o.value === filter.statusFilter)?.label || 'Status';
+    const currentUnitLabel = UNIT_OPTIONS.find(o => o.value === filter.unit)?.label || 'Unit';
 
     return (
         <div className={styles.toolbar}>
@@ -48,24 +73,40 @@ export const DesktopToolbar = () => {
 
             {/* Right Side: Quick Filters */}
             <div className={styles.filterChips}>
-                <button className={styles.filterChip}>
-                    Facility Area
-                    <span className="material-symbols-rounded">expand_more</span>
-                </button>
-                <button className={styles.filterChip}>
-                    Comments
-                    <span className="material-symbols-rounded">expand_more</span>
-                </button>
-                {view === 'historical' && (
-                    <button
-                        className={`${styles.filterChip} ${filter.showMissedOnly ? styles.active : ''}`}
-                        onClick={handleMissedOnlyChange}
+                {/* Unit Filter */}
+                <div className={`${styles.filterChip} ${filter.unit !== 'all' ? styles.active : ''}`}>
+                    <select
+                        className={styles.filterSelect}
+                        value={filter.unit}
+                        onChange={handleUnitChange}
                     >
-                        Status
-                        <span className="material-symbols-rounded">
-                            {filter.showMissedOnly ? 'check' : 'expand_more'}
-                        </span>
-                    </button>
+                        {UNIT_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                    <span className={styles.filterLabel}>{currentUnitLabel}</span>
+                    <span className="material-symbols-rounded">expand_more</span>
+                </div>
+
+                {/* Status Filter (Historical only) */}
+                {view === 'historical' && (
+                    <div className={`${styles.filterChip} ${filter.statusFilter !== 'all' ? styles.active : ''}`}>
+                        <select
+                            className={styles.filterSelect}
+                            value={filter.statusFilter}
+                            onChange={handleStatusFilterChange}
+                        >
+                            {STATUS_OPTIONS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+                        <span className={styles.filterLabel}>{currentStatusLabel}</span>
+                        <span className="material-symbols-rounded">expand_more</span>
+                    </div>
                 )}
             </div>
         </div>

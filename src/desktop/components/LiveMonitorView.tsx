@@ -1,75 +1,24 @@
 // src/desktop/components/LiveMonitorView.tsx
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { ColumnDef } from '@tanstack/react-table';
-import { timeSortedChecksAtom } from '../../data/appDataAtoms';
+import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import { desktopFilterAtom } from '../atoms';
 import { LiveCheckRow } from '../types';
-import { SafetyCheck } from '../../types';
+import { mockLiveChecks } from '../mockLiveData';
 import { DataTable } from './DataTable';
+import { BulkActionFooter } from './BulkActionFooter';
 import { addToastAtom } from '../../data/toastAtoms';
 import styles from './DataTable.module.css';
 
-/** Transform SafetyCheck to LiveCheckRow for display */
-const transformToLiveRow = (check: SafetyCheck): LiveCheckRow => {
-    const now = Date.now();
-    const dueTime = new Date(check.dueDate).getTime();
-    const intervalMs = check.baseInterval * 60 * 1000;
-    const windowStartTime = dueTime - intervalMs;
-    const elapsedMs = now - windowStartTime;
-    const elapsedMinutes = Math.floor(elapsedMs / 60000);
-
-    let status: 'missed' | 'due' | 'pending' = 'pending';
-    let timerText = '';
-    let timerSeverity: 'alert' | 'warning' | 'neutral' = 'neutral';
-
-    if (check.status === 'missed' || elapsedMinutes >= 15) {
-        status = 'missed';
-        const overdueMinutes = elapsedMinutes - 15;
-        timerText = `Overdue ${overdueMinutes}m`;
-        timerSeverity = 'alert';
-    } else if (check.status === 'due' || elapsedMinutes >= 13) {
-        status = 'due';
-        const dueInMinutes = 15 - elapsedMinutes;
-        timerText = `Due in ${dueInMinutes}m`;
-        timerSeverity = 'warning';
-    } else {
-        status = 'pending';
-        timerText = `${15 - elapsedMinutes}m`;
-        timerSeverity = 'neutral';
-    }
-
-    const hasHighRisk = check.specialClassifications && check.specialClassifications.length > 0;
-    const riskType = hasHighRisk ? check.specialClassifications?.[0]?.type : undefined;
-
-    return {
-        id: check.id,
-        status,
-        timerText,
-        timerSeverity,
-        location: check.residents[0]?.location || 'Unknown',
-        residents: check.residents,
-        hasHighRisk: hasHighRisk || false,
-        riskType,
-        lastCheckTime: check.lastChecked || null,
-        lastCheckOfficer: null, // Would come from check history in real app
-        originalCheck: check,
-    };
-};
-
 export const LiveMonitorView = () => {
-    const checks = useAtomValue(timeSortedChecksAtom);
     const filter = useAtomValue(desktopFilterAtom);
     const addToast = useSetAtom(addToastAtom);
+    const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 
-    // Transform and filter checks
+    // Filter and sort mock data
     const liveRows = useMemo(() => {
-        const actionableChecks = checks.filter(
-            (c) => !['complete', 'completing', 'queued'].includes(c.status)
-        );
-
-        let rows = actionableChecks.map(transformToLiveRow);
+        let rows = [...mockLiveChecks];
 
         // Apply search filter
         if (filter.search) {
@@ -83,14 +32,42 @@ export const LiveMonitorView = () => {
             });
         }
 
-        // Sort by urgency
+        // Apply unit filter (mock data uses room numbers like "101", "102")
+        // For demo purposes, we'll keep all data visible unless specific unit filter
+
+        // Sort by urgency, then by risk level (high risk first within same urgency)
         rows.sort((a, b) => {
-            const statusOrder = { missed: 0, due: 1, pending: 2 };
-            return statusOrder[a.status] - statusOrder[b.status];
+            const statusOrder: Record<'missed' | 'due' | 'pending', number> = { missed: 0, due: 1, pending: 2 };
+            const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+            if (statusDiff !== 0) return statusDiff;
+            // High risk residents bubble to top
+            if (a.hasHighRisk && !b.hasHighRisk) return -1;
+            if (!a.hasHighRisk && b.hasHighRisk) return 1;
+            return 0;
         });
 
         return rows;
-    }, [checks, filter.search]);
+    }, [filter.search]);
+
+    // Convert Set to TanStack's RowSelectionState
+    const rowSelection: RowSelectionState = useMemo(() => {
+        const selection: RowSelectionState = {};
+        selectedRows.forEach((id) => {
+            selection[id] = true;
+        });
+        return selection;
+    }, [selectedRows]);
+
+    const handleRowSelectionChange = useCallback(
+        (updaterOrValue: RowSelectionState | ((prev: RowSelectionState) => RowSelectionState)) => {
+            const newSelection = typeof updaterOrValue === 'function'
+                ? updaterOrValue(rowSelection)
+                : updaterOrValue;
+            const newSet = new Set(Object.keys(newSelection).filter((k) => newSelection[k]));
+            setSelectedRows(newSet);
+        },
+        [rowSelection]
+    );
 
     const handleAlert = useCallback((row: LiveCheckRow) => {
         addToast({
@@ -100,84 +77,160 @@ export const LiveMonitorView = () => {
         });
     }, [addToast]);
 
+    const handleBulkComment = () => {
+        addToast({
+            message: `Comment added for ${selectedRows.size} checks`,
+            icon: 'check_circle',
+            variant: 'success',
+        });
+        setSelectedRows(new Set());
+    };
+
     const columns: ColumnDef<LiveCheckRow>[] = useMemo(
         () => [
             {
-                id: 'status',
-                header: 'Status',
-                size: 60,
-                cell: ({ row }) => (
-                    <div className={`${styles.statusIcon} ${styles[row.original.status]}`}>
-                        {row.original.status === 'missed' && '🔴'}
-                        {row.original.status === 'due' && '🟠'}
-                        {row.original.status === 'pending' && '⚪'}
+                id: 'select',
+                header: ({ table }) => (
+                    <div
+                        className={styles.checkbox}
+                        onClick={table.getToggleAllRowsSelectedHandler()}
+                        data-state={table.getIsAllRowsSelected() ? 'checked' : 'unchecked'}
+                    >
+                        {table.getIsAllRowsSelected() && (
+                            <span className="material-symbols-rounded">check</span>
+                        )}
                     </div>
                 ),
-            },
-            {
-                id: 'timer',
-                header: 'Timer',
-                size: 100,
                 cell: ({ row }) => (
-                    <span className={`${styles.timerCell} ${styles[row.original.timerSeverity]}`}>
-                        {row.original.timerText}
-                    </span>
+                    <div
+                        className={styles.checkbox}
+                        onClick={row.getToggleSelectedHandler()}
+                        data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
+                    >
+                        {row.getIsSelected() && (
+                            <span className="material-symbols-rounded">check</span>
+                        )}
+                    </div>
                 ),
-            },
-            {
-                id: 'location',
-                header: 'Location',
-                accessorKey: 'location',
-                size: 120,
+                size: 48,
             },
             {
                 id: 'resident',
                 header: 'Resident',
                 cell: ({ row }) => (
                     <div className={styles.residentCell}>
-                        <span>{row.original.residents.map((r) => r.name).join(', ')}</span>
                         {row.original.hasHighRisk && (
-                            <span className={styles.riskIcon} title={row.original.riskType}>
+                            <span
+                                className={styles.riskIcon}
+                                title={row.original.riskType || 'High Risk'}
+                            >
                                 ⚠️
                             </span>
                         )}
+                        <span>{row.original.residents.map((r) => r.name).join(', ')}</span>
                     </div>
                 ),
             },
             {
-                id: 'lastCheck',
-                header: 'Last Check',
-                size: 160,
-                cell: ({ row }) => {
-                    if (!row.original.lastCheckTime) return '—';
-                    const lastTime = new Date(row.original.lastCheckTime);
-                    const minutesAgo = Math.floor((Date.now() - lastTime.getTime()) / 60000);
-                    return `${minutesAgo}m ago`;
+                id: 'location',
+                header: 'Room',
+                accessorKey: 'location',
+                size: 80,
+            },
+            {
+                id: 'scheduled',
+                header: 'Scheduled',
+                size: 140,
+                cell: () => {
+                    // Mock scheduled time
+                    const now = new Date();
+                    return now.toLocaleString('en-US', {
+                        month: '2-digit',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                    });
                 },
             },
             {
-                id: 'action',
+                id: 'actual',
+                header: 'Actual',
+                size: 100,
+                cell: ({ row }) => {
+                    if (row.original.status === 'missed') return 'No check';
+                    return row.original.timerText;
+                },
+            },
+            {
+                id: 'status',
+                header: 'Status',
+                size: 100,
+                cell: ({ row }) => {
+                    const statusLabels = {
+                        missed: 'Missed',
+                        due: 'Due',
+                        pending: 'Upcoming',
+                    };
+                    return (
+                        <span className={`${styles.statusLozenge} ${styles[row.original.status]}`}>
+                            {statusLabels[row.original.status]}
+                        </span>
+                    );
+                },
+            },
+            {
+                id: 'checkedBy',
+                header: 'Checked by',
+                size: 120,
+                cell: ({ row }) => row.original.lastCheckOfficer || 'Brett Corbin',
+            },
+            {
+                id: 'comments',
+                header: 'Supervisor Comments',
+                size: 160,
+                cell: () => (
+                    <button className={styles.linkAction}>+</button>
+                ),
+            },
+            {
+                id: 'actions',
                 header: '',
-                size: 80,
-                cell: ({ row }) =>
-                    row.original.status !== 'pending' && (
-                        <button
-                            className={styles.actionButton}
-                            onClick={() => handleAlert(row.original)}
-                        >
-                            Alert
-                        </button>
-                    ),
+                size: 40,
+                cell: ({ row }) => (
+                    <button
+                        className={styles.iconButtonSmall}
+                        onClick={() => handleAlert(row.original)}
+                        aria-label="More options"
+                    >
+                        <span className="material-symbols-rounded">more_vert</span>
+                    </button>
+                ),
             },
         ],
         [handleAlert]
     );
 
     return (
-        <DataTable
-            data={liveRows}
-            columns={columns}
-            getRowId={(row) => row.id}
-        />
+        <>
+            <DataTable
+                data={liveRows}
+                columns={columns}
+                enableRowSelection
+                rowSelection={rowSelection}
+                onRowSelectionChange={handleRowSelectionChange}
+                getRowId={(row) => row.id}
+            />
+
+            {selectedRows.size > 0 && (
+                <BulkActionFooter
+                    selectedCount={selectedRows.size}
+                    onAction={handleBulkComment}
+                    onClear={() => setSelectedRows(new Set())}
+                    actionLabel="Comment"
+                />
+            )}
+        </>
     );
 };

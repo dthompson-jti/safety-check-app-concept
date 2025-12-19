@@ -13,6 +13,7 @@ export const desktopFilterAtom = atom<DesktopFilter>({
     unit: 'all',
     search: '',
     showMissedOnly: false,
+    statusFilter: 'all',
 });
 
 /** Selected row IDs for bulk actions (Historical view) */
@@ -37,8 +38,17 @@ export const filteredHistoricalChecksAtom = atom((get) => {
             if (!matchesResident && !matchesLocation) return false;
         }
 
-        // Show missed only filter
-        if (filter.showMissedOnly && check.status !== 'missed') {
+        // Unit filter - extract unit letter from location (e.g., "A-101" → "A")
+        if (filter.unit !== 'all') {
+            const unitFromLocation = check.location.split('-')[0];
+            if (unitFromLocation !== filter.unit) return false;
+        }
+
+        // Status filter
+        if (filter.statusFilter === 'missed' && check.status !== 'missed') {
+            return false;
+        }
+        if (filter.statusFilter === 'late' && check.status !== 'late') {
             return false;
         }
 

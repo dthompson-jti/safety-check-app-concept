@@ -6,9 +6,17 @@ interface BulkActionFooterProps {
     selectedCount: number;
     onAction: () => void;
     onClear: () => void;
+    actionLabel?: string;
+    actionIcon?: string;
 }
 
-export const BulkActionFooter = ({ selectedCount, onAction, onClear }: BulkActionFooterProps) => {
+export const BulkActionFooter = ({
+    selectedCount,
+    onAction,
+    onClear,
+    actionLabel = 'Add Note',
+    actionIcon = 'edit_note',
+}: BulkActionFooterProps) => {
     return (
         <div className={styles.footer}>
             {/* Count section with dismiss */}
@@ -29,8 +37,8 @@ export const BulkActionFooter = ({ selectedCount, onAction, onClear }: BulkActio
 
             {/* Primary action */}
             <button className={`${styles.actionButton} ${styles.primary}`} onClick={onAction}>
-                <span className="material-symbols-rounded">edit_note</span>
-                Add Note
+                <span className="material-symbols-rounded">{actionIcon}</span>
+                {actionLabel}
             </button>
 
             {/* Overflow menu */}

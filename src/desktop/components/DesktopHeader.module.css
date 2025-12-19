@@ -173,3 +173,9 @@
 .menuItem:hover {
     background-color: var(--control-bg-tertiary-hover);
 }
+
+.menuDivider {
+    height: 1px;
+    background: var(--surface-border-secondary);
+    margin: var(--spacing-1) 0;
+}

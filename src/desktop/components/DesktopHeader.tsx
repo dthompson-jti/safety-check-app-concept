@@ -64,6 +64,19 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
                             <div className={styles.backdrop} onClick={() => setShowOverflowMenu(false)} />
                             <div className={styles.menu}>
                                 <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                                    <span className="material-symbols-rounded">qr_code_2</span>
+                                    Generate QR Codes
+                                </button>
+                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                                    <span className="material-symbols-rounded">settings</span>
+                                    Safeguard Settings
+                                </button>
+                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                                    <span className="material-symbols-rounded">summarize</span>
+                                    Safeguard Report
+                                </button>
+                                <div className={styles.menuDivider} />
+                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
                                     <span className="material-symbols-rounded">download</span>
                                     Export CSV
                                 </button>

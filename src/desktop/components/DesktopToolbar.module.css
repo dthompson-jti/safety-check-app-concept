@@ -181,3 +181,21 @@
     background: var(--surface-border-secondary);
     margin: 0 var(--spacing-2);
 }
+
+/* Filter Select - invisible native select for accessibility */
+.filterChip {
+    position: relative;
+}
+
+.filterSelect {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.filterLabel {
+    pointer-events: none;
+}

@@ -5,6 +5,7 @@ import { HistoricalCheck } from './types';
 /**
  * Mock historical check data representing "yesterday's" checks.
  * Demonstrates various scenarios for the Historical Review view.
+ * Contains 50+ rows for scroll/density testing per PRD Section 7.
  */
 
 const createCheck = (
@@ -49,67 +50,133 @@ const createCheck = (
 };
 
 export const historicalChecks: HistoricalCheck[] = [
-    // Good checks - on time
-    createCheck('h1', 'John Davis', 'A-101', '08:00', '08:01', 'B. Corbin'),
-    createCheck('h2', 'Sarah Mitchell', 'A-102', '08:15', '08:14', 'B. Corbin'),
-    createCheck('h3', 'Mike Rodriguez', 'A-103', '08:30', '08:31', 'J. Smith'),
-    createCheck('h4', 'Emily Chen', 'A-104', '08:45', '08:46', 'J. Smith'),
+    // === MORNING SHIFT (06:00 - 10:00) ===
 
-    // Late checks
-    createCheck('h5', 'Dave Thompson', 'A-105', '09:00', '09:08', 'B. Corbin', {
+    // Early morning - all good
+    createCheck('h1', 'John Davis', 'A-101', '06:00', '06:01', 'B. Corbin'),
+    createCheck('h2', 'Sarah Mitchell', 'A-102', '06:15', '06:14', 'B. Corbin'),
+    createCheck('h3', 'Mike Rodriguez', 'A-103', '06:30', '06:31', 'J. Smith'),
+    createCheck('h4', 'Emily Chen', 'A-104', '06:45', '06:46', 'J. Smith'),
+    createCheck('h5', 'Robert Kim', 'A-105', '07:00', '07:02', 'B. Corbin'),
+    createCheck('h6', 'Lisa Park', 'B-201', '07:15', '07:14', 'K. Adams'),
+
+    // Breakfast rush - some late
+    createCheck('h7', 'Dave Thompson', 'B-202', '07:30', '07:38', 'B. Corbin', {
         officerNote: 'Resident was in shower',
     }),
-    createCheck('h6', 'James Wilson', 'B-201', '09:15', '09:22', 'K. Adams', {
+    createCheck('h8', 'James Wilson', 'B-203', '07:45', '07:52', 'K. Adams', {
         officerNote: 'Multiple residents in room, took extra time',
     }),
-    createCheck('h7', 'Lisa Park', 'B-202', '09:30', '09:38', 'K. Adams'),
+    createCheck('h9', 'Marcus Brown', 'B-204', '08:00', '08:01', 'J. Smith'),
+    createCheck('h10', 'Jennifer Taylor', 'C-301', '08:15', '08:16', 'J. Smith'),
 
-    // Missed checks - pending review
-    createCheck('h8', 'Carlos Mendez', 'B-203', '09:45', null, 'B. Corbin', {
+    // Morning count - missed checks
+    createCheck('h11', 'Carlos Mendez', 'C-302', '08:30', null, 'B. Corbin', {
         reviewStatus: 'pending',
     }),
-    createCheck('h9', 'Robert Kim', 'B-204', '10:00', null, 'B. Corbin', {
-        reviewStatus: 'pending',
-    }),
-    createCheck('h10', 'Anna Lopez', 'C-301', '10:15', null, 'J. Smith', {
+    createCheck('h12', 'Anna Lopez', 'C-303', '08:45', null, 'B. Corbin', {
         officerNote: 'Door jammed, maintenance called',
         reviewStatus: 'pending',
     }),
+    createCheck('h13', 'Steven Clark', 'A-101', '09:00', '09:02', 'K. Adams'),
+    createCheck('h14', 'Michelle Lewis', 'A-102', '09:15', '09:14', 'K. Adams'),
+    createCheck('h15', 'Kevin Robinson', 'A-103', '09:30', '09:32', 'B. Corbin'),
 
-    // Missed checks - already verified
-    createCheck('h11', 'Marcus Brown', 'C-302', '10:30', null, 'J. Smith', {
+    // Verified missed - lockdown
+    createCheck('h16', 'Nancy Hall', 'A-104', '09:45', null, 'J. Smith', {
         supervisorNote: 'Unit Lockdown - verified by Shift Supervisor',
         reviewStatus: 'verified',
     }),
-    createCheck('h12', 'Jennifer Taylor', 'C-303', '10:45', null, 'K. Adams', {
-        supervisorNote: 'Court Appearance - resident transported',
+    createCheck('h17', 'Brian Allen', 'A-105', '10:00', null, 'J. Smith', {
+        supervisorNote: 'Unit Lockdown - verified by Shift Supervisor',
         reviewStatus: 'verified',
     }),
 
-    // Afternoon checks - mix
-    createCheck('h13', 'William Garcia', 'A-101', '11:00', '11:02', 'B. Corbin'),
-    createCheck('h14', 'Patricia Moore', 'A-102', '11:15', '11:16', 'B. Corbin'),
-    createCheck('h15', 'Christopher Lee', 'A-103', '11:30', '11:35', 'J. Smith'),
-    createCheck('h16', 'Amanda White', 'A-104', '11:45', '11:47', 'J. Smith'),
-    createCheck('h17', 'Daniel Harris', 'A-105', '12:00', '12:12', 'K. Adams', {
+    // === MID-MORNING (10:00 - 12:00) ===
+
+    createCheck('h18', 'Sandra Young', 'B-201', '10:15', '10:17', 'K. Adams'),
+    createCheck('h19', 'Timothy King', 'B-202', '10:30', '10:31', 'B. Corbin'),
+    createCheck('h20', 'Dorothy Wright', 'B-203', '10:45', '10:44', 'B. Corbin'),
+    createCheck('h21', 'William Garcia', 'B-204', '11:00', '11:09', 'J. Smith', {
         officerNote: 'Medical check in progress',
     }),
+    createCheck('h22', 'Patricia Moore', 'C-301', '11:15', '11:16', 'J. Smith'),
+    createCheck('h23', 'Christopher Lee', 'C-302', '11:30', '11:35', 'K. Adams'),
+    createCheck('h24', 'Amanda White', 'C-303', '11:45', '11:47', 'K. Adams'),
+    createCheck('h25', 'Daniel Harris', 'A-101', '12:00', '12:02', 'B. Corbin'),
 
-    // More missed for bulk action testing
-    createCheck('h18', 'Steven Clark', 'B-201', '12:15', null, 'B. Corbin', {
-        reviewStatus: 'pending',
+    // === LUNCH PERIOD (12:00 - 14:00) ===
+
+    createCheck('h26', 'Jessica Martinez', 'A-102', '12:15', '12:14', 'B. Corbin'),
+    createCheck('h27', 'Thomas Anderson', 'A-103', '12:30', '12:32', 'J. Smith'),
+
+    // Missed during court transport
+    createCheck('h28', 'Richard Scott', 'A-104', '12:45', null, 'J. Smith', {
+        supervisorNote: 'Court Appearance - resident transported',
+        reviewStatus: 'verified',
     }),
-    createCheck('h19', 'Michelle Lewis', 'B-202', '12:30', null, 'B. Corbin', {
-        reviewStatus: 'pending',
-    }),
-    createCheck('h20', 'Kevin Robinson', 'B-203', '12:45', null, 'J. Smith', {
-        reviewStatus: 'pending',
+    createCheck('h29', 'Barbara Jackson', 'A-105', '13:00', '13:01', 'K. Adams'),
+    createCheck('h30', 'Charles Thomas', 'B-201', '13:15', '13:22', 'K. Adams', {
+        officerNote: 'Slow response, resident sleeping',
     }),
 
-    // Afternoon on-time
-    createCheck('h21', 'Nancy Hall', 'B-204', '13:00', '13:01', 'K. Adams'),
-    createCheck('h22', 'Brian Allen', 'C-301', '13:15', '13:14', 'K. Adams'),
-    createCheck('h23', 'Sandra Young', 'C-302', '13:30', '13:32', 'B. Corbin'),
-    createCheck('h24', 'Timothy King', 'C-303', '13:45', '13:46', 'B. Corbin'),
-    createCheck('h25', 'Dorothy Wright', 'A-101', '14:00', '14:03', 'J. Smith'),
+    // Pending missed checks
+    createCheck('h31', 'Margaret Hernandez', 'B-202', '13:30', null, 'B. Corbin', {
+        reviewStatus: 'pending',
+    }),
+    createCheck('h32', 'Joseph Walker', 'B-203', '13:45', null, 'B. Corbin', {
+        reviewStatus: 'pending',
+    }),
+    createCheck('h33', 'Elizabeth Hall', 'B-204', '14:00', '14:03', 'J. Smith'),
+
+    // === AFTERNOON SHIFT (14:00 - 18:00) ===
+
+    createCheck('h34', 'David Allen', 'C-301', '14:15', '14:16', 'J. Smith'),
+    createCheck('h35', 'Susan Young', 'C-302', '14:30', '14:29', 'K. Adams'),
+    createCheck('h36', 'Mark Robinson', 'C-303', '14:45', '14:48', 'K. Adams'),
+    createCheck('h37', 'Linda Clark', 'A-101', '15:00', '15:01', 'B. Corbin'),
+    createCheck('h38', 'Paul Lewis', 'A-102', '15:15', '15:14', 'B. Corbin'),
+    createCheck('h39', 'Karen Walker', 'A-103', '15:30', '15:38', 'J. Smith', {
+        officerNote: 'Recreation time, had to locate resident',
+    }),
+    createCheck('h40', 'Donald King', 'A-104', '15:45', '15:46', 'J. Smith'),
+    createCheck('h41', 'Betty Wright', 'A-105', '16:00', '16:02', 'K. Adams'),
+
+    // Verified missed - medical emergency
+    createCheck('h42', 'George Hill', 'B-201', '16:15', null, 'K. Adams', {
+        supervisorNote: 'Medical Emergency - EMT on scene',
+        reviewStatus: 'verified',
+    }),
+    createCheck('h43', 'Helen Lopez', 'B-202', '16:30', '16:31', 'B. Corbin'),
+    createCheck('h44', 'Edward Gonzalez', 'B-203', '16:45', '16:44', 'B. Corbin'),
+    createCheck('h45', 'Ruth Adams', 'B-204', '17:00', '17:07', 'J. Smith', {
+        officerNote: 'Phone call in progress',
+    }),
+
+    // === EVENING (17:00 - 20:00) ===
+
+    createCheck('h46', 'Frank Nelson', 'C-301', '17:15', '17:16', 'J. Smith'),
+    createCheck('h47', 'Carol Carter', 'C-302', '17:30', '17:29', 'K. Adams'),
+    createCheck('h48', 'Raymond Mitchell', 'C-303', '17:45', '17:48', 'K. Adams'),
+    createCheck('h49', 'Virginia Roberts', 'A-101', '18:00', '18:01', 'B. Corbin'),
+    createCheck('h50', 'Jerry Turner', 'A-102', '18:15', '18:14', 'B. Corbin'),
+
+    // Missed - pending review
+    createCheck('h51', 'Alice Phillips', 'A-103', '18:30', null, 'J. Smith', {
+        reviewStatus: 'pending',
+    }),
+    createCheck('h52', 'Henry Campbell', 'A-104', '18:45', null, 'J. Smith', {
+        officerNote: 'Staffing shortage during dinner',
+        reviewStatus: 'pending',
+    }),
+    createCheck('h53', 'Deborah Parker', 'A-105', '19:00', '19:03', 'K. Adams'),
+    createCheck('h54', 'Roger Evans', 'B-201', '19:15', '19:16', 'K. Adams'),
+    createCheck('h55', 'Julia Edwards', 'B-202', '19:30', '19:32', 'B. Corbin'),
+
+    // Verified - staff shortage
+    createCheck('h56', 'Lawrence Collins', 'B-203', '19:45', null, 'B. Corbin', {
+        supervisorNote: 'Staff Shortage - shift overlap gap',
+        reviewStatus: 'verified',
+    }),
+    createCheck('h57', 'Shirley Stewart', 'B-204', '20:00', '20:01', 'J. Smith'),
 ];
