@@ -12,6 +12,7 @@ import { HistoricalCheck } from '../types';
 import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
 import { RowContextMenu } from './RowContextMenu';
+import { StatusBadge, StatusBadgeType } from './StatusBadge';
 import styles from './DataTable.module.css';
 
 const formatTime = (isoString: string): string => {
@@ -136,9 +137,7 @@ export const HistoricalReviewView = () => {
                 size: 90,
                 accessorKey: 'status',
                 cell: ({ row }) => (
-                    <span className={`${styles.statusLozenge} ${styles[row.original.status]}`}>
-                        {row.original.status}
-                    </span>
+                    <StatusBadge status={row.original.status as StatusBadgeType} />
                 ),
             },
             {

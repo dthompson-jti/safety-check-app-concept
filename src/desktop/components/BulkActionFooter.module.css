@@ -9,12 +9,14 @@
 
     display: flex;
     align-items: center;
-    gap: var(--spacing-1);
+    gap: var(--spacing-3);
+    /* Consistent gap between main sections */
 
     background-color: var(--surface-bg-brand-solid);
     color: var(--control-fg-on-solid);
     border-radius: var(--radius-md);
-    padding: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    /* Even padding */
     box-shadow: var(--surface-shadow-lg);
     z-index: 50;
 
@@ -38,55 +40,66 @@
 .countSection {
     display: flex;
     align-items: center;
-    gap: var(--spacing-1);
-    padding: 0 var(--spacing-2);
+    gap: var(--spacing-2);
+    /* Increased gap for better visual balance */
 }
 
 .dismissButton {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    /* Stepped up size to match other buttons */
+    height: 32px;
     background: transparent;
     border: none;
     border-radius: var(--radius-xs);
     color: var(--control-fg-on-solid);
     cursor: pointer;
     transition: background-color 0.15s ease;
+    padding: 0;
+    /* Clear any default padding for concentricity */
 }
 
 .dismissButton:hover {
     background-color: var(--control-bg-on-solid-hover);
 }
 
+.dismissButton .material-symbols-rounded {
+    font-size: var(--icon-size-md);
+    /* Concentricity helper: ensure icon is centered perfectly */
+}
+
 .count {
     font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-weight: 600;
+    /* Slightly heavier for better readability on solid bg */
     color: var(--control-fg-on-solid);
 }
 
 /* Divider between count and actions */
 .divider {
     width: 1px;
-    height: 20px;
-    background-color: var(--surface-border-theme);
-    margin: 0 var(--spacing-2);
-    opacity: 0.5;
+    height: 24px;
+    /* Slightly taller */
+    background-color: white;
+    /* More visible on brand solid */
+    opacity: 0.2;
 }
 
 /* Action buttons */
 .actionButton {
     display: flex;
     align-items: center;
-    gap: var(--spacing-1);
+    gap: var(--spacing-1p5);
+    /* Even spacing between icon and text */
     padding: var(--spacing-1p5) var(--spacing-3);
     background: var(--control-bg-on-solid-hover);
     color: var(--control-fg-on-solid);
     border: none;
     border-radius: var(--radius-sm);
     font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.15s ease;
 }
@@ -97,6 +110,8 @@
 
 .actionButton .material-symbols-rounded {
     font-size: var(--icon-size-md);
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'grad' 0, 'opsz' 24;
+    /* ENFORCE SOLID */
 }
 
 /* Primary action variant */
@@ -126,4 +141,10 @@
 
 .overflowButton:hover {
     background-color: var(--control-bg-on-solid-hover);
+}
+
+.overflowButton .material-symbols-rounded {
+    font-size: var(--icon-size-md);
+    font-variation-settings: 'FILL' 1;
+    /* ENFORCE SOLID */
 }

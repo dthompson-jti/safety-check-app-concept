@@ -1,0 +1,60 @@
+/* src/desktop/components/StatusBadge.module.css */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-0p5) var(--spacing-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    line-height: var(--line-height-tight);
+    border: 1px solid transparent;
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+.icon {
+    font-size: 14px !important;
+    font-variation-settings: 'opsz' 14, 'wght' 600;
+}
+
+.label {
+    /* Ensure label alignment */
+}
+
+/* Missed */
+.badge[data-status='missed'] {
+    background: var(--surface-bg-error-primary);
+    color: var(--surface-fg-alert-primary);
+    border-color: var(--surface-border-alert);
+}
+
+/* Due */
+.badge[data-status='due'] {
+    background: var(--surface-bg-warning-primary);
+    color: var(--surface-fg-warning-primary);
+    border-color: var(--surface-border-warning);
+}
+
+/* Pending / Upcoming */
+.badge[data-status='pending'] {
+    background: var(--surface-bg-secondary_subtle);
+    color: var(--surface-fg-secondary);
+    border-color: var(--surface-border-primary);
+}
+
+/* Complete / Verified */
+.badge[data-status='complete'],
+.badge[data-status='verified'] {
+    background: var(--surface-bg-success);
+    color: var(--surface-fg-success-primary);
+    border-color: var(--surface-border-success);
+}
+
+/* Late */
+.badge[data-status='late'] {
+    background: var(--surface-bg-error-primary);
+    color: var(--surface-fg-alert-primary);
+    border-color: var(--surface-border-alert);
+}

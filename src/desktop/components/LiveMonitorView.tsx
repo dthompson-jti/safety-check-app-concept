@@ -9,6 +9,7 @@ import { mockLiveChecks } from '../mockLiveData';
 import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
 import { RowContextMenu } from './RowContextMenu';
+import { StatusBadge, StatusBadgeType } from './StatusBadge';
 import { addToastAtom } from '../../data/toastAtoms';
 import styles from './DataTable.module.css';
 
@@ -175,15 +176,8 @@ export const LiveMonitorView = () => {
                 size: 100,
                 accessorKey: 'status',
                 cell: ({ row }) => {
-                    const statusLabels = {
-                        missed: 'Missed',
-                        due: 'Due',
-                        pending: 'Upcoming',
-                    };
                     return (
-                        <span className={`${styles.statusLozenge} ${styles[row.original.status]}`}>
-                            {statusLabels[row.original.status]}
-                        </span>
+                        <StatusBadge status={row.original.status as StatusBadgeType} />
                     );
                 },
             },
