@@ -63,3 +63,49 @@
     font-size: 0.875rem;
     line-height: 1.5;
 }
+
+/* =========================================
+   Solid Variant (Offline Mode)
+   ========================================= */
+
+.contentContainer[data-variant="solid"] {
+    gap: var(--spacing-2);
+}
+
+.statusPill[data-variant="solid"] {
+    background-color: transparent;
+    border-radius: var(--radius-sm);
+    /* Tighter radius for stacked look */
+    padding: 0 var(--spacing-1p5);
+    /* Tighter padding */
+    box-shadow: none;
+    color: var(--primitives-white);
+    line-height: 1;
+    /* Ensure tight vertical fit */
+}
+
+.statusPill[data-variant="solid"] .count {
+    font-weight: 700;
+}
+
+/* Ensure sticker-like contrast */
+.statusPill[data-variant="solid"][data-status="missed"] {
+    color: var(--primitives-white);
+}
+
+.statusPill[data-variant="solid"][data-status="due"] {
+    color: var(--primitives-white);
+}
+
+.statusPill[data-variant="solid"] .icon {
+    font-size: 1rem;
+    /* Step down from 1.25rem for offline mode */
+    display: flex;
+    /* Ensure flex for alignment */
+    align-items: center;
+}
+
+/* Remove padding from the root container in solid/offline mode to reduce stack gap */
+.statusBar[data-variant="solid"] {
+    padding: 0;
+}

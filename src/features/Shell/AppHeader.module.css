@@ -205,6 +205,14 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   -webkit-backdrop-filter: none;
 }
 
+.offlineStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Very tight gap to keep content within header bounds */
+  gap: var(--spacing-1);
+}
+
 .offlineButton {
   color: var(--primitives-grey-100) !important;
 }
@@ -226,8 +234,20 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   transition: all 0.2s ease;
 }
 
+/* Specific override for the Text-Only Offline indicator in the vertical stack */
+.offlineStack .offlineStatus {
+  /* Tight padding for vertical stack mode */
+  padding: 0 var(--spacing-2);
+  /* Restore "tight wrapped" pill look */
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Height control */
+  height: 24px;
+}
+
 .offlineStatus:not(:disabled):hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  /* Subtle hover for the text part */
+  opacity: 0.8;
   transform: translateY(-1px);
 }
 

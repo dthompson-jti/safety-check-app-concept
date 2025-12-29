@@ -14,15 +14,17 @@ interface StatusPillProps {
   count: number;
   icon: string;
   status: StatusType;
+  variant: 'default' | 'solid';
   tooltipContent?: React.ReactNode;
 }
 
-const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, tooltipContent }) => {
+const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, variant, tooltipContent }) => {
   const isEmpty = count === 0;
   const pill = (
     <div
       className={styles.statusPill}
       data-status={status}
+      data-variant={variant}
       data-active="false"
       data-empty={isEmpty ? "true" : undefined}
     >
@@ -44,7 +46,11 @@ const StatusPill: React.FC<StatusPillProps> = ({ count, icon, status, tooltipCon
 };
 
 
-export const StatusBar = () => {
+interface StatusBarProps {
+  variant?: 'default' | 'solid';
+}
+
+export const StatusBar = ({ variant = 'default' }: StatusBarProps) => {
   const counts = useAtomValue(statusCountsAtom);
 
   // Tooltips for each status
@@ -67,12 +73,13 @@ export const StatusBar = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ type: 'tween', duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+      data-variant={variant}
     >
-      <div className={styles.contentContainer}>
+      <div className={styles.contentContainer} data-variant={variant}>
         {/* Missed pill (red) - always visible, softened when count=0 */}
-        <StatusPill count={counts.missed} icon="notifications_active" status="missed" tooltipContent={missedTooltip} />
+        <StatusPill count={counts.missed} icon="notifications_active" status="missed" variant={variant} tooltipContent={missedTooltip} />
         {/* Due pill (yellow/warning) - always visible, softened when count=0 */}
-        <StatusPill count={counts.due} icon="schedule" status="due" tooltipContent={dueTooltip} />
+        <StatusPill count={counts.due} icon="schedule" status="due" variant={variant} tooltipContent={dueTooltip} />
       </div>
     </motion.div>
   );

@@ -92,7 +92,7 @@ export const AppHeader = () => {
       data-offline={isOffline}
       aria-live="polite"
     >
-      {/* Animated grey background overlay with offline content inside */}
+      {/* Animated grey background overlay */}
       <motion.div
         className={styles.greyOverlay}
         initial={false}
@@ -104,27 +104,44 @@ export const AppHeader = () => {
       >
         {/* Offline content positioned at center, moves with overlay */}
         <div className={styles.overlayContent}>
-          <button
-            className={styles.offlineStatus}
-            data-status={status}
-            onClick={status === 'offline' ? handleSync : undefined}
-            disabled={status === 'syncing' || status === 'connected'}
-          >
-            <span className={`material-symbols-rounded ${status === 'syncing' ? styles.spinning : ''}`}>
-              {status === 'syncing' ? 'sync' : status === 'connected' ? 'check_circle' : 'cloud_off'}
-            </span>
-            <span className={styles.offlineTextContainer}>
-              <span className={styles.offlineTimer}>
-                {status === 'syncing' ? 'Syncing...' : status === 'connected' ? 'Connected' : `Offline ${duration}`}
-              </span>
-              {status === 'offline' && (
-                <>
+          {status === 'offline' ? (
+            /* OFFLINE: Vertical Stack (Badge + Counts) */
+            <div className={styles.offlineStack}>
+              {/* Top: Offline Indicator (Icon + Timer) */}
+              <button
+                className={styles.offlineStatus}
+                data-status="offline"
+                onClick={handleSync}
+              >
+                <span className={styles.offlineTextContainer}>
+                  <span className={styles.offlineTimer}>
+                    Offline {duration}
+                  </span>
                   <span className={styles.separator} />
                   <span className={styles.queuedCount}>{queuedCount} Queued</span>
-                </>
-              )}
-            </span>
-          </button>
+                </span>
+              </button>
+
+              {/* Bottom: Status Bar (White Text) */}
+              <StatusBar variant="solid" />
+            </div>
+          ) : (
+            /* SYNCING / CONNECTED: Single Clean Pill */
+            <button
+              className={styles.offlineStatus}
+              data-status={status}
+              disabled
+            >
+              <span className={`material-symbols-rounded ${status === 'syncing' ? styles.spinning : ''}`}>
+                {status === 'syncing' ? 'sync' : 'check_circle'}
+              </span>
+              <span className={styles.offlineTextContainer}>
+                <span className={styles.offlineTimer}>
+                  {status === 'syncing' ? 'Syncing...' : 'Connected'}
+                </span>
+              </span>
+            </button>
+          )}
         </div>
       </motion.div>
 
