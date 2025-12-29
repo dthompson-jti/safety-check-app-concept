@@ -9,7 +9,6 @@ import {
   isRingAnimationTestOpenAtom,
   isFutureIdeasModalOpenAtom,
   isUserSettingsModalOpenAtom,
-  connectionStatusAtom,
   appViewAtom,
 } from './data/atoms';
 
@@ -17,7 +16,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { AppSideMenu } from './features/Shell/AppSideMenu';
 import { AppHeader } from './features/Shell/AppHeader';
 import { AppFooter } from './features/Shell/AppFooter';
-import { OfflineBanner } from './features/Shell/OfflineBanner';
+import { OfflineToggleFab } from './features/Shell/OfflineToggleFab';
 import { ScanView } from './features/Workflow/ScanView';
 import { CheckEntryView } from './features/Workflow/CheckEntryView';
 import { NfcWriteView } from './features/Workflow/NfcWriteView';
@@ -46,7 +45,6 @@ const viewTransition = {
 const AppShellContent = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const workflowState = useAtomValue(workflowStateAtom);
-  const connectionStatus = useAtomValue(connectionStatusAtom);
 
   const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
@@ -252,7 +250,7 @@ const AppShellContent = () => {
         />
 
         <div ref={appChromeRef} className={styles.chromeContainer}>
-          {connectionStatus !== 'online' && <OfflineBanner />}
+          <OfflineToggleFab />
           {/* 
             Layout Stability:
             The AppHeader is always rendered. Overlays (ScanView, etc.) will cover it via z-index.

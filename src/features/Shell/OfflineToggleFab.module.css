@@ -1,0 +1,28 @@
+/* src/features/Shell/OfflineToggleFab.module.css */
+
+.fab {
+    position: fixed;
+    left: var(--spacing-4);
+    bottom: calc(var(--footer-height, 80px) + var(--spacing-4));
+    z-index: 100;
+
+    width: var(--control-height-lg);
+    height: var(--control-height-lg);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-pill);
+    background-color: var(--primitives-grey-700);
+    color: var(--primitives-grey-100);
+    box-shadow: var(--surface-shadow-lg);
+    cursor: pointer;
+
+    font-size: var(--icon-size-lg);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.fab:active {
+    transform: scale(0.92);
+}

@@ -483,3 +483,49 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Case Study:** NFC scanning label had `z-index: 10` and `animation: labelPulse 2s infinite`. During success transition, the CSS pulse created a flash. Fix: `style={{ animation: 'none' }}` + remove `mode="wait"` + lower z-index.
 *   **Reference:** See `src/features/Shell/NfcScanButton.tsx`, Section 12 (CSS Animation Negative Delay).
 
+### 19. Zero-CLS Header Morph Pattern (Offline Indicator)
+*   **The Problem:** Traditional banners (e.g., "You are offline") push content down, causing Cumulative Layout Shift (CLS).
+*   **The Solution:** Morph the existing header in place using a sliding overlay technique.
+*   **Architecture:**
+    1.  **Grey Overlay:** An absolutely positioned `motion.div` slides down from `y: -100%` to `y: 0` when offline.
+    2.  **Offline Pill:** Rendered *inside* the overlay, so it moves with the background as a single unit.
+    3.  **Stationary Elements:** Menu icon and avatar have higher `z-index` (10) than the overlay (5), so they remain visible and clickable.
+    4.  **StatusBar Fade:** When offline, the StatusBar fades out with simple opacity—no Y-axis animation.
+*   **Motion Curve:** `cubic-bezier(0.16, 1, 0.3, 1)` at 0.2s duration (fast and fluid).
+*   **Connected State:** After sync completes, shows green success state for 1s with outward `box-shadow` pulse matching `card-flash-complete`:
+    ```css
+    @keyframes connected-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+      60% { box-shadow: 0 0 0 16px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 16px rgba(34, 197, 94, 0); }
+    }
+    ```
+*   **Key Files:** `AppHeader.tsx`, `AppHeader.module.css`, `OfflineToggleFab.tsx`.
+
+### 20. Layout Registry Stability (Preventing Height Flash)
+*   **The Problem:** During view transitions (offline→online, scanning), measured heights can flash to 0, causing content to jump under the header.
+*   **Root Cause:** `useLayoutRegistration` previously reset height to 0 in its cleanup function.
+*   **The Fix:** Do NOT reset height to 0 on cleanup. The header never truly unmounts in normal usage.
+*   **Pattern:**
+    ```tsx
+    return () => {
+        observer.disconnect();
+        cancelAnimationFrame(frameId.current);
+        // NOTE: Intentionally do NOT reset height to 0
+        // Prevents layout flash during view transitions
+    };
+    ```
+*   **Key File:** `src/data/useLayoutRegistration.ts`.
+
+### 21. Sliding Overlay Z-Index Strategy
+*   **The Problem:** When a background overlay slides in, it can cover interactive elements (menu, avatar) if z-index isn't carefully managed.
+*   **The Solution:** Use a layered z-index strategy where interactive elements have higher z-index than the overlay.
+*   **Pattern:**
+    | Element | Z-Index | Purpose |
+    |:--------|:--------|:--------|
+    | `.greyOverlay` | 5 | Sliding background |
+    | `.overlayContent` | 6 | Content inside overlay (offline pill) |
+    | `.headerContent` | 10 | Contains menu/avatar, above overlay |
+    | `.leftActions`, `.rightActions` | 10 | Interactive elements stay visible |
+*   **Anti-Pattern:** Setting overlay z-index higher than interactive elements, making them unclickable.
+*   **Key File:** `AppHeader.module.css`.

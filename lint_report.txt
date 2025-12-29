@@ -1,0 +1,439 @@
+
+> safety-check-app-concept@0.0.0 lint
+> eslint .
+
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\App.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\App.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Accordion.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Accordion.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\ActionMenu.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\ActionMenu.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\ActionToolbar.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\ActionToolbar.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\AnimatedTabs.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\AnimatedTabs.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\BindingConnectionsDropdown.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\BindingConnectionsDropdown.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Button.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Button.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\ComponentPreview.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\ComponentPreview.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\DataBindingModal.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\DataBindingModal.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\DataBindingPicker.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\DataBindingPicker.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\EmptyStateMessage.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\EmptyStateMessage.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\FormRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\FormRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\FullScreenPlaceholder.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\FullScreenPlaceholder.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\IconToggleGroup.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\IconToggleGroup.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\InlineTextInput.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\InlineTextInput.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Modal.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Modal.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\PanelHeader.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\PanelHeader.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Popover.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Popover.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\ResizablePanel.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\ResizablePanel.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\ScreenToolbar.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\ScreenToolbar.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\SearchInput.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\SearchInput.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Select.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Select.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\SelectableListItem.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\SelectableListItem.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\StaticBindingDisplay.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\StaticBindingDisplay.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\StatusBadge.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\StatusBadge.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Switch.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Switch.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Toast.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Toast.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\ToastContainer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\ToastContainer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Toggle.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Toggle.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\components\Tooltip.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\components\Tooltip.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\atoms.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\atoms.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\componentBrowserMock.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\componentBrowserMock.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\componentFactory.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\componentFactory.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\generalComponentsMock.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\generalComponentsMock.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\historyAtoms.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\historyAtoms.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\navigator.d.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\navigator.d.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\screenTypeConfig.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\screenTypeConfig.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\settingsMock.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\settingsMock.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\toastAtoms.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\toastAtoms.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useAutoScroller.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useAutoScroller.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useCanvasDnd.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useCanvasDnd.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useEditable.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useEditable.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useEditorHotkeys.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useEditorHotkeys.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useIsMac.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useIsMac.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useOnClickOutside.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useOnClickOutside.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useScrollSpy.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useScrollSpy.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useUndoRedo.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useUndoRedo.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\data\useUrlSync.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\data\useUrlSync.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\AppHeader\AppHeader.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\AppHeader\AppHeader.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\AppHeader\FormNameEditor.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\AppHeader\FormNameEditor.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\AppHeader\FormNameMenu.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\AppHeader\FormNameMenu.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\AppHeader\HeaderMenu.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\AppHeader\HeaderMenu.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\AppHeader\ScreenTypeBadge.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\AppHeader\ScreenTypeBadge.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\ComponentBrowser.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\ComponentBrowser.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\DraggableListItem.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\DraggableListItem.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\GeneralComponentsBrowser.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\GeneralComponentsBrowser.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\PlaceholderPanel.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\PlaceholderPanel.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\dataNavigatorAtoms.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\ComponentBrowser\dataNavigatorAtoms.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\DataNavigator\ConnectionsDropdown.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\DataNavigator\ConnectionsDropdown.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\DataNavigator\DataNavigatorView.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\DataNavigator\DataNavigatorView.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\CanvasContextMenu.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\CanvasContextMenu.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\CanvasEmptyState.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\CanvasEmptyState.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\CanvasNode.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\CanvasNode.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\CanvasSelectionToolbar.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\CanvasSelectionToolbar.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\CanvasUI.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\CanvasUI.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\DndDragOverlay.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\DndDragOverlay.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\EditorCanvas.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\EditorCanvas.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\MainToolbar.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\MainToolbar.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\ContextualLayoutEditor.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\ContextualLayoutEditor.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\EmptyStatePanel.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\EmptyStatePanel.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\FormEditor.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\FormEditor.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\LayoutEditor.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\LayoutEditor.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\MultiSelectEditor.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\MultiSelectEditor.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\PropertiesPanel.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\PropertiesPanel.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\RootEditor.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\RootEditor.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\propertyEditorRegistry.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\PropertiesPanel\propertyEditorRegistry.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\canvasUtils.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\canvasUtils.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\CheckboxRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\CheckboxRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\DropdownRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\DropdownRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\LayoutRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\LayoutRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\LinkRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\LinkRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\PlainTextRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\PlainTextRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\RadioButtonsRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\RadioButtonsRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\TextInputRenderer.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\TextInputRenderer.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\renderers\types.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\renderers\types.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\useCanvasActions.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\useCanvasActions.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\useComponentCapabilities.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\useComponentCapabilities.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Editor\useEditorInteractions.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Editor\useEditorInteractions.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Preview\PreviewToolbar.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Preview\PreviewToolbar.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Preview\PreviewView.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Preview\PreviewView.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Settings\SettingsForm.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Settings\SettingsForm.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Settings\SettingsNavigator.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Settings\SettingsNavigator.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\features\Settings\SettingsPage.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\features\Settings\SettingsPage.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\main.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\main.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\types.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\types.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\src\vite-env.d.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\src\vite-env.d.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference II\screen-studio-prototype-public\vite.config.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference II\screen-studio-prototype-public\vite.config.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\App.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\App.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\AppProviders.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\AppProviders.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\components\layout\MainToolbar.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\components\layout\MainToolbar.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\data\mockComponentTree.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\data\mockComponentTree.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\main.tsx
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\main.tsx
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\state\browserAtoms.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\state\browserAtoms.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\state\canvasAtoms.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\state\canvasAtoms.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\types\assets.d.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\types\assets.d.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\types\index.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\types\index.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\Reference\src\vite-env.d.ts
+  0:0  error  Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
+The file was not found in any of the provided project(s): Reference\src\vite-env.d.ts
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\src\features\Overlays\DeveloperModal.tsx
+  210:37  error  Unsafe argument of type `any` assigned to a parameter of type `ConnectionStatus`  @typescript-eslint/no-unsafe-argument
+  210:44  error  Unexpected any. Specify a different type                                          @typescript-eslint/no-explicit-any
+
+Γ£û 109 problems (109 errors, 0 warnings)
+

@@ -53,10 +53,9 @@ export const useLayoutRegistration = (heightAtom: PrimitiveAtom<number>) => {
         return () => {
             observer.disconnect();
             cancelAnimationFrame(frameId.current);
-            // Only reset if we are truly unmounting, but be careful with 
-            // flashing 0 heights during strict-mode double invokes.
-            // For this specific app architecture, resetting to 0 is safer for the Banner.
-            setHeight(0);
+            // NOTE: We intentionally do NOT reset height to 0 on cleanup.
+            // The header never truly unmounts in normal usage, and resetting
+            // would cause a layout flash during view transitions.
         };
     }, [setHeight]);
 

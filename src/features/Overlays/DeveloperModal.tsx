@@ -5,6 +5,8 @@ import {
   appConfigAtom,
   hardwareSimulationAtom,
   connectionStatusAtom,
+  isOfflineToggleVisibleAtom,
+  ConnectionStatus,
 } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
@@ -37,6 +39,7 @@ export const DeveloperModal = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
+  const [isOfflineToggleVisible, setIsOfflineToggleVisible] = useAtom(isOfflineToggleVisibleAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
   const activeToasts = useAtomValue(toastsAtom);
@@ -205,9 +208,17 @@ export const DeveloperModal = () => {
               value={connectionStatus === 'offline' ? 'offline' : 'online'}
               onValueChange={(val) => {
                 triggerHaptic('selection');
-                setConnectionStatus(val);
+                setConnectionStatus(val as ConnectionStatus);
               }}
               itemDirection="column"
+            />
+          </div>
+          <div className={styles.settingsItem}>
+            <label htmlFor="offline-toggle-visible-switch" className={styles.itemLabel}>Show offline toggle</label>
+            <Switch
+              id="offline-toggle-visible-switch"
+              checked={isOfflineToggleVisible}
+              onCheckedChange={handleSwitch((checked) => setIsOfflineToggleVisible(checked))}
             />
           </div>
           <div className={styles.settingsItem}>

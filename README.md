@@ -58,7 +58,8 @@ This project is a high-craft prototype for a mobile-first Progressive Web App (P
         -   Force NFC Turned Off: Scan cannot start, shows "Open NFC Settings to turn on" toast.
     -   **Camera Simulation:** Force Camera Failure intercepts camera startup to display error overlays.
     -   **Lifecycle Stress Test (A-Wing):** The A-Wing mock data is specifically configured with staggered checks (30s intervals) to test every lifecycle boundary (Early→Pending, Pending→Due, Due→Missed, Missed Rollover) in under 60 seconds.
-    -   **Network Status:** Toggle between Online, Offline, and Syncing states.
+    -   **Network Status:** Toggle between Online, Offline, and Syncing states via Developer FAB (floating action button, enabled in Developer Tools).
+-   **Zero-CLS Offline Indicator:** When offline, the header morphs in place—a grey overlay slides down carrying the offline pill, while menu and avatar remain stationary. No layout shift. Reconnection shows a celebratory "Connected" state with green success pulse before returning to normal.
     -   **Toast Playground:** A dedicated grid to trigger and visualize all application toast notifications and their variants.
     -   **Scan Simulation:** Tap the footer area during NFC scanning to simulate a successful tag read.
 -   **Late Check Visual Language:** A comprehensive suite of ambient and micro-interaction effects that activate when checks become overdue, creating progressive urgency without overwhelming the user:

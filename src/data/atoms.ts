@@ -128,6 +128,7 @@ export const isFutureIdeasModalOpenAtom = atom(false);
 export const isUserSettingsModalOpenAtom = atom(false); // Future Idea: Enhanced Avatar
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
+export const isOfflineToggleVisibleAtom = atomWithStorage('sc_feat_offline_toggle', false);
 export const nfcProvisioningGroupIdAtom = atom<string | null>(null);
 export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 
@@ -135,7 +136,7 @@ export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 //                App Configuration & Dev Tools State
 // =================================================================
 
-export type ConnectionStatus = 'online' | 'offline' | 'syncing';
+export type ConnectionStatus = 'online' | 'offline' | 'syncing' | 'connected';
 const _connectionStatusAtom = atom<ConnectionStatus>('online');
 export const offlineTimestampAtom = atom<number | null>(null);
 

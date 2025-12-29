@@ -63,10 +63,10 @@ export const StatusBar = () => {
   return (
     <motion.div
       className={styles.statusBar}
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ type: 'tween', duration: 0.2 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ type: 'tween', duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
     >
       <div className={styles.contentContainer}>
         {/* Missed pill (red) - always visible, softened when count=0 */}

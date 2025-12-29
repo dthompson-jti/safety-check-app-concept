@@ -429,3 +429,63 @@ For looping animations that should appear "already running" at steady-state on m
 -   **How It Works:** A negative `animation-delay` tells the browser to start the animation as if it had already been running for that duration.
 -   **When to Use:** NFC radar effects, audio visualizers, breathing indicators, any continuous effect that should look "settled" on mount.
 -   **Reference:** See `NfcScanButton.tsx` and `NfcScanButton.module.css`.
+
+---
+
+### Zero-CLS State Transitions (Sliding Overlay Pattern)
+
+When transitioning between UI states that require background color changes (e.g., online→offline), avoid CSS transitions on the container background—use a sliding overlay instead.
+
+#### The Pattern
+
+```css
+/* Sliding overlay positioned absolutely within header */
+.greyOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--primitives-grey-700);
+  z-index: 5;
+  overflow: hidden;
+}
+
+/* Content inside overlay moves with it */
+.overlayContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+
+/* Interactive elements ABOVE the overlay */
+.headerContent {
+  position: relative;
+  z-index: 10;
+}
+```
+
+```tsx
+// Framer Motion animates the overlay Y position
+<motion.div
+  className={styles.greyOverlay}
+  animate={{ y: isOffline ? 0 : '-100%' }}
+  transition={{ type: 'tween', duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+>
+  {/* Content rendered INSIDE moves with overlay */}
+  <div className={styles.overlayContent}>
+    <OfflinePill />
+  </div>
+</motion.div>
+```
+
+#### Benefits
+
+-   **Zero CLS:** Header dimensions never change; the overlay slides *within* the existing boundary.
+-   **Unified Motion:** Background and content move as a cohesive unit.
+-   **Stationary Elements:** Higher z-index elements (menu, avatar) stay put during transition.
+
+#### Motion Curves
+
+-   **Standard Fast Curve:** `cubic-bezier(0.16, 1, 0.3, 1)` at 0.2s
+-   **Success Pulse:** Outward `box-shadow` expansion (0→16px) matching card completion pattern.

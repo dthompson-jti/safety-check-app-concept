@@ -6,7 +6,7 @@ import { generateAvatarHue, getAvatarColor } from '../data/users';
 import { Popover } from './Popover';
 import styles from './UserAvatar.module.css';
 
-export const UserAvatar = () => {
+export const UserAvatar = ({ className }: { className?: string }) => {
     const session = useAtomValue(sessionAtom);
     const userPreferences = useAtomValue(userPreferencesAtom);
     const featureFlags = useAtomValue(featureFlagsAtom);
@@ -29,7 +29,7 @@ export const UserAvatar = () => {
 
     const avatarElement = (
         <div
-            className={styles.avatar}
+            className={`${styles.avatar} ${className || ''}`}
             aria-label={`User: ${displayName}`}
             style={backgroundColor ? { backgroundColor } : undefined}
             onClick={featureFlags.enableEnhancedAvatarDropdown ? () => setUserSettingsOpen(true) : undefined}
