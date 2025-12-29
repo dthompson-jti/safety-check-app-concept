@@ -162,8 +162,8 @@ const FeedbackVisualizer = () => {
             >
                 <div className={`${styles.feedbackBackground} ${bgClass}`} />
                 <motion.div
-                    animate={isPreFormPhase ? { opacity: 1 } : { opacity: [1, 1, 0] }}
-                    transition={isPreFormPhase ? {} : { times: [0, 0.6, 1], duration: 1.0, ease: 'easeInOut' }}
+                    animate={(isPreFormPhase && !primary) ? { opacity: 1 } : { opacity: [1, 1, 0] }}
+                    transition={(isPreFormPhase && !primary) ? {} : { times: [0, 0.6, 1], duration: 1.0, ease: 'easeInOut' }}
                 >
                     <AnimatedIcon type={iconType} />
                 </motion.div>
