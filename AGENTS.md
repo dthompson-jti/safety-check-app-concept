@@ -483,24 +483,26 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Case Study:** NFC scanning label had `z-index: 10` and `animation: labelPulse 2s infinite`. During success transition, the CSS pulse created a flash. Fix: `style={{ animation: 'none' }}` + remove `mode="wait"` + lower z-index.
 *   **Reference:** See `src/features/Shell/NfcScanButton.tsx`, Section 12 (CSS Animation Negative Delay).
 
-### 19. Zero-CLS Header Morph Pattern (Offline Indicator)
-*   **The Problem:** Traditional banners (e.g., "You are offline") push content down, causing Cumulative Layout Shift (CLS).
-*   **The Solution:** Morph the existing header in place using a sliding overlay technique.
+### 19. Zero-CLS Header Offline Pattern (Badges + Pill Layout)
+*   **The Problem:** Traditional banners push content down, causing Cumulative Layout Shift (CLS).
+*   **The Solution:** Expand header height slightly (+6px), keep badges visible but shifted up, slide pill in below.
 *   **Architecture:**
-    1.  **Grey Overlay:** An absolutely positioned `motion.div` slides down from `y: -100%` to `y: 0` when offline.
-    2.  **Offline Pill:** Rendered *inside* the overlay, so it moves with the background as a single unit.
-    3.  **Stationary Elements:** Menu icon and avatar have higher `z-index` (10) than the overlay (5), so they remain visible and clickable.
-    4.  **StatusBar Fade:** When offline, the StatusBar fades out with simple opacity—no Y-axis animation.
-*   **Motion Curve:** `cubic-bezier(0.16, 1, 0.3, 1)` at 0.2s duration (fast and fluid).
-*   **Connected State:** After sync completes, shows green success state for 1s with outward `box-shadow` pulse matching `card-flash-complete`:
-    ```css
-    @keyframes connected-pulse {
-      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
-      60% { box-shadow: 0 0 0 16px rgba(34, 197, 94, 0); }
-      100% { box-shadow: 0 0 0 16px rgba(34, 197, 94, 0); }
-    }
+    1.  **Header Height:** Increases from `var(--modal-header-height)` to `calc(var(--modal-header-height) + 6px)` via CSS transition.
+    2.  **Status Badges:** Remain visible, animated to `y: -2` in offline mode via Framer Motion.
+    3.  **Offline Pill:** Slides up from below (`initial: y: 12` → `animate: y: -6`) using `AnimatePresence`.
+    4.  **Background:** Fades to translucent dark (`rgba(37, 43, 55, 0.85)`) with blur.
+    5.  **Menu/Avatar:** Remain stationary (no animation).
+*   **Pill Content Morphing (Instant Exit, Slow Enter):**
+    ```tsx
+    // Eliminates empty pill gap during state changes
+    animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
+    exit={{ opacity: 0, transition: { duration: 0.05 } }}
     ```
-*   **Key Files:** `AppHeader.tsx`, `AppHeader.module.css`, `OfflineToggleFab.tsx`.
+*   **Success Sequence (Connected State):**
+    1.  Content settles (0.4s)
+    2.  Background fades grey → green (0.3s, delayed 0.4s)
+    3.  Pulse radiates outward (1s, delayed 0.7s) - matches `card-flash-complete`
+*   **Key Files:** `AppHeader.tsx`, `AppHeader.module.css`.
 
 ### 20. Layout Registry Stability (Preventing Height Flash)
 *   **The Problem:** During view transitions (offline→online, scanning), measured heights can flash to 0, causing content to jump under the header.
@@ -553,3 +555,29 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Behavior:** The user scrolls, sees a subtle ghost row, and real data swaps in in-place.
 *   **Anti-Pattern:** Showing a spinner that replaces the entire list (flicker) or a "Load More" button (friction).
 
+### 24. Framer Motion Transition Typing (Enter vs Exit Durations)
+*   **The Problem:** You want different durations for enter (0.4s) and exit (0.05s) animations.
+*   **The Wrong Pattern:** Using `transition: { exit: { duration: 0.05 } }` - TypeScript error, not supported.
+*   **The Correct Pattern:** Embed transition inside animate/exit props:
+    ```tsx
+    // CORRECT - each state defines its own transition
+    animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
+    exit={{ opacity: 0, transition: { duration: 0.05 } }}
+    ```
+*   **Anti-Pattern:** Putting `exit` as a nested object inside the shared `transition` prop.
+*   **Reference:** See `AppHeader.tsx` pill content morphing.
+
+### 25. CSS Module + Global Class Targeting Limitation
+*   **The Problem:** CSS module selectors get hashed at build time (e.g., `.offlineContentRow` → `._offlineContentRow_abc123`), but global classes like `.material-symbols-rounded` remain unhashed.
+*   **The Symptom:** Descendant selectors like `.offlineContentRow .material-symbols-rounded` fail to match because the parent is hashed but the child isn't.
+*   **The Solution:** Use inline styles for properties that must target global classes:
+    ```tsx
+    // CORRECT - inline style guarantees application
+    <span 
+      className="material-symbols-rounded"
+      style={{ color: 'var(--surface-fg-on-solid)' }}
+    >check</span>
+    ```
+*   **When CSS Works:** If the element has a CSS module class directly applied (not as a descendant).
+*   **Anti-Pattern:** Adding multiple selectors with `!important` hoping specificity wins - the selector never matches.
+*   **Reference:** See `AppHeader.tsx` icon color application, comment in `AppHeader.module.css`.

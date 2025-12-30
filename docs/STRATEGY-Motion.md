@@ -102,6 +102,48 @@ const variants = {
 
 ---
 
+## 4. Pill State Morphing Pattern (Instant Exit, Slow Enter)
+
+When animating content swaps inside a fixed container (like the offline pill), use asymmetric timing to eliminate empty gaps.
+
+### The Problem
+`AnimatePresence mode="wait"` waits for exit to complete before enter starts. With equal 0.4s durations, the container appears empty for 0.4s.
+
+### The Solution
+Make exit nearly instant (0.05s), keep enter smooth (0.4s).
+
+```tsx
+<AnimatePresence mode="wait">
+  <motion.div
+    key={currentState}
+    initial={{ opacity: 0, scale: 0.95 }}
+    animate={{ 
+      opacity: 1, 
+      scale: 1, 
+      transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
+    }}
+    exit={{ 
+      opacity: 0, 
+      transition: { duration: 0.05 } 
+    }}
+  >
+    {content}
+  </motion.div>
+</AnimatePresence>
+```
+
+### Why It Works
+- Old content vanishes immediately (user barely notices)
+- New content appears smoothly (creates "morphing" feel)
+- No empty container gap
+
+### When to Use
+- Pill/badge content changing between states
+- List items transitioning between modes
+- Any fixed-size container with swapping content
+
+---
+
 > [!NOTE] 
 > **MUI Migration Strategy (Hypothetical)**
 > 
@@ -136,3 +178,4 @@ const variants = {
 > - Keep `framer-motion` for this component.
 > - Rewrite using CSS `@keyframes` (harder to sync).
 > - Use `react-spring` if that was the "MUI-preferred" alternative, though Framer Motion is generally standard for React now.
+
