@@ -180,3 +180,68 @@ export const historicalChecks: HistoricalCheck[] = [
     }),
     createCheck('h57', 'Shirley Stewart', 'B-204', '20:00', '20:01', 'J. Smith'),
 ];
+
+export const TOTAL_HISTORICAL_RECORDS = 5420;
+
+export function loadHistoricalChecksPage(
+    cursor: number,
+    pageSize: number
+): Promise<{ data: HistoricalCheck[]; nextCursor: number | null }> {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            let data: HistoricalCheck[] = [];
+
+            // Base realistic data
+            if (cursor < historicalChecks.length) {
+                data = historicalChecks.slice(cursor, Math.min(cursor + pageSize, historicalChecks.length));
+            }
+
+            // Fill remaining with generated data
+            const remainingNeeded = pageSize - data.length;
+            if (remainingNeeded > 0 && cursor + data.length < TOTAL_HISTORICAL_RECORDS) {
+                const startIndex = cursor + data.length;
+                const generateCount = Math.min(remainingNeeded, TOTAL_HISTORICAL_RECORDS - startIndex);
+
+                const generated = Array.from({ length: generateCount }, (_, i) => {
+                    const idx = startIndex + i;
+                    const isMissed = idx % 20 === 0;
+                    const isLate = idx % 7 === 0 && !isMissed;
+
+                    const scheduledHour = 8 + Math.floor(idx / 60) % 12;
+                    const scheduledMin = idx % 60;
+                    const scheduledTime = `${scheduledHour.toString().padStart(2, '0')}:${scheduledMin.toString().padStart(2, '0')}`;
+
+                    let actualTime: string | null = null;
+                    let varianceMinutes = Infinity;
+                    let status: 'done' | 'late' | 'missed' = 'missed';
+
+                    if (!isMissed) {
+                        const actualMin = (scheduledMin + (isLate ? 5 : 1)) % 60;
+                        const actualHour = scheduledHour + (scheduledMin + (isLate ? 5 : 1) >= 60 ? 1 : 0);
+                        actualTime = `${actualHour.toString().padStart(2, '0')}:${actualMin.toString().padStart(2, '0')}`;
+                        varianceMinutes = isLate ? 5 : 1;
+                        status = isLate ? 'late' : 'done';
+                    }
+
+                    return {
+                        id: `gen-hist-${idx}`,
+                        residents: [{ id: `res-gen-h-${idx}`, name: `Historical Resident ${idx}`, location: `Room ${idx % 100}` }],
+                        location: `Room ${idx % 100}`,
+                        scheduledTime: `2024-12-17T${scheduledTime}:00`,
+                        actualTime: actualTime ? `2024-12-17T${actualTime}:00` : null,
+                        varianceMinutes,
+                        status,
+                        officerName: 'B. Corbin',
+                        officerNote: undefined,
+                        supervisorNote: undefined,
+                        reviewStatus: (status === 'done' ? 'verified' : 'pending') as 'verified' | 'pending',
+                    };
+                });
+                data = [...data, ...generated];
+            }
+
+            const nextCursor = cursor + data.length < TOTAL_HISTORICAL_RECORDS ? cursor + data.length : null;
+            resolve({ data, nextCursor });
+        }, 1500); // Simulate network delay
+    });
+}

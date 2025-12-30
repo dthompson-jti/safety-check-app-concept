@@ -1,110 +1,201 @@
 # Design PRD: Safeguard Room Checks (Desktop Companion)
 
 ## Executive Summary
-This document defines the design specifications for the "Mega UI Update" of the Desktop Companion app. It strictly adheres to the **Design System Law** established by the reference project (`screen-studio-prototype-public`).
+This document defines the design specifications for the "Mega UI Update" of the Desktop Companion app. It strictly adheres to the **Design System Law** established by the reference project (`screen-studio-prototype-public`) and leverages the existing `buttons.css` token-based system already in the codebase.
+
+## Goals
+
+1. **Improve Desktop UX** — The current desktop experience feels unpolished. This update brings it to production quality with proper interactions, layout, and visual consistency.
+2. **Design System Parity** — Ensure our design system works as well on desktop as it does in the reference project. Reuse `buttons.css`, `forms.css`, and semantic tokens instead of ad-hoc styles.
+3. **Zero Mobile Regressions** — All changes are isolated to `src/desktop/`. Shared styles (`buttons.css`, `semantics.css`) are additive-only; no mutations that could break mobile.
+
+---
 
 ## 1. Header Region
 
 ### 1.1 Action Buttons (Export & Overflow)
-**Current State:**
-- **Style:** Custom `.outlineButton` and `.iconButton` classes in `DesktopHeader.module.css`. (Non-standard)
-- **Tokens:** Uses raw propertys `border: 1px solid var(--surface-border-secondary)`.
 
-**Proposed State:**
-- **Component:** `Button` (Ported from Reference).
-- **Variant:** `Secondary` (`data-variant="secondary"`).
-- **Tokens (Verified in Reference `buttons.css`):**
-  - Background: `var(--control-bg-secondary)`
-  - Text: `var(--surface-fg-primary)`
-  - Border: `var(--control-border-secondary)`
-  - Interaction: Hover `var(--control-bg-secondary-hover)`, Pressed `var(--control-bg-secondary-pressed)`.
+| Aspect | Current State | Target State |
+|--------|--------------|--------------|
+| **Implementation** | Custom `.outlineButton` and `.iconButton` in `DesktopHeader.module.css` | Reuse `.btn` from `buttons.css` |
+| **Tokens** | Mix of `--surface-*` tokens, hardcoded `36px` height | Proper `--control-*` tokens via `data-variant` attributes |
 
-### 1.2 Side Panel Trigger Configuration
-**Current State:**
-- **Visual:** Simple `.iconButton`.
-- **Behavior:** Overlay `DetailPanel`. `App.tsx` renders `<DetailPanel>` conditionally over content.
+**Target Tokens (from `buttons.css`):**
+- Variant: `secondary` → `data-variant="secondary"`
+- Size: `s` → `data-size="s"` (32px height) or `m` (38px height)
+- Background: `var(--control-bg-secondary)`
+- Border: `var(--control-border-secondary)`
+- Hover: `var(--control-bg-secondary-hover)`
+- Pressed: `var(--control-bg-secondary-pressed)`
 
-**Proposed State:**
-- **Visual:** `Button` (Variant: `Secondary`, Icon: `side_navigation`).
-- **State:** Toggles `active` class (Standard Button `active` state supports `data-state="on"` or similar? *checked in `buttons.css`: `.btn.active` exists*).
-- **Layout Behavior (Push):**
-  - **Grid System:** Convert `App.module.css` `.contentArea` to `display: grid`.
-  - **Columns:** `grid-template-columns: 1fr auto`.
-  - **Panel:** Placed in the second column.
-  - **Result:** Main content resizes (shrinks) to fit 1fr, Panel takes fixed width (e.g., 400px). No overlay.
+**Files to Modify:**
+- `src/desktop/components/DesktopHeader.tsx` — Replace `<button className={styles.outlineButton}>` with `<button className="btn" data-variant="secondary" data-size="s">`
+- `src/desktop/components/DesktopHeader.module.css` — Remove `.outlineButton` and `.iconButton` definitions
+
+---
+
+### 1.2 Side Panel Layout Behavior
+
+| Aspect | Current State | Target State |
+|--------|--------------|--------------|
+| **Panel Position** | `position: fixed` (overlay) | Inline grid column (push) |
+| **Layout System** | Flexbox in `App.module.css` | CSS Grid with `grid-template-columns: 1fr auto` |
+| **Content Resize** | Main content unchanged | Main content shrinks to `1fr` |
+
+**Implementation Details:**
+
+```css
+/* App.module.css - Target */
+.main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 0;
+}
+
+.main[data-panel-open="true"] {
+    grid-template-columns: 1fr 320px;
+}
+```
+
+```css
+/* DetailPanel.module.css - Target */
+.panel {
+    /* REMOVE: position: fixed; top/right/bottom/z-index */
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-bg-primary);
+    border-left: 1px solid var(--surface-border-secondary);
+    height: 100%;
+}
+```
+
+**Files to Modify:**
+- `src/desktop/App.tsx` — Move `<DetailPanel>` inside `.main`, add `data-panel-open` attribute
+- `src/desktop/App.module.css` — Convert `.main` to grid
+- `src/desktop/components/DetailPanel.module.css` — Remove fixed positioning
+
+---
 
 ## 2. Search & Filter Bar
 
 ### 2.1 Search Input
-**Current State:**
-- **Style:** `.searchContainer` (Gray Bg).
-- **Location:** `DesktopToolbar.module.css`.
 
-**Proposed State:**
-- **Component:** `SearchInput` (Reference).
-- **Variant:** `Standalone` (`data-variant="standalone"`).
-- **Tokens:**
-  - Bg: `var(--surface-bg-primary)` (**White**).
-  - Border: `var(--surface-border-primary)` (Light Grey).
-  - Focus: `var(--control-focus-ring-standard)` (Blue Ring).
-- **Note:** Must port `SearchInput.tsx` and `SearchInput.module.css` from Reference.
+| Aspect | Current State | Target State |
+|--------|--------------|--------------|
+| **Background** | `var(--surface-bg-secondary)` (gray) | `var(--surface-bg-primary)` (white) |
+| **Border** | `var(--surface-border-secondary)` | `var(--surface-border-primary)` |
+| **Focus** | None | `var(--control-focus-ring-standard)` |
 
-### 2.2 Filter Button
-**Standardization:**
-- Replace custom `.iconButton` with `Button` (Variant: `Secondary`, Icon: `filter_list`).
+**Files to Modify:**
+- `src/desktop/components/DesktopToolbar.module.css` — Update `.searchContainer` tokens
+
+---
+
+### 2.2 Filter & Advanced Search Buttons
+
+| Aspect | Current State | Target State |
+|--------|--------------|--------------|
+| **Implementation** | `.iconButton` in module CSS | `.btn` with `data-variant="secondary"` |
+
+**Files to Modify:**
+- `src/desktop/components/DesktopToolbar.tsx` — Replace custom button with `.btn`
+- `src/desktop/components/DesktopToolbar.module.css` — Remove duplicate `.iconButton`
+
+---
 
 ## 3. Data Table Architecture
 
-### 3.1 Architecture Overview
-The Reference Project uses `buttons.css` and `forms.css` but lacks a dedicated `DataTable` component. We will build a **Desktop-Specific Table** adhering to the tokens.
+### 3.1 Current State Assessment ✅
 
-### 3.2 Column Dividers
-**Specification:**
-- Vertical dividers are required.
-- **Implementation:** `th, td { border-right: 1px solid var(--surface-border-secondary); }`
-- **Exclusion:** `&:last-child { border-right: none; }`.
+The DataTable implementation is **largely compliant** with the design system:
 
-### 3.3 Sticky Actions Column
-**Specification:**
-- The "Three Dots" menu column must be sticky.
-- **Z-Index:** Must be higher than scrolling content but lower than headers. `z-index: 5`.
-- **Shadow:** Left-side shadow implementation required for depth perception when scrolling.
-  - Token: `box-shadow: -10px 0 8px -8px rgba(0,0,0,0.15);` (Or use `var(--surface-shadow-sm)` adapted).
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Sticky Actions Column | ✅ Complete | `position: sticky`, `z-index: 5/15` |
+| Scroll Shadow | ✅ Complete | `::before` pseudo-element with `box-shadow` |
+| Column Dividers | ❌ Missing | Need `border-right` on cells |
+| Token Usage | ✅ Complete | All colors use semantic tokens |
 
-### 3.4 Row Actions
+### 3.2 Column Dividers (TODO)
+
 **Specification:**
-- **Always Visible**.
-- **Component:** `Button` (Variant: `Tertiary` or `Quaternary`, Size: `s`).
-- **Icon:** `more_vert`.
+```css
+.th, .td {
+    border-right: 1px solid var(--surface-border-secondary);
+}
+.th:last-child, .td:last-child {
+    border-right: none;
+}
+```
+
+**Files to Modify:**
+- `src/desktop/components/DataTable.module.css`
+
+---
 
 ## 4. Visual Components
 
 ### 4.1 Resident Status Badge
-**Current:** Orange Square Container + White Icon.
-**Proposed:**
-- **Container:** Removed (Transparent).
-- **Icon:** `var(--surface-fg-primary)` (Dark Grey/Black).
-- **Alignment:** Centered in cell.
 
-## 5. Mobile Impact Assessment (Safety Check)
+| Aspect | Current State | Target State |
+|--------|--------------|--------------|
+| **Container** | Orange square with white icon (`.specialStatusIcon`) | Transparent, dark gray icon |
+| **Icon Color** | `var(--surface-fg-on-solid)` | `var(--surface-fg-primary)` |
+
+**Files to Modify:**
+- `src/desktop/components/DataTable.module.css` — Update `.specialStatusIcon`
+- `src/desktop/components/DataTable.tsx` — Remove background container
+
+---
+
+## 5. Mobile Impact Assessment
+
 > [!IMPORTANT]
 > **Status: SAFE**
-> - **Files Modified:** `src/desktop/*` exclusively.
-> - **Shared Tokens:** `src/styles/semantics.css` in Target matches Reference structure.
-> - **Verification:** `App.module.css` is specific to the Desktop Entry point. Mobile uses `src/App.tsx` (Root) or mobile-specific layouts which are untouched.
+> - All changes are isolated to `src/desktop/*`
+> - `src/styles/buttons.css` is shared but only adds new patterns, no mutations
+> - `src/styles/semantics.css` remains unchanged
+> - Mobile entry point (`src/App.tsx`) is untouched
+
+---
 
 ## 6. Token Gap Analysis
-**Findings:**
-1.  **Matched Tokens:** `semantics.css` in `safety-check-app-concept` appears to be a direct fork of the reference. Most tokens (`--control-bg-secondary`, `--surface-bg-primary`) exist.
-2.  **Missing Tokens:**
-    - `var(--surface-bg-brand-solid)` (Used in Resizer?) - *Exists in `semantics.css` line 21.*
-    - `var(--control-bg-quaternary-hover)` - *Exists in `semantics.css` line 113.*
-3.  **Action Items:**
-    - No new tokens need to be defined in `semantics.css`.
-    - We rely 100% on existing definitions.
 
-## 7. Component Porting List
-The following components must be copied from Reference (`screen-studio-prototype-public`) to Target (`safety-check-app-concept/src/desktop/components`):
-1.  `Button.tsx` + `buttons.css` (or ensure `buttons.css` is imported globally).
-2.  `SearchInput.tsx` + `SearchInput.module.css`.
-3.  `ResizablePanel.tsx` (Optional, if we want dragging resizing for the Side Panel, otherwise use Grid). *User asked for "Push", Resizable is a "Nice to have". We will start with Grid.*
+| Token | Status | Location |
+|-------|--------|----------|
+| `--control-bg-secondary` | ✅ Exists | `semantics.css` |
+| `--control-bg-secondary-hover` | ✅ Exists | `semantics.css` |
+| `--control-bg-secondary-pressed` | ✅ Exists | `semantics.css` |
+| `--control-border-secondary` | ✅ Exists | `semantics.css` |
+| `--surface-bg-brand-solid` | ✅ Exists | `semantics.css` |
+| `--control-bg-quaternary-hover` | ✅ Exists | `semantics.css` |
+
+**Conclusion:** No new tokens need to be defined.
+
+---
+
+## 7. Implementation Priority
+
+| Priority | Item | Effort | Impact |
+|----------|------|--------|--------|
+| P0 | Refactor buttons to use `.btn` | Low | High (consistency) |
+| P0 | Side panel push layout | Medium | High (UX) |
+| P1 | Search input white background | Trivial | Medium |
+| P1 | Column dividers | Trivial | Low |
+| P2 | Badge style update | Low | Low |
+
+---
+
+## Appendix: File Change Summary
+
+| File | Action |
+|------|--------|
+| `src/desktop/App.tsx` | Restructure for grid layout |
+| `src/desktop/App.module.css` | Convert to CSS Grid |
+| `src/desktop/components/DesktopHeader.tsx` | Replace custom buttons with `.btn` |
+| `src/desktop/components/DesktopHeader.module.css` | Remove redundant button styles |
+| `src/desktop/components/DesktopToolbar.tsx` | Replace custom buttons with `.btn` |
+| `src/desktop/components/DesktopToolbar.module.css` | Update search tokens, remove `.iconButton` |
+| `src/desktop/components/DetailPanel.module.css` | Remove fixed positioning |
+| `src/desktop/components/DataTable.module.css` | Add column dividers, update badge |

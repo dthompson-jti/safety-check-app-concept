@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { connectionStatusAtom, isOfflineToggleVisibleAtom } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { useHaptics } from '../../data/useHaptics';
-import { useAppSound } from '../../data/useAppSound';
 import styles from './OfflineToggleFab.module.css';
 
 export const OfflineToggleFab = () => {
@@ -12,7 +11,6 @@ export const OfflineToggleFab = () => {
     const [status, setStatus] = useAtom(connectionStatusAtom);
     const dispatch = useSetAtom(dispatchActionAtom);
     const { trigger: triggerHaptic } = useHaptics();
-    const { play: playSound } = useAppSound();
 
     const handleToggle = () => {
         triggerHaptic('selection');
@@ -22,7 +20,6 @@ export const OfflineToggleFab = () => {
             // Going back online - clear queue and show connected state
             dispatch({ type: 'SYNC_QUEUED_CHECKS', payload: { syncTime: new Date().toISOString() } });
             triggerHaptic('success');
-            playSound('success');
             setStatus('connected');
             setTimeout(() => setStatus('online'), 1000);
         }

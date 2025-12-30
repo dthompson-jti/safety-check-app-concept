@@ -19,13 +19,7 @@
     color: var(--surface-fg-tertiary);
     cursor: pointer;
     transition: background-color 0.15s, color 0.15s;
-    opacity: 0;
-}
-
-/* Show on row hover */
-tr:hover .trigger,
-.trigger:focus {
-    opacity: 1;
+    /* Always visible - no opacity gate */
 }
 
 .trigger:hover {

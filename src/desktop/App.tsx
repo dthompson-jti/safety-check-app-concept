@@ -27,21 +27,23 @@ export default function App() {
 
     return (
         <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
-            <div className={styles.app}>
-                <DesktopHeader
-                    onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
-                    isPanelOpen={isPanelOpen}
-                />
-                <DesktopToolbar />
+            <div className={styles.app} data-panel-open={isPanelOpen}>
+                <div className={styles.mainWrapper}>
+                    <DesktopHeader
+                        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
+                        isPanelOpen={isPanelOpen}
+                    />
+                    <DesktopToolbar />
 
-                <main className={styles.main}>
-                    <div className={styles.contentArea}>
-                        <div className={styles.tableSection}>
-                            {view === 'live' && <LiveMonitorView />}
-                            {view === 'historical' && <HistoricalReviewView />}
+                    <main className={styles.main}>
+                        <div className={styles.contentArea}>
+                            <div className={styles.tableSection}>
+                                {view === 'live' && <LiveMonitorView />}
+                                {view === 'historical' && <HistoricalReviewView />}
+                            </div>
                         </div>
-                    </div>
-                </main>
+                    </main>
+                </div>
 
                 {isPanelOpen && (
                     <DetailPanel onClose={() => setIsPanelOpen(false)} />

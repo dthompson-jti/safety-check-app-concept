@@ -1,16 +1,14 @@
-// src/desktop/components/LiveMonitorView.tsx
-
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import { desktopFilterAtom } from '../atoms';
 import { LiveCheckRow } from '../types';
-import { mockLiveChecks } from '../mockLiveData';
 import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
 import { RowContextMenu } from './RowContextMenu';
 import { StatusBadge, StatusBadgeType } from './StatusBadge';
 import { addToastAtom } from '../../data/toastAtoms';
+import { TOTAL_LIVE_RECORDS, loadLiveChecksPage } from '../mockLiveData';
 import styles from './DataTable.module.css';
 
 export const LiveMonitorView = () => {
@@ -18,9 +16,38 @@ export const LiveMonitorView = () => {
     const addToast = useSetAtom(addToastAtom);
     const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 
-    // Filter and sort mock data
+    // Pagination State
+    const [loadedData, setLoadedData] = useState<LiveCheckRow[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [cursor, setCursor] = useState(0);
+
+    // Initial load
+    useEffect(() => {
+        setIsLoading(true);
+        loadLiveChecksPage(0, 50).then(({ data, nextCursor }) => {
+            setLoadedData(data);
+            setCursor(nextCursor ?? 0);
+            setHasMore(nextCursor !== null);
+            setIsLoading(false);
+        });
+    }, []);
+
+    const handleLoadMore = useCallback(() => {
+        if (isLoading || !hasMore) return;
+
+        setIsLoading(true);
+        loadLiveChecksPage(cursor, 50).then(({ data, nextCursor }) => {
+            setLoadedData((prev) => [...prev, ...data]);
+            setCursor(nextCursor ?? cursor);
+            setHasMore(nextCursor !== null);
+            setIsLoading(false);
+        });
+    }, [cursor, isLoading, hasMore]);
+
+    // Filter and sort loaded data
     const liveRows = useMemo(() => {
-        let rows = [...mockLiveChecks];
+        let rows = [...loadedData];
 
         // Apply search filter
         if (filter.search) {
@@ -49,7 +76,7 @@ export const LiveMonitorView = () => {
         });
 
         return rows;
-    }, [filter.search]);
+    }, [filter.search, loadedData]);
 
     // Convert Set to TanStack's RowSelectionState
     const rowSelection: RowSelectionState = useMemo(() => {
@@ -93,25 +120,35 @@ export const LiveMonitorView = () => {
             {
                 id: 'select',
                 header: ({ table }) => (
-                    <div
-                        className={styles.checkbox}
-                        onClick={table.getToggleAllRowsSelectedHandler()}
-                        data-state={table.getIsAllRowsSelected() ? 'checked' : 'unchecked'}
-                    />
+                    <div className={styles.checkboxCell}>
+                        <input
+                            type="checkbox"
+                            className={styles.checkbox}
+                            checked={table.getIsAllRowsSelected()}
+                            onChange={table.getToggleAllRowsSelectedHandler()}
+                            aria-label="Select all rows"
+                        />
+                    </div>
                 ),
                 cell: ({ row }) => (
-                    <div
-                        className={styles.checkbox}
-                        onClick={row.getToggleSelectedHandler()}
-                        data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
-                    />
+                    <div className={styles.checkboxCell}>
+                        <input
+                            type="checkbox"
+                            className={styles.checkbox}
+                            checked={row.getIsSelected()}
+                            onChange={row.getToggleSelectedHandler()}
+                            aria-label={`Select row ${row.id}`}
+                        />
+                    </div>
                 ),
-                size: 48,
+                size: 44,
+                enableResizing: false,
             },
             {
                 id: 'resident',
                 header: 'Resident',
-                size: 240, // Name can be long
+                size: 200,
+                minSize: 120,
                 accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
                 cell: ({ row }) => (
                     <div className={styles.residentCell}>
@@ -131,12 +168,14 @@ export const LiveMonitorView = () => {
                 id: 'location',
                 header: 'Room',
                 accessorKey: 'location',
-                size: 100,
+                size: 80,
+                minSize: 60,
             },
             {
                 id: 'scheduled',
                 header: 'Scheduled',
-                size: 140,
+                size: 160,
+                minSize: 130,
                 accessorFn: () => {
                     // Constant date for mock sorting/display
                     return new Date().toISOString();
@@ -157,16 +196,18 @@ export const LiveMonitorView = () => {
                 id: 'actual',
                 header: 'Actual',
                 size: 100,
+                minSize: 80,
                 accessorFn: (row) => row.timerText,
                 cell: ({ row }) => {
-                    if (row.original.status === 'missed') return 'No check';
+                    if (row.original.status === 'missed') return '—';
                     return row.original.timerText;
                 },
             },
             {
                 id: 'status',
                 header: 'Status',
-                size: 100,
+                size: 110,
+                minSize: 90,
                 accessorKey: 'status',
                 cell: ({ row }) => {
                     return (
@@ -177,18 +218,23 @@ export const LiveMonitorView = () => {
             {
                 id: 'checkedBy',
                 header: 'Checked by',
-                size: 140,
+                size: 130,
+                minSize: 100,
                 accessorFn: (row) => row.lastCheckOfficer || '—',
             },
             {
                 id: 'comments',
                 header: 'Supervisor Comments',
-                size: 250,
+                size: 200,
+                minSize: 150,
                 accessorFn: (row) => row.supervisorNote || '',
                 cell: ({ row }) => (
                     <div className={styles.commentsCell}>
                         {row.original.supervisorNote ? (
-                            <span className={styles.supervisorComment}>
+                            <span
+                                className={styles.supervisorComment}
+                                title={row.original.supervisorNote}
+                            >
                                 {row.original.supervisorNote}
                             </span>
                         ) : (
@@ -199,9 +245,10 @@ export const LiveMonitorView = () => {
             },
             {
                 id: 'actions',
-                header: '',
+                header: () => null,
                 size: 48,
                 enableSorting: false,
+                enableResizing: false,
                 cell: ({ row }) => (
                     <RowContextMenu
                         onAddNote={() => handleAlert(row.original)}
@@ -222,6 +269,10 @@ export const LiveMonitorView = () => {
                 rowSelection={rowSelection}
                 onRowSelectionChange={handleRowSelectionChange}
                 getRowId={(row) => row.id}
+                totalCount={TOTAL_LIVE_RECORDS}
+                isLoading={isLoading}
+                hasMore={hasMore}
+                onLoadMore={handleLoadMore}
             />
 
             {selectedRows.size > 0 && (

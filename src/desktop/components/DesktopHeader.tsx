@@ -46,14 +46,17 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
             {/* Right: Actions */}
             <div className={styles.actions}>
                 {/* Export button */}
-                <button className={styles.outlineButton}>
+                <button className="btn" data-variant="secondary" data-size="s">
                     Export
                 </button>
 
                 {/* Overflow menu */}
                 <div className={styles.menuContainer}>
                     <button
-                        className={styles.iconButton}
+                        className="btn"
+                        data-variant="secondary"
+                        data-size="s"
+                        data-icon-only="true"
                         onClick={() => setShowOverflowMenu(!showOverflowMenu)}
                         aria-label="More options"
                     >
@@ -91,7 +94,10 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
 
                 {/* Side panel toggle */}
                 <button
-                    className={`${styles.iconButton} ${isPanelOpen ? styles.active : ''}`}
+                    className={`btn ${isPanelOpen ? 'active' : ''}`}
+                    data-variant="secondary"
+                    data-size="s"
+                    data-icon-only="true"
                     onClick={onTogglePanel}
                     aria-label="Toggle side panel"
                     aria-pressed={isPanelOpen}

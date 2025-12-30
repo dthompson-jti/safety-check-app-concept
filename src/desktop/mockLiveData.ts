@@ -93,3 +93,55 @@ const generateData = (): LiveCheckRow[] => {
 };
 
 export const mockLiveChecks: LiveCheckRow[] = generateData();
+
+// Export the total count constant
+export const TOTAL_LIVE_RECORDS = 8914;
+
+// Pagination helper to simulate async fetch
+export function loadLiveChecksPage(
+    cursor: number,
+    pageSize: number
+): Promise<{ data: LiveCheckRow[]; nextCursor: number | null }> {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            let data: LiveCheckRow[] = [];
+
+            // If we've already loaded the base 124 realistic rows, generate fake ones
+            if (cursor < mockLiveChecks.length) {
+                data = mockLiveChecks.slice(cursor, Math.min(cursor + pageSize, mockLiveChecks.length));
+            }
+
+            // Fill remaining with generated data if still within total limit
+            const remainingNeeded = pageSize - data.length;
+            if (remainingNeeded > 0 && cursor + data.length < TOTAL_LIVE_RECORDS) {
+                const startIndex = cursor + data.length;
+                const generateCount = Math.min(remainingNeeded, TOTAL_LIVE_RECORDS - startIndex);
+
+                const generated = Array.from({ length: generateCount }, (_, i) => {
+                    const idx = startIndex + i;
+                    const status = (['pending', 'due', 'missed'] as const)[idx % 3];
+                    const timerSeverity = (status === 'missed' ? 'alert' : status === 'due' ? 'warning' : 'neutral') as 'alert' | 'warning' | 'neutral';
+
+                    return {
+                        id: `gen-live-${idx}`,
+                        status,
+                        timerText: `Due in ${10 + (idx % 50)}m`,
+                        timerSeverity,
+                        location: `${100 + (idx % 200)}`,
+                        residents: [{ id: `res-gen-${idx}`, name: `Resident ${idx}`, location: `${100 + (idx % 200)}` }],
+                        hasHighRisk: idx % 15 === 0,
+                        riskType: idx % 15 === 0 ? 'Random Assessment' : undefined,
+                        lastCheckTime: new Date(Date.now() - 16 * 60000).toISOString(),
+                        lastCheckOfficer: 'Brett Corbin',
+                        supervisorNote: undefined,
+                        originalCheck: null as never,
+                    };
+                });
+                data = [...data, ...generated];
+            }
+
+            const nextCursor = cursor + data.length < TOTAL_LIVE_RECORDS ? cursor + data.length : null;
+            resolve({ data, nextCursor });
+        }, 1500); // Simulate network delay
+    });
+}

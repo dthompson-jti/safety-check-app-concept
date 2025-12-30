@@ -1,25 +1,41 @@
 /* src/desktop/App.module.css */
 
 .app {
-    min-height: 100vh;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    background: var(--surface-bg-secondary);
+    transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.app[data-panel-open="true"] {
+    grid-template-columns: 1fr 320px;
+}
+
+/* Wrapper for everything that gets "pushed" (Header, Toolbar, Content) */
+.mainWrapper {
     display: flex;
     flex-direction: column;
-    background: var(--surface-bg-secondary);
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .main {
     flex: 1;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .contentArea {
     flex: 1;
     display: flex;
-    align-items: stretch;
-    gap: 0;
+    flex-direction: column;
     min-height: 0;
+    min-width: 0;
     background: var(--surface-bg-tertiary);
     overflow: hidden;
 }

@@ -9,27 +9,8 @@
   flex-shrink: 0;
   position: relative;
   z-index: 10;
-  overflow: hidden;
-  /* Clip the sliding overlay */
-}
-
-.greyOverlay {
-  position: absolute;
-  inset: 0;
-  background-color: var(--primitives-grey-700);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 5;
-  /* Above headerContent (z-index: 1) */
-  /* Will transform from y: -100% to y: 0 when offline */
-}
-
-.overlayContent {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 6;
+  overflow: visible;
+  /* Allow offline bar to float below */
 }
 
 /* =========================================
@@ -154,6 +135,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   position: relative;
   z-index: 10;
   /* Above greyOverlay (z-index: 5) so menu/avatar are visible */
+  pointer-events: none;
 }
 
 .leftActions {
@@ -167,6 +149,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   position: relative;
   z-index: 10;
   /* Above overlay (z-index: 5) */
+  pointer-events: auto;
 }
 
 .centerContent {
@@ -180,6 +163,11 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   /* Clip exiting animations */
 }
 
+/* Re-enable pointer events for online content */
+.centerContent>* {
+  pointer-events: auto;
+}
+
 .rightActions {
   display: flex;
   align-items: center;
@@ -191,139 +179,146 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   position: relative;
   z-index: 10;
   /* Above overlay (z-index: 5) */
+  pointer-events: auto;
 }
 
 /* =========================================
-   Offline Morph Styles
+   Offline Morph Styles (Expanded Header)
    ========================================= */
 
-.header[data-offline="true"] {
-  /* backgroundColor handled by motion.header animate prop */
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.offlineStack {
+/* Unified Background Transition */
+.header {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  /* Very tight gap to keep content within header bounds */
-  gap: var(--spacing-1);
+  transition: background-color 0.2s ease, border-bottom-color 0.2s ease;
 }
 
+.header[data-offline="true"] {
+  /* Solid dark background for authoritative offline state */
+  background-color: var(--primitives-grey-800);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Option B: Success Flash (Scope: Lower Bar Only) */
+.header[data-status="connected"] .offlineBar {
+  background-color: var(--surface-bg-success-solid) !important;
+  transition: background-color 0.3s ease;
+}
+
+/* The Expanding Offline Bar (Relative Child) */
+.offlineBar {
+  position: relative;
+  /* In flow */
+  width: 100%;
+  z-index: 9;
+
+  /* Transparent so it shares the header's background */
+  background-color: transparent;
+
+  /* Remove individual borders, wrapper handles it */
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  overflow: hidden;
+  cursor: pointer;
+  display: block;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+
+  /* No individual shadow */
+  box-shadow: none;
+
+  transition: background-color 0.2s ease;
+}
+
+.offlineBar:hover {
+  /* Highlight entire row on hover */
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.offlineBarContent {
+  /* Container for the transitioning content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Reduced height per user request (was 36px) */
+  height: 28px;
+  color: var(--primitives-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.offlineContentRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  padding: 0 var(--spacing-2);
+  width: 100%;
+}
+
+/* Typography Enhancements */
+.offlineTimer {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--surface-fg-on-solid);
+}
+
+/* Match Opacity for Offline State Elements (User Request) */
+.header[data-status="offline"] .offlineTimer,
+.header[data-status="offline"] .offlineBarContent .material-symbols-rounded {
+  color: var(--surface-fg-on-solid-faint);
+}
+
+.queuedCount {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--surface-fg-on-solid-faint);
+}
+
+.separator {
+  width: 1px;
+  height: 14px;
+  /* Use white with opacity for separator */
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 0 var(--spacing-1);
+}
+
+/* Icon polish */
+.offlineBarContent .material-symbols-rounded {
+  font-size: 1.125rem;
+  color: var(--surface-fg-on-solid);
+}
+
+/* Fix Avatar Color - Remove bogus filters */
+.offlineAvatar {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Fix Menu Button color */
 .offlineButton {
-  color: var(--primitives-grey-100) !important;
+  color: var(--primitives-white) !important;
 }
 
 .offlineButton:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.offlineStatus {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-1p5) var(--spacing-3);
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-pill);
-  color: var(--primitives-grey-100);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Specific override for the Text-Only Offline indicator in the vertical stack */
-.offlineStack .offlineStatus {
-  /* Tight padding for vertical stack mode */
-  padding: 0 var(--spacing-2);
-  /* Restore "tight wrapped" pill look */
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  /* Height control */
-  height: 24px;
-}
-
-.offlineStatus:not(:disabled):hover {
-  /* Subtle hover for the text part */
-  opacity: 0.8;
-  transform: translateY(-1px);
-}
-
-.offlineStatus:not(:disabled):active {
-  transform: translateY(0);
-}
-
-.offlineStatus:disabled {
-  cursor: default;
-  opacity: 0.8;
-}
-
-/* Connected state - green success celebration with outward pulse */
-@keyframes connected-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
-  }
-
-  60% {
-    box-shadow: 0 0 0 16px rgba(34, 197, 94, 0);
-  }
-
-  100% {
-    box-shadow: 0 0 0 16px rgba(34, 197, 94, 0);
-  }
-}
-
-.offlineStatus[data-status="connected"] {
-  background-color: var(--surface-bg-success);
-  border-color: var(--surface-border-success);
-  color: var(--surface-fg-success-primary);
-  animation: connected-pulse 1s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.offlineStatus[data-status="connected"] .material-symbols-rounded {
-  color: var(--surface-fg-success-primary);
-}
-
-.offlineTextContainer {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.offlineTimer {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-}
-
-.separator {
-  width: 1px;
-  height: 1.2em;
-  background-color: currentColor;
-  opacity: 0.3;
-  margin: 0 var(--spacing-1);
-}
-
-.queuedCount {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.offlineAvatar {
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-}
-
+/* Restore Spinning Animation for Syncing */
 .spinning {
-  animation: spin 2s linear infinite;
   display: inline-block;
+  /* Option B Refinement: Slower (2s), Reverse direction */
+  animation: spin 2s linear infinite reverse;
+  /* Softer color per user request */
+  color: rgba(255, 255, 255, 0.7);
 }
 
 @keyframes spin {
@@ -336,8 +331,4 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .spinning {
-    animation: none;
-  }
-}
+/* CSS Overrides cleaned up - using Props now */

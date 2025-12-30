@@ -68,58 +68,6 @@
     gap: var(--spacing-2);
 }
 
-/* Outline button (Export) */
-.outlineButton {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    height: 36px;
-    padding: 0 var(--spacing-4);
-    border: 1px solid var(--surface-border-secondary);
-    border-radius: var(--radius-md);
-    background: transparent;
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    color: var(--surface-fg-primary);
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.outlineButton:hover {
-    background: var(--surface-bg-secondary);
-    border-color: var(--surface-border-primary);
-}
-
-/* Icon button */
-.iconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--surface-border-secondary);
-    border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--surface-fg-secondary);
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.iconButton:hover {
-    background: var(--surface-bg-secondary);
-    color: var(--surface-fg-primary);
-}
-
-.iconButton.active {
-    background: var(--control-bg-selected);
-    border-color: var(--control-border-selected);
-    color: var(--control-fg-selected);
-}
-
-.iconButton .material-symbols-rounded {
-    font-size: var(--icon-size-md);
-}
-
 /* Overflow menu */
 .menuContainer {
     position: relative;

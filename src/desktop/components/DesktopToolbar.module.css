@@ -23,12 +23,19 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-2);
-    background: var(--surface-bg-secondary);
-    border: 1px solid var(--surface-border-secondary);
+    background: var(--surface-bg-primary);
+    border: 1px solid var(--surface-border-primary);
     border-radius: var(--radius-md);
     padding: 0 var(--spacing-3);
-    height: 36px;
-    width: 220px;
+    height: 38px;
+    width: 240px;
+    /* Only transition colors/shadows, never layout */
+    transition: border-color 0.1s ease, box-shadow 0.1s ease;
+}
+
+.searchContainer:focus-within {
+    border-color: var(--control-border-selected);
+    box-shadow: 0 0 0 3px rgba(88, 144, 237, 0.2);
 }
 
 .searchContainer .material-symbols-rounded {
@@ -68,29 +75,7 @@
     font-size: var(--icon-size-sm);
 }
 
-/* Icon Button */
-.iconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--surface-border-secondary);
-    border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--surface-fg-tertiary);
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.iconButton:hover {
-    background: var(--surface-bg-secondary);
-    color: var(--surface-fg-secondary);
-}
-
-.iconButton .material-symbols-rounded {
-    font-size: var(--icon-size-md);
-}
+/* Icon button styling now handled by global .btn in buttons.css */
 
 /* Filter Chips (Right aligned) */
 .filterChips {

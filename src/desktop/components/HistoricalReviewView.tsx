@@ -1,6 +1,4 @@
-// src/desktop/components/HistoricalReviewView.tsx
-
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import {
@@ -13,6 +11,7 @@ import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
 import { RowContextMenu } from './RowContextMenu';
 import { StatusBadge, StatusBadgeType } from './StatusBadge';
+import { TOTAL_HISTORICAL_RECORDS, loadHistoricalChecksPage } from '../mockHistoricalData';
 import styles from './DataTable.module.css';
 
 const formatTime = (isoString: string): string => {
@@ -31,9 +30,37 @@ const formatVariance = (minutes: number): string => {
 };
 
 export const HistoricalReviewView = () => {
-    const checks = useAtomValue(filteredHistoricalChecksAtom);
     const [selectedRows, setSelectedRows] = useAtom(selectedHistoryRowsAtom);
     const setModalState = useSetAtom(supervisorNoteModalAtom);
+
+    // Pagination State
+    const [loadedData, setLoadedData] = useState<HistoricalCheck[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [cursor, setCursor] = useState(0);
+
+    // Initial load
+    useEffect(() => {
+        setIsLoading(true);
+        loadHistoricalChecksPage(0, 50).then(({ data, nextCursor }) => {
+            setLoadedData(data);
+            setCursor(nextCursor ?? 0);
+            setHasMore(nextCursor !== null);
+            setIsLoading(false);
+        });
+    }, []);
+
+    const handleLoadMore = useCallback(() => {
+        if (isLoading || !hasMore) return;
+
+        setIsLoading(true);
+        loadHistoricalChecksPage(cursor, 50).then(({ data, nextCursor }) => {
+            setLoadedData((prev) => [...prev, ...data]);
+            setCursor(nextCursor ?? cursor);
+            setHasMore(nextCursor !== null);
+            setIsLoading(false);
+        });
+    }, [cursor, isLoading, hasMore]);
 
     // Convert Set to TanStack's RowSelectionState
     const rowSelection: RowSelectionState = useMemo(() => {
@@ -79,20 +106,29 @@ export const HistoricalReviewView = () => {
             {
                 id: 'select',
                 header: ({ table }) => (
-                    <div
-                        className={styles.checkbox}
-                        onClick={table.getToggleAllRowsSelectedHandler()}
-                        data-state={table.getIsAllRowsSelected() ? 'checked' : 'unchecked'}
-                    />
+                    <div className={styles.checkboxCell}>
+                        <input
+                            type="checkbox"
+                            className={styles.checkbox}
+                            checked={table.getIsAllRowsSelected()}
+                            onChange={table.getToggleAllRowsSelectedHandler()}
+                            aria-label="Select all rows"
+                        />
+                    </div>
                 ),
                 cell: ({ row }) => (
-                    <div
-                        className={styles.checkbox}
-                        onClick={row.getToggleSelectedHandler()}
-                        data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
-                    />
+                    <div className={styles.checkboxCell}>
+                        <input
+                            type="checkbox"
+                            className={styles.checkbox}
+                            checked={row.getIsSelected()}
+                            onChange={row.getToggleSelectedHandler()}
+                            aria-label={`Select row ${row.id}`}
+                        />
+                    </div>
                 ),
-                size: 48,
+                size: 44,
+                enableResizing: false,
             },
             {
                 id: 'scheduled',
@@ -190,9 +226,10 @@ export const HistoricalReviewView = () => {
             },
             {
                 id: 'actions',
-                header: '',
+                header: () => null,
                 size: 48,
                 enableSorting: false,
+                enableResizing: false,
                 cell: ({ row }) => (
                     <RowContextMenu
                         onAddNote={() => handleOpenNoteModal(row.original.id)}
@@ -207,12 +244,16 @@ export const HistoricalReviewView = () => {
     return (
         <>
             <DataTable
-                data={checks}
+                data={loadedData}
                 columns={columns}
                 enableRowSelection
                 rowSelection={rowSelection}
                 onRowSelectionChange={handleRowSelectionChange}
                 getRowId={(row) => row.id}
+                totalCount={TOTAL_HISTORICAL_RECORDS}
+                isLoading={isLoading}
+                hasMore={hasMore}
+                onLoadMore={handleLoadMore}
             />
 
             {selectedRows.size > 0 && (

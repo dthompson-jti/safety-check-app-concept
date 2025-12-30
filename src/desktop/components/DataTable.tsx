@@ -12,7 +12,7 @@ import {
     ColumnSizingState,
     ColumnPinningState,
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './DataTable.module.css';
 
 interface DataTableProps<T> {
@@ -22,6 +22,10 @@ interface DataTableProps<T> {
     rowSelection?: RowSelectionState;
     onRowSelectionChange?: (selection: RowSelectionState) => void;
     getRowId?: (row: T) => string;
+    totalCount?: number;
+    isLoading?: boolean;
+    hasMore?: boolean;
+    onLoadMore?: () => void;
 }
 
 export function DataTable<T>({
@@ -31,6 +35,10 @@ export function DataTable<T>({
     rowSelection = {},
     onRowSelectionChange,
     getRowId,
+    totalCount,
+    isLoading = false,
+    hasMore = false,
+    onLoadMore,
 }: DataTableProps<T>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
@@ -59,9 +67,36 @@ export function DataTable<T>({
         getRowId,
     });
 
+    const sentinelRef = useRef<HTMLTableRowElement>(null);
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!onLoadMore || !hasMore) return;
+
+        const sentinel = sentinelRef.current;
+        const scrollArea = scrollAreaRef.current;
+        if (!sentinel || !scrollArea) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    onLoadMore();
+                }
+            },
+            {
+                root: scrollArea,
+                rootMargin: '0px',
+                threshold: 0,
+            }
+        );
+
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [onLoadMore, hasMore]);
+
     return (
         <div className={styles.tableContainer}>
-            <div className={styles.scrollArea}>
+            <div ref={scrollAreaRef} className={styles.scrollArea}>
                 <table className={styles.table} style={{ width: table.getTotalSize() }}>
                     <thead className={styles.thead}>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -96,8 +131,15 @@ export function DataTable<T>({
                                             </div>
                                             {header.column.getCanResize() && (
                                                 <div
-                                                    onMouseDown={header.getResizeHandler()}
-                                                    onTouchStart={header.getResizeHandler()}
+                                                    onMouseDown={(e) => {
+                                                        e.stopPropagation();
+                                                        header.getResizeHandler()(e);
+                                                    }}
+                                                    onTouchStart={(e) => {
+                                                        e.stopPropagation();
+                                                        header.getResizeHandler()(e);
+                                                    }}
+                                                    onClick={(e) => e.stopPropagation()}
                                                     className={`${styles.resizer} ${header.column.getIsResizing() ? styles.isResizing : ''
                                                         }`}
                                                 />
@@ -134,11 +176,16 @@ export function DataTable<T>({
                                 })}
                             </tr>
                         ))}
+                        {hasMore && (
+                            <tr ref={sentinelRef} className={styles.sentinelRow}>
+                                <td colSpan={columns.length} />
+                            </tr>
+                        )}
                     </tbody>
                 </table>
-                {table.getRowModel().rows.length === 0 && (
+                {table.getRowModel().rows.length === 0 && !isLoading && (
                     <div className={styles.emptyState}>
-                        <span className="material-symbols-rounded" style={{ fontSize: 'var(--icon-size-2xl)', opacity: 0.3 }}>
+                        <span className={`material-symbols-rounded ${styles.emptyIcon}`}>
                             inbox
                         </span>
                         <p>No data to display</p>
@@ -148,9 +195,19 @@ export function DataTable<T>({
 
             {/* Table Footer */}
             <div className={styles.tableFooter}>
-                <span>
-                    {table.getRowModel().rows.length} of {data.length}
-                </span>
+                <div className={styles.footerLeft}>
+                    {isLoading && (
+                        <div className={styles.loadingIndicator}>
+                            <span className={`material-symbols-rounded ${styles.loadingSpinner}`}>
+                                progress_activity
+                            </span>
+                            <span>Loading records...</span>
+                        </div>
+                    )}
+                    <div className={styles.footerCount}>
+                        {data.length.toLocaleString()} of {(totalCount ?? data.length).toLocaleString()} records
+                    </div>
+                </div>
             </div>
         </div>
     );

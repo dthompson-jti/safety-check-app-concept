@@ -66,7 +66,13 @@ export const DesktopToolbar = () => {
                 </div>
 
                 {/* Advanced search (placeholder) */}
-                <button className={styles.iconButton} aria-label="Advanced search">
+                <button
+                    className="btn"
+                    data-variant="secondary"
+                    data-size="s"
+                    data-icon-only="true"
+                    aria-label="Advanced search"
+                >
                     <span className="material-symbols-rounded">tune</span>
                 </button>
             </div>
