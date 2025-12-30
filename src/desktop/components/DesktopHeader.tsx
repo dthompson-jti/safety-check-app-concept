@@ -46,7 +46,11 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
             {/* Right: Actions */}
             <div className={styles.actions}>
                 {/* Export button */}
-                <button className="btn" data-variant="secondary" data-size="s">
+                <button
+                    className="btn"
+                    data-variant="secondary"
+                    data-size="s"
+                >
                     Export
                 </button>
 

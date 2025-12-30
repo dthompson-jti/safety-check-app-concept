@@ -19,8 +19,50 @@
     /* Fill deadspace with white */
 }
 
+/* Custom Scrollbar Styling - Subtle by Default, Prominent on Hover */
+
+/* Webkit browsers (Chrome, Edge, Safari) - Both vertical and horizontal */
+.scrollArea::-webkit-scrollbar {
+    width: 12px;
+    /* Vertical scrollbar - matched to global default */
+    height: 12px;
+    /* Horizontal scrollbar - matched to global default */
+}
+
+.scrollArea::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+    /* Rest State: 20% opacity (Visible but subtle) */
+    background-color: rgba(var(--surface-fg-quaternary-rgb), 0.2);
+    border-radius: 6px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    /* Creates inner padding effect */
+    transition: background-color 200ms ease;
+}
+
+/* Container Hover: 60% opacity (Clear interaction cue) */
+.scrollArea:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--surface-fg-quaternary-rgb), 0.6);
+}
+
+/* Thumb Hover/Active: 100% opacity (Full control visibility) */
+.scrollArea::-webkit-scrollbar-thumb:hover,
+.scrollArea::-webkit-scrollbar-thumb:active {
+    background-color: var(--surface-fg-quaternary);
+}
+
+/* Firefox: Always-visible thin scrollbar (browser limitation, no hover) */
+.scrollArea {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--surface-fg-quaternary-rgb), 0.3) transparent;
+}
+
 .table {
     width: max-content;
+    min-width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     table-layout: fixed;
@@ -39,7 +81,7 @@
     padding: var(--spacing-3) var(--spacing-4);
     font-size: var(--font-size-sm);
     font-weight: 500;
-    color: var(--surface-fg-secondary);
+    color: var(--surface-fg-quaternary);
     border-bottom: 1px solid var(--surface-border-secondary);
     /* No border-right - resizer handles visual divider */
     user-select: none;
@@ -69,9 +111,16 @@
 }
 
 .sortIndicator {
-    font-size: var(--font-size-sm);
-    color: var(--surface-fg-tertiary);
+    font-size: 16px;
+    color: var(--surface-fg-secondary);
     margin-left: var(--spacing-1);
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.th[data-sort-direction="asc"] .sortIndicator {
+    transform: rotate(180deg);
 }
 
 /* Active sort state - more prominent */
@@ -85,7 +134,7 @@
 
 .tr {
     background: var(--surface-bg-secondary_subtle);
-    border-bottom: 1px solid var(--surface-border-secondary);
+    /* border-bottom moved to TD for better collapse/spacing control */
     transition: background-color 0.1s ease;
 }
 
@@ -118,24 +167,22 @@
     color: var(--surface-fg-primary);
     vertical-align: middle;
     min-height: 56px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid var(--surface-border-secondary);
 }
 
-/* Checkbox column - first cell: fixed width, centered, with divider */
+/* Checkbox column - first cell: centered, with divider */
 .td:first-child,
 .th:first-child {
-    width: 44px !important;
-    min-width: 44px !important;
-    max-width: 44px !important;
     padding: 0 !important;
     border-right: 1px solid var(--surface-border-secondary);
 }
 
-/* Actions column - last cell: fixed width, centered */
+/* Actions column - last cell: centered */
 .td:last-child,
 .th:last-child {
-    width: 48px !important;
-    min-width: 48px !important;
-    max-width: 48px !important;
     padding: 0 !important;
 }
 
@@ -430,6 +477,8 @@
     background: var(--surface-bg-primary);
     z-index: 5;
     border-left: 1px solid var(--surface-border-secondary);
+    overflow: visible !important;
+    /* Allow shadow to bleed out */
 }
 
 /* Row sticky columns inherit row bg */
@@ -547,8 +596,61 @@
     height: 1px;
 }
 
-.sentinelRow td {
-    padding: 0;
-    border: none;
-    height: 1px;
+
+/* Skeleton Loader */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeletonRow td {
+    padding: var(--spacing-3) var(--spacing-4);
+    border-bottom: 1px solid var(--surface-border-secondary);
+}
+
+.skeletonCell {
+    height: 20px;
+    width: 100%;
+    /* Higher contrast gradient: secondary -> tertiary -> secondary */
+    background: linear-gradient(90deg,
+            var(--surface-bg-secondary) 25%,
+            var(--surface-bg-tertiary) 37%,
+            var(--surface-bg-secondary) 63%);
+    background-size: 400% 100%;
+    /* Slower pulse */
+    animation: shimmer 3s ease-in-out infinite;
+    border-radius: var(--radius-sm);
+}
+
+.skeletonCheckbox {
+    height: 20px;
+    width: 20px;
+    margin: 0 auto;
+    /* Reuse same gradient */
+    background: linear-gradient(90deg,
+            var(--surface-bg-secondary) 25%,
+            var(--surface-bg-tertiary) 37%,
+            var(--surface-bg-secondary) 63%);
+    background-size: 400% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    border-radius: 4px;
+}
+
+.skeletonAction {
+    height: 24px;
+    width: 24px;
+    margin: 0 auto;
+    /* Reuse same gradient */
+    background: linear-gradient(90deg,
+            var(--surface-bg-secondary) 25%,
+            var(--surface-bg-tertiary) 37%,
+            var(--surface-bg-secondary) 63%);
+    background-size: 400% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    border-radius: var(--radius-full);
 }

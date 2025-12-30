@@ -432,9 +432,10 @@ For looping animations that should appear "already running" at steady-state on m
 
 ---
 
+
 ### Zero-CLS State Transitions (Sliding Overlay Pattern)
 
-When transitioning between UI states that require background color changes (e.g., online→offline), avoid CSS transitions on the container background—use a sliding overlay instead.
+When transitioning between UI states that require background color changes (e.g., online→online), avoid CSS transitions on the container background—use a sliding overlay instead.
 
 #### The Pattern
 
@@ -489,3 +490,15 @@ When transitioning between UI states that require background color changes (e.g.
 
 -   **Standard Fast Curve:** `cubic-bezier(0.16, 1, 0.3, 1)` at 0.2s
 -   **Success Pulse:** Outward `box-shadow` expansion (0→16px) matching card completion pattern.
+
+---
+
+### Table Layout Stability
+
+For complex data tables, ensuring column stability and proper border rendering is critical.
+
+*   **Fixed Layout:** Always use `table-layout: fixed` for predictable column sizing and to support text truncation (`text-overflow: ellipsis`).
+*   **Border Collapse:** Use `border-collapse: separate` and `border-spacing: 0` if you need sticky headers/columns with borders. Standard `border-collapse: collapse` often fights with `position: sticky`.
+*   **Divider Location:** Apply horizontal dividers (`border-bottom`) to `td` elements, not `tr`. This allows for cleaner interactions and avoids "jumping" borders on hover.
+*   **Skeleton Alignment:** Skeleton loaders must match the `padding` and `border` of real cells exactly to prevent a 1px jump when data loads.
+

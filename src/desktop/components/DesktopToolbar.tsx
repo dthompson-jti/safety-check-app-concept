@@ -46,11 +46,10 @@ export const DesktopToolbar = () => {
             {/* Left Side: Search + Advanced */}
             <div className={styles.leftSection}>
                 <div className={styles.searchContainer}>
-                    <span className="material-symbols-rounded">search</span>
                     <input
                         type="text"
                         className={styles.searchInput}
-                        placeholder="Search room checks"
+                        placeholder="Search Checks"
                         value={filter.search}
                         onChange={handleSearchChange}
                     />
@@ -63,6 +62,7 @@ export const DesktopToolbar = () => {
                             <span className="material-symbols-rounded">close</span>
                         </button>
                     )}
+                    <span className={`material-symbols-rounded ${styles.searchIcon}`}>search</span>
                 </div>
 
                 {/* Advanced search (placeholder) */}

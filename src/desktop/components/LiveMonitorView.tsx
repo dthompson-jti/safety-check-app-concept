@@ -9,6 +9,7 @@ import { RowContextMenu } from './RowContextMenu';
 import { StatusBadge, StatusBadgeType } from './StatusBadge';
 import { addToastAtom } from '../../data/toastAtoms';
 import { TOTAL_LIVE_RECORDS, loadLiveChecksPage } from '../mockLiveData';
+import { COLUMN_WIDTHS } from './tableConstants';
 import styles from './DataTable.module.css';
 
 export const LiveMonitorView = () => {
@@ -141,14 +142,12 @@ export const LiveMonitorView = () => {
                         />
                     </div>
                 ),
-                size: 44,
-                enableResizing: false,
+                ...COLUMN_WIDTHS.CHECKBOX,
             },
             {
                 id: 'resident',
                 header: 'Resident',
-                size: 200,
-                minSize: 120,
+                ...COLUMN_WIDTHS.RESIDENT,
                 accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
                 cell: ({ row }) => (
                     <div className={styles.residentCell}>
@@ -168,14 +167,12 @@ export const LiveMonitorView = () => {
                 id: 'location',
                 header: 'Room',
                 accessorKey: 'location',
-                size: 80,
-                minSize: 60,
+                ...COLUMN_WIDTHS.LOCATION,
             },
             {
                 id: 'scheduled',
                 header: 'Scheduled',
-                size: 160,
-                minSize: 130,
+                ...COLUMN_WIDTHS.TIMESTAMP,
                 accessorFn: () => {
                     // Constant date for mock sorting/display
                     return new Date().toISOString();
@@ -195,8 +192,7 @@ export const LiveMonitorView = () => {
             {
                 id: 'actual',
                 header: 'Actual',
-                size: 100,
-                minSize: 80,
+                ...COLUMN_WIDTHS.TIMESTAMP,
                 accessorFn: (row) => row.timerText,
                 cell: ({ row }) => {
                     if (row.original.status === 'missed') return '—';
@@ -206,8 +202,7 @@ export const LiveMonitorView = () => {
             {
                 id: 'status',
                 header: 'Status',
-                size: 110,
-                minSize: 90,
+                ...COLUMN_WIDTHS.STATUS,
                 accessorKey: 'status',
                 cell: ({ row }) => {
                     return (
@@ -218,15 +213,13 @@ export const LiveMonitorView = () => {
             {
                 id: 'checkedBy',
                 header: 'Checked by',
-                size: 130,
-                minSize: 100,
+                ...COLUMN_WIDTHS.OFFICER,
                 accessorFn: (row) => row.lastCheckOfficer || '—',
             },
             {
                 id: 'comments',
                 header: 'Supervisor Comments',
-                size: 200,
-                minSize: 150,
+                ...COLUMN_WIDTHS.NOTES,
                 accessorFn: (row) => row.supervisorNote || '',
                 cell: ({ row }) => (
                     <div className={styles.commentsCell}>
@@ -244,11 +237,24 @@ export const LiveMonitorView = () => {
                 ),
             },
             {
-                id: 'actions',
-                header: () => null,
-                size: 48,
-                enableSorting: false,
+                id: 'spacer',
+                size: 0,
+                minSize: 0,
                 enableResizing: false,
+                header: () => null,
+                cell: () => null,
+            },
+            {
+                id: 'actions',
+                header: () => (
+                    <div className={styles.checkboxCell}>
+                        <span className="material-symbols-rounded" style={{ fontSize: '20px', color: 'var(--surface-fg-tertiary)' }}>
+                            more_vert
+                        </span>
+                    </div>
+                ),
+                ...COLUMN_WIDTHS.ACTIONS,
+                enableSorting: false,
                 cell: ({ row }) => (
                     <RowContextMenu
                         onAddNote={() => handleAlert(row.original)}

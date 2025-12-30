@@ -46,6 +46,7 @@
   --surface-fg-tertiary: var(--primitives-grey-600);
   --surface-fg-tertiary_hover: var(--primitives-grey-700);
   --surface-fg-quaternary: var(--primitives-grey-500);
+  --surface-fg-quaternary-rgb: 113, 118, 128;
   --surface-fg-quinary: var(--primitives-grey-400);
   --surface-fg-white: var(--primitives-base-white);
   --surface-fg-primary_on_brand: var(--primitives-base-white);
@@ -248,7 +249,7 @@
   --surface-fg-secondary: var(--primitives-grey-300);
   --surface-fg-tertiary: var(--primitives-grey-400);
   --surface-fg-quaternary: var(--primitives-grey-500);
-  --surface-fg-quaternary: var(--primitives-grey-500);
+  --surface-fg-quaternary-rgb: 113, 118, 128;
   --surface-fg-quinary: var(--primitives-grey-400);
 
   /* Brand Text - Lightened for Dark Mode */
@@ -434,7 +435,7 @@
   --surface-fg-secondary: var(--primitives-grey-300);
   --surface-fg-tertiary: var(--primitives-grey-400);
   --surface-fg-quaternary: var(--primitives-grey-500);
-  --surface-fg-quaternary: var(--primitives-grey-500);
+  --surface-fg-quaternary-rgb: 113, 118, 128;
   --surface-fg-quinary: var(--primitives-grey-400);
 
   /* Brand Text - Lightened for Dark Mode */
@@ -529,6 +530,7 @@
   --control-fg-tertiary: var(--primitives-grey-400);
   --control-fg-tertiary-hover: var(--primitives-grey-300);
   --control-fg-quaternary: var(--primitives-grey-500);
+  --surface-fg-quaternary-rgb: 113, 118, 128;
   --control-fg-quaternary-hover: var(--primitives-grey-400);
   --control-fg-placeholder: var(--primitives-grey-500);
   --control-fg-disabled: var(--primitives-grey-600);
@@ -620,6 +622,7 @@
   --surface-fg-secondary: var(--primitives-grey-300);
   --surface-fg-tertiary: var(--primitives-grey-400);
   --surface-fg-quaternary: var(--primitives-grey-500);
+  --surface-fg-quaternary-rgb: 113, 118, 128;
   --surface-fg-quinary: var(--primitives-grey-400);
 
   /* Brand Text - Lightened for Dark Mode */

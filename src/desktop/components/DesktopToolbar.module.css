@@ -1,10 +1,11 @@
 /* src/desktop/components/DesktopToolbar.module.css */
 
 .toolbar {
-    height: 48px;
+    /* Removed fixed height 48px, allow content + padding to dictate size */
     background: var(--surface-bg-secondary);
     border-bottom: 1px solid var(--surface-border-secondary);
-    padding: 0 var(--spacing-4);
+    padding: var(--spacing-3);
+    /* 12px padding all around */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -26,30 +27,53 @@
     background: var(--surface-bg-primary);
     border: 1px solid var(--surface-border-primary);
     border-radius: var(--radius-md);
-    padding: 0 var(--spacing-3);
-    height: 38px;
+    padding: 0;
+    /* Clear padding, using input/icon margins instead */
+    height: 40px;
+    /* Requested 40px height */
     width: 240px;
     /* Only transition colors/shadows, never layout */
     transition: border-color 0.1s ease, box-shadow 0.1s ease;
+    position: relative;
+    /* For absolute icon positioning if needed, or flex alignment */
 }
 
-.searchContainer:focus-within {
-    border-color: var(--control-border-selected);
-    box-shadow: 0 0 0 3px rgba(88, 144, 237, 0.2);
-}
+/* ... focus-within ... */
 
-.searchContainer .material-symbols-rounded {
+/* ... focus-within ... */
+
+.searchIcon {
     font-size: var(--icon-size-md);
-    color: var(--surface-fg-tertiary);
+    color: var(--control-fg-disabled-faint);
+    /* Matches #A4A7AE */
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2px;
+    margin-left: auto;
+    padding: 0;
+    cursor: default;
 }
 
 .searchInput {
     flex: 1;
+    height: 100%;
     border: none;
     background: transparent;
     font-size: var(--font-size-sm);
     color: var(--surface-fg-primary);
     outline: none;
+    box-shadow: none;
+    padding-left: 12px;
+    /* "12 pixels padding on the left" */
+}
+
+.searchInput:focus,
+.searchInput:focus-visible {
+    outline: none;
+    box-shadow: none;
 }
 
 .searchInput::placeholder {

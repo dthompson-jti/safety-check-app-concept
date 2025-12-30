@@ -292,3 +292,34 @@ transition={{ duration: 0.15, ease: 'easeOut' }}
 ### Reference Implementation
 See `src/features/Shell/NfcScanButton.tsx` for case study of resolving label flash during success animation.
 
+
+---
+
+## 8. Skeleton Shimmer
+
+The "Premium Shimmer" effect used in DataTables and Cards.
+
+### Timing Values
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| **Duration** | 3000ms (3s) | Slow "breathing" cycle |
+| **Ease** | `ease-in-out` | Smooth start/end |
+| **Iteration** | `infinite` | Continuous loop |
+
+### Gradient Definition
+A high-contrast wave that moves across the element.
+```css
+background: linear-gradient(
+  90deg,
+  var(--surface-bg-secondary) 25%,
+  var(--surface-bg-tertiary) 37%, /* Highlight */
+  var(--surface-bg-secondary) 63%
+);
+background-size: 400% 100%;
+```
+
+### Shape Primitives
+- **Standard:** `border-radius: var(--radius-sm)` (Text bars)
+- **Checkbox:** `border-radius: 4px` (20x20px Square)
+- **Action:** `border-radius: 999px` (24x24px Circle)
+

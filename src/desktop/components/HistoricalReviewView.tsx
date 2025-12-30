@@ -1,8 +1,7 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import {
-    filteredHistoricalChecksAtom,
     selectedHistoryRowsAtom,
     supervisorNoteModalAtom,
 } from '../atoms';
@@ -12,6 +11,7 @@ import { BulkActionFooter } from './BulkActionFooter';
 import { RowContextMenu } from './RowContextMenu';
 import { StatusBadge, StatusBadgeType } from './StatusBadge';
 import { TOTAL_HISTORICAL_RECORDS, loadHistoricalChecksPage } from '../mockHistoricalData';
+import { COLUMN_WIDTHS } from './tableConstants';
 import styles from './DataTable.module.css';
 
 const formatTime = (isoString: string): string => {
@@ -127,14 +127,13 @@ export const HistoricalReviewView = () => {
                         />
                     </div>
                 ),
-                size: 44,
-                enableResizing: false,
+                ...COLUMN_WIDTHS.CHECKBOX,
             },
             {
                 id: 'scheduled',
                 header: 'Scheduled',
                 accessorFn: (row) => formatTime(row.scheduledTime),
-                size: 110,
+                ...COLUMN_WIDTHS.TIMESTAMP,
             },
             {
                 id: 'actual',
@@ -142,12 +141,12 @@ export const HistoricalReviewView = () => {
                 accessorFn: (row) => row.actualTime ? formatTime(row.actualTime) : '',
                 cell: ({ row }) =>
                     row.original.actualTime ? formatTime(row.original.actualTime) : '—',
-                size: 110,
+                ...COLUMN_WIDTHS.TIMESTAMP,
             },
             {
                 id: 'variance',
                 header: 'Variance',
-                size: 120,
+                ...COLUMN_WIDTHS.VARIANCE,
                 accessorKey: 'varianceMinutes',
                 cell: ({ row }) => {
                     const variance = row.original.varianceMinutes;
@@ -162,7 +161,7 @@ export const HistoricalReviewView = () => {
             {
                 id: 'status',
                 header: 'Status',
-                size: 100,
+                ...COLUMN_WIDTHS.STATUS,
                 accessorKey: 'status',
                 cell: ({ row }) => (
                     <StatusBadge status={row.original.status as StatusBadgeType} />
@@ -171,13 +170,14 @@ export const HistoricalReviewView = () => {
             {
                 id: 'resident',
                 header: 'Resident',
-                size: 240,
+                ...COLUMN_WIDTHS.RESIDENT,
                 accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
             },
             {
                 id: 'notes',
                 header: 'Notes',
-                size: 80,
+                size: 80, // Custom mini size for this view
+                minSize: 60,
                 accessorFn: (row) => `${row.officerNote || ''} ${row.supervisorNote || ''}`,
                 cell: ({ row }) => (
                     <div className={styles.notesCell}>
@@ -203,7 +203,10 @@ export const HistoricalReviewView = () => {
             {
                 id: 'review',
                 header: 'Review',
-                size: 120,
+                ...COLUMN_WIDTHS.ACTIONS,
+                size: 120, // Override actions size for text button
+                maxSize: 200, // Allow resize for this text
+                enableResizing: true,
                 accessorKey: 'reviewStatus',
                 cell: ({ row }) => {
                     if (row.original.reviewStatus === 'verified') {
@@ -225,11 +228,24 @@ export const HistoricalReviewView = () => {
                 },
             },
             {
-                id: 'actions',
-                header: () => null,
-                size: 48,
-                enableSorting: false,
+                id: 'spacer',
+                size: 0,
+                minSize: 0,
                 enableResizing: false,
+                header: () => null,
+                cell: () => null,
+            },
+            {
+                id: 'actions',
+                header: () => (
+                    <div className={styles.checkboxCell}>
+                        <span className="material-symbols-rounded" style={{ fontSize: '20px', color: 'var(--surface-fg-tertiary)' }}>
+                            more_vert
+                        </span>
+                    </div>
+                ),
+                ...COLUMN_WIDTHS.ACTIONS,
+                enableSorting: false,
                 cell: ({ row }) => (
                     <RowContextMenu
                         onAddNote={() => handleOpenNoteModal(row.original.id)}

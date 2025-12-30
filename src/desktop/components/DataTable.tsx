@@ -46,6 +46,58 @@ export function DataTable<T>({
         right: ['actions'],
     });
 
+    // Auto-Fit Logic
+    const handleAutoFit = (columnId: string) => {
+        const column = table.getColumn(columnId);
+        if (!column) return;
+
+        // Create temporary canvas for measurement
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        if (!context) return;
+
+        context.font = '500 14px Inter, sans-serif'; // Match .th/.td font
+
+        let maxWidth = 0;
+
+        // Measure Header
+        const headerText = typeof column.columnDef.header === 'string'
+            ? column.columnDef.header
+            : ''; // Complex headers might need manual adjustment, strict AutoFit is best for data
+
+        if (headerText) {
+            maxWidth = Math.max(maxWidth, context.measureText(headerText).width);
+        }
+
+        // Measure Visible Rows
+        const rows = table.getRowModel().rows;
+        rows.forEach(row => {
+            const cellValue = row.getValue(columnId);
+            const text = String(cellValue ?? '');
+            const width = context.measureText(text).width;
+            maxWidth = Math.max(maxWidth, width);
+        });
+
+        // Add Padding (approx 16px left + 16px right + 1px border + safety buffer)
+        // Previous value 44 was insufficient for Badges? Let's try 56 to be safe.
+        // Actually, the issue might be that badged text (like Status) isn't text-only measureable.
+        // But for text columns, 44 should be fine. If status is clipping, it's because badges have padding.
+        // Let's bump to 60.
+        const padding = 60;
+        const targetWidth = maxWidth + padding;
+
+        // Clamp to min/max
+        const minSize = column.columnDef.minSize || 0;
+        const maxSize = column.columnDef.maxSize || 1000;
+        const finalWidth = Math.max(minSize, Math.min(targetWidth, maxSize));
+
+        setColumnSizing(old => ({
+            ...old,
+            [columnId]: finalWidth
+        }));
+    };
+
+
     const table = useReactTable({
         data,
         columns,
@@ -69,7 +121,66 @@ export function DataTable<T>({
 
     const sentinelRef = useRef<HTMLTableRowElement>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+    // Initial Width Distribution Logic
+    const hasInitializedRef = useRef(false);
 
+    useEffect(() => {
+        if (hasInitializedRef.current || !scrollAreaRef.current) return;
+
+        const container = scrollAreaRef.current;
+        const observer = new ResizeObserver((entries) => {
+            if (hasInitializedRef.current) return;
+
+            const entry = entries[0];
+            if (!entry) return;
+
+            const containerWidth = entry.contentRect.width;
+            if (containerWidth <= 0) return;
+
+            // Calculate total default width
+            const currentTotalWidth = table.getPageCount() > 0 ? table.getTotalSize() : 0;
+
+            // If we have data and the table is smaller than container, distribute space
+            if (currentTotalWidth > 0 && currentTotalWidth < containerWidth) {
+                const excess = containerWidth - currentTotalWidth;
+
+                // Columns to grow: Resident (Primary), Notes (Secondary), Officer (Tertiary)
+                const growableColumns = {
+                    'resident': 3,
+                    'notes': 2,
+                    'officer': 1
+                };
+
+                const totalShares = Object.entries(growableColumns).reduce((sum, [id, share]) => {
+                    return table.getColumn(id)?.getIsVisible() ? sum + share : sum;
+                }, 0);
+
+                if (totalShares > 0) {
+                    const newSizing = { ...columnSizing };
+                    const pixelPerShare = excess / totalShares;
+
+                    Object.entries(growableColumns).forEach(([id, share]) => {
+                        const column = table.getColumn(id);
+                        if (column && column.getIsVisible()) {
+                            const currentSize = column.getSize();
+                            newSizing[id] = Math.floor(currentSize + (pixelPerShare * share));
+                        }
+                    });
+
+                    setColumnSizing(newSizing);
+                }
+            }
+
+            hasInitializedRef.current = true;
+            // We disconnect this specific observer after one success
+            observer.disconnect();
+        });
+
+        observer.observe(container);
+        return () => observer.disconnect();
+    }, [table, columnSizing]); // Dependencies need to include table to access columns
+
+    // Load More Observer
     useEffect(() => {
         if (!onLoadMore || !hasMore) return;
 
@@ -94,51 +205,60 @@ export function DataTable<T>({
         return () => observer.disconnect();
     }, [onLoadMore, hasMore]);
 
+
     return (
         <div className={styles.tableContainer}>
             <div ref={scrollAreaRef} className={styles.scrollArea}>
-                <table className={styles.table} style={{ width: table.getTotalSize() }}>
+                <table
+                    className={styles.table}
+                    style={{
+                        width: table.getTotalSize(),
+                    }}
+                >
                     <thead className={styles.thead}>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <tr key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     const isPinned = header.column.getIsPinned();
+                                    const isSpacer = header.column.id === 'spacer';
                                     return (
                                         <th
                                             key={header.id}
-                                            className={`${styles.th} ${isPinned ? styles.stickyColumn : ''}`}
+                                            className={`${styles.th} ${isPinned ? styles.stickyColumn : ''
+                                                }`}
+                                            colSpan={header.colSpan}
                                             style={{
-                                                width: header.getSize(),
+                                                width: isSpacer ? 'auto' : header.getSize(),
+                                                padding: isSpacer ? 0 : undefined,
                                                 position: isPinned ? 'sticky' : undefined,
                                                 right: isPinned === 'right' ? 0 : undefined,
                                                 left: isPinned === 'left' ? 0 : undefined,
                                             }}
-                                            onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
-                                            data-sortable={header.column.getCanSort()}
+                                            data-pinned={isPinned || undefined}
+                                            data-sort-direction={header.column.getIsSorted() as string}
                                         >
-                                            <div className={styles.thContent}>
+                                            <div
+                                                className={styles.thContent}
+                                                onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
+                                                data-sortable={header.column.getCanSort()}
+                                            >
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(header.column.columnDef.header, header.getContext())}
-                                                {header.column.getCanSort() && (
-                                                    <span className={styles.sortIndicator}>
-                                                        {{
-                                                            asc: '↑',
-                                                            desc: '↓',
-                                                        }[header.column.getIsSorted() as string] ?? ''}
+                                                {header.column.getIsSorted() && (
+                                                    <span className={`material-symbols-rounded ${styles.sortIndicator}`}>
+                                                        arrow_downward
                                                     </span>
                                                 )}
                                             </div>
-                                            {header.column.getCanResize() && (
+                                            {header.column.getCanResize() && !isSpacer && (
                                                 <div
-                                                    onMouseDown={(e) => {
+                                                    onDoubleClick={(e) => {
                                                         e.stopPropagation();
-                                                        header.getResizeHandler()(e);
+                                                        handleAutoFit(header.column.id);
                                                     }}
-                                                    onTouchStart={(e) => {
-                                                        e.stopPropagation();
-                                                        header.getResizeHandler()(e);
-                                                    }}
+                                                    onMouseDown={header.getResizeHandler()}
+                                                    onTouchStart={header.getResizeHandler()}
                                                     onClick={(e) => e.stopPropagation()}
                                                     className={`${styles.resizer} ${header.column.getIsResizing() ? styles.isResizing : ''
                                                         }`}
@@ -151,6 +271,43 @@ export function DataTable<T>({
                         ))}
                     </thead>
                     <tbody className={styles.tbody}>
+                        {/* Skeleton Loading State */}
+                        {isLoading && data.length === 0 && Array.from({ length: 15 }).map((_, idx) => (
+                            <tr key={`skeleton-${idx}`} className={styles.skeletonRow}>
+                                {table.getVisibleFlatColumns().map((column) => {
+                                    const isPinned = column.getIsPinned();
+                                    const isSpacer = column.id === 'spacer';
+                                    return (
+                                        <td
+                                            key={column.id}
+                                            className={`${styles.td} ${isPinned ? styles.stickyColumn : ''}`}
+                                            style={{
+                                                width: isSpacer ? 'auto' : column.getSize(),
+                                                position: isPinned ? 'sticky' : undefined,
+                                                right: isPinned === 'right' ? 0 : undefined,
+                                                left: isPinned === 'left' ? 0 : undefined,
+                                                padding: isSpacer ? 0 : undefined,
+                                            }}
+                                            data-pinned={isPinned || undefined}
+                                        >
+                                            {!isSpacer && (
+                                                <div
+                                                    className={
+                                                        column.id === 'select'
+                                                            ? styles.skeletonCheckbox
+                                                            : column.id === 'actions'
+                                                                ? styles.skeletonAction
+                                                                : styles.skeletonCell
+                                                    }
+                                                />
+                                            )}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+
+                        {/* Actual Data */}
                         {table.getRowModel().rows.map((row) => (
                             <tr
                                 key={row.id}
@@ -159,16 +316,20 @@ export function DataTable<T>({
                             >
                                 {row.getVisibleCells().map((cell) => {
                                     const isPinned = cell.column.getIsPinned();
+                                    const isSpacer = cell.column.id === 'spacer';
                                     return (
                                         <td
                                             key={cell.id}
-                                            className={`${styles.td} ${isPinned ? styles.stickyColumn : ''}`}
+                                            className={`${styles.td} ${isPinned ? styles.stickyColumn : ''
+                                                }`}
                                             style={{
-                                                width: cell.column.getSize(),
+                                                width: isSpacer ? 'auto' : cell.column.getSize(),
+                                                padding: isSpacer ? 0 : undefined,
                                                 position: isPinned ? 'sticky' : undefined,
                                                 right: isPinned === 'right' ? 0 : undefined,
                                                 left: isPinned === 'left' ? 0 : undefined,
                                             }}
+                                            data-pinned={isPinned || undefined}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </td>
@@ -177,13 +338,41 @@ export function DataTable<T>({
                             </tr>
                         ))}
                         {hasMore && (
-                            <tr ref={sentinelRef} className={styles.sentinelRow}>
-                                <td colSpan={columns.length} />
+                            <tr ref={sentinelRef} className={styles.skeletonRow}>
+                                {table.getVisibleFlatColumns().map((column) => {
+                                    const isPinned = column.getIsPinned();
+                                    const isSpacer = column.id === 'spacer';
+                                    return (
+                                        <td
+                                            key={`sentinel-${column.id}`}
+                                            className={`${styles.td} ${isPinned ? styles.stickyColumn : ''}`}
+                                            style={{
+                                                width: isSpacer ? 'auto' : column.getSize(),
+                                                position: isPinned ? 'sticky' : undefined,
+                                                right: isPinned === 'right' ? 0 : undefined,
+                                                left: isPinned === 'left' ? 0 : undefined,
+                                                padding: isSpacer ? 0 : undefined,
+                                            }}
+                                        >
+                                            {!isSpacer && (
+                                                <div
+                                                    className={
+                                                        column.id === 'select'
+                                                            ? styles.skeletonCheckbox
+                                                            : column.id === 'actions'
+                                                                ? styles.skeletonAction
+                                                                : styles.skeletonCell
+                                                    }
+                                                />
+                                            )}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                         )}
                     </tbody>
                 </table>
-                {table.getRowModel().rows.length === 0 && !isLoading && (
+                {table.getRowModel().rows.length === 0 && !isLoading && data.length === 0 && (
                     <div className={styles.emptyState}>
                         <span className={`material-symbols-rounded ${styles.emptyIcon}`}>
                             inbox
@@ -196,17 +385,19 @@ export function DataTable<T>({
             {/* Table Footer */}
             <div className={styles.tableFooter}>
                 <div className={styles.footerLeft}>
-                    {isLoading && (
+                    {/* If fetching, show just text. If done, show count. */}
+                    {isLoading ? (
                         <div className={styles.loadingIndicator}>
                             <span className={`material-symbols-rounded ${styles.loadingSpinner}`}>
                                 progress_activity
                             </span>
                             <span>Loading records...</span>
                         </div>
+                    ) : (
+                        <div className={styles.footerCount}>
+                            {data.length.toLocaleString()} of {(totalCount ?? data.length).toLocaleString()} records
+                        </div>
                     )}
-                    <div className={styles.footerCount}>
-                        {data.length.toLocaleString()} of {(totalCount ?? data.length).toLocaleString()} records
-                    </div>
                 </div>
             </div>
         </div>

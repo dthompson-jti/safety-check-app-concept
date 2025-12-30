@@ -529,3 +529,27 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
     | `.leftActions`, `.rightActions` | 10 | Interactive elements stay visible |
 *   **Anti-Pattern:** Setting overlay z-index higher than interactive elements, making them unclickable.
 *   **Key File:** `AppHeader.module.css`.
+
+### 22. Skeleton Loading Strategy
+*   **The Problem:** Generic loading spinners feel slow and disconnected from the final content layout.
+*   **The Solution:** Use high-fidelity **Shimmer Skeletons** that mirror the final content shape.
+*   **The Shape Contract:**
+    *   **Text/Cells:** Use `width: 100%` variants or random widths. Class: `.skeletonCell`.
+    *   **Checkboxes:** Use **Square** (20x20px). Class: `.skeletonCheckbox`.
+    *   **Icons/Actions:** Use **Circle** (24x24px). Class: `.skeletonAction`.
+*   **The Animation:** 
+    *   **Duration:** 3s (slow, premium feel).
+    *   **Gradient:** `secondary` → `tertiary` (high contrast) → `secondary`.
+*   **Anti-Pattern:** Using generic bars for everything. A checkbox column should look like a checkbox, not a text bar.
+*   **Reference:** `src/desktop/components/DataTable.module.css`.
+
+### 23. Infinite Scroll Pattern (The Skeleton Sentinel)
+*   **The Problem:** "Load More" buttons break flow, and replacing content with spinners causes layout jumps.
+*   **The Solution:** Append a single **Skeleton Row** at the bottom of the list when fetching more data.
+*   **The Logic:**
+    1.  Render existing data rows.
+    2.  If `hasMore` is true, render *one* additional `<tr>` with skeleton cells.
+    3.  Attach the `IntersectionObserver` ref to this skeleton row.
+*   **Behavior:** The user scrolls, sees a subtle ghost row, and real data swaps in in-place.
+*   **Anti-Pattern:** Showing a spinner that replaces the entire list (flicker) or a "Load More" button (friction).
+

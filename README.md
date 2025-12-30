@@ -89,11 +89,14 @@ The project includes a **companion desktop experience** (`desktop.html` → `src
 - **Desktop Dashboard:** `desktop.html` → `src/desktop/main.tsx`
 
 ### Desktop Views
--   **Live Monitor:** Real-time triage view showing all active checks sorted by urgency (Missed → Due → Upcoming). Includes "Alert" action buttons.
--   **Historical Review:** Audit view of yesterday's checks with variance display, status lozenges, and bulk supervisor note workflow.
+-   **Live Monitor:** Real-time triage view showing all active checks.
+    -   **Mega UI Update:** Features pixel-perfect "Shimmer" skeletons, infinite scroll with "Skeleton Sentinel" loading, and ghost-on-solid bulk actions.
+    -   **Smart Layout:** Uses a "Push" side panel grid layout and responsive column sizing.
+-   **Historical Review:** Audit view of yesterday's checks with variance display and bulk workflows.
 
 ### Key Technologies
--   **TanStack Table:** Headless data grid library (~15KB) for sorting, filtering, and row selection.
+-   **TanStack Table:** Headless data grid (~15KB) for robust sorting, filtering, and row selection.
+-   **Shared Design System:** Reuses mobile `buttons.css` and `semantics.css` for 100% brand consistency.
 -   **Shared Atoms:** Desktop reads from `safetyChecksAtom` for live data sync with mobile.
 -   **Mock Historical Data:** `src/desktop/mockHistoricalData.ts` provides 25 test scenarios.
 

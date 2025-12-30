@@ -114,14 +114,16 @@
     /* ENFORCE SOLID */
 }
 
-/* Primary action variant */
+/* Primary action variant - Ghost on Solid */
 .actionButton.primary {
-    background: white;
-    color: var(--surface-bg-brand-solid);
+    background: transparent;
+    color: var(--control-fg-on-solid);
+    border: 1px solid transparent;
+    /* Keep layout stable */
 }
 
 .actionButton.primary:hover {
-    background: var(--surface-bg-secondary);
+    background: var(--control-bg-on-solid-hover);
 }
 
 /* Overflow menu button */
