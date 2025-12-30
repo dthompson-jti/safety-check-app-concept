@@ -27,7 +27,7 @@ export const LiveMonitorView = () => {
     // Initial load
     useEffect(() => {
         setIsLoading(true);
-        loadLiveChecksPage(0, 50).then(({ data, nextCursor }) => {
+        void loadLiveChecksPage(0, 50).then(({ data, nextCursor }) => {
             setLoadedData(data);
             setCursor(nextCursor ?? 0);
             setHasMore(nextCursor !== null);
@@ -39,7 +39,7 @@ export const LiveMonitorView = () => {
         if (isLoading || !hasMore) return;
 
         setIsLoading(true);
-        loadLiveChecksPage(cursor, 50).then(({ data, nextCursor }) => {
+        void loadLiveChecksPage(cursor, 50).then(({ data, nextCursor }) => {
             setLoadedData((prev) => [...prev, ...data]);
             setCursor(nextCursor ?? cursor);
             setHasMore(nextCursor !== null);

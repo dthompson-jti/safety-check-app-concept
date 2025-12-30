@@ -46,7 +46,7 @@ export const HistoricalReviewView = () => {
     // Initial load
     useEffect(() => {
         setIsLoading(true);
-        loadHistoricalChecksPage(0, 50).then(({ data, nextCursor }) => {
+        void loadHistoricalChecksPage(0, 50).then(({ data, nextCursor }) => {
             setLoadedData(data);
             setCursor(nextCursor ?? 0);
             setHasMore(nextCursor !== null);
@@ -58,7 +58,7 @@ export const HistoricalReviewView = () => {
         if (isLoading || !hasMore) return;
 
         setIsLoading(true);
-        loadHistoricalChecksPage(cursor, 50).then(({ data, nextCursor }) => {
+        void loadHistoricalChecksPage(cursor, 50).then(({ data, nextCursor }) => {
             setLoadedData((prev) => [...prev, ...data]);
             setCursor(nextCursor ?? cursor);
             setHasMore(nextCursor !== null);

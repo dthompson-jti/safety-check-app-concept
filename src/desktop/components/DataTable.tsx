@@ -75,7 +75,7 @@ export function DataTable<T>({
         const rows = table.getRowModel().rows;
         rows.forEach(row => {
             const cellValue = row.getValue(columnId);
-            const text = String(cellValue ?? '');
+            const text = String((cellValue as string | number | null | undefined) ?? '');
             const width = context.measureText(text).width;
             maxWidth = Math.max(maxWidth, width);
         });

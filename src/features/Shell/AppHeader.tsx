@@ -107,84 +107,98 @@ export const AppHeader = () => {
         </div>
 
         <div className={styles.centerContent}>
-          {/* Always show StatusBar (Missed/Due counts) - use solid variant for contrast when offline */}
+          {/* Status Badges - Always present, variant changes based on offline status */}
           <motion.div
-            key="statusbar"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            className={styles.statusBadgesWrapper}
+            animate={{
+              y: isOffline ? -2 : 0,
+            }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
             <StatusBar variant={isOffline ? 'solid' : 'default'} />
           </motion.div>
+
+          {/* Offline Pill - Appears below status badges when offline */}
+          <AnimatePresence>
+            {isOffline && (
+              <motion.div
+                key="offline-pill"
+                className={styles.offlinePillWrapper}
+                initial={{ y: 12, opacity: 0, height: 0 }}
+                animate={{ y: -6, opacity: 1, height: 'auto' }}
+                exit={{ y: 12, opacity: 0, height: 0 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <button
+                  className={styles.offlineBar}
+                  onClick={status === 'offline' ? handleSync : undefined}
+                  aria-label={status === 'offline' ? "Offline: Click to sync" : "Back online"}
+                  data-status={status}
+                >
+                  <div className={styles.offlineBarContent}>
+                    {/* Instant exit, smooth enter - eliminates empty pill gap */}
+                    <AnimatePresence mode="wait">
+                      {status === 'syncing' ? (
+                        <motion.div
+                          key="syncing"
+                          className={styles.offlineContentRow}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
+                          exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                        >
+                          <span
+                            className={`material-symbols-rounded ${styles.spinning}`}
+                            style={{
+                              color: 'var(--surface-fg-on-solid)',
+                              marginRight: '2px' // Optical adjustment: Material Symbols have built-in padding
+                            }}
+                          >sync</span>
+                          <span className={styles.offlineTimer}>Connecting...</span>
+                        </motion.div>
+                      ) : status === 'connected' ? (
+                        <motion.div
+                          key="connected"
+                          className={styles.offlineContentRow}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
+                          exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                        >
+                          <span
+                            className="material-symbols-rounded"
+                            style={{
+                              color: 'var(--surface-fg-on-solid)',
+                              marginRight: '2px' // Optical adjustment: Material Symbols have built-in padding
+                            }}
+                          >check</span>
+                          <span className={styles.offlineTimer}>Connected</span>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="offline-content"
+                          className={styles.offlineContentRow}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
+                          exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                        >
+                          <span className={styles.offlineTimer}>Offline: {duration}</span>
+                          <svg width="12" height="1" viewBox="0 0 12 1" fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.divider}>
+                            <rect width="12" height="1" fill="currentColor" />
+                          </svg>
+                          <span className={styles.queuedText}>{queuedCount} Queued</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className={styles.rightActions}>
           <UserAvatar className={isOffline ? styles.offlineAvatar : ''} />
         </div>
       </div>
-
-      {/* Offline Bar: Expands downwards */}
-      <AnimatePresence>
-        {isOffline && (
-          <motion.button
-            className={styles.offlineBar}
-            onClick={status === 'offline' ? handleSync : undefined}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ type: 'tween', duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            aria-label={status === 'offline' ? "Offline: Click to sync" : "Back online"}
-          >
-            <div className={styles.offlineBarContent}>
-              <AnimatePresence mode="wait">
-                {status === 'syncing' ? (
-                  /* Syncing State */
-                  <motion.div
-                    key="syncing"
-                    className={styles.offlineContentRow}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <span className={`material-symbols-rounded ${styles.spinning}`}>sync</span>
-                    <span className={styles.offlineTimer}>Syncing...</span>
-                  </motion.div>
-                ) : status === 'connected' ? (
-                  /* Option B: Success Flash Content (Simplified) */
-                  <motion.div
-                    key="connected"
-                    className={styles.offlineContentRow}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <span className="material-symbols-rounded">check</span>
-                    <span className={styles.offlineTimer}>Connected</span>
-                  </motion.div>
-                ) : (
-                  /* Standard Offline Content */
-                  <motion.div
-                    key="offline"
-                    className={styles.offlineContentRow}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <span className="material-symbols-rounded">cloud_off</span>
-                    <span className={styles.offlineTimer}>Offline {duration}</span>
-                    <span className={styles.separator} />
-                    <span className={styles.queuedCount}>{queuedCount} queued</span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.button>
-        )}
-      </AnimatePresence>
     </header>
   );
 };

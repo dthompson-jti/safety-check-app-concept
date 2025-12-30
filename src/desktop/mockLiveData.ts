@@ -120,7 +120,7 @@ export function loadLiveChecksPage(
                 const generated = Array.from({ length: generateCount }, (_, i) => {
                     const idx = startIndex + i;
                     const status = (['pending', 'due', 'missed'] as const)[idx % 3];
-                    const timerSeverity = (status === 'missed' ? 'alert' : status === 'due' ? 'warning' : 'neutral') as 'alert' | 'warning' | 'neutral';
+                    const timerSeverity: 'alert' | 'warning' | 'neutral' = status === 'missed' ? 'alert' : status === 'due' ? 'warning' : 'neutral';
 
                     return {
                         id: `gen-live-${idx}`,

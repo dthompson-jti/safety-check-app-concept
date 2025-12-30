@@ -234,6 +234,7 @@ export function loadHistoricalChecksPage(
                         officerName: 'B. Corbin',
                         officerNote: undefined,
                         supervisorNote: undefined,
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                         reviewStatus: (status === 'done' ? 'verified' : 'pending') as 'verified' | 'pending',
                     };
                 });

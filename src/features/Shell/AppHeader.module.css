@@ -1,16 +1,26 @@
 /* src/features/Shell/AppHeader.module.css */
 
 .header {
+  /* Layout */
   width: 100%;
-  background-color: var(--surface-bg-header-translucent);
-  backdrop-filter: blur(var(--blur-glass));
-  -webkit-backdrop-filter: blur(var(--blur-glass));
-  border-bottom: 1px solid var(--surface-border-secondary);
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
   position: relative;
   z-index: 10;
   overflow: visible;
-  /* Allow offline bar to float below */
+
+  /* Online Background - glassmorphic */
+  background-color: var(--surface-bg-header-translucent);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border-bottom: 1px solid var(--surface-border-secondary);
+
+  /* Smooth transitions for offline mode */
+  transition:
+    background-color 0.5s ease,
+    border-bottom-color 0.5s ease,
+    min-height 0.5s ease;
 }
 
 /* =========================================
@@ -123,6 +133,14 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
     animation: none;
     background-color: var(--surface-bg-pulse-static, rgba(255, 59, 48, 0.1));
   }
+
+  .offlineBar[data-status="connected"] {
+    animation: none;
+  }
+
+  .spinning {
+    animation: none;
+  }
 }
 
 .headerContent {
@@ -130,12 +148,13 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-3);
-  height: var(--modal-header-height);
-  padding: var(--spacing-2) var(--spacing-2);
+  height: calc(var(--modal-header-height) + 6px);
+  padding: var(--spacing-2) var(--spacing-4);
   position: relative;
   z-index: 10;
   /* Above greyOverlay (z-index: 5) so menu/avatar are visible */
   pointer-events: none;
+  transition: height 0.5s ease;
 }
 
 .leftActions {
@@ -155,17 +174,34 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
 .centerContent {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-width: 0;
   /* Allow flex item to shrink below content size */
-  overflow: hidden;
-  /* Clip exiting animations */
+  gap: var(--spacing-0p5);
+  /* Small gap between badges and pill */
 }
 
 /* Re-enable pointer events for online content */
 .centerContent>* {
   pointer-events: auto;
+}
+
+/* Wrapper for status badges - always visible */
+.statusBadgesWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Wrapper for offline pill - animates in below badges */
+.offlinePillWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  /* Allow pulse box-shadow to expand */
 }
 
 .rightActions {
@@ -183,56 +219,80 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
 }
 
 /* =========================================
-   Offline Morph Styles (Expanded Header)
+   Offline Morph Styles (Expanded Rows)
    ========================================= */
 
-/* Unified Background Transition */
-.header {
-  display: flex;
-  flex-direction: column;
-  transition: background-color 0.2s ease, border-bottom-color 0.2s ease;
-}
-
+/* Offline Background - translucent dark (secondary-solid converted to rgba at 0.85) */
 .header[data-offline="true"] {
-  /* Solid dark background for authoritative offline state */
-  background-color: var(--primitives-grey-800);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  /* User-approved: translucent bg secondary solid */
+  background-color: rgba(37, 43, 55, 0.85);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border-bottom: 1px solid var(--surface-border-secondary);
+  box-shadow: none;
 }
 
-/* Option B: Success Flash (Scope: Lower Bar Only) */
-.header[data-status="connected"] .offlineBar {
-  background-color: var(--surface-bg-success-solid) !important;
-  transition: background-color 0.3s ease;
+/* Success Pulse Animation - matches CheckCard completing state */
+@keyframes pill-flash-complete {
+  0% {
+    box-shadow: 0 0 0 0px rgba(13, 147, 90, 0.6);
+  }
+
+  60% {
+    box-shadow: 0 0 0 8px rgba(13, 147, 90, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 8px rgba(13, 147, 90, 0);
+  }
 }
 
-/* The Expanding Offline Bar (Relative Child) */
+/* Success Background Fade Animation */
+@keyframes pill-success-bg-fade {
+  0% {
+    background-color: var(--surface-bg-secondary-solid);
+  }
+
+  100% {
+    background-color: var(--surface-bg-success-solid);
+  }
+}
+
+/* Connected State: Success Flash with Pulse (Scope: Pill Button) */
+.offlineBar[data-status="connected"] {
+  border-color: rgba(255, 255, 255, 0.25);
+  /* Sequence: size settles (0.4s) → bg fades in (0.3s) → pulse (1s) */
+  animation:
+    pill-success-bg-fade 0.3s ease 0.4s forwards,
+    pill-flash-complete 1s cubic-bezier(0.16, 1, 0.3, 1) 0.7s;
+}
+
+/* The Offline Pill (Solid Pill Below Badges) */
 .offlineBar {
   position: relative;
-  /* In flow */
-  width: 100%;
-  z-index: 9;
+  /* Pill shape - using correct token */
+  border-radius: var(--radius-pill);
+  padding: 0 var(--spacing-0p5);
+  /* Reduced padding for tighter appearance */
+  /* Solid background */
+  background-color: var(--surface-bg-secondary-solid);
 
-  /* Transparent so it shares the header's background */
-  background-color: transparent;
-
-  /* Remove individual borders, wrapper handles it */
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-
-  overflow: hidden;
+  /* Reset button styles */
+  border: 1px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  display: block;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
-  text-align: center;
 
-  /* No individual shadow */
+  /* No shadow */
   box-shadow: none;
 
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.offlineBar:active {
+  transform: scale(0.98);
 }
 
 .offlineBar:hover {
@@ -245,8 +305,8 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Reduced height per user request (was 36px) */
-  height: 28px;
+  /* Reduced height for tighter vertical padding */
+  height: 20px;
   color: var(--primitives-white);
   position: relative;
   overflow: hidden;
@@ -256,23 +316,29 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-3);
+  gap: var(--spacing-2);
   padding: 0 var(--spacing-2);
   width: 100%;
+  /* Maintain consistent width across states (prevents size jump) */
+  min-width: 115px;
 }
 
 /* Typography Enhancements */
 .offlineTimer {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 500;
   letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
   color: var(--surface-fg-on-solid);
 }
 
-/* Match Opacity for Offline State Elements (User Request) */
-.header[data-status="offline"] .offlineTimer,
-.header[data-status="offline"] .offlineBarContent .material-symbols-rounded {
+/* Queued text styling - lighter weight and faint color */
+.queuedText {
+  font-size: var(--font-size-sm);
+  /* 14px */
+  font-weight: 400;
+  /* Regular */
+  letter-spacing: 0.01em;
   color: var(--surface-fg-on-solid-faint);
 }
 
@@ -282,18 +348,15 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   color: var(--surface-fg-on-solid-faint);
 }
 
-.separator {
-  width: 1px;
-  height: 14px;
-  /* Use white with opacity for separator */
-  background-color: rgba(255, 255, 255, 0.3);
-  margin: 0 var(--spacing-1);
-}
+/* 
+ * Note: Icon colors (sync, check) are applied via inline styles in JSX
+ * CSS module selectors cannot reliably target global .material-symbols-rounded 
+ * class when nested inside hashed module selectors
+ */
 
-/* Icon polish */
-.offlineBarContent .material-symbols-rounded {
-  font-size: 1.125rem;
-  color: var(--surface-fg-on-solid);
+/* SVG divider styling */
+.divider {
+  color: var(--surface-border-primary);
 }
 
 /* Fix Avatar Color - Remove bogus filters */
@@ -317,8 +380,6 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   display: inline-block;
   /* Option B Refinement: Slower (2s), Reverse direction */
   animation: spin 2s linear infinite reverse;
-  /* Softer color per user request */
-  color: rgba(255, 255, 255, 0.7);
 }
 
 @keyframes spin {
