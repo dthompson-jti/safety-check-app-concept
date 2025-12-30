@@ -1,113 +1,313 @@
 /* src/desktop/components/DetailPanel.module.css */
-/* Side panel - now inline in CSS Grid, not fixed overlay */
 
 .panel {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    bottom: 0;
+    width: 400px;
+    background: var(--surface-bg-primary);
+    border-left: 1px solid var(--surface-border-primary);
+    box-shadow: var(--surface-shadow-xl);
     display: flex;
     flex-direction: column;
-    background-color: var(--surface-bg-primary);
-    border-left: 1px solid var(--surface-border-secondary);
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
+    z-index: 100;
+    /* High enough to be over header if needed, but usually below modal */
 }
 
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 90;
+    backdrop-filter: blur(2px);
+}
+
+/* Framer Motion handles transform, so we remove the static overrides */
+
+/* --- HEADER --- */
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--spacing-3) var(--spacing-4);
+    flex-shrink: 0;
+    padding: var(--spacing-6);
     border-bottom: 1px solid var(--surface-border-secondary);
-    min-height: 48px;
     background: var(--surface-bg-tertiary);
-}
-
-.title {
-    margin: 0;
-    font-size: var(--font-size-md);
-    font-weight: 600;
-    color: var(--surface-fg-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.closeButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: transparent;
-    border: none;
-    border-radius: var(--spacing-2);
-    color: var(--surface-fg-tertiary);
-    cursor: pointer;
-    transition: background-color 0.15s, color 0.15s;
-}
-
-.closeButton:hover {
-    background-color: var(--control-bg-tertiary-hover);
-    color: var(--surface-fg-secondary);
-}
-
-.content {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--spacing-4);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
 }
 
-.field {
+.headerTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.titleGroup {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-1);
 }
 
-.label {
-    font-size: var(--font-size-2xs);
+.residentName {
+    font-family: var(--font-primary);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--surface-fg-primary);
+    line-height: 1.2;
+}
+
+.locationPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--surface-fg-secondary);
-    letter-spacing: 0.02em;
+    background: var(--surface-bg-secondary);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    width: max-content;
 }
 
-.value {
-    font-size: var(--font-size-sm);
-    color: var(--surface-fg-primary);
-    word-break: break-word;
-}
-
-/* Status tags */
-.tags {
+.closeButton {
+    background: none;
+    border: none;
+    color: var(--surface-fg-tertiary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--radius-full);
+    transition: all 0.2s;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-right: -8px;
+    margin-top: -8px;
+}
+
+.closeButton:hover {
+    background: var(--surface-bg-secondary);
+    color: var(--surface-fg-primary);
+}
+
+/* --- CONTENT AREA --- */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+}
+
+/* Cards / Sections */
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.sectionTitle {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--surface-fg-tertiary);
+}
+
+/* Metrics Grid */
+.metricsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-4);
+    background: var(--surface-bg-secondary);
+    /* Slight card bg */
+    padding: var(--spacing-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--surface-border-secondary);
+}
+
+.metricCard {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metricLabel {
+    font-size: 12px;
+    color: var(--surface-fg-secondary);
+}
+
+.metricValue {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--surface-fg-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.metricValue.late {
+    color: var(--status-late-fg);
+}
+
+.metricValue.missed {
+    color: var(--status-missed-fg);
+}
+
+/* Quote/Log Block */
+.quoteBlock {
+    background: var(--surface-bg-secondary);
+    border-left: 4px solid var(--surface-border-primary);
+    padding: var(--spacing-4);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-2);
 }
 
-.tag {
+.quoteContent {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--surface-fg-primary);
+    font-style: italic;
+    margin: 0;
+}
+
+.quoteSignature {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--surface-fg-tertiary);
+    font-weight: 500;
+}
+
+.emptyNote {
+    font-size: 13px;
+    color: var(--surface-fg-tertiary);
+    font-style: italic;
+}
+
+/* Flight Log Card */
+.flightLogCard {
+    background: var(--surface-bg-secondary);
+    border: 1px solid var(--surface-border-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.flightLogHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flightLogTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--surface-fg-primary);
+}
+
+.flightLogDate {
+    font-size: 12px;
+    color: var(--surface-fg-secondary);
+}
+
+.flightLogContent {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--surface-fg-primary);
+    white-space: pre-wrap;
+}
+
+.flightLogSignature {
+    font-size: 12px;
+    color: var(--surface-fg-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--spacing-1);
+}
+
+.emptyFlightLog {
+    font-style: italic;
+    color: var(--surface-fg-tertiary);
+    font-size: 14px;
+}
+
+/* Supervisor Review */
+.supervisorBlock {
+    border: 1px dashed var(--surface-border-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.actionButton {
+    align-self: flex-start;
     display: inline-flex;
     align-items: center;
-    padding: 2px 8px;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--surface-bg-secondary);
+    border: 1px solid var(--surface-border-primary);
     border-radius: var(--radius-sm);
-    font-size: var(--font-size-2xs);
+    color: var(--surface-fg-primary);
+    font-size: 13px;
     font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.actionButton:hover {
+    background: var(--surface-bg-tertiary);
+    border-color: var(--surface-border-secondary);
+}
+
+/* Empty State */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: var(--spacing-8);
+    text-align: center;
+    gap: var(--spacing-4);
+    color: var(--surface-fg-tertiary);
+}
+
+.emptyTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--surface-fg-primary);
+    margin: 0;
+}
+
+.emptyText {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--surface-fg-secondary);
+    margin: 0;
+    max-width: 280px;
+}
+
+/* Tags */
+.tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
     text-transform: capitalize;
-}
-
-.tag.done {
-    background: var(--surface-bg-success-secondary);
-    color: var(--surface-fg-success-primary);
-}
-
-.tag.late {
-    background: var(--surface-bg-warning-secondary);
-    color: var(--surface-fg-warning-primary);
-}
-
-.tag.missed {
-    background: var(--surface-bg-error-secondary);
-    color: var(--surface-fg-alert-primary);
 }
 
 .tag.pending {
@@ -116,19 +316,6 @@
 }
 
 .tag.verified {
-    background: var(--surface-bg-success-secondary);
-    color: var(--surface-fg-success-primary);
-}
-
-/* Empty state */
-.emptyState {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-2);
-    color: var(--surface-fg-tertiary);
-    text-align: center;
-    padding: var(--spacing-6);
+    background: var(--status-complete-bg);
+    color: var(--status-complete-fg);
 }

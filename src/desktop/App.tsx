@@ -1,11 +1,8 @@
-// src/desktop/App.tsx
-
-import { useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import * as ToastPrimitive from '@radix-ui/react-toast';
 import { AnimatePresence } from 'framer-motion';
 import { toastsAtom } from '../data/toastAtoms';
-import { desktopViewAtom } from './atoms';
+import { desktopViewAtom, activeDetailRecordAtom, isDetailPanelOpenAtom, selectedHistoryRowsAtom, selectedLiveRowsAtom } from './atoms';
 import { DesktopHeader } from './components/DesktopHeader';
 import { DesktopToolbar } from './components/DesktopToolbar';
 import { LiveMonitorView } from './components/LiveMonitorView';
@@ -23,14 +20,24 @@ import styles from './App.module.css';
 export default function App() {
     const view = useAtomValue(desktopViewAtom);
     const toasts = useAtomValue(toastsAtom);
-    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const activeRecord = useAtomValue(activeDetailRecordAtom);
+    const [isPanelOpen, setIsPanelOpen] = useAtom(isDetailPanelOpenAtom);
+
+    // Selection counts to handle "Select single record" state in panel
+    const selectedLive = useAtomValue(selectedLiveRowsAtom);
+    const selectedHistory = useAtomValue(selectedHistoryRowsAtom);
+    const totalSelected = selectedLive.size + selectedHistory.size;
+
+    const handleTogglePanel = () => {
+        setIsPanelOpen(!isPanelOpen);
+    };
 
     return (
         <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
             <div className={styles.app} data-panel-open={isPanelOpen}>
                 <div className={styles.mainWrapper}>
                     <DesktopHeader
-                        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
+                        onTogglePanel={handleTogglePanel}
                         isPanelOpen={isPanelOpen}
                     />
                     <DesktopToolbar />
@@ -45,9 +52,11 @@ export default function App() {
                     </main>
                 </div>
 
-                {isPanelOpen && (
-                    <DetailPanel onClose={() => setIsPanelOpen(false)} />
-                )}
+                <AnimatePresence>
+                    {isPanelOpen && (
+                        <DetailPanel record={activeRecord} selectedCount={totalSelected} />
+                    )}
+                </AnimatePresence>
 
                 <SupervisorNoteModal />
             </div>

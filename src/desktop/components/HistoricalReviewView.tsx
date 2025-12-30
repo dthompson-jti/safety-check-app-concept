@@ -4,6 +4,9 @@ import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import {
     selectedHistoryRowsAtom,
     supervisorNoteModalAtom,
+    activeDetailRecordAtom,
+    isDetailPanelOpenAtom,
+    PanelData,
 } from '../atoms';
 import { HistoricalCheck } from '../types';
 import { DataTable } from './DataTable';
@@ -32,6 +35,7 @@ const formatVariance = (minutes: number): string => {
 export const HistoricalReviewView = () => {
     const [selectedRows, setSelectedRows] = useAtom(selectedHistoryRowsAtom);
     const setModalState = useSetAtom(supervisorNoteModalAtom);
+    const setIsPanelOpen = useSetAtom(isDetailPanelOpenAtom);
 
     // Pagination State
     const [loadedData, setLoadedData] = useState<HistoricalCheck[]>([]);
@@ -93,6 +97,57 @@ export const HistoricalReviewView = () => {
     const handleClearSelection = () => {
         setSelectedRows(new Set<string>());
     };
+
+    const setDetailRecord = useSetAtom(activeDetailRecordAtom);
+
+    const handleRowClick = useCallback((row: HistoricalCheck, event: React.MouseEvent) => {
+        const isMeta = event.ctrlKey || event.metaKey;
+        const isShift = event.shiftKey;
+
+        setSelectedRows((prev: Set<string>) => {
+            const next = new Set(prev);
+            if (isMeta) {
+                if (next.has(row.id)) next.delete(row.id);
+                else next.add(row.id);
+            } else if (isShift && prev.size > 0) {
+                const lastId = Array.from(prev).pop();
+                if (lastId) {
+                    const allIds = loadedData.map((r: HistoricalCheck) => r.id);
+                    const startIdx = allIds.indexOf(lastId);
+                    const endIdx = allIds.indexOf(row.id);
+                    const range = allIds.slice(
+                        Math.min(startIdx, endIdx),
+                        Math.max(startIdx, endIdx) + 1
+                    );
+                    range.forEach((id: string) => next.add(id));
+                }
+            } else {
+                next.clear();
+                next.add(row.id);
+            }
+            return next;
+        });
+
+        const panelData: PanelData = {
+            id: row.id,
+            source: 'historical',
+            residentName: row.residents.map(r => r.name).join(', '),
+            location: row.location,
+            status: row.status,
+            timeScheduled: row.scheduledTime,
+            timeActual: row.actualTime,
+            varianceMinutes: row.varianceMinutes,
+            officerName: row.officerName,
+            officerNote: row.officerNote,
+            supervisorNote: row.supervisorNote,
+            reviewStatus: row.reviewStatus,
+        };
+        setDetailRecord(panelData);
+
+        if (!isMeta && !isShift) {
+            setIsPanelOpen(true);
+        }
+    }, [loadedData, setSelectedRows, setDetailRecord, setIsPanelOpen]);
 
     const handleOpenNoteModal = useCallback((checkId: string) => {
         setModalState({
@@ -270,6 +325,7 @@ export const HistoricalReviewView = () => {
                 isLoading={isLoading}
                 hasMore={hasMore}
                 onLoadMore={handleLoadMore}
+                onRowClick={handleRowClick}
             />
 
             {selectedRows.size > 0 && (

@@ -26,6 +26,7 @@ interface DataTableProps<T> {
     isLoading?: boolean;
     hasMore?: boolean;
     onLoadMore?: () => void;
+    onRowClick?: (row: T, event: React.MouseEvent) => void;
 }
 
 export function DataTable<T>({
@@ -39,6 +40,7 @@ export function DataTable<T>({
     isLoading = false,
     hasMore = false,
     onLoadMore,
+    onRowClick,
 }: DataTableProps<T>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
@@ -313,6 +315,7 @@ export function DataTable<T>({
                                 key={row.id}
                                 className={styles.tr}
                                 data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
+                                onClick={(e) => onRowClick?.(row.original, e)}
                             >
                                 {row.getVisibleCells().map((cell) => {
                                     const isPinned = cell.column.getIsPinned();

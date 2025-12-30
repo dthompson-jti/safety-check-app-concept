@@ -1,7 +1,7 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
-import { desktopFilterAtom } from '../atoms';
+import { desktopFilterAtom, activeDetailRecordAtom, selectedLiveRowsAtom, isDetailPanelOpenAtom, PanelData } from '../atoms';
 import { LiveCheckRow } from '../types';
 import { DataTable } from './DataTable';
 import { BulkActionFooter } from './BulkActionFooter';
@@ -15,7 +15,8 @@ import styles from './DataTable.module.css';
 export const LiveMonitorView = () => {
     const filter = useAtomValue(desktopFilterAtom);
     const addToast = useSetAtom(addToastAtom);
-    const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+    const [selectedRows, setSelectedRows] = useAtom(selectedLiveRowsAtom);
+    const setIsPanelOpen = useSetAtom(isDetailPanelOpenAtom);
 
     // Pagination State
     const [loadedData, setLoadedData] = useState<LiveCheckRow[]>([]);
@@ -96,7 +97,7 @@ export const LiveMonitorView = () => {
             const newSet = new Set(Object.keys(newSelection).filter((k) => newSelection[k]));
             setSelectedRows(newSet);
         },
-        [rowSelection]
+        [rowSelection, setSelectedRows]
     );
 
     const handleAlert = useCallback((row: LiveCheckRow) => {
@@ -115,6 +116,60 @@ export const LiveMonitorView = () => {
         });
         setSelectedRows(new Set());
     };
+
+    const setDetailRecord = useSetAtom(activeDetailRecordAtom);
+
+    const handleRowClick = useCallback((row: LiveCheckRow, event: React.MouseEvent) => {
+        const isMeta = event.ctrlKey || event.metaKey;
+        const isShift = event.shiftKey;
+
+        setSelectedRows((prev: Set<string>) => {
+            const next = new Set(prev);
+            if (isMeta) {
+                if (next.has(row.id)) next.delete(row.id);
+                else next.add(row.id);
+            } else if (isShift && prev.size > 0) {
+                // Shift click: select range from last selected
+                const lastId = Array.from(prev).pop();
+                if (lastId) {
+                    const allIds = liveRows.map((r: LiveCheckRow) => r.id);
+                    const startIdx = allIds.indexOf(lastId);
+                    const endIdx = allIds.indexOf(row.id);
+                    const range = allIds.slice(
+                        Math.min(startIdx, endIdx),
+                        Math.max(startIdx, endIdx) + 1
+                    );
+                    range.forEach((id: string) => next.add(id));
+                }
+            } else {
+                // Standard click: clear and select one
+                next.clear();
+                next.add(row.id);
+            }
+            return next;
+        });
+
+        // Always update panel data for the clicked row
+        const panelData: PanelData = {
+            id: row.id,
+            source: 'live',
+            residentName: row.residents.map(r => r.name).join(', '),
+            location: row.location,
+            status: row.status,
+            timeScheduled: row.originalCheck.dueDate || '',
+            timeActual: row.lastCheckTime,
+            officerName: row.lastCheckOfficer || '—',
+            supervisorNote: row.supervisorNote,
+            hasHighRisk: row.hasHighRisk,
+            riskType: row.riskType,
+        };
+        setDetailRecord(panelData);
+
+        // If it was a standard click (no modifiers), ensure panel is open
+        if (!isMeta && !isShift) {
+            setIsPanelOpen(true);
+        }
+    }, [liveRows, setSelectedRows, setDetailRecord, setIsPanelOpen]);
 
     const columns: ColumnDef<LiveCheckRow>[] = useMemo(
         () => [
@@ -279,6 +334,7 @@ export const LiveMonitorView = () => {
                 isLoading={isLoading}
                 hasMore={hasMore}
                 onLoadMore={handleLoadMore}
+                onRowClick={handleRowClick}
             />
 
             {selectedRows.size > 0 && (
