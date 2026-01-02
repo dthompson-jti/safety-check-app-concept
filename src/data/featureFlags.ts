@@ -43,7 +43,7 @@ export interface FeatureFlags {
     feat_invert_badge: boolean;
     feat_badge_mode: 'none' | 'pulse' | 'ticker';
     feat_jump_fab: boolean;
-    feat_ring_animation: boolean;
+    feat_scan_animation: 'none' | 'rings' | 'wave' | 'wave-top';
 }
 
 const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
@@ -65,7 +65,7 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     feat_invert_badge: false,
     feat_badge_mode: 'none',
     feat_jump_fab: false,
-    feat_ring_animation: false,
+    feat_scan_animation: 'none',
 };
 
 export const featureFlagsAtom = atomWithStorage<FeatureFlags>('feature-flags', DEFAULT_FEATURE_FLAGS);

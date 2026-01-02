@@ -206,7 +206,7 @@
   position: relative;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  color: var(--surface-fg-info-primary);
+  color: var(--surface-fg-secondary);
   text-align: center;
   white-space: nowrap;
 
@@ -288,7 +288,96 @@
     display: none;
   }
 
-  .scanningLabel {
+  .scanningLabel,
+  .scanningLabelSmall {
     animation: none;
   }
+
+  .waveBarsContainer,
+  .waveTopContainer {
+    display: none;
+  }
+}
+
+/* =================================================================
+   Wave Bars Visualizer
+   ================================================================= */
+
+.waveBarsContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.waveBarsSvg {
+  position: absolute;
+  height: 39px;
+  width: 23px;
+}
+
+.waveBarsSvg[data-side="left"] {
+  right: calc(50% + 80px);
+  /* ~half text width (52px) + 48px gap */
+  /* Position left of center text */
+}
+
+.waveBarsSvg[data-side="right"] {
+  left: calc(50% + 80px);
+  transform: scaleX(-1);
+  /* Mirror horizontally */
+}
+
+.waveBarsSvg path {
+  fill: var(--surface-fg-secondary);
+}
+
+/* =================================================================
+   Wave Top Visualizer (stacked: wave above, text below)
+   ================================================================= */
+
+.waveTopContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.waveTopSvg {
+  height: 24px;
+  width: 39px;
+  /* Rotate 90deg so arcs point upward (away from text) */
+  /* Scale 1.25 for 25% larger wave */
+  transform: rotate(90deg) scale(1.25);
+  flex-shrink: 0;
+  margin-top: -2px;
+}
+
+.waveTopSvg path {
+  fill: var(--surface-fg-secondary);
+}
+
+/* Smaller label when using wave-top layout */
+.scanningLabelSmall {
+  position: relative;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--surface-fg-secondary);
+  text-align: center;
+  white-space: nowrap;
+  text-shadow:
+    0 0 8px var(--surface-bg-secondary),
+    0 0 16px var(--surface-bg-secondary);
+  letter-spacing: -0.01em;
+  z-index: 1;
+  animation: labelPulse 2s ease-in-out infinite;
+  /* Reduced to 0 to move text up closer to wave */
+  margin-top: 0;
 }

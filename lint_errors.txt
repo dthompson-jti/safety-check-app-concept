@@ -1,0 +1,8 @@
+
+C:\Users\dthompson\Documents\CODE\safety-check-app-concept\src\features\Overlays\FutureIdeasModal.tsx
+  58:88  error  This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+  79:92  error  This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+
+Γ£û 2 problems (2 errors, 0 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

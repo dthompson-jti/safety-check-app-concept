@@ -39,19 +39,28 @@ export const FutureIdeasModal = () => {
                     These are just conceptual ideas for a potential future version.  Nothing here is expected for v1.
                 </div>
 
-                {/* Ring Animation */}
-                <h3 className={styles.sectionHeader}>Ring Animation</h3>
+                {/* Scan Animation */}
+                <h3 className={styles.sectionHeader}>Scan Animation</h3>
                 <div className={styles.settingsGroup}>
-                    <div className={styles.settingsItem}>
-                        <label htmlFor="ring-animation-switch" className={styles.itemLabel}>Enable Ring Animation</label>
-                        <Switch
-                            id="ring-animation-switch"
-                            checked={featureFlags.feat_ring_animation}
-                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, feat_ring_animation: c })))}
+                    <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+                        <label className={styles.itemLabel}>Animation Style</label>
+                        <SegmentedControl
+                            id="scan-animation-style"
+                            options={[
+                                { value: 'none', label: 'None' },
+                                { value: 'rings', label: 'Rings' },
+                                { value: 'wave', label: 'Wave' },
+                                { value: 'wave-top', label: 'Top' },
+                            ]}
+                            value={featureFlags.feat_scan_animation}
+                            onValueChange={(v) => {
+                                triggerHaptic('light');
+                                setFeatureFlags(cur => ({ ...cur, feat_scan_animation: v as 'none' | 'rings' | 'wave' | 'wave-top' }));
+                            }}
                         />
                     </div>
                 </div>
-                {featureFlags.feat_ring_animation && (
+                {featureFlags.feat_scan_animation === 'rings' && (
                     <Button variant="secondary" onClick={() => { triggerHaptic('light'); setIsRingTestOpen(true); }}>
                         <span className="material-symbols-rounded">animation</span>
                         Ring Animation Sandbox

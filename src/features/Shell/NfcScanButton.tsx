@@ -4,6 +4,8 @@ import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useAtomValue } from 'jotai';
 import { useNfcScan } from './useNfcScan';
 import { WaapiRingVisualizer } from './WaapiRingVisualizer';
+import { WaveBarsVisualizer } from './WaveBarsVisualizer';
+import { WaveTopVisualizer } from './WaveTopVisualizer';
 import { featureFlagsAtom } from '../../data/featureFlags';
 import { appConfigAtom } from '../../data/atoms';
 import styles from './NfcScanButton.module.css';
@@ -15,7 +17,7 @@ const StartButton = ({ onClick }: { onClick: () => void }) => {
     return (
         <button className={styles.startButton} onClick={onClick}>
             <span className="material-symbols-rounded">sensors</span>
-            <span>Scan</span>
+            <span>Start Scan</span>
         </button>
     );
 };
@@ -143,7 +145,10 @@ const FeedbackVisualizer = () => {
     }, [scanState]);
 
     const isScanning = scanState === 'scanning';
-    const showRings = featureFlags.feat_ring_animation && isScanning;
+    const scanAnimation = featureFlags.feat_scan_animation;
+    const showRings = scanAnimation === 'rings' && isScanning;
+    const showWaveBars = scanAnimation === 'wave' && isScanning;
+    const showWaveTop = scanAnimation === 'wave-top' && isScanning;
 
     const renderFeedback = (primary: string, secondary?: string, iconType: 'success' | 'alert' | 'warning' = 'success') => {
         const bgClass = iconType === 'success' ? styles.feedbackBackgroundSuccess : styles.feedbackBackgroundError;
@@ -214,9 +219,11 @@ const FeedbackVisualizer = () => {
             style={{ cursor: scanState === 'readError' ? 'pointer' : 'default' }}
         >
             {showRings && <WaapiRingVisualizer isEnabled={true} />}
+            {showWaveBars && <WaveBarsVisualizer isEnabled={true} />}
+            {showWaveTop && <WaveTopVisualizer isEnabled={true} />}
 
             <AnimatePresence mode="wait">
-                {scanState === 'scanning' && (
+                {scanState === 'scanning' && !showWaveTop && (
                     <motion.div
                         key="scanning"
                         className={styles.scanningLabel}
