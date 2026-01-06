@@ -17,6 +17,12 @@
     -webkit-backdrop-filter: blur(var(--blur-glass));
 }
 
+.header[data-header-style="quaternary"] {
+    background-color: var(--surface-bg-quaternary-translucent);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+}
+
 .titleGroup {
     display: flex;
     flex-direction: column;

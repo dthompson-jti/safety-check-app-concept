@@ -186,7 +186,7 @@ interface AppConfig {
   nfcScanTimeout: number; // ms
   nfcTimeoutEnabled: boolean; // if false, scan stays active indefinitely
   nfcShowCountdown: boolean;
-  headerStyle: 'secondary' | 'tertiary';
+  headerStyle: 'secondary' | 'tertiary' | 'quaternary';
   showEnvironmentName: boolean;
   environmentName: string;
 }
