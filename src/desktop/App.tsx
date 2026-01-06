@@ -3,6 +3,9 @@ import * as ToastPrimitive from '@radix-ui/react-toast';
 import { AnimatePresence } from 'framer-motion';
 import { toastsAtom } from '../data/toastAtoms';
 import { desktopViewAtom, activeDetailRecordAtom, isDetailPanelOpenAtom, selectedHistoryRowsAtom, selectedLiveRowsAtom } from './atoms';
+import { isDevToolsModalOpenAtom } from '../data/atoms';
+import { FullScreenModal } from '../components/FullScreenModal';
+import { DeveloperModal } from '../features/Overlays/DeveloperModal';
 import { DesktopHeader } from './components/DesktopHeader';
 import { DesktopToolbar } from './components/DesktopToolbar';
 import { LiveMonitorView } from './components/LiveMonitorView';
@@ -22,6 +25,7 @@ export default function App() {
     const toasts = useAtomValue(toastsAtom);
     const activeRecord = useAtomValue(activeDetailRecordAtom);
     const [isPanelOpen, setIsPanelOpen] = useAtom(isDetailPanelOpenAtom);
+    const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
 
     // Selection counts to handle "Select single record" state in panel
     const selectedLive = useAtomValue(selectedLiveRowsAtom);
@@ -59,6 +63,16 @@ export default function App() {
                 </AnimatePresence>
 
                 <SupervisorNoteModal />
+
+                <FullScreenModal
+                    isOpen={isDevToolsOpen}
+                    onClose={() => setIsDevToolsOpen(false)}
+                    title="Developer Tools"
+                    transitionType="slide-horizontal"
+                    actionType="back"
+                >
+                    <DeveloperModal />
+                </FullScreenModal>
             </div>
 
             {/* Toast System */}

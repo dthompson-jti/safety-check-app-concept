@@ -1,8 +1,9 @@
 // src/desktop/components/DesktopHeader.tsx
 
 import { useState } from 'react';
-import { useAtom } from 'jotai';
 import { desktopViewAtom } from '../atoms';
+import { isDevToolsModalOpenAtom, appConfigAtom } from '../../data/atoms';
+import { useAtom, useAtomValue } from 'jotai';
 import { DesktopView } from '../types';
 import styles from './DesktopHeader.module.css';
 
@@ -13,6 +14,8 @@ interface DesktopHeaderProps {
 
 export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps) => {
     const [view, setView] = useAtom(desktopViewAtom);
+    const [, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
+    const appConfig = useAtomValue(appConfigAtom);
     const [showOverflowMenu, setShowOverflowMenu] = useState(false);
 
     const handleViewChange = (newView: DesktopView) => {
@@ -20,10 +23,15 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
     };
 
     return (
-        <header className={styles.header}>
+        <header className={styles.header} data-header-style={appConfig.headerStyle}>
             {/* Left: Title + View Toggle */}
             <div className={styles.leftSection}>
-                <h1 className={styles.title}>Safeguard Room Checks</h1>
+                <div className={styles.titleGroup}>
+                    <h1 className={styles.title}>Safeguard Room Checks</h1>
+                    {appConfig.showEnvironmentName && (
+                        <span className={styles.envName}>{appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}</span>
+                    )}
+                </div>
 
                 <div className={styles.viewToggle}>
                     <button
@@ -81,6 +89,11 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
                                 <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
                                     <span className="material-symbols-rounded">summarize</span>
                                     Safeguard Report
+                                </button>
+                                <div className={styles.menuDivider} />
+                                <button className={styles.menuItem} onClick={() => { setShowOverflowMenu(false); setIsDevToolsOpen(true); }}>
+                                    <span className="material-symbols-rounded">code</span>
+                                    Developer tools
                                 </button>
                                 <div className={styles.menuDivider} />
                                 <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>

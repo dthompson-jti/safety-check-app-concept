@@ -19,6 +19,7 @@
   --surface-bg-secondary-solid: var(--primitives-grey-600);
   /* The translucent, blurred background for the main app header and footer. */
   --surface-bg-header-translucent: rgba(249, 249, 249, 0.75);
+  --surface-bg-tertiary-translucent: rgba(243, 243, 244, 0.75);
   --surface-bg-brand-primary: var(--primitives-theme-50);
   --surface-bg-brand-solid: var(--primitives-theme-600);
   --surface-bg-brand-solid_hover: var(--primitives-theme-700);
@@ -242,6 +243,7 @@
 
   /* Header/Footer Translucency - matches secondary bg (grey-950) */
   --surface-bg-header-translucent: rgba(10, 12, 18, 0.85);
+  --surface-bg-tertiary-translucent: rgba(37, 43, 55, 0.85);
   --surface-bg-brand-primary: var(--primitives-theme-900);
 
   /* Text - High Contrast */
@@ -428,6 +430,7 @@
 
   /* Header/Footer Translucency - matches secondary bg (grey-900) */
   --surface-bg-header-translucent: rgba(24, 29, 39, 0.85);
+  --surface-bg-tertiary-translucent: rgba(37, 43, 55, 0.85);
   --surface-bg-brand-primary: var(--primitives-theme-900);
 
   /* Text - High Contrast */
@@ -615,6 +618,7 @@
 
   /* Header/Footer Translucency - matches secondary bg (grey-940) */
   --surface-bg-header-translucent: rgba(14, 16, 23, 0.85);
+  --surface-bg-tertiary-translucent: rgba(32, 37, 49, 0.85);
   --surface-bg-brand-primary: var(--primitives-theme-900);
 
   /* Text - High Contrast */

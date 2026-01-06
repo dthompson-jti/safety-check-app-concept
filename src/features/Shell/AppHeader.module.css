@@ -23,6 +23,10 @@
     min-height 0.5s ease;
 }
 
+.header[data-header-style="tertiary"] {
+  background-color: var(--surface-bg-tertiary-translucent);
+}
+
 /* =========================================
    Glass Pulse Effects - Late Check Warning
    ========================================= */

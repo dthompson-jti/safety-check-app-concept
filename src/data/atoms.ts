@@ -186,6 +186,9 @@ interface AppConfig {
   nfcScanTimeout: number; // ms
   nfcTimeoutEnabled: boolean; // if false, scan stays active indefinitely
   nfcShowCountdown: boolean;
+  headerStyle: 'secondary' | 'tertiary';
+  showEnvironmentName: boolean;
+  environmentName: string;
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
@@ -205,6 +208,9 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   nfcScanTimeout: 15000,
   nfcTimeoutEnabled: true,
   nfcShowCountdown: true,
+  headerStyle: 'secondary',
+  showEnvironmentName: false,
+  environmentName: 'https://vicbc-qa-symphony.logan-symphony.com',
 });
 
 // =================================================================

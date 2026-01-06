@@ -1,7 +1,7 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
-import { appViewAtom, connectionStatusAtom, offlineTimestampAtom } from '../../data/atoms';
+import { appViewAtom, connectionStatusAtom, offlineTimestampAtom, appConfigAtom } from '../../data/atoms';
 import { headerHeightAtom } from '../../data/layoutAtoms';
 import { lateCheckCountAtom, queuedChecksCountAtom, dispatchActionAtom } from '../../data/appDataAtoms';
 import { useLayoutRegistration } from '../../data/useLayoutRegistration';
@@ -28,6 +28,7 @@ export const AppHeader = () => {
   const queuedCount = useAtomValue(queuedChecksCountAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const { trigger: triggerHaptic } = useHaptics();
+  const appConfig = useAtomValue(appConfigAtom);
 
   const [duration, setDuration] = useState('0:00');
 
@@ -88,6 +89,7 @@ export const AppHeader = () => {
       ref={combinedRef}
       data-offline={isOffline}
       data-status={status} // For Option B Success Flash styling
+      data-header-style={appConfig.headerStyle}
       aria-live="polite"
     >
       <div className={styles.headerContent}>

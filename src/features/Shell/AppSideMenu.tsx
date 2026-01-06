@@ -19,6 +19,7 @@ import { useTapCounter } from '../../hooks/useTapCounter';
 import { ContextSwitcherCard } from './ContextSwitcherCard';
 import { ActionListItem } from '../../components/ActionListItem';
 import { APP_VERSION } from '../../config';
+import { appConfigAtom } from '../../data/atoms';
 import styles from './AppSideMenu.module.css';
 
 export const AppSideMenu = () => {
@@ -32,6 +33,7 @@ export const AppSideMenu = () => {
   const session = useAtomValue(sessionAtom);
   const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
   const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
+  const appConfig = useAtomValue(appConfigAtom);
 
   const { toggle: toggleFutureIdeas, isUnlocked: futureIdeasUnlocked } = useFutureIdeas();
   const addToast = useSetAtom(addToastAtom);
@@ -67,6 +69,11 @@ export const AppSideMenu = () => {
           <h1 className={styles.title} onClick={handleFutureIdeasTap}>Safeguard</h1>
           <span className={styles.version}>{APP_VERSION}</span>
         </div>
+        {appConfig.showEnvironmentName && (
+          <div className={styles.envBanner}>
+            {appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}
+          </div>
+        )}
         <div className={styles.headerSeparator} />
       </header>
 

@@ -1,8 +1,8 @@
 // src/features/Session/LoginView.tsx
 import { useState, useRef } from 'react';
-import { useSetAtom } from 'jotai';
+import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { sessionAtom } from '../../data/atoms';
+import { sessionAtom, appConfigAtom } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { findUser } from '../../data/users';
 import { Button } from '../../components/Button';
@@ -25,6 +25,7 @@ export const LoginView = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const setSession = useSetAtom(sessionAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
+  const appConfig = useAtomValue(appConfigAtom);
 
   // Layout Stability Hook
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -217,15 +218,22 @@ export const LoginView = () => {
           </motion.div>
 
           <footer className={styles.pageFooter}>
-            <p>&copy; 2025 Journal Technologies Inc.</p>
-            <p>
+            <div className={styles.footerData}>
+              {appConfig.showEnvironmentName && (
+                <div className={styles.envDisplay}>
+                  Environment: {appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}
+                </div>
+              )}
+              <div className={styles.versionDisplay}>
+                v{APP_VERSION.replace('v', '')}
+              </div>
+            </div>
+            <p className={styles.footerLinks}>
               <a href="#" onClick={(e) => e.preventDefault()}>Privacy Policy</a>
               <span className={styles.footerSeparator}>&middot;</span>
               <a href="#" onClick={(e) => e.preventDefault()}>Terms of Use</a>
             </p>
-            <div className={styles.versionDisplay}>
-              v{APP_VERSION.replace('v', '')}
-            </div>
+            <p className={styles.copyright}>&copy; 2025 Journal Technologies Inc.</p>
           </footer>
         </div>
       </motion.div>

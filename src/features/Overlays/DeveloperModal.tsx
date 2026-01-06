@@ -189,6 +189,44 @@ export const DeveloperModal = () => {
               onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, showStatusIndicators: c })))}
             />
           </div>
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Header style</label>
+            <SegmentedControl
+              id="header-style-toggle"
+              options={[
+                { value: 'secondary', label: 'Secondary' },
+                { value: 'tertiary', label: 'Tertiary' },
+              ]}
+              value={appConfig.headerStyle || 'secondary'}
+              onValueChange={(val) => {
+                triggerHaptic('selection');
+                setAppConfig((c) => ({ ...c, headerStyle: val as 'secondary' | 'tertiary' }));
+              }}
+            />
+          </div>
+
+          <div className={styles.settingsItem}>
+            <label htmlFor="show-env-name-switch" className={styles.itemLabel}>Show environment name</label>
+            <Switch
+              id="show-env-name-switch"
+              checked={appConfig.showEnvironmentName}
+              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, showEnvironmentName: c })))}
+            />
+          </div>
+
+          {appConfig.showEnvironmentName && (
+            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+              <label htmlFor="env-name-input" className={styles.itemLabel}>Environment name</label>
+              <input
+                id="env-name-input"
+                className={styles.textInput}
+                type="text"
+                value={appConfig.environmentName}
+                onChange={(e) => setAppConfig(cur => ({ ...cur, environmentName: e.target.value }))}
+                placeholder="e.g. https://vicbc-qa-symphony.logan-symphony.com"
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -307,6 +345,6 @@ export const DeveloperModal = () => {
           ))}
         </div>
       </div>
-    </motion.div>
+    </motion.div >
   );
 };
