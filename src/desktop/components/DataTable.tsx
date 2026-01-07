@@ -248,6 +248,7 @@ export function DataTable<T>({
                                             key={header.id}
                                             className={`${styles.th} ${pinnedClass}`}
                                             colSpan={header.colSpan}
+                                            onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                                             style={{
                                                 width: isSpacer ? 'auto' : header.getSize(),
                                                 padding: isSpacer ? 0 : undefined,
@@ -256,17 +257,16 @@ export function DataTable<T>({
                                                 left: isPinned === 'left' ? leftOffset : undefined,
                                             }}
                                             data-pinned={isPinned || undefined}
+                                            data-sortable={header.column.getCanSort()}
                                             data-sort-direction={header.column.getIsSorted() as string}
                                         >
                                             <div
                                                 className={styles.thContent}
-                                                onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
-                                                data-sortable={header.column.getCanSort()}
                                             >
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(header.column.columnDef.header, header.getContext())}
-                                                {header.column.getIsSorted() && (
+                                                {header.column.getCanSort() && (
                                                     <span className={`material-symbols-rounded ${styles.sortIndicator}`}>
                                                         arrow_downward
                                                     </span>

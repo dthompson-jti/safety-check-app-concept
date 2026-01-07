@@ -282,7 +282,9 @@ export const LiveMonitorView = () => {
                             <span
                                 className={styles.supervisorComment}
                                 title={row.original.supervisorNote}
+                                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
                             >
+                                <span className="material-symbols-rounded" style={{ fontSize: 14 }}>description</span>
                                 {row.original.supervisorNote}
                             </span>
                         ) : (

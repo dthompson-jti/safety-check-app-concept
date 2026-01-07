@@ -1,5 +1,4 @@
-// src/desktop/components/BulkActionFooter.tsx
-
+import { Button } from '../../components/Button';
 import styles from './BulkActionFooter.module.css';
 
 interface BulkActionFooterProps {
@@ -21,13 +20,15 @@ export const BulkActionFooter = ({
         <div className={styles.footer}>
             {/* Count section with dismiss */}
             <div className={styles.countSection}>
-                <button
-                    className={styles.dismissButton}
+                <Button
+                    variant="on-solid"
+                    size="s"
+                    iconOnly
                     onClick={onClear}
                     aria-label="Clear selection"
                 >
                     <span className="material-symbols-rounded">close</span>
-                </button>
+                </Button>
                 <span className={styles.count}>
                     {selectedCount} Selected
                 </span>
@@ -36,15 +37,26 @@ export const BulkActionFooter = ({
             <div className={styles.divider} />
 
             {/* Primary action */}
-            <button className={`${styles.actionButton} ${styles.primary}`} onClick={onAction}>
+            <Button
+                variant="on-solid"
+                size="s"
+                onClick={onAction}
+            >
                 <span className="material-symbols-rounded">{actionIcon}</span>
                 {actionLabel}
-            </button>
+            </Button>
+
+            <div className={styles.divider} />
 
             {/* Overflow menu */}
-            <button className={styles.overflowButton} aria-label="More actions">
+            <Button
+                variant="on-solid"
+                size="s"
+                iconOnly
+                aria-label="More actions"
+            >
                 <span className="material-symbols-rounded">more_vert</span>
-            </button>
+            </Button>
         </div>
     );
 };

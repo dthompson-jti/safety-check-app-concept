@@ -249,7 +249,7 @@ export const HistoricalReviewView = () => {
                                 className={`material-symbols-rounded ${styles.noteIcon}`}
                                 title={row.original.supervisorNote}
                             >
-                                comment
+                                description
                             </span>
                         )}
                     </div>

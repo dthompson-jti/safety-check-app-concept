@@ -128,6 +128,11 @@ export const LoginView = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
+        {appConfig.showEnvironmentName && (
+          <div className={styles.envDisplayTop}>
+            {appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}
+          </div>
+        )}
         <div className={styles.scrollableContent} ref={scrollContainerRef}>
           <motion.div
             className={styles.loginFormCard}
@@ -219,11 +224,6 @@ export const LoginView = () => {
 
           <footer className={styles.pageFooter}>
             <div className={styles.footerData}>
-              {appConfig.showEnvironmentName && (
-                <div className={styles.envDisplay}>
-                  {appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}
-                </div>
-              )}
               <div className={styles.versionDisplay}>
                 v{APP_VERSION.replace('v', '')}
               </div>

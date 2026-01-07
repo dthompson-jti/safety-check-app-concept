@@ -8,7 +8,7 @@ interface SelectProps {
   value: string;
   onValueChange: (value: string) => void;
   placeholder?: string;
-  disabled?: boolean; // FIX: Add disabled prop
+  disabled?: boolean;
 }
 
 interface SelectItemProps {
@@ -16,40 +16,49 @@ interface SelectItemProps {
   value: string;
   className?: string;
   icon?: string;
+  disabled?: boolean;
 }
 
 export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
-  ({ children, icon, ...props }, forwardedRef) => {
+  ({ children, icon, disabled, ...props }, forwardedRef) => {
     return (
-      // Use the global .menu-item class for styling
-      <RadixSelect.Item className="menu-item" {...props} ref={forwardedRef}>
-        {/* Slot A: Fixed-width container for alignment from global menu.css */}
-        <div className="checkmark-container">
-          {/* The checkmark, rendered by Radix when state is 'checked' */}
+      <RadixSelect.Item
+        className="menuItem"
+        {...props}
+        ref={forwardedRef}
+        disabled={disabled}
+      >
+        <div className="menuCheckmark">
           <RadixSelect.ItemIndicator>
             <span className="material-symbols-rounded">check</span>
           </RadixSelect.ItemIndicator>
-          {/* The decorative icon, hidden via CSS when checked */}
-          {icon && <span className={`material-symbols-rounded ${styles.selectItemIcon}`}>{icon}</span>}
+          {icon && (
+            <span className={`material-symbols-rounded ${styles.selectItemIcon}`}>{icon}</span>
+          )}
         </div>
-        {/* Slot B: Label */}
         <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
       </RadixSelect.Item>
     );
   }
 );
 
-export const Select = ({ children, value, onValueChange, placeholder, disabled = false }: SelectProps) => {
+SelectItem.displayName = 'SelectItem';
+
+export const Select = ({ children, value, onValueChange, placeholder, disabled }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    // FIX: Pass disabled prop to the Radix Root to prevent opening.
-    <RadixSelect.Root value={value} onValueChange={onValueChange} open={isOpen} onOpenChange={setIsOpen} disabled={disabled}>
-      <RadixSelect.Trigger 
-        className={styles.selectTrigger} 
+    <RadixSelect.Root
+      value={value}
+      onValueChange={onValueChange}
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      disabled={disabled}
+    >
+      <RadixSelect.Trigger
+        className={styles.selectTrigger}
         aria-label={placeholder}
-        data-focused={isOpen} // Add data attribute for focus styling
-        disabled={disabled} // FIX: Pass disabled prop to the Trigger for styling and semantics.
+        data-focused={isOpen}
       >
         <RadixSelect.Value placeholder={placeholder} />
         <RadixSelect.Icon className={styles.selectIcon}>
@@ -57,15 +66,18 @@ export const Select = ({ children, value, onValueChange, placeholder, disabled =
         </RadixSelect.Icon>
       </RadixSelect.Trigger>
       <RadixSelect.Portal>
-        {/* Use global .menu-popover for appearance and local .selectContent for width */}
-        <RadixSelect.Content className={`${styles.selectContent} menu-popover`} position="popper" sideOffset={5}>
-          <RadixSelect.ScrollUpButton className="menu-item">
+        <RadixSelect.Content
+          className="menuPopover"
+          position="popper"
+          sideOffset={5}
+        >
+          <RadixSelect.ScrollUpButton className={styles.scrollButton}>
             <span className="material-symbols-rounded">expand_less</span>
           </RadixSelect.ScrollUpButton>
           <RadixSelect.Viewport className={styles.selectViewport}>
             {children}
           </RadixSelect.Viewport>
-          <RadixSelect.ScrollDownButton className="menu-item">
+          <RadixSelect.ScrollDownButton className={styles.scrollButton}>
             <span className="material-symbols-rounded">expand_more</span>
           </RadixSelect.ScrollDownButton>
         </RadixSelect.Content>

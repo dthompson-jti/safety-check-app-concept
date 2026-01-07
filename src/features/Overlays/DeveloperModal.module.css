@@ -146,7 +146,7 @@
 }
 
 .toastLogic {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--surface-fg-tertiary);
   line-height: 1.4;
 }
@@ -160,13 +160,13 @@
 
 .toastDescription {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--surface-fg-tertiary);
   line-height: 1.4;
 }
 
 .shortcutHint {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--surface-fg-tertiary);
   font-style: italic;
 }

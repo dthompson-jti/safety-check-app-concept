@@ -2,6 +2,8 @@
 
 import { useAtom, useAtomValue } from 'jotai';
 import { desktopViewAtom, desktopFilterAtom } from '../atoms';
+import { SearchInput } from '../../components/SearchInput';
+import { Select, SelectItem } from '../../components/Select';
 import styles from './DesktopToolbar.module.css';
 
 type StatusFilterValue = 'all' | 'missed' | 'late';
@@ -23,47 +25,28 @@ export const DesktopToolbar = () => {
     const view = useAtomValue(desktopViewAtom);
     const [filter, setFilter] = useAtom(desktopFilterAtom);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFilter((prev) => ({ ...prev, search: e.target.value }));
-    };
 
-    const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleStatusFilterChange = (val: string) => {
         setFilter((prev) => ({
             ...prev,
-            statusFilter: e.target.value as StatusFilterValue
+            statusFilter: val as StatusFilterValue
         }));
     };
 
-    const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setFilter((prev) => ({ ...prev, unit: e.target.value }));
+    const handleUnitChange = (val: string) => {
+        setFilter((prev) => ({ ...prev, unit: val }));
     };
-
-    const currentStatusLabel = STATUS_OPTIONS.find(o => o.value === filter.statusFilter)?.label || 'Status';
-    const currentUnitLabel = UNIT_OPTIONS.find(o => o.value === filter.unit)?.label || 'Unit';
 
     return (
         <div className={styles.toolbar}>
             {/* Left Side: Search + Advanced */}
             <div className={styles.leftSection}>
-                <div className={styles.searchContainer}>
-                    <input
-                        type="text"
-                        className={styles.searchInput}
-                        placeholder="Search Checks"
-                        value={filter.search}
-                        onChange={handleSearchChange}
-                    />
-                    {filter.search && (
-                        <button
-                            className={styles.clearButton}
-                            onClick={() => setFilter((prev) => ({ ...prev, search: '' }))}
-                            aria-label="Clear search"
-                        >
-                            <span className="material-symbols-rounded">close</span>
-                        </button>
-                    )}
-                    <span className={`material-symbols-rounded ${styles.searchIcon}`}>search</span>
-                </div>
+                <SearchInput
+                    value={filter.search}
+                    onChange={(val) => setFilter((prev) => ({ ...prev, search: val }))}
+                    placeholder="Search residents..."
+                    variant="standalone"
+                />
 
                 {/* Advanced search (placeholder) */}
                 <button
@@ -80,38 +63,34 @@ export const DesktopToolbar = () => {
             {/* Right Side: Quick Filters */}
             <div className={styles.filterChips}>
                 {/* Unit Filter */}
-                <div className={`${styles.filterChip} ${filter.unit !== 'all' ? styles.active : ''}`}>
-                    <select
-                        className={styles.filterSelect}
+                <div style={{ width: 140 }}>
+                    <Select
                         value={filter.unit}
-                        onChange={handleUnitChange}
+                        onValueChange={handleUnitChange}
+                        placeholder="Unit"
                     >
                         {UNIT_OPTIONS.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
+                            <SelectItem key={opt.value} value={opt.value}>
                                 {opt.label}
-                            </option>
+                            </SelectItem>
                         ))}
-                    </select>
-                    <span className={styles.filterLabel}>{currentUnitLabel}</span>
-                    <span className="material-symbols-rounded">expand_more</span>
+                    </Select>
                 </div>
 
                 {/* Status Filter (Historical only) */}
                 {view === 'historical' && (
-                    <div className={`${styles.filterChip} ${filter.statusFilter !== 'all' ? styles.active : ''}`}>
-                        <select
-                            className={styles.filterSelect}
+                    <div style={{ width: 140 }}>
+                        <Select
                             value={filter.statusFilter}
-                            onChange={handleStatusFilterChange}
+                            onValueChange={handleStatusFilterChange}
+                            placeholder="Status"
                         >
                             {STATUS_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
+                                <SelectItem key={opt.value} value={opt.value}>
                                     {opt.label}
-                                </option>
+                                </SelectItem>
                             ))}
-                        </select>
-                        <span className={styles.filterLabel}>{currentStatusLabel}</span>
-                        <span className="material-symbols-rounded">expand_more</span>
+                        </Select>
                     </div>
                 )}
             </div>

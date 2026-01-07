@@ -99,11 +99,10 @@
 }
 
 .sectionHeader {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--surface-fg-secondary);
   /* Tier 2: Section organizer */
-  text-transform: uppercase;
 
   margin-top: var(--spacing-4);
   margin-bottom: var(--spacing-2);

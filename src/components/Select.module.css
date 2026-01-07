@@ -7,26 +7,32 @@
   gap: var(--spacing-1);
   font-family: var(--font-family-sans);
   width: 100%;
-  height: var(--control-height-md);
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--surface-border-primary);
-  border-radius: var(--radius-sm);
-  font-size: 0.9em;
-  background-color: var(--surface-bg-primary);
-  color: var(--surface-fg-primary);
+  height: 36px;
+  padding: 0 var(--spacing-3);
+  border: 1px solid var(--control-border-secondary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  background-color: var(--control-bg-secondary);
+  color: var(--control-fg-secondary);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.15s ease;
   cursor: pointer;
   position: relative;
+  user-select: none;
 }
 
-@media (hover: hover) {
-  .selectTrigger:hover:not([disabled]) {
-    border-color: var(--control-border-tertiary-hover);
-  }
+.selectTrigger:hover:not(:disabled) {
+  background-color: var(--control-bg-secondary-hover);
+  border-color: var(--control-border-secondary-hover);
+  color: var(--control-fg-secondary_hover);
 }
 
-/* Use the standard outer box-shadow for focus. */
+.selectTrigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .selectTrigger[data-state='open'],
 .selectTrigger:focus-visible,
 .selectTrigger[data-focused='true'] {
@@ -34,48 +40,37 @@
   box-shadow: 0 0 0 2px var(--control-focus-ring-standard);
 }
 
-/* FIX: Add styles for the disabled state */
-.selectTrigger[disabled] {
-  background-color: var(--control-bg-disabled_subtle);
-  color: var(--control-fg-disabled);
-  border-color: var(--control-border-disabled);
-  cursor: not-allowed;
-}
-
-.selectTrigger[disabled] .selectIcon {
-  color: var(--control-fg-disabled);
-}
-
-
 .selectIcon {
   color: var(--surface-fg-tertiary);
   transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
 }
 
 .selectTrigger[data-state='open'] .selectIcon {
   transform: rotate(180deg);
 }
 
-
-/* The content container now only handles component-specific layout (width). */
-/* All visual styling (bg, border, shadow) comes from the global .menu-popover class. */
-.selectContent {
-  width: var(--radix-select-trigger-width);
-  overflow: hidden;
-}
-
 .selectViewport {
   max-height: 256px;
 }
 
-/* The decorative icon, rendered when an item is not checked */
 .selectItemIcon {
-  color: var(--surface-fg-secondary);
-  font-size: var(--font-size-lg);
-  font-variation-settings: 'opsz' 18;
+  color: var(--surface-fg-tertiary);
+  font-size: 18px;
 }
 
-/* When the item is checked, Radix adds an ItemIndicator. We hide our decorative icon. */
-.menu-item[data-state='checked'] .selectItemIcon {
+/* Hide decorative icon when checked */
+.menuItem[data-state='checked'] .selectItemIcon {
   display: none;
+}
+
+.scrollButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  background-color: transparent;
+  color: var(--surface-fg-tertiary);
+  cursor: default;
 }

@@ -3,6 +3,8 @@ import { useAtom, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { supervisorNoteModalAtom, isDetailPanelOpenAtom, PanelData, panelWidthAtom } from '../atoms';
 import { StatusBadge, StatusBadgeType } from './StatusBadge';
+import { Button } from '../../components/Button';
+import { Tooltip } from '../../components/Tooltip';
 import styles from './DetailPanel.module.css';
 
 interface DetailPanelProps {
@@ -12,13 +14,15 @@ interface DetailPanelProps {
 
 export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => {
     // Selection state to trigger "select single" or "empty" messages
+    // State management
+    const [panelWidth, setPanelWidth] = useAtom(panelWidthAtom);
     const setPanelOpen = useSetAtom(isDetailPanelOpenAtom);
     const setModalState = useSetAtom(supervisorNoteModalAtom);
 
-    // Resize state - use global atom so App.tsx grid can react
-    const [panelWidth, setPanelWidth] = useAtom(panelWidthAtom);
+    // Performance refs: track width during drag without re-rendering DetailPanel
     const [isResizing, setIsResizing] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
+    const widthRef = useRef(panelWidth);
 
     const handleClose = () => setPanelOpen(false);
 
@@ -43,19 +47,29 @@ export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => 
     const handleResizeStart = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
         setIsResizing(true);
+        if (panelRef.current) {
+            panelRef.current.style.transition = 'none';
+        }
     }, []);
 
     const handleResizeMove = useCallback((e: MouseEvent) => {
         if (!isResizing) return;
         const newWidth = window.innerWidth - e.clientX;
-        // Constrain width between min and max
         const clampedWidth = Math.max(320, Math.min(600, newWidth));
-        setPanelWidth(clampedWidth);
+
+        // Direct DOM update on root for real-time grid scaling
+        widthRef.current = clampedWidth;
+        document.documentElement.style.setProperty('--panel-width', `${clampedWidth}px`);
     }, [isResizing]);
 
     const handleResizeEnd = useCallback(() => {
         setIsResizing(false);
-    }, []);
+        if (panelRef.current) {
+            panelRef.current.style.transition = '';
+            // Sync Jotai state once dragging stops
+            setPanelWidth(widthRef.current);
+        }
+    }, [setPanelWidth]);
 
     // Add/remove global listeners for resize
     useEffect(() => {
@@ -99,43 +113,52 @@ export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => 
             <div
                 className={`${styles.resizeHandle} ${isResizing ? styles.active : ''}`}
                 onMouseDown={handleResizeStart}
-            />
-            {/* Header: Identity & Primary Status */}
+            >
+                <div className={styles.resizeIndicator} />
+            </div>
+            {/* Header: Identity Only */}
             <div className={styles.header}>
-                <div className={styles.headerTop}>
-                    <div className={styles.titleGroup}>
-                        {record ? (
-                            <>
-                                <h3 className={styles.residentName}>{record.residentName}</h3>
-                                <div className={styles.locationPill}>
-                                    <span className="material-symbols-rounded" style={{ fontSize: 16 }}>door_front</span>
-                                    {record.location}
-                                </div>
-                            </>
-                        ) : (
-                            <h3 className={styles.residentName}>Flight Log</h3>
-                        )}
-                    </div>
-                    <button className={styles.closeButton} onClick={handleClose} aria-label="Close">
-                        <span className="material-symbols-rounded">close</span>
-                    </button>
+                <div className={styles.titleGroup}>
+                    <h3 className={styles.residentName}>
+                        {record ? record.residentName : 'No selection'}
+                    </h3>
                 </div>
-                {record && (
-                    <div className={styles.tags}>
-                        <StatusBadge status={record.status as StatusBadgeType} />
-                        {record.reviewStatus === 'verified' && (
-                            <span className={`${styles.tag} ${styles.verified}`}>
-                                Verified
-                            </span>
-                        )}
-                    </div>
-                )}
+                <div className={styles.headerActions}>
+                    <Tooltip content="Close Panel">
+                        <Button
+                            variant="quaternary"
+                            size="s"
+                            iconOnly
+                            aria-label="Close Panel"
+                            onClick={handleClose}
+                        >
+                            <span className="material-symbols-rounded">close</span>
+                        </Button>
+                    </Tooltip>
+                </div>
             </div>
 
             <div className={styles.content}>
+                {record && (
+                    <div className={styles.identityBar}>
+                        <div className={styles.locationPill}>
+                            <span className="material-symbols-rounded">door_front</span>
+                            {record.location}
+                        </div>
+                        <div className={styles.tags}>
+                            <StatusBadge status={record.status as StatusBadgeType} />
+                            {record.reviewStatus === 'verified' && (
+                                <span className={`${styles.tag} ${styles.verified}`}>
+                                    Verified
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 {!record ? (
                     <div className={styles.emptyState}>
-                        <span className="material-symbols-rounded" style={{ fontSize: 48, color: 'var(--surface-fg-tertiary)' }}>
+                        <span className={`material-symbols-rounded ${styles.placeholderIcon}`}>
                             {selectedCount > 1 ? 'rule' : 'info'}
                         </span>
                         <h4 className={styles.emptyTitle}>
@@ -143,7 +166,7 @@ export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => 
                         </h4>
                         <p className={styles.emptyText}>
                             {selectedCount > 1
-                                ? 'Select a single record to view its complete check history and flight log.'
+                                ? 'Select a single record to view its complete check history.'
                                 : 'Select a row from the monitor to view detailed check logs and officer notes.'}
                         </p>
                     </div>
@@ -184,7 +207,7 @@ export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => 
                                     <>
                                         <p className={styles.quoteContent}>“{record.officerNote}”</p>
                                         <div className={styles.quoteSignature}>
-                                            <span className="material-symbols-rounded" style={{ fontSize: 14 }}>edit_note</span>
+                                            <span className="material-symbols-rounded" style={{ fontSize: 14 }}>description</span>
                                             {record.officerName}
                                         </div>
                                     </>

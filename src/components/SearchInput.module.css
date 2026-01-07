@@ -11,8 +11,8 @@
   border: 1px solid transparent;
   /* Default to transparent */
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
-  height: var(--control-height-md);
-  min-height: var(--control-height-md);
+  height: 38px;
+  min-height: 38px;
   /* Enforce minimum height */
 }
 
@@ -20,6 +20,8 @@
 .wrapper[data-variant="standalone"] {
   background-color: var(--surface-bg-primary);
   border-color: var(--surface-border-primary);
+  width: 240px;
+  flex: 0 0 240px;
 }
 
 @media (hover: hover) {

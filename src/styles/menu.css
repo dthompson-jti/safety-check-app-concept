@@ -2,39 +2,60 @@
 /* This is the single source of truth for all menu popovers and items. */
 
 /* --- Menu Popover Container --- */
-.menu-popover {
+.menuPopover {
   z-index: 1100;
-  /* Above most UI, below modals */
   background-color: var(--surface-bg-primary);
   border-radius: var(--spacing-3);
+  /* 12px */
   box-shadow: var(--surface-shadow-xl);
   border: 1px solid var(--surface-border-primary);
   padding: var(--spacing-1);
-  /* Consistent padding for all menus */
-  min-width: var(--side-menu-min-width);
+  min-width: 220px;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-0p5);
+  gap: 2px;
 }
 
-/* REFACTOR: Use the standardized global keyframes from animations.css */
-.menu-popover[data-state='open'] {
-  animation: scaleIn 150ms ease-out;
+@keyframes popover-show {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.menu-popover[data-state='closed'] {
-  animation: scaleOut 150ms ease-in;
+@keyframes popover-hide {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
 }
 
+.menuPopover[data-state='open'] {
+  animation: popover-show 150ms ease-out;
+}
+
+.menuPopover[data-state='closed'] {
+  animation: popover-hide 150ms ease-in;
+}
 
 /* --- Menu Item --- */
-.menu-item {
+.menuItem {
   display: flex;
   align-items: center;
   width: 100%;
   text-align: left;
   gap: var(--spacing-3);
-  font-size: 0.9em;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   font-family: var(--font-family-sans);
   color: var(--surface-fg-primary);
@@ -43,179 +64,70 @@
   cursor: pointer;
   padding: var(--spacing-2) var(--spacing-1p5);
   border-radius: var(--spacing-2);
+  /* 8px */
   border: 1px solid transparent;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   user-select: none;
   outline: none;
 }
 
-/* --- States --- */
-.menu-item:disabled,
-.menu-item[data-disabled] {
-  color: var(--control-fg-disabled) !important;
+.menuItem:disabled,
+.menuItem[data-disabled] {
+  color: var(--surface-fg-quaternary) !important;
   cursor: not-allowed;
   opacity: 0.5;
-  background-color: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
 }
 
-.menu-item:disabled .material-symbols-rounded,
-.menu-item[data-disabled] .material-symbols-rounded,
-.menu-item:disabled .hotkey,
-.menu-item[data-disabled] .hotkey,
-.menu-item:disabled .chevron,
-.menu-item[data-disabled] .chevron {
-  color: var(--control-fg-disabled) !important;
-}
-
-/* Hover state for mouse-based devices */
-@media (hover: hover) {
-  .menu-item:hover:not(:disabled):not([data-disabled]):not([data-state='checked']) {
-    background-color: var(--control-bg-tertiary-hover);
-    color: var(--control-fg-tertiary-hover);
-    border-color: var(--control-border-tertiary-hover);
-    box-shadow: inset 0 -2px 0 0 var(--control-border-tertiary-hover);
-  }
-
-  .menu-item:hover:not(:disabled):not([data-disabled]):not([data-state='checked']) .material-symbols-rounded,
-  .menu-item:hover:not(:disabled):not([data-disabled]):not([data-state='checked']) .hotkey,
-  .menu-item:hover:not(:disabled):not([data-disabled]):not([data-state='checked']) .chevron {
-    color: var(--surface-fg-secondary);
-  }
-}
-
-/* Highlighted state for keyboard navigation on ALL devices */
-.menu-item[data-highlighted]:not([data-disabled]):not([data-state='checked']) {
-  outline: none;
+/* Hover/Focus state for items */
+.menuItem:hover:not(:disabled):not([data-disabled]):not([data-state='checked']),
+.menuItem[data-highlighted]:not([data-disabled]):not([data-state='checked']) {
   background-color: var(--control-bg-tertiary-hover);
   color: var(--control-fg-tertiary-hover);
   border-color: var(--control-border-tertiary-hover);
   box-shadow: inset 0 -2px 0 0 var(--control-border-tertiary-hover);
 }
 
-.menu-item[data-highlighted]:not([data-disabled]):not([data-state='checked']) .material-symbols-rounded,
-.menu-item[data-highlighted]:not([data-disabled]):not([data-state='checked']) .hotkey,
-.menu-item[data-highlighted]:not([data-disabled]):not([data-state='checked']) .chevron {
-  color: var(--surface-fg-secondary);
-}
-
-/* Keyboard focus state for UNCHECKED items */
-.menu-item[data-highlighted]:focus-visible:not([data-disabled]):not([data-state='checked']) {
-  box-shadow: inset 0 0 0 var(--ring-width-focus) var(--control-focus-ring-standard), inset 0 -2px 0 0 var(--control-border-tertiary-hover);
-}
-
-
-/* --- Variants --- */
-
-/* Destructive Variant */
-.menu-item.destructive {
-  color: var(--surface-fg-alert-primary);
-}
-
-.menu-item.destructive .material-symbols-rounded,
-.menu-item.destructive .hotkey {
-  color: var(--surface-fg-alert-primary);
-}
-
-@media (hover: hover) {
-  .menu-item.destructive:hover:not(:disabled):not([data-disabled]) {
-    background-color: var(--control-bg-alert-hover);
-    border-color: var(--control-border-alert);
-    color: var(--control-fg-on-solid);
-  }
-
-  .menu-item.destructive:hover:not(:disabled):not([data-disabled]) .material-symbols-rounded,
-  .menu-item.destructive:hover:not(:disabled):not([data-disabled]) .hotkey {
-    color: var(--control-fg-on-solid);
-  }
-}
-
-.menu-item.destructive[data-highlighted]:not([data-disabled]) {
-  background-color: var(--control-bg-alert-hover);
-  border-color: var(--control-border-alert);
-  color: var(--control-fg-on-solid);
-}
-
-.menu-item.destructive[data-highlighted]:not([data-disabled]) .material-symbols-rounded,
-.menu-item.destructive[data-highlighted]:not([data-disabled]) .hotkey {
-  color: var(--control-fg-on-solid);
-}
-
-.menu-item.destructive[data-highlighted]:focus-visible:not([data-disabled]) {
-  background-color: transparent;
-  box-shadow: inset 0 0 0 var(--ring-width-focus) var(--control-focus-ring-error);
-  color: var(--surface-fg-alert-primary);
-}
-
-.menu-item.destructive[data-highlighted]:focus-visible:not([data-disabled]) .material-symbols-rounded,
-.menu-item.destructive[data-highlighted]:focus-visible:not([data-disabled]) .hotkey {
-  color: var(--surface-fg-alert-primary);
-}
-
-
-/* Toggle Item / Selected State */
-.menu-item[data-state="checked"] {
+/* Selected State */
+.menuItem[data-state="checked"] {
   background-color: var(--control-bg-selected);
   border-color: transparent;
   color: var(--control-fg-selected);
 }
 
-.menu-item[data-state="checked"] .material-symbols-rounded,
-.menu-item[data-state="checked"] .hotkey,
-.menu-item[data-state="checked"] .chevron {
-  color: var(--control-fg-selected);
-}
-
-@media (hover: hover) {
-  .menu-item[data-state='checked']:hover:not(:disabled):not([data-disabled]) {
-    background-color: var(--control-bg-selected-hover);
-    color: var(--control-fg-selected-hover);
-    border-color: var(--control-border-selected-hover);
-    box-shadow: inset 0 -2px 0 0 var(--control-border-selected-hover);
-  }
-}
-
-.menu-item[data-state='checked'][data-highlighted]:not([data-disabled]) {
+.menuItem[data-state='checked']:hover:not(:disabled):not([data-disabled]),
+.menuItem[data-state='checked'][data-highlighted]:not([data-disabled]) {
   background-color: var(--control-bg-selected-hover);
   color: var(--control-fg-selected-hover);
   border-color: var(--control-border-selected-hover);
   box-shadow: inset 0 -2px 0 0 var(--control-border-selected-hover);
 }
 
-.menu-item[data-state='checked'][data-highlighted]:focus-visible:not([data-disabled]) {
-  box-shadow: inset 0 0 0 var(--ring-width-focus) var(--control-focus-ring-standard), inset 0 -2px 0 0 var(--control-border-selected-hover);
+/* Destructive Variant */
+.menuItem.destructive {
+  color: var(--surface-fg-alert-primary);
 }
 
+.menuItem.destructive:hover:not(:disabled):not([data-disabled]) {
+  background-color: var(--control-bg-alert-hover);
+  border-color: var(--control-border-alert);
+  color: var(--control-fg-on-solid);
+}
 
-/* --- Slots & Content --- */
-.menu-item .checkmark-container {
-  width: var(--control-width-checkbox);
-  height: var(--control-width-checkbox);
+.menuCheckmark {
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.menu-item .material-symbols-rounded {
-  font-size: var(--icon-size-md);
+.menuItem .material-symbols-rounded {
+  font-size: 18px;
   color: var(--surface-fg-secondary);
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 18;
   transition: color 0.2s;
 }
 
-.menu-item .hotkey {
-  margin-left: auto;
-  color: var(--surface-fg-tertiary);
-  font-size: var(--icon-size-xs);
-  font-weight: 500;
-  padding-left: var(--spacing-6);
-  transition: color 0.2s;
-}
-
-.menu-item .chevron {
-  color: var(--surface-fg-tertiary);
-  font-size: var(--icon-size-sm);
-  font-variation-settings: 'opsz' 16;
+.menuItem[data-state='checked'] .material-symbols-rounded {
+  color: var(--control-fg-selected);
 }

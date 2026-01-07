@@ -74,30 +74,30 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
                     {showOverflowMenu && (
                         <>
                             <div className={styles.backdrop} onClick={() => setShowOverflowMenu(false)} />
-                            <div className={styles.menu}>
-                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                            <div className="menuPopover">
+                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
                                     <span className="material-symbols-rounded">qr_code_2</span>
                                     Generate QR Codes
                                 </button>
-                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
                                     <span className="material-symbols-rounded">settings</span>
                                     Safeguard Settings
                                 </button>
-                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
                                     <span className="material-symbols-rounded">summarize</span>
                                     Safeguard Report
                                 </button>
                                 <div className={styles.menuDivider} />
-                                <button className={styles.menuItem} onClick={() => { setShowOverflowMenu(false); setIsDevToolsOpen(true); }}>
+                                <button className="menuItem" onClick={() => { setShowOverflowMenu(false); setIsDevToolsOpen(true); }}>
                                     <span className="material-symbols-rounded">code</span>
                                     Developer tools
                                 </button>
                                 <div className={styles.menuDivider} />
-                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
                                     <span className="material-symbols-rounded">download</span>
                                     Export CSV
                                 </button>
-                                <button className={styles.menuItem} onClick={() => setShowOverflowMenu(false)}>
+                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
                                     <span className="material-symbols-rounded">print</span>
                                     Print Report
                                 </button>
