@@ -381,3 +381,59 @@
   /* Reduced to 0 to move text up closer to wave */
   margin-top: 0;
 }
+
+/* =================================================================
+   NFC Icon Visualizer
+   ================================================================= */
+
+.nfcIconContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.nfcIconSvg {
+  position: relative;
+  width: 35px;
+  height: 24px;
+  color: var(--surface-fg-secondary);
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.nfcIconLabel {
+  position: relative;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--surface-fg-secondary);
+  text-align: center;
+  white-space: nowrap;
+  text-shadow:
+    0 0 8px var(--surface-bg-secondary),
+    0 0 16px var(--surface-bg-secondary),
+    0 0 24px var(--surface-bg-secondary);
+  letter-spacing: -0.01em;
+  z-index: 1;
+  animation: labelPulse 2s ease-in-out infinite;
+}
+
+.nfcIconDot {
+  animation: dotOscillate 2s ease-in-out infinite;
+}
+
+@keyframes dotOscillate {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}

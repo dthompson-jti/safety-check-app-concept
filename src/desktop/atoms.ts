@@ -106,3 +106,6 @@ export const activeDetailRecordAtom = atom<PanelData | null>(null);
 
 /** Visibility state for the detail panel (independent of data) */
 export const isDetailPanelOpenAtom = atom<boolean>(false);
+
+/** Panel width for resize functionality (min: 320, max: 600) */
+export const panelWidthAtom = atom<number>(400);

@@ -2,6 +2,10 @@
 
 .toolbar {
     /* Removed fixed height 48px, allow content + padding to dictate size */
+    position: sticky;
+    top: 56px;
+    /* Below the header */
+    z-index: 40;
     background: var(--surface-bg-secondary);
     border-bottom: 1px solid var(--surface-border-secondary);
     padding: var(--spacing-3);

@@ -1,6 +1,7 @@
-import { useSetAtom } from 'jotai';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { supervisorNoteModalAtom, isDetailPanelOpenAtom, PanelData } from '../atoms';
+import { supervisorNoteModalAtom, isDetailPanelOpenAtom, PanelData, panelWidthAtom } from '../atoms';
 import { StatusBadge, StatusBadgeType } from './StatusBadge';
 import styles from './DetailPanel.module.css';
 
@@ -13,6 +14,11 @@ export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => 
     // Selection state to trigger "select single" or "empty" messages
     const setPanelOpen = useSetAtom(isDetailPanelOpenAtom);
     const setModalState = useSetAtom(supervisorNoteModalAtom);
+
+    // Resize state - use global atom so App.tsx grid can react
+    const [panelWidth, setPanelWidth] = useAtom(panelWidthAtom);
+    const [isResizing, setIsResizing] = useState(false);
+    const panelRef = useRef<HTMLDivElement>(null);
 
     const handleClose = () => setPanelOpen(false);
 
@@ -33,6 +39,40 @@ export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => 
         });
     };
 
+    // Resize handlers
+    const handleResizeStart = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        setIsResizing(true);
+    }, []);
+
+    const handleResizeMove = useCallback((e: MouseEvent) => {
+        if (!isResizing) return;
+        const newWidth = window.innerWidth - e.clientX;
+        // Constrain width between min and max
+        const clampedWidth = Math.max(320, Math.min(600, newWidth));
+        setPanelWidth(clampedWidth);
+    }, [isResizing]);
+
+    const handleResizeEnd = useCallback(() => {
+        setIsResizing(false);
+    }, []);
+
+    // Add/remove global listeners for resize
+    useEffect(() => {
+        if (isResizing) {
+            document.addEventListener('mousemove', handleResizeMove);
+            document.addEventListener('mouseup', handleResizeEnd);
+            document.body.style.cursor = 'ew-resize';
+            document.body.style.userSelect = 'none';
+        }
+        return () => {
+            document.removeEventListener('mousemove', handleResizeMove);
+            document.removeEventListener('mouseup', handleResizeEnd);
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        };
+    }, [isResizing, handleResizeMove, handleResizeEnd]);
+
     const panelVariants = {
         closed: { x: '100%' },
         open: { x: 0 },
@@ -46,13 +86,20 @@ export const DetailPanel = ({ record, selectedCount = 0 }: DetailPanelProps) => 
 
     return (
         <motion.div
+            ref={panelRef}
             className={styles.panel}
+            style={{ '--panel-width': `${panelWidth}px` } as React.CSSProperties}
             initial="closed"
             animate="open"
             exit="closed"
             variants={panelVariants}
             transition={transition}
         >
+            {/* Resize Handle */}
+            <div
+                className={`${styles.resizeHandle} ${isResizing ? styles.active : ''}`}
+                onMouseDown={handleResizeStart}
+            />
             {/* Header: Identity & Primary Status */}
             <div className={styles.header}>
                 <div className={styles.headerTop}>

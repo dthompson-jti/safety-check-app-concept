@@ -11,6 +11,9 @@
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border-top: 1px solid var(--surface-border-secondary);
+  box-shadow:
+    0 -3px 6px -3px rgba(0, 0, 0, 0.1),
+    0 -6px 12px -4px rgba(0, 0, 0, 0.08);
   padding: var(--spacing-4);
   /* Safe area handling for modern mobile devices (iPhone Home Indicator) */
   padding-bottom: calc(var(--spacing-4) + env(safe-area-inset-bottom));
@@ -29,13 +32,7 @@
    ========================================= */
 
 /* Basic Pulse - Opacity breathing effect (1.2s cycle) */
-/* Basic Pulse - Opacity breathing effect (1.2s cycle) */
 /* Moved to ::before to layer ON TOP of glass background */
-body[data-glass-pulse="basic"] .footer,
-body[data-glass-tint="active"] .footer {
-  /* No direct animation, keep base glass background */
-}
-
 body[data-glass-pulse="basic"] .footer::before,
 body[data-glass-tint="active"] .footer::before {
   content: '';
@@ -96,12 +93,6 @@ body[data-theme^='dark'] .footer {
 
 /* Gradient Pulse - Flowing magma effect (4.8s cycle, 4x sync base) */
 /* Uses ::before pseudo-element to avoid conflicts with safe-area padding */
-body[data-glass-pulse="gradient"] .footer {
-  /* CRITICAL FIX: Do NOT set position: relative here. 
-     It overrides the sticky/fixed positioning of the footer. 
-     The footer is already positioned correctly. */
-}
-
 body[data-glass-pulse="gradient"] .footer::before {
   content: '';
   position: absolute;

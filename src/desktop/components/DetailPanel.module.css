@@ -2,10 +2,12 @@
 
 .panel {
     position: fixed;
-    top: 64px;
+    top: 0;
     right: 0;
     bottom: 0;
-    width: 400px;
+    width: var(--panel-width, 400px);
+    min-width: 320px;
+    max-width: 600px;
     background: var(--surface-bg-primary);
     border-left: 1px solid var(--surface-border-primary);
     box-shadow: var(--surface-shadow-xl);
@@ -13,6 +15,43 @@
     flex-direction: column;
     z-index: 100;
     /* High enough to be over header if needed, but usually below modal */
+}
+
+/* Resize Handle */
+.resizeHandle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: ew-resize;
+    background: transparent;
+    transition: background-color 0.15s;
+    z-index: 10;
+}
+
+.resizeHandle:hover,
+.resizeHandle.active {
+    background: var(--control-bg-selected);
+}
+
+.resizeHandle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 32px;
+    background: var(--surface-border-primary);
+    border-radius: var(--radius-full);
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.resizeHandle:hover::after,
+.resizeHandle.active::after {
+    opacity: 1;
 }
 
 .backdrop {
@@ -28,12 +67,12 @@
 /* --- HEADER --- */
 .header {
     flex-shrink: 0;
-    padding: var(--spacing-6);
+    padding: var(--spacing-4) var(--spacing-6);
     border-bottom: 1px solid var(--surface-border-secondary);
     background: var(--surface-bg-tertiary);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4);
+    gap: var(--spacing-3);
 }
 
 .headerTop {
@@ -75,7 +114,7 @@
     color: var(--surface-fg-tertiary);
     cursor: pointer;
     padding: 8px;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     transition: all 0.2s;
     display: flex;
     align-items: center;

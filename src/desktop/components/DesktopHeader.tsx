@@ -28,9 +28,6 @@ export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps
             <div className={styles.leftSection}>
                 <div className={styles.titleGroup}>
                     <h1 className={styles.title}>Safeguard Room Checks</h1>
-                    {appConfig.showEnvironmentName && (
-                        <span className={styles.envName}>{appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}</span>
-                    )}
                 </div>
 
                 <div className={styles.viewToggle}>

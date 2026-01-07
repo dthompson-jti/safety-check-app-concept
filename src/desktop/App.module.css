@@ -10,7 +10,7 @@
 }
 
 .app[data-panel-open="true"] {
-    grid-template-columns: 1fr 400px;
+    grid-template-columns: 1fr var(--panel-width, 400px);
 }
 
 /* Wrapper for everything that gets "pushed" (Header, Toolbar, Content) */

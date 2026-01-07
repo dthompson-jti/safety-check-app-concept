@@ -201,7 +201,7 @@ export const DeveloperModal = () => {
               value={appConfig.headerStyle || 'secondary'}
               onValueChange={(val) => {
                 triggerHaptic('selection');
-                setAppConfig((c) => ({ ...c, headerStyle: val as 'secondary' | 'tertiary' | 'quaternary' }));
+                setAppConfig((c) => ({ ...c, headerStyle: val }));
               }}
             />
           </div>

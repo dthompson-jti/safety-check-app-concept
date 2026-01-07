@@ -221,7 +221,7 @@ export const LoginView = () => {
             <div className={styles.footerData}>
               {appConfig.showEnvironmentName && (
                 <div className={styles.envDisplay}>
-                  Environment: {appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}
+                  {appConfig.environmentName || 'https://vicbc-qa-symphony.logan-symphony.com'}
                 </div>
               )}
               <div className={styles.versionDisplay}>

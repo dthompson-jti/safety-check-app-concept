@@ -2,7 +2,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import * as ToastPrimitive from '@radix-ui/react-toast';
 import { AnimatePresence } from 'framer-motion';
 import { toastsAtom } from '../data/toastAtoms';
-import { desktopViewAtom, activeDetailRecordAtom, isDetailPanelOpenAtom, selectedHistoryRowsAtom, selectedLiveRowsAtom } from './atoms';
+import { desktopViewAtom, activeDetailRecordAtom, isDetailPanelOpenAtom, selectedHistoryRowsAtom, selectedLiveRowsAtom, panelWidthAtom } from './atoms';
 import { isDevToolsModalOpenAtom } from '../data/atoms';
 import { FullScreenModal } from '../components/FullScreenModal';
 import { DeveloperModal } from '../features/Overlays/DeveloperModal';
@@ -32,13 +32,20 @@ export default function App() {
     const selectedHistory = useAtomValue(selectedHistoryRowsAtom);
     const totalSelected = selectedLive.size + selectedHistory.size;
 
+    // Panel width for grid layout
+    const panelWidth = useAtomValue(panelWidthAtom);
+
     const handleTogglePanel = () => {
         setIsPanelOpen(!isPanelOpen);
     };
 
     return (
         <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
-            <div className={styles.app} data-panel-open={isPanelOpen}>
+            <div
+                className={styles.app}
+                data-panel-open={isPanelOpen}
+                style={{ '--panel-width': `${panelWidth}px` } as React.CSSProperties}
+            >
                 <div className={styles.mainWrapper}>
                     <DesktopHeader
                         onTogglePanel={handleTogglePanel}

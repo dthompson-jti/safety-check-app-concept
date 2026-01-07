@@ -45,6 +45,7 @@ export function DataTable<T>({
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
     const [columnPinning] = useState<ColumnPinningState>({
+        left: ['select'],
         right: ['actions'],
     });
 
@@ -223,18 +224,36 @@ export function DataTable<T>({
                                 {headerGroup.headers.map((header) => {
                                     const isPinned = header.column.getIsPinned();
                                     const isSpacer = header.column.id === 'spacer';
+
+                                    // Compute left offset for left-pinned columns
+                                    let leftOffset = 0;
+                                    if (isPinned === 'left') {
+                                        const leftPinnedHeaders = headerGroup.headers.filter(
+                                            h => h.column.getIsPinned() === 'left'
+                                        );
+                                        for (const h of leftPinnedHeaders) {
+                                            if (h.id === header.id) break;
+                                            leftOffset += h.getSize();
+                                        }
+                                    }
+
+                                    const pinnedClass = isPinned === 'left'
+                                        ? styles.stickyColumnLeft
+                                        : isPinned === 'right'
+                                            ? styles.stickyColumn
+                                            : '';
+
                                     return (
                                         <th
                                             key={header.id}
-                                            className={`${styles.th} ${isPinned ? styles.stickyColumn : ''
-                                                }`}
+                                            className={`${styles.th} ${pinnedClass}`}
                                             colSpan={header.colSpan}
                                             style={{
                                                 width: isSpacer ? 'auto' : header.getSize(),
                                                 padding: isSpacer ? 0 : undefined,
                                                 position: isPinned ? 'sticky' : undefined,
                                                 right: isPinned === 'right' ? 0 : undefined,
-                                                left: isPinned === 'left' ? 0 : undefined,
+                                                left: isPinned === 'left' ? leftOffset : undefined,
                                             }}
                                             data-pinned={isPinned || undefined}
                                             data-sort-direction={header.column.getIsSorted() as string}
@@ -276,18 +295,36 @@ export function DataTable<T>({
                         {/* Skeleton Loading State */}
                         {isLoading && data.length === 0 && Array.from({ length: 15 }).map((_, idx) => (
                             <tr key={`skeleton-${idx}`} className={styles.skeletonRow}>
-                                {table.getVisibleFlatColumns().map((column) => {
+                                {table.getVisibleFlatColumns().map((column, colIndex) => {
                                     const isPinned = column.getIsPinned();
                                     const isSpacer = column.id === 'spacer';
+
+                                    // Compute left offset for left-pinned columns
+                                    let leftOffset = 0;
+                                    if (isPinned === 'left') {
+                                        const allCols = table.getVisibleFlatColumns();
+                                        for (let i = 0; i < colIndex; i++) {
+                                            if (allCols[i].getIsPinned() === 'left') {
+                                                leftOffset += allCols[i].getSize();
+                                            }
+                                        }
+                                    }
+
+                                    const pinnedClass = isPinned === 'left'
+                                        ? styles.stickyColumnLeft
+                                        : isPinned === 'right'
+                                            ? styles.stickyColumn
+                                            : '';
+
                                     return (
                                         <td
                                             key={column.id}
-                                            className={`${styles.td} ${isPinned ? styles.stickyColumn : ''}`}
+                                            className={`${styles.td} ${pinnedClass}`}
                                             style={{
                                                 width: isSpacer ? 'auto' : column.getSize(),
                                                 position: isPinned ? 'sticky' : undefined,
                                                 right: isPinned === 'right' ? 0 : undefined,
-                                                left: isPinned === 'left' ? 0 : undefined,
+                                                left: isPinned === 'left' ? leftOffset : undefined,
                                                 padding: isSpacer ? 0 : undefined,
                                             }}
                                             data-pinned={isPinned || undefined}
@@ -317,20 +354,37 @@ export function DataTable<T>({
                                 data-state={row.getIsSelected() ? 'checked' : 'unchecked'}
                                 onClick={(e) => onRowClick?.(row.original, e)}
                             >
-                                {row.getVisibleCells().map((cell) => {
+                                {row.getVisibleCells().map((cell, cellIndex) => {
                                     const isPinned = cell.column.getIsPinned();
                                     const isSpacer = cell.column.id === 'spacer';
+
+                                    // Compute left offset for left-pinned columns
+                                    let leftOffset = 0;
+                                    if (isPinned === 'left') {
+                                        const allCells = row.getVisibleCells();
+                                        for (let i = 0; i < cellIndex; i++) {
+                                            if (allCells[i].column.getIsPinned() === 'left') {
+                                                leftOffset += allCells[i].column.getSize();
+                                            }
+                                        }
+                                    }
+
+                                    const pinnedClass = isPinned === 'left'
+                                        ? styles.stickyColumnLeft
+                                        : isPinned === 'right'
+                                            ? styles.stickyColumn
+                                            : '';
+
                                     return (
                                         <td
                                             key={cell.id}
-                                            className={`${styles.td} ${isPinned ? styles.stickyColumn : ''
-                                                }`}
+                                            className={`${styles.td} ${pinnedClass}`}
                                             style={{
                                                 width: isSpacer ? 'auto' : cell.column.getSize(),
                                                 padding: isSpacer ? 0 : undefined,
                                                 position: isPinned ? 'sticky' : undefined,
                                                 right: isPinned === 'right' ? 0 : undefined,
-                                                left: isPinned === 'left' ? 0 : undefined,
+                                                left: isPinned === 'left' ? leftOffset : undefined,
                                             }}
                                             data-pinned={isPinned || undefined}
                                         >
@@ -342,18 +396,36 @@ export function DataTable<T>({
                         ))}
                         {hasMore && (
                             <tr ref={sentinelRef} className={styles.skeletonRow}>
-                                {table.getVisibleFlatColumns().map((column) => {
+                                {table.getVisibleFlatColumns().map((column, colIndex) => {
                                     const isPinned = column.getIsPinned();
                                     const isSpacer = column.id === 'spacer';
+
+                                    // Compute left offset for left-pinned columns
+                                    let leftOffset = 0;
+                                    if (isPinned === 'left') {
+                                        const allCols = table.getVisibleFlatColumns();
+                                        for (let i = 0; i < colIndex; i++) {
+                                            if (allCols[i].getIsPinned() === 'left') {
+                                                leftOffset += allCols[i].getSize();
+                                            }
+                                        }
+                                    }
+
+                                    const pinnedClass = isPinned === 'left'
+                                        ? styles.stickyColumnLeft
+                                        : isPinned === 'right'
+                                            ? styles.stickyColumn
+                                            : '';
+
                                     return (
                                         <td
                                             key={`sentinel-${column.id}`}
-                                            className={`${styles.td} ${isPinned ? styles.stickyColumn : ''}`}
+                                            className={`${styles.td} ${pinnedClass}`}
                                             style={{
                                                 width: isSpacer ? 'auto' : column.getSize(),
                                                 position: isPinned ? 'sticky' : undefined,
                                                 right: isPinned === 'right' ? 0 : undefined,
-                                                left: isPinned === 'left' ? 0 : undefined,
+                                                left: isPinned === 'left' ? leftOffset : undefined,
                                                 padding: isSpacer ? 0 : undefined,
                                             }}
                                         >

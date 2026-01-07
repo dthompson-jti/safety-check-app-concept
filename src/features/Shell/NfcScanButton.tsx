@@ -6,7 +6,9 @@ import { useNfcScan } from './useNfcScan';
 import { WaapiRingVisualizer } from './WaapiRingVisualizer';
 import { WaveBarsVisualizer } from './WaveBarsVisualizer';
 import { WaveTopVisualizer } from './WaveTopVisualizer';
-import { featureFlagsAtom } from '../../data/featureFlags';
+import { ScanAnimationE } from './ScanAnimationE';
+import { ScanAnimationF } from './ScanAnimationF';
+import { featureFlagsAtom, futureIdeasUnlockedAtom } from '../../data/featureFlags';
 import { appConfigAtom } from '../../data/atoms';
 import styles from './NfcScanButton.module.css';
 
@@ -145,10 +147,13 @@ const FeedbackVisualizer = () => {
     }, [scanState]);
 
     const isScanning = scanState === 'scanning';
-    const scanAnimation = featureFlags.feat_scan_animation;
-    const showRings = scanAnimation === 'rings' && isScanning;
-    const showWaveBars = scanAnimation === 'wave' && isScanning;
-    const showWaveTop = scanAnimation === 'wave-top' && isScanning;
+    const isUnlocked = useAtomValue(futureIdeasUnlockedAtom);
+    const scanAnimation = isUnlocked ? featureFlags.feat_scan_animation : 'E';
+    const showRings = scanAnimation === 'B' && isScanning;
+    const showWaveBars = scanAnimation === 'C' && isScanning;
+    const showWaveTop = scanAnimation === 'D' && isScanning;
+    const showScanE = scanAnimation === 'E' && isScanning;
+    const showScanF = scanAnimation === 'F' && isScanning;
 
     const renderFeedback = (primary: string, secondary?: string, iconType: 'success' | 'alert' | 'warning' = 'success') => {
         const bgClass = iconType === 'success' ? styles.feedbackBackgroundSuccess : styles.feedbackBackgroundError;
@@ -221,9 +226,11 @@ const FeedbackVisualizer = () => {
             {showRings && <WaapiRingVisualizer isEnabled={true} />}
             {showWaveBars && <WaveBarsVisualizer isEnabled={true} />}
             {showWaveTop && <WaveTopVisualizer isEnabled={true} />}
+            {showScanE && <ScanAnimationE isEnabled={true} />}
+            {showScanF && <ScanAnimationF isEnabled={true} />}
 
             <AnimatePresence mode="wait">
-                {scanState === 'scanning' && !showWaveTop && (
+                {scanState === 'scanning' && !showWaveTop && !showScanE && !showScanF && (
                     <motion.div
                         key="scanning"
                         className={styles.scanningLabel}
@@ -232,7 +239,7 @@ const FeedbackVisualizer = () => {
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
                     >
-                        Ready to Scan
+                        Hold near Tag
                     </motion.div>
                 )}
 

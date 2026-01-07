@@ -1,7 +1,7 @@
 // src/features/Overlays/FutureIdeasModal.tsx
 import { useAtom, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { featureFlagsAtom, PulseStyle } from '../../data/featureFlags';
+import { featureFlagsAtom, PulseStyle, ScanAnimationStyle } from '../../data/featureFlags';
 import { appConfigAtom, isRingAnimationTestOpenAtom } from '../../data/atoms';
 import { useHaptics } from '../../data/useHaptics';
 import { Switch } from '../../components/Switch';
@@ -47,20 +47,22 @@ export const FutureIdeasModal = () => {
                         <SegmentedControl
                             id="scan-animation-style"
                             options={[
-                                { value: 'none', label: 'None' },
-                                { value: 'rings', label: 'Rings' },
-                                { value: 'wave', label: 'Wave' },
-                                { value: 'wave-top', label: 'Top' },
+                                { value: 'A', label: 'A' },
+                                { value: 'B', label: 'B' },
+                                { value: 'C', label: 'C' },
+                                { value: 'D', label: 'D' },
+                                { value: 'E', label: 'E' },
+                                { value: 'F', label: 'F' },
                             ]}
                             value={featureFlags.feat_scan_animation}
                             onValueChange={(v) => {
                                 triggerHaptic('light');
-                                setFeatureFlags(cur => ({ ...cur, feat_scan_animation: v as 'none' | 'rings' | 'wave' | 'wave-top' }));
+                                setFeatureFlags(cur => ({ ...cur, feat_scan_animation: v as ScanAnimationStyle }));
                             }}
                         />
                     </div>
                 </div>
-                {featureFlags.feat_scan_animation === 'rings' && (
+                {featureFlags.feat_scan_animation === 'B' && (
                     <Button variant="secondary" onClick={() => { triggerHaptic('light'); setIsRingTestOpen(true); }}>
                         <span className="material-symbols-rounded">animation</span>
                         Ring Animation Sandbox

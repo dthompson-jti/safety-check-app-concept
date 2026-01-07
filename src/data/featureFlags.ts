@@ -20,6 +20,9 @@ import { appConfigAtom } from './atoms';
 // Pulse style options for glass and card effects
 export type PulseStyle = 'none' | 'basic' | 'gradient';
 
+// Scan animation style options (A=none, B=rings, C=wave, D=wave-top, E=step-pulse, F=icon-restored)
+export type ScanAnimationStyle = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+
 // Unlock state for Future Ideas section
 export const futureIdeasUnlockedAtom = atomWithStorage('future-ideas-unlocked', false);
 
@@ -43,7 +46,7 @@ export interface FeatureFlags {
     feat_invert_badge: boolean;
     feat_badge_mode: 'none' | 'pulse' | 'ticker';
     feat_jump_fab: boolean;
-    feat_scan_animation: 'none' | 'rings' | 'wave' | 'wave-top';
+    feat_scan_animation: ScanAnimationStyle;
 }
 
 const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
@@ -65,7 +68,7 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     feat_invert_badge: false,
     feat_badge_mode: 'none',
     feat_jump_fab: false,
-    feat_scan_animation: 'none',
+    feat_scan_animation: 'E',
 };
 
 export const featureFlagsAtom = atomWithStorage<FeatureFlags>('feature-flags', DEFAULT_FEATURE_FLAGS);
@@ -108,6 +111,7 @@ export const useFutureIdeas = () => {
                 feat_invert_card: false,
                 feat_badge_mode: 'none',
                 feat_jump_fab: false,
+                feat_scan_animation: 'E',
             }));
         }, 0);
     }, [setUnlocked, setTheme, setAppConfig, setFeatureFlags]);
