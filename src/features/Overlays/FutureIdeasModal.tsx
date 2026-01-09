@@ -128,22 +128,14 @@ export const FutureIdeasModal = () => {
                     )}
                 </div>
 
-                {/* Other Features */}
+                {/* Dynamic Avatar */}
                 <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem}>
-                        <label htmlFor="enable-dark-mode-switch" className={styles.itemLabel}>Enable Dark Mode</label>
+                        <label htmlFor="dynamic-avatar-switch" className={styles.itemLabel}>Dynamic Avatar Color</label>
                         <Switch
-                            id="enable-dark-mode-switch"
-                            checked={featureFlags.enableDarkMode}
-                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, enableDarkMode: c })))}
-                        />
-                    </div>
-                    <div className={styles.settingsItem}>
-                        <label htmlFor="enable-enhanced-avatar-switch" className={styles.itemLabel}>Enhanced Avatar Dropdown</label>
-                        <Switch
-                            id="enable-enhanced-avatar-switch"
-                            checked={featureFlags.enableEnhancedAvatarDropdown}
-                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, enableEnhancedAvatarDropdown: c })))}
+                            id="dynamic-avatar-switch"
+                            checked={featureFlags.enableDynamicAvatarColor}
+                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, enableDynamicAvatarColor: c })))}
                         />
                     </div>
                 </div>

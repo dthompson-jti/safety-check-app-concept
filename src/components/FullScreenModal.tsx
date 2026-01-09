@@ -88,7 +88,7 @@ export const FullScreenModal: React.FC<FullScreenModalProps> = ({
                 null
               )}
 
-              <h2 style={{ marginLeft: actionType === 'close' ? '8px' : '0' }}>{title}</h2>
+              <h2 style={{ marginLeft: actionType === 'back' ? '0' : 'var(--spacing-2)' }}>{title}</h2>
 
               <div className={styles.rightActionContainer}>
                 {/* RIGHT ACTION: Custom action OR 'close' mode button */}

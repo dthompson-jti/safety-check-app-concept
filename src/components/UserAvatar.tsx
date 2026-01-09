@@ -18,9 +18,9 @@ export const UserAvatar = ({ className }: { className?: string }) => {
 
     const { initials, displayName, username } = session.user;
 
-    // Get color: Only use OKLCH when enhanced dropdown is enabled
+    // Get color: Only use OKLCH when dynamic color is enabled
     let backgroundColor: string | undefined;
-    if (featureFlags.enableEnhancedAvatarDropdown) {
+    if (featureFlags.enableDynamicAvatarColor) {
         const customHue = userPreferences[username]?.avatarHue;
         const hue = customHue !== undefined ? customHue : generateAvatarHue(username);
         backgroundColor = getAvatarColor(hue);
@@ -28,7 +28,7 @@ export const UserAvatar = ({ className }: { className?: string }) => {
     // When flag is OFF, backgroundColor is undefined -> falls back to CSS static blue
 
     const handleAvatarClick = () => {
-        if (featureFlags.enableEnhancedAvatarDropdown) {
+        if (featureFlags.enableDynamicAvatarColor) {
             setUserSettingsOpen(true);
         } else {
             setSettingsOpen(true);

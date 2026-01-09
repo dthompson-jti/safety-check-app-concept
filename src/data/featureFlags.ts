@@ -6,15 +6,6 @@ import { appConfigAtom } from './atoms';
 
 /**
  * Future Ideas Feature Flags
- * 
- * Controls visibility of experimental "Future Ideas" features.
- * Unlocked via:
- * - Konami code (keyboard): ↑↑↓↓←→←→BA
- * - 7 taps on app logo
- * 
- * Persisted to localStorage so it stays unlocked.
- * 
- * REPLACES: devMode.ts (Dave Mode)
  */
 
 // Pulse style options for glass and card effects
@@ -30,8 +21,7 @@ export const futureIdeasUnlockedAtom = atomWithStorage('future-ideas-unlocked', 
 export interface FeatureFlags {
     useSoundEnabled: boolean;
     useHapticsEnabled: boolean;
-    enableDarkMode: boolean;
-    enableEnhancedAvatarDropdown: boolean;
+    enableDynamicAvatarColor: boolean;
     // Late Check Concepts - Pulse Effects
     feat_glass_pulse: PulseStyle;  // Header/Footer pulse style
     feat_card_pulse: PulseStyle;   // Card background pulse style
@@ -52,8 +42,7 @@ export interface FeatureFlags {
 const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     useSoundEnabled: false,
     useHapticsEnabled: false,
-    enableDarkMode: false,
-    enableEnhancedAvatarDropdown: false,
+    enableDynamicAvatarColor: false,
     // Late Check Concepts - Pulse defaults to 'none'
     feat_glass_pulse: 'none',
     feat_card_pulse: 'none',
@@ -93,13 +82,12 @@ export const useFutureIdeas = () => {
             }));
             setFeatureFlags(cur => ({
                 ...cur,
-                // ON: Haptics, Audio, Enhanced Avatar, Invert Badge
-                enableEnhancedAvatarDropdown: true,
+                // ON: Haptics, Audio, Dynamic Avatar, Invert Badge
+                enableDynamicAvatarColor: true,
                 useHapticsEnabled: true,
                 useSoundEnabled: true,
                 feat_invert_badge: true,
-                // OFF: Dark mode, Pulse effects, everything else
-                enableDarkMode: false,
+                // OFF: Pulse effects, everything else
                 feat_glass_pulse: 'none',
                 feat_card_pulse: 'none',
                 feat_vignette: false,
@@ -117,18 +105,10 @@ export const useFutureIdeas = () => {
     }, [setUnlocked, setTheme, setAppConfig, setFeatureFlags]);
 
     const lock = useCallback(() => {
-        console.log('[Future Ideas] LOCK called - resetting to defaults');
         setUnlocked(false);
-        // Reset theme immediately (not in setTimeout)
-        console.log('[Future Ideas] Setting theme to light immediately');
         setTheme('light');
-        // Reset all feature flags to default (off)
-        // Use setTimeout to ensure state updates are processed
         setTimeout(() => {
-            console.log('[Future Ideas] Resetting feature flags to defaults');
             setFeatureFlags(DEFAULT_FEATURE_FLAGS);
-            console.log('[Future Ideas] Resetting haptics and audio');
-            // Reset haptics and audio when locking Future Ideas
             setAppConfig(cur => ({
                 ...cur,
                 hapticsEnabled: false,
@@ -137,25 +117,18 @@ export const useFutureIdeas = () => {
         }, 0);
     }, [setUnlocked, setFeatureFlags, setTheme, setAppConfig]);
 
-    // Toggle: Konami code or 7-tap toggles visibility
     const toggle = useCallback(() => {
         let wasUnlocked = false;
         setUnlocked((prev) => {
             wasUnlocked = prev;
-            console.log(`[Future Ideas] TOGGLE - wasUnlocked: ${prev}, will be: ${!prev}`);
             return !prev;
         });
 
-        // If we were unlocked and are now locking, call lock()
         if (wasUnlocked) {
-            console.log('[Future Ideas] Calling lock() to reset everything');
-            // Call lock to reset - but we need to do it in next tick since setUnlocked already ran
             setTimeout(() => {
                 lock();
             }, 0);
         } else {
-            // Unlocking - call unlock()
-            console.log("[Future Ideas] Calling unlock() to apply Daves favorites");
             setTimeout(() => {
                 unlock();
             }, 0);

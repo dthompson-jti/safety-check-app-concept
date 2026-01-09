@@ -128,8 +128,8 @@ export const SettingsModal = () => {
         </div>
       </div>
 
-      {/* Appearance Section: Only visible when enhanced avatar dropdown is enabled */}
-      {featureFlags.enableEnhancedAvatarDropdown && (
+      {/* Appearance Section: Only visible when dynamic avatar color is enabled */}
+      {featureFlags.enableDynamicAvatarColor && (
         <div className={styles.settingsSection}>
           <h3 className={styles.sectionTitle}>Appearance</h3>
           <div className={styles.settingsGroup}>
@@ -161,7 +161,8 @@ export const SettingsModal = () => {
           onClick={handleLogout}
           className={styles.logoutButton}
         >
-          Log Out
+          <span className="material-symbols-rounded">logout</span>
+          <span>Log Out</span>
         </Button>
       </div>
     </motion.div>
