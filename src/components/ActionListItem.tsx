@@ -43,7 +43,7 @@ export const ActionListItem = ({
   indent = false,
   showChevron = true,
 }: ActionListItemProps) => {
-  
+
   // Logic: Determine Leading Content
   // Priority: Custom Element > Icon > Implicit Checkmark (if selected)
   let renderedLeading = leadingElement;

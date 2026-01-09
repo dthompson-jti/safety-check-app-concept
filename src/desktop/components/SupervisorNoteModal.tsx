@@ -58,7 +58,7 @@ export const SupervisorNoteModal = () => {
         <Dialog.Root open={modalState.isOpen} onOpenChange={(open) => !open && handleClose()}>
             <Dialog.Portal>
                 <Dialog.Overlay className={styles.overlay} />
-                <Dialog.Content className={styles.content}>
+                <Dialog.Content className={styles.content} data-platform="desktop">
                     <div className={styles.header}>
                         <Dialog.Title className={styles.title}>Add Supervisor Note</Dialog.Title>
                         <Dialog.Close asChild>

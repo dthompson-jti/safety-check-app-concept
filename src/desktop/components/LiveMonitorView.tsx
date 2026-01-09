@@ -1,22 +1,17 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
-import { desktopFilterAtom, activeDetailRecordAtom, selectedLiveRowsAtom, isDetailPanelOpenAtom, PanelData } from '../atoms';
+import { useAtomValue } from 'jotai';
+import { ColumnDef } from '@tanstack/react-table';
+import { desktopFilterAtom } from '../atoms';
 import { LiveCheckRow } from '../types';
 import { DataTable } from './DataTable';
-import { BulkActionFooter } from './BulkActionFooter';
 import { RowContextMenu } from './RowContextMenu';
 import { StatusBadge, StatusBadgeType } from './StatusBadge';
-import { addToastAtom } from '../../data/toastAtoms';
 import { TOTAL_LIVE_RECORDS, loadLiveChecksPage } from '../mockLiveData';
 import { COLUMN_WIDTHS } from './tableConstants';
 import styles from './DataTable.module.css';
 
 export const LiveMonitorView = () => {
     const filter = useAtomValue(desktopFilterAtom);
-    const addToast = useSetAtom(addToastAtom);
-    const [selectedRows, setSelectedRows] = useAtom(selectedLiveRowsAtom);
-    const setIsPanelOpen = useSetAtom(isDetailPanelOpenAtom);
 
     // Pagination State
     const [loadedData, setLoadedData] = useState<LiveCheckRow[]>([]);
@@ -63,13 +58,12 @@ export const LiveMonitorView = () => {
             });
         }
 
-        // Apply unit filter (mock data uses room numbers like "101", "102")
-        // For demo purposes, we'll keep all data visible unless specific unit filter
-
         // Sort by urgency, then by risk level (high risk first within same urgency)
         rows.sort((a, b) => {
-            const statusOrder: Record<'missed' | 'due' | 'pending', number> = { missed: 0, due: 1, pending: 2 };
-            const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+            const statusOrder: Record<string, number> = { missed: 0, due: 1, pending: 2, overdue: 0 };
+            const aStatus = a.status === 'missed' ? 'overdue' : a.status;
+            const bStatus = b.status === 'missed' ? 'overdue' : b.status;
+            const statusDiff = (statusOrder[aStatus] ?? 99) - (statusOrder[bStatus] ?? 99);
             if (statusDiff !== 0) return statusDiff;
             // High risk residents bubble to top
             if (a.hasHighRisk && !b.hasHighRisk) return -1;
@@ -80,125 +74,9 @@ export const LiveMonitorView = () => {
         return rows;
     }, [filter.search, loadedData]);
 
-    // Convert Set to TanStack's RowSelectionState
-    const rowSelection: RowSelectionState = useMemo(() => {
-        const selection: RowSelectionState = {};
-        selectedRows.forEach((id) => {
-            selection[id] = true;
-        });
-        return selection;
-    }, [selectedRows]);
-
-    const handleRowSelectionChange = useCallback(
-        (updaterOrValue: RowSelectionState | ((prev: RowSelectionState) => RowSelectionState)) => {
-            const newSelection = typeof updaterOrValue === 'function'
-                ? updaterOrValue(rowSelection)
-                : updaterOrValue;
-            const newSet = new Set(Object.keys(newSelection).filter((k) => newSelection[k]));
-            setSelectedRows(newSet);
-        },
-        [rowSelection, setSelectedRows]
-    );
-
-    const handleAlert = useCallback((row: LiveCheckRow) => {
-        addToast({
-            message: `Alert dispatched for ${row.location}`,
-            icon: 'notifications_active',
-            variant: 'info',
-        });
-    }, [addToast]);
-
-    const handleBulkComment = () => {
-        addToast({
-            message: `Comment added for ${selectedRows.size} checks`,
-            icon: 'check_circle',
-            variant: 'success',
-        });
-        setSelectedRows(new Set());
-    };
-
-    const setDetailRecord = useSetAtom(activeDetailRecordAtom);
-
-    const handleRowClick = useCallback((row: LiveCheckRow, event: React.MouseEvent) => {
-        const isMeta = event.ctrlKey || event.metaKey;
-        const isShift = event.shiftKey;
-
-        setSelectedRows((prev: Set<string>) => {
-            const next = new Set(prev);
-            if (isMeta) {
-                if (next.has(row.id)) next.delete(row.id);
-                else next.add(row.id);
-            } else if (isShift && prev.size > 0) {
-                // Shift click: select range from last selected
-                const lastId = Array.from(prev).pop();
-                if (lastId) {
-                    const allIds = liveRows.map((r: LiveCheckRow) => r.id);
-                    const startIdx = allIds.indexOf(lastId);
-                    const endIdx = allIds.indexOf(row.id);
-                    const range = allIds.slice(
-                        Math.min(startIdx, endIdx),
-                        Math.max(startIdx, endIdx) + 1
-                    );
-                    range.forEach((id: string) => next.add(id));
-                }
-            } else {
-                // Standard click: clear and select one
-                next.clear();
-                next.add(row.id);
-            }
-            return next;
-        });
-
-        // Always update panel data for the clicked row
-        const panelData: PanelData = {
-            id: row.id,
-            source: 'live',
-            residentName: row.residents.map(r => r.name).join(', '),
-            location: row.location,
-            status: row.status,
-            timeScheduled: row.originalCheck.dueDate || '',
-            timeActual: row.lastCheckTime,
-            officerName: row.lastCheckOfficer || '—',
-            supervisorNote: row.supervisorNote,
-            hasHighRisk: row.hasHighRisk,
-            riskType: row.riskType,
-        };
-        setDetailRecord(panelData);
-
-        // If it was a standard click (no modifiers), ensure panel is open
-        if (!isMeta && !isShift) {
-            setIsPanelOpen(true);
-        }
-    }, [liveRows, setSelectedRows, setDetailRecord, setIsPanelOpen]);
-
     const columns: ColumnDef<LiveCheckRow>[] = useMemo(
         () => [
-            {
-                id: 'select',
-                header: ({ table }) => (
-                    <div className={styles.checkboxCell}>
-                        <input
-                            type="checkbox"
-                            className={styles.checkbox}
-                            checked={table.getIsAllRowsSelected()}
-                            onChange={table.getToggleAllRowsSelectedHandler()}
-                            aria-label="Select all rows"
-                        />
-                    </div>
-                ),
-                cell: ({ row }) => (
-                    <div className={styles.checkboxCell}>
-                        <input
-                            type="checkbox"
-                            className={styles.checkbox}
-                            checked={row.getIsSelected()}
-                            onChange={row.getToggleSelectedHandler()}
-                            aria-label={`Select row ${row.id}`}
-                        />
-                    </div>
-                ),
-                ...COLUMN_WIDTHS.CHECKBOX,
-            },
+            // 1. Resident column with hyperlink and alert icon
             {
                 id: 'resident',
                 header: 'Resident',
@@ -206,24 +84,46 @@ export const LiveMonitorView = () => {
                 accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
                 cell: ({ row }) => (
                     <div className={styles.residentCell}>
+                        <a
+                            href="#"
+                            className={styles.linkText}
+                            onClick={(e) => e.preventDefault()}
+                        >
+                            {row.original.residents.map((r) => r.name).join(', ')}
+                        </a>
                         {row.original.hasHighRisk && (
                             <span
-                                className={`material-symbols-rounded ${styles.specialStatusIcon}`}
+                                className={`material-symbols-rounded ${styles.alertIconInline}`}
                                 title={row.original.riskType || 'Special Status'}
                             >
                                 warning
                             </span>
                         )}
-                        <span>{row.original.residents.map((r) => r.name).join(', ')}</span>
                     </div>
                 ),
             },
+            // 2. Group column
+            {
+                id: 'group',
+                header: 'Group',
+                accessorKey: 'group',
+                ...COLUMN_WIDTHS.GROUP,
+            },
+            // 3. Unit column
+            {
+                id: 'unit',
+                header: 'Unit',
+                accessorKey: 'unit',
+                ...COLUMN_WIDTHS.UNIT,
+            },
+            // 4. Room column (location)
             {
                 id: 'location',
                 header: 'Room',
-                accessorKey: 'location',
                 ...COLUMN_WIDTHS.LOCATION,
+                accessorKey: 'location',
             },
+            // 5. Scheduled column
             {
                 id: 'scheduled',
                 header: 'Scheduled',
@@ -244,16 +144,7 @@ export const LiveMonitorView = () => {
                     });
                 },
             },
-            {
-                id: 'actual',
-                header: 'Actual',
-                ...COLUMN_WIDTHS.TIMESTAMP,
-                accessorFn: (row) => row.timerText,
-                cell: ({ row }) => {
-                    if (row.original.status === 'missed') return '—';
-                    return row.original.timerText;
-                },
-            },
+            // 6. Status column
             {
                 id: 'status',
                 header: 'Status',
@@ -265,34 +156,7 @@ export const LiveMonitorView = () => {
                     );
                 },
             },
-            {
-                id: 'checkedBy',
-                header: 'Checked by',
-                ...COLUMN_WIDTHS.OFFICER,
-                accessorFn: (row) => row.lastCheckOfficer || '—',
-            },
-            {
-                id: 'comments',
-                header: 'Supervisor Comments',
-                ...COLUMN_WIDTHS.NOTES,
-                accessorFn: (row) => row.supervisorNote || '',
-                cell: ({ row }) => (
-                    <div className={styles.commentsCell}>
-                        {row.original.supervisorNote ? (
-                            <span
-                                className={styles.supervisorComment}
-                                title={row.original.supervisorNote}
-                                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
-                            >
-                                <span className="material-symbols-rounded" style={{ fontSize: 14 }}>description</span>
-                                {row.original.supervisorNote}
-                            </span>
-                        ) : (
-                            <button className={styles.linkAction}>+</button>
-                        )}
-                    </div>
-                ),
-            },
+            // Spacer to push remaining columns to the right
             {
                 id: 'spacer',
                 size: 0,
@@ -301,6 +165,7 @@ export const LiveMonitorView = () => {
                 header: () => null,
                 cell: () => null,
             },
+            // Actions column (pinned right)
             {
                 id: 'actions',
                 header: () => (
@@ -314,39 +179,35 @@ export const LiveMonitorView = () => {
                 enableSorting: false,
                 cell: ({ row }) => (
                     <RowContextMenu
-                        onAddNote={() => handleAlert(row.original)}
-                        isVerified={false}
+                        actions={[
+                            {
+                                label: 'View resident',
+                                icon: 'person',
+                                onClick: () => console.log('View resident', row.original.id),
+                            },
+                            {
+                                label: 'Manage room',
+                                icon: 'door_front',
+                                onClick: () => console.log('Manage room', row.original.location),
+                            }
+                        ]}
                     />
                 ),
             },
         ],
-        [handleAlert]
+        []
     );
 
     return (
-        <>
-            <DataTable
-                data={liveRows}
-                columns={columns}
-                enableRowSelection
-                rowSelection={rowSelection}
-                onRowSelectionChange={handleRowSelectionChange}
-                getRowId={(row) => row.id}
-                totalCount={TOTAL_LIVE_RECORDS}
-                isLoading={isLoading}
-                hasMore={hasMore}
-                onLoadMore={handleLoadMore}
-                onRowClick={handleRowClick}
-            />
-
-            {selectedRows.size > 0 && (
-                <BulkActionFooter
-                    selectedCount={selectedRows.size}
-                    onAction={handleBulkComment}
-                    onClear={() => setSelectedRows(new Set())}
-                    actionLabel="Comment"
-                />
-            )}
-        </>
+        <DataTable
+            data={liveRows}
+            columns={columns}
+            getRowId={(row) => row.id}
+            totalCount={TOTAL_LIVE_RECORDS}
+            isLoading={isLoading}
+            hasMore={hasMore}
+            onLoadMore={handleLoadMore}
+            onRowClick={undefined}
+        />
     );
 };

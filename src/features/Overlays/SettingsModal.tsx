@@ -109,26 +109,22 @@ export const SettingsModal = () => {
             </div>
           )}
 
-          {/* Theme: Only visible when enableDarkMode feature flag is on */}
-          {featureFlags.enableDarkMode && (
-            <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
-              <label className={styles.itemLabel}>Theme</label>
-              <SegmentedControl
-                id="theme-toggle"
-                options={[
-                  { value: 'light', label: 'Light' },
-                  { value: 'dark-a', label: 'Dark A' },
-                  { value: 'dark-b', label: 'Dark B' },
-                  { value: 'dark-c', label: 'Dark C' },
-                ]}
-                value={theme}
-                onValueChange={(val) => {
-                  triggerHaptic('selection');
-                  setTheme(val);
-                }}
-              />
-            </div>
-          )}
+          {/* Theme: Always visible in promoted experience */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Theme</label>
+            <SegmentedControl
+              id="theme-toggle"
+              options={[
+                { value: 'light', label: 'Light' },
+                { value: 'dark-c', label: 'Dark' },
+              ]}
+              value={theme === 'light' ? 'light' : 'dark-c'}
+              onValueChange={(val) => {
+                triggerHaptic('selection');
+                setTheme(val as any);
+              }}
+            />
+          </div>
         </div>
       </div>
 

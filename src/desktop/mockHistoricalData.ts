@@ -1,6 +1,6 @@
 // src/desktop/mockHistoricalData.ts
 
-import { HistoricalCheck } from './types';
+import { HistoricalCheck, DesktopFilter } from './types';
 
 /**
  * Mock historical check data representing "yesterday's" checks.
@@ -42,6 +42,8 @@ const createCheck = (
         actualTime: actualTime ? `2024-12-17T${actualTime}:00` : null,
         varianceMinutes,
         status,
+        group: location.startsWith('A') ? 'Alpha' : location.startsWith('B') ? 'Bravo' : 'Charlie',
+        unit: location.includes('-10') ? 'Unit 1' : location.includes('-20') ? 'Unit 2' : 'Unit 3',
         officerName,
         officerNote: options.officerNote,
         supervisorNote: options.supervisorNote,
@@ -185,21 +187,56 @@ export const TOTAL_HISTORICAL_RECORDS = 5420;
 
 export function loadHistoricalChecksPage(
     cursor: number,
-    pageSize: number
+    pageSize: number,
+    filter?: DesktopFilter
 ): Promise<{ data: HistoricalCheck[]; nextCursor: number | null }> {
     return new Promise((resolve) => {
         setTimeout(() => {
-            let data: HistoricalCheck[] = [];
+            // Apply filtering to the entire dataset (for mock purposes)
+            let allFiltered = historicalChecks;
 
-            // Base realistic data
-            if (cursor < historicalChecks.length) {
-                data = historicalChecks.slice(cursor, Math.min(cursor + pageSize, historicalChecks.length));
+            if (filter) {
+                allFiltered = allFiltered.filter(check => {
+                    if (filter.search) {
+                        const searchLower = filter.search.toLowerCase();
+                        const matchesResident = check.residents.some((r) =>
+                            r.name.toLowerCase().includes(searchLower)
+                        );
+                        const matchesLocation = check.location.toLowerCase().includes(searchLower);
+                        if (!matchesResident && !matchesLocation) return false;
+                    }
+
+                    if (filter.unit !== 'all') {
+                        const unitFromLocation = check.location.split('-')[0];
+                        if (unitFromLocation !== filter.unit) return false;
+                    }
+
+                    if (filter.statusFilter === 'missed' && check.status !== 'missed') return false;
+                    if (filter.statusFilter === 'late' && check.status !== 'late') return false;
+
+                    if (filter.dateStart || filter.dateEnd) {
+                        const checkDate = check.scheduledTime.split('T')[0];
+                        if (filter.dateStart && checkDate < filter.dateStart) return false;
+                        if (filter.dateEnd && checkDate > filter.dateEnd) return false;
+                    }
+
+                    return true;
+                });
             }
 
-            // Fill remaining with generated data
-            const remainingNeeded = pageSize - data.length;
-            if (remainingNeeded > 0 && cursor + data.length < TOTAL_HISTORICAL_RECORDS) {
+            const totalFilteredCount = filter ? allFiltered.length : TOTAL_HISTORICAL_RECORDS;
+
+            let data: HistoricalCheck[] = [];
+
+            // Paging the filtered data
+            if (cursor < allFiltered.length) {
+                data = allFiltered.slice(cursor, Math.min(cursor + pageSize, allFiltered.length));
+            }
+
+            // If we are not filtering, we can fill with generated data up to TOTAL_HISTORICAL_RECORDS
+            if (!filter && data.length < pageSize && cursor + data.length < TOTAL_HISTORICAL_RECORDS) {
                 const startIndex = cursor + data.length;
+                const remainingNeeded = pageSize - data.length;
                 const generateCount = Math.min(remainingNeeded, TOTAL_HISTORICAL_RECORDS - startIndex);
 
                 const generated = Array.from({ length: generateCount }, (_, i) => {
@@ -231,18 +268,58 @@ export function loadHistoricalChecksPage(
                         actualTime: actualTime ? `2024-12-17T${actualTime}:00` : null,
                         varianceMinutes,
                         status,
+                        group: (idx % 3 === 0) ? 'Alpha' : (idx % 3 === 1) ? 'Bravo' : 'Charlie',
+                        unit: `Unit ${(idx % 3) + 1}`,
                         officerName: 'B. Corbin',
                         officerNote: undefined,
                         supervisorNote: undefined,
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                         reviewStatus: (status === 'done' ? 'verified' : 'pending') as 'verified' | 'pending',
                     };
                 });
                 data = [...data, ...generated];
             }
 
-            const nextCursor = cursor + data.length < TOTAL_HISTORICAL_RECORDS ? cursor + data.length : null;
+            const nextCursor = cursor + data.length < totalFilteredCount ? cursor + data.length : null;
             resolve({ data, nextCursor });
         }, 1500); // Simulate network delay
     });
+}
+
+/**
+ * Calculates total counts for the Historical View tab badges based on filters.
+ * Returns the count of 'missed' checks.
+ */
+export function getHistoricalCounts(filter: DesktopFilter): { unreviewed: number } {
+    // 1. Filter the base checks
+    const filteredBase = historicalChecks.filter(check => {
+        if (filter.search) {
+            const searchLower = filter.search.toLowerCase();
+            const matchesResident = check.residents.some(r => r.name.toLowerCase().includes(searchLower));
+            const matchesLocation = check.location.toLowerCase().includes(searchLower);
+            if (!matchesResident && !matchesLocation) return false;
+        }
+
+        if (filter.unit !== 'all') {
+            const unitFromLocation = check.location.split('-')[0];
+            if (unitFromLocation !== filter.unit) return false;
+        }
+
+        if (filter.dateStart || filter.dateEnd) {
+            const checkDate = check.scheduledTime.split('T')[0];
+            if (filter.dateStart && checkDate < filter.dateStart) return false;
+            if (filter.dateEnd && checkDate > filter.dateEnd) return false;
+        }
+
+        return check.status === 'missed' && !check.supervisorNote;
+    });
+
+    let unreviewed = filteredBase.length;
+
+    // 2. Account for generated checks if not filtering strictly by something that breaks the idx % 20 logic
+    if (!filter.search && filter.unit === 'all' && !filter.dateStart && !filter.dateEnd) {
+        const remaining = TOTAL_HISTORICAL_RECORDS - historicalChecks.length;
+        unreviewed += Math.floor(remaining / 20); // idx % 20 === 0
+    }
+
+    return { unreviewed };
 }

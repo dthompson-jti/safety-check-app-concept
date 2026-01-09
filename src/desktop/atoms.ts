@@ -18,6 +18,8 @@ export const desktopFilterAtom = atom<DesktopFilter>({
     search: '',
     showMissedOnly: false,
     statusFilter: 'all',
+    dateStart: null,
+    dateEnd: null,
 });
 
 /** Selected row IDs for bulk actions (Historical view) */
@@ -57,6 +59,13 @@ export const filteredHistoricalChecksAtom = atom((get) => {
         }
         if (filter.statusFilter === 'late' && check.status !== 'late') {
             return false;
+        }
+
+        // Date Range Filter
+        if (filter.dateStart || filter.dateEnd) {
+            const checkDate = check.scheduledTime.split('T')[0]; // Extract YYYY-MM-DD
+            if (filter.dateStart && checkDate < filter.dateStart) return false;
+            if (filter.dateEnd && checkDate > filter.dateEnd) return false;
         }
 
         return true;
@@ -109,3 +118,55 @@ export const isDetailPanelOpenAtom = atom<boolean>(false);
 
 /** Panel width for resize functionality (min: 320, max: 600) */
 export const panelWidthAtom = atom<number>(400);
+
+// ============================================================================
+// AUTO-REFRESH STATE
+// ============================================================================
+
+/** Auto-refresh configuration */
+export interface AutoRefreshState {
+    isPaused: boolean;
+    intervalSeconds: number;
+    lastRefreshTime: number; // timestamp (ms)
+}
+
+export const autoRefreshAtom = atom<AutoRefreshState>({
+    isPaused: false,
+    intervalSeconds: 30,
+    lastRefreshTime: Date.now(),
+});
+
+/** Derived: Time until next refresh (in seconds) */
+export const nextRefreshSecondsAtom = atom((get) => {
+    const { isPaused, intervalSeconds, lastRefreshTime } = get(autoRefreshAtom);
+
+    if (isPaused) return null; // null = paused
+
+    const elapsed = (Date.now() - lastRefreshTime) / 1000;
+    const remaining = Math.max(0, intervalSeconds - elapsed);
+    return Math.ceil(remaining);
+});
+
+// ============================================================================
+// DESKTOP STATUS COUNTS
+// ============================================================================
+
+import { getLiveCounts } from './mockLiveData';
+import { getHistoricalCounts } from './mockHistoricalData';
+
+/** Desktop-specific counts for header tabs - now pulling from desktop mock data */
+export const desktopTabCountsAtom = atom((get) => {
+    const filter = get(desktopFilterAtom);
+
+    const live = getLiveCounts({ search: filter.search });
+    const history = getHistoricalCounts(filter);
+
+    return {
+        // Live View badges
+        missed: live.missed,     // 🔔 red bell
+        due: live.due,           // ⏰ amber clock
+
+        // Historical View badge
+        unreviewed: history.unreviewed, // 👤⚠ gray
+    };
+});

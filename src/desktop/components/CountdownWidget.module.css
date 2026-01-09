@@ -1,0 +1,160 @@
+/* src/desktop/components/CountdownWidget.module.css */
+
+/* =============================================
+   TRIGGER BUTTON
+   ============================================= */
+
+.trigger {
+    /* Reset */
+    border: none;
+    cursor: pointer;
+
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1p5);
+    /* 6px */
+    padding: var(--spacing-1p5) var(--spacing-3);
+    /* 6px 12px */
+
+    /* Appearance - matches secondary button style */
+    background: var(--surface-bg-secondary);
+    border-radius: var(--radius-lg);
+    /* 10px */
+    color: var(--surface-fg-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+
+    /* Interactivity */
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.trigger:hover {
+    background: var(--control-bg-tertiary-hover);
+}
+
+.trigger .material-symbols-rounded {
+    font-size: var(--icon-size-md);
+    /* 20px */
+    color: var(--surface-fg-secondary);
+}
+
+.countdownText {
+    font-variant-numeric: tabular-nums;
+    min-width: 3ch;
+    /* Prevent layout shift */
+}
+
+.caret {
+    font-size: var(--icon-size-sm) !important;
+    /* 16px */
+    margin-left: calc(-1 * var(--spacing-1));
+    /* Pull caret closer */
+}
+
+/* =============================================
+   POPOVER CONTENT
+   ============================================= */
+
+.popoverContent {
+    width: 240px;
+    padding: var(--spacing-3);
+    /* 12px */
+}
+
+.popoverRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popoverLabel {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+    color: var(--surface-fg-primary);
+}
+
+.divider {
+    height: 1px;
+    background: var(--surface-border-secondary);
+    margin: var(--spacing-3) 0;
+}
+
+/* =============================================
+   INFO SECTION
+   ============================================= */
+
+.infoSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    color: var(--surface-fg-secondary);
+}
+
+.infoRow .material-symbols-rounded {
+    font-size: var(--icon-size-sm);
+    color: var(--surface-fg-tertiary);
+}
+
+/* =============================================
+   PROGRESS RING
+   ============================================= */
+
+.progressContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 80px;
+    margin: var(--spacing-3) 0;
+}
+
+.progressRing {
+    width: 72px;
+    height: 72px;
+    transform: rotate(-90deg);
+    /* Start from top */
+}
+
+.progressBg {
+    stroke: var(--surface-border-secondary);
+}
+
+.progressFg {
+    stroke: var(--primitives-theme-600);
+    transition: stroke-dashoffset 1s linear;
+}
+
+.progressText {
+    position: absolute;
+    font-size: var(--font-size-xl);
+    /* 20px */
+    font-weight: var(--font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    color: var(--surface-fg-primary);
+}
+
+.progressUnit {
+    font-size: var(--font-size-sm);
+    color: var(--surface-fg-tertiary);
+}
+
+/* =============================================
+   ACTION BUTTONS
+   ============================================= */
+
+.actionButtons {
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.actionButtons .btn {
+    flex: 1;
+}

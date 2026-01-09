@@ -58,7 +58,7 @@ export const AppFooter = () => {
   };
 
   return (
-    <footer className={styles.footer} ref={footerRef} data-footer-style={appConfig.headerStyle}>
+    <footer className={styles.footer} ref={footerRef} data-footer-style={appConfig.headerStyle} data-shadow={appConfig.showChromeShadow}>
       {appConfig.scanMode === 'nfc' ? (
         <NfcScanButton />
       ) : (

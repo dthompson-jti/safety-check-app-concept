@@ -171,7 +171,8 @@
 
 .td {
     padding: var(--spacing-3) var(--spacing-4);
-    font-size: var(--font-size-sm);
+    font-size: 14px;
+    font-weight: 500;
     color: var(--surface-fg-primary);
     vertical-align: middle;
     min-height: 56px;
@@ -181,10 +182,10 @@
     border-bottom: 1px solid var(--surface-border-secondary);
 }
 
-/* Checkbox column - first cell: centered, with divider removed for cleaner look */
-.td:first-child,
-.th:first-child {
-    padding: 0 !important;
+/* No padding override for first child - ensure standard padding exists like all other columns */
+.td,
+.th {
+    padding: var(--spacing-3) var(--spacing-4);
 }
 
 /* Actions column - last cell: centered */
@@ -234,7 +235,7 @@
 .residentCell {
     display: flex;
     align-items: center;
-    gap: var(--spacing-2);
+    gap: var(--spacing-1p5);
 }
 
 .riskIcon {
@@ -263,8 +264,8 @@
 }
 
 .statusLozenge.done {
-    background: var(--surface-bg-success-secondary);
-    color: var(--surface-fg-success-primary);
+    background: var(--surface-bg-secondary);
+    color: var(--surface-fg-secondary);
 }
 
 .statusLozenge.late {
@@ -321,6 +322,39 @@
 
 .linkAction:hover {
     text-decoration: underline;
+}
+
+/* Hyperlink text styling for names and room numbers */
+.linkText {
+    color: var(--control-fg-theme);
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: auto;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.linkText:hover {
+    color: var(--control-fg-theme-hover);
+    text-decoration: underline;
+    text-decoration-thickness: 20%;
+}
+
+/* Alert icon at far right of row - legacy */
+.alertIcon {
+    color: var(--status-error, var(--surface-fg-alert-primary));
+    font-size: 18px;
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Alert icon inline next to name */
+.alertIconInline {
+    color: var(--surface-fg-primary);
+    font-size: 18px;
+    font-variation-settings: 'FILL' 1;
 }
 
 /* Verified status */
@@ -673,4 +707,23 @@
     background-size: 400% 100%;
     animation: shimmer 3s ease-in-out infinite;
     border-radius: var(--radius-full);
+}
+
+/* Single Row Cell (Date/Time merge) */
+.singleRowCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.primaryText {
+    color: var(--surface-fg-primary);
+    font-weight: 500;
+}
+
+.secondaryText {
+    color: var(--surface-fg-primary);
+    font-size: 14px;
+    font-weight: 500;
 }

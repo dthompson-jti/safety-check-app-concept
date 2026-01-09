@@ -11,12 +11,16 @@
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border-top: 1px solid var(--surface-border-secondary);
-  box-shadow:
-    0 -3px 6px -3px rgba(0, 0, 0, 0.1),
-    0 -6px 12px -4px rgba(0, 0, 0, 0.08);
   padding: var(--spacing-4);
   /* Safe area handling for modern mobile devices (iPhone Home Indicator) */
   padding-bottom: calc(var(--spacing-4) + env(safe-area-inset-bottom));
+}
+
+/* Drop shadow only when enabled */
+.footer[data-shadow="true"] {
+  box-shadow:
+    0 -3px 6px -3px rgba(0, 0, 0, 0.1),
+    0 -6px 12px -4px rgba(0, 0, 0, 0.08);
 }
 
 .footer[data-footer-style='tertiary'] {

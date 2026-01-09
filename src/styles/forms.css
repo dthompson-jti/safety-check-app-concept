@@ -61,7 +61,7 @@ input[type="checkbox"] {
   cursor: pointer;
   display: grid;
   place-content: center;
-  border: 1px solid var(--control-border-secondary);
+  border: 1px solid var(--surface-border-primary);
   background: var(--surface-bg-primary);
   transition: all 0.1s ease-in-out;
 }

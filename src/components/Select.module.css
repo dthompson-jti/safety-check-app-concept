@@ -9,7 +9,7 @@
   width: 100%;
   height: 36px;
   padding: 0 var(--spacing-3);
-  border: 1px solid var(--control-border-secondary);
+  border: 1px solid var(--surface-border-primary);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -20,6 +20,11 @@
   cursor: pointer;
   position: relative;
   user-select: none;
+}
+
+/* Desktop: Secondary style with visible border */
+[data-platform="desktop"] .selectTrigger {
+  border-color: var(--control-border-secondary);
 }
 
 .selectTrigger:hover:not(:disabled) {

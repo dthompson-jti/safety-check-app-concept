@@ -189,6 +189,7 @@ interface AppConfig {
   headerStyle: 'secondary' | 'tertiary' | 'quaternary';
   showEnvironmentName: boolean;
   environmentName: string;
+  showChromeShadow: boolean;
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
@@ -211,6 +212,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
   headerStyle: 'secondary',
   showEnvironmentName: false,
   environmentName: 'https://vicbc-qa-symphony.logan-symphony.com',
+  showChromeShadow: true,
 });
 
 // =================================================================

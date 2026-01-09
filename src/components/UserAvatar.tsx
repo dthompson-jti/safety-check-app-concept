@@ -1,9 +1,8 @@
 // src/components/UserAvatar.tsx
 import { useAtomValue, useSetAtom } from 'jotai';
-import { sessionAtom, userPreferencesAtom, isUserSettingsModalOpenAtom } from '../data/atoms';
+import { sessionAtom, userPreferencesAtom, isUserSettingsModalOpenAtom, isSettingsModalOpenAtom } from '../data/atoms';
 import { featureFlagsAtom } from '../data/featureFlags';
 import { generateAvatarHue, getAvatarColor } from '../data/users';
-import { Popover } from './Popover';
 import styles from './UserAvatar.module.css';
 
 export const UserAvatar = ({ className }: { className?: string }) => {
@@ -11,6 +10,7 @@ export const UserAvatar = ({ className }: { className?: string }) => {
     const userPreferences = useAtomValue(userPreferencesAtom);
     const featureFlags = useAtomValue(featureFlagsAtom);
     const setUserSettingsOpen = useSetAtom(isUserSettingsModalOpenAtom);
+    const setSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
 
     if (!session.user) {
         return null;
@@ -27,33 +27,30 @@ export const UserAvatar = ({ className }: { className?: string }) => {
     }
     // When flag is OFF, backgroundColor is undefined -> falls back to CSS static blue
 
-    const avatarElement = (
+    const handleAvatarClick = () => {
+        if (featureFlags.enableEnhancedAvatarDropdown) {
+            setUserSettingsOpen(true);
+        } else {
+            setSettingsOpen(true);
+        }
+    };
+
+    return (
         <div
             className={`${styles.avatar} ${className || ''}`}
             aria-label={`User: ${displayName}`}
             style={backgroundColor ? { backgroundColor } : undefined}
-            onClick={featureFlags.enableEnhancedAvatarDropdown ? () => setUserSettingsOpen(true) : undefined}
-            role={featureFlags.enableEnhancedAvatarDropdown ? "button" : undefined}
+            onClick={handleAvatarClick}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleAvatarClick();
+                }
+            }}
         >
             {initials}
         </div>
-    );
-
-    // Enhanced mode: Just show clickable avatar (no popover)
-    if (featureFlags.enableEnhancedAvatarDropdown) {
-        return avatarElement;
-    }
-
-    // Default: Simple name popover
-    const popoverContent = (
-        <div className={styles.popoverContent}>
-            {displayName}
-        </div>
-    );
-
-    return (
-        <Popover trigger={avatarElement} variant="tooltip">
-            {popoverContent}
-        </Popover>
     );
 };

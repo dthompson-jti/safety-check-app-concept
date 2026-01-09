@@ -1,11 +1,12 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import {
     selectedHistoryRowsAtom,
     supervisorNoteModalAtom,
     activeDetailRecordAtom,
     isDetailPanelOpenAtom,
+    desktopFilterAtom,
     PanelData,
 } from '../atoms';
 import { HistoricalCheck } from '../types';
@@ -26,12 +27,6 @@ const formatTime = (isoString: string): string => {
     });
 };
 
-const formatVariance = (minutes: number): string => {
-    if (!isFinite(minutes)) return 'Missed';
-    if (minutes <= 2) return 'On Time';
-    return `+${minutes}m late`;
-};
-
 export const HistoricalReviewView = () => {
     const [selectedRows, setSelectedRows] = useAtom(selectedHistoryRowsAtom);
     const setModalState = useSetAtom(supervisorNoteModalAtom);
@@ -43,28 +38,30 @@ export const HistoricalReviewView = () => {
     const [hasMore, setHasMore] = useState(true);
     const [cursor, setCursor] = useState(0);
 
+    const filter = useAtomValue(desktopFilterAtom);
+
     // Initial load
     useEffect(() => {
         setIsLoading(true);
-        void loadHistoricalChecksPage(0, 50).then(({ data, nextCursor }) => {
+        void loadHistoricalChecksPage(0, 50, filter).then(({ data, nextCursor }) => {
             setLoadedData(data);
             setCursor(nextCursor ?? 0);
             setHasMore(nextCursor !== null);
             setIsLoading(false);
         });
-    }, []);
+    }, [filter]);
 
     const handleLoadMore = useCallback(() => {
         if (isLoading || !hasMore) return;
 
         setIsLoading(true);
-        void loadHistoricalChecksPage(cursor, 50).then(({ data, nextCursor }) => {
+        void loadHistoricalChecksPage(cursor, 50, filter).then(({ data, nextCursor }) => {
             setLoadedData((prev) => [...prev, ...data]);
             setCursor(nextCursor ?? cursor);
             setHasMore(nextCursor !== null);
             setIsLoading(false);
         });
-    }, [cursor, isLoading, hasMore]);
+    }, [cursor, isLoading, hasMore, filter]);
 
     // Convert Set to TanStack's RowSelectionState
     const rowSelection: RowSelectionState = useMemo(() => {
@@ -143,11 +140,7 @@ export const HistoricalReviewView = () => {
             reviewStatus: row.reviewStatus,
         };
         setDetailRecord(panelData);
-
-        if (!isMeta && !isShift) {
-            setIsPanelOpen(true);
-        }
-    }, [loadedData, setSelectedRows, setDetailRecord, setIsPanelOpen]);
+    }, [loadedData, setSelectedRows, setDetailRecord]);
 
     const handleOpenNoteModal = useCallback((checkId: string) => {
         setModalState({
@@ -184,35 +177,78 @@ export const HistoricalReviewView = () => {
                 ),
                 ...COLUMN_WIDTHS.CHECKBOX,
             },
+            // 1. Resident (Link)
+            {
+                id: 'resident',
+                header: 'Resident',
+                ...COLUMN_WIDTHS.RESIDENT,
+                accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
+                cell: ({ row }) => (
+                    <a
+                        href="#"
+                        className={styles.linkText}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleRowClick(row.original, e);
+                        }}
+                    >
+                        {row.original.residents.map((r) => r.name).join(', ')}
+                    </a>
+                ),
+            },
+            // 2. Group
+            {
+                id: 'group',
+                header: 'Group',
+                accessorKey: 'group',
+                ...COLUMN_WIDTHS.GROUP,
+            },
+            // 3. Unit
+            {
+                id: 'unit',
+                header: 'Unit',
+                accessorKey: 'unit',
+                ...COLUMN_WIDTHS.UNIT,
+            },
+            // 4. Room
+            {
+                id: 'location',
+                header: 'Room',
+                ...COLUMN_WIDTHS.LOCATION,
+                accessorKey: 'location',
+            },
+            // 5. Scheduled (Date + Time Merged)
             {
                 id: 'scheduled',
                 header: 'Scheduled',
-                accessorFn: (row) => formatTime(row.scheduledTime),
                 ...COLUMN_WIDTHS.TIMESTAMP,
+                accessorFn: (row) => row.scheduledTime,
+                cell: ({ row }) => {
+                    const dateObj = new Date(row.original.scheduledTime);
+                    const dateStr = dateObj.toLocaleDateString('en-US', {
+                        month: '2-digit',
+                        day: '2-digit',
+                        year: 'numeric',
+                    });
+                    const timeStr = formatTime(row.original.scheduledTime);
+
+                    return (
+                        <div className={styles.singleRowCell}>
+                            <span className={styles.primaryText}>{dateStr}</span>
+                            <span className={styles.secondaryText}>{timeStr}</span>
+                        </div>
+                    );
+                }
             },
+            // 7. Actual
             {
                 id: 'actual',
                 header: 'Actual',
-                accessorFn: (row) => row.actualTime ? formatTime(row.actualTime) : '',
-                cell: ({ row }) =>
-                    row.original.actualTime ? formatTime(row.original.actualTime) : '—',
                 ...COLUMN_WIDTHS.TIMESTAMP,
+                accessorFn: (row) => row.actualTime ? formatTime(row.actualTime) : '—',
             },
-            {
-                id: 'variance',
-                header: 'Variance',
-                ...COLUMN_WIDTHS.VARIANCE,
-                accessorKey: 'varianceMinutes',
-                cell: ({ row }) => {
-                    const variance = row.original.varianceMinutes;
-                    let className = styles.timerCell;
-                    if (!isFinite(variance)) className += ` ${styles.alert}`;
-                    else if (variance > 2) className += ` ${styles.warning}`;
-                    else className += ` ${styles.neutral}`;
-
-                    return <span className={className}>{formatVariance(variance)}</span>;
-                },
-            },
+            // 8. Status
             {
                 id: 'status',
                 header: 'Status',
@@ -222,66 +258,7 @@ export const HistoricalReviewView = () => {
                     <StatusBadge status={row.original.status as StatusBadgeType} />
                 ),
             },
-            {
-                id: 'resident',
-                header: 'Resident',
-                ...COLUMN_WIDTHS.RESIDENT,
-                accessorFn: (row) => row.residents.map((r) => r.name).join(', '),
-            },
-            {
-                id: 'notes',
-                header: 'Notes',
-                size: 80, // Custom mini size for this view
-                minSize: 60,
-                accessorFn: (row) => `${row.officerNote || ''} ${row.supervisorNote || ''}`,
-                cell: ({ row }) => (
-                    <div className={styles.notesCell}>
-                        {row.original.officerNote && (
-                            <span
-                                className={`material-symbols-rounded ${styles.noteIcon}`}
-                                title={row.original.officerNote}
-                            >
-                                description
-                            </span>
-                        )}
-                        {row.original.supervisorNote && (
-                            <span
-                                className={`material-symbols-rounded ${styles.noteIcon}`}
-                                title={row.original.supervisorNote}
-                            >
-                                description
-                            </span>
-                        )}
-                    </div>
-                ),
-            },
-            {
-                id: 'review',
-                header: 'Review',
-                ...COLUMN_WIDTHS.ACTIONS,
-                size: 120, // Override actions size for text button
-                maxSize: 200, // Allow resize for this text
-                enableResizing: true,
-                accessorKey: 'reviewStatus',
-                cell: ({ row }) => {
-                    if (row.original.reviewStatus === 'verified') {
-                        return (
-                            <span className={styles.verifiedStatus}>
-                                <span className="material-symbols-rounded">check_circle</span>
-                                Verified
-                            </span>
-                        );
-                    }
-                    return (
-                        <button
-                            className={styles.linkAction}
-                            onClick={() => handleOpenNoteModal(row.original.id)}
-                        >
-                            Add Note
-                        </button>
-                    );
-                },
-            },
+            // Spacer column to push actions to the right
             {
                 id: 'spacer',
                 size: 0,
@@ -290,26 +267,32 @@ export const HistoricalReviewView = () => {
                 header: () => null,
                 cell: () => null,
             },
+            // Action Menu
             {
                 id: 'actions',
-                header: () => (
-                    <div className={styles.checkboxCell}>
-                        <span className="material-symbols-rounded" style={{ fontSize: '20px', color: 'var(--surface-fg-tertiary)' }}>
-                            more_vert
-                        </span>
-                    </div>
-                ),
+                header: () => null,
                 ...COLUMN_WIDTHS.ACTIONS,
                 enableSorting: false,
                 cell: ({ row }) => (
                     <RowContextMenu
-                        onAddNote={() => handleOpenNoteModal(row.original.id)}
-                        isVerified={row.original.reviewStatus === 'verified'}
+                        actions={[
+                            {
+                                label: row.original.reviewStatus === 'verified' ? 'Edit Note' : 'Add Note',
+                                icon: 'edit_note',
+                                onClick: () => handleOpenNoteModal(row.original.id),
+                            },
+                            {
+                                label: 'Flag for Review',
+                                icon: 'flag',
+                                onClick: () => console.log('Flag for review', row.original.id),
+                                destructive: true,
+                            }
+                        ]}
                     />
                 ),
             },
         ],
-        [handleOpenNoteModal]
+        [handleOpenNoteModal, handleRowClick]
     );
 
     return (

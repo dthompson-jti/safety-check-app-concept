@@ -14,6 +14,8 @@ export interface HistoricalCheck {
     actualTime: string | null;  // ISO string or null if missed
     varianceMinutes: number;    // Positive = late, negative = early, Infinity = missed
     status: 'done' | 'late' | 'missed';
+    group: string;
+    unit: string;
     officerName: string;
     officerNote?: string;
     supervisorNote?: string;
@@ -27,6 +29,8 @@ export interface DesktopFilter {
     search: string;    // Resident name search
     showMissedOnly: boolean;
     statusFilter: 'all' | 'missed' | 'late';  // Status filter for historical view
+    dateStart: string | null; // ISO Date string (YYYY-MM-DD)
+    dateEnd: string | null;   // ISO Date string (YYYY-MM-DD)
 }
 
 /** Derived live check for table display */
@@ -39,6 +43,8 @@ export interface LiveCheckRow {
     residents: Resident[];
     hasHighRisk: boolean;
     riskType?: string;
+    group: string;      // Group assignment
+    unit: string;       // Unit identifier
     lastCheckTime: string | null;
     lastCheckOfficer: string | null;
     supervisorNote?: string;

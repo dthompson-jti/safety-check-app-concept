@@ -1,10 +1,10 @@
 // src/desktop/components/DesktopHeader.tsx
 
-import { useState } from 'react';
+import { useAtomValue } from 'jotai';
 import { desktopViewAtom } from '../atoms';
-import { isDevToolsModalOpenAtom, appConfigAtom } from '../../data/atoms';
-import { useAtom, useAtomValue } from 'jotai';
-import { DesktopView } from '../types';
+import { appConfigAtom } from '../../data/atoms';
+import { DesktopTabGroup } from './DesktopTabGroup';
+import { CountdownWidget } from './CountdownWidget';
 import styles from './DesktopHeader.module.css';
 
 interface DesktopHeaderProps {
@@ -13,113 +13,63 @@ interface DesktopHeaderProps {
 }
 
 export const DesktopHeader = ({ onTogglePanel, isPanelOpen }: DesktopHeaderProps) => {
-    const [view, setView] = useAtom(desktopViewAtom);
-    const [, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
+    const view = useAtomValue(desktopViewAtom);
     const appConfig = useAtomValue(appConfigAtom);
-    const [showOverflowMenu, setShowOverflowMenu] = useState(false);
-
-    const handleViewChange = (newView: DesktopView) => {
-        setView(newView);
-    };
 
     return (
         <header className={styles.header} data-header-style={appConfig.headerStyle}>
-            {/* Left: Title + View Toggle */}
+            {/* Left: Title */}
             <div className={styles.leftSection}>
                 <div className={styles.titleGroup}>
                     <h1 className={styles.title}>Safeguard Room Checks</h1>
                 </div>
-
-                <div className={styles.viewToggle}>
-                    <button
-                        className={`${styles.viewButton} ${view === 'live' ? styles.active : ''}`}
-                        onClick={() => handleViewChange('live')}
-                    >
-                        <span className="material-symbols-rounded">radio_button_checked</span>
-                        Live
-                    </button>
-                    <button
-                        className={`${styles.viewButton} ${view === 'historical' ? styles.active : ''}`}
-                        onClick={() => handleViewChange('historical')}
-                    >
-                        <span className="material-symbols-rounded">history</span>
-                        Historical
-                    </button>
-                </div>
             </div>
 
-            {/* Right: Actions */}
-            <div className={styles.actions}>
-                {/* Export button */}
-                <button
-                    className="btn"
-                    data-variant="secondary"
-                    data-size="s"
-                >
-                    Export
-                </button>
+            {/* Center: Tabs (NEW!) */}
+            <div className={styles.centerSection}>
+                <DesktopTabGroup />
+            </div>
 
-                {/* Overflow menu */}
-                <div className={styles.menuContainer}>
-                    <button
-                        className="btn"
-                        data-variant="secondary"
-                        data-size="s"
-                        data-icon-only="true"
-                        onClick={() => setShowOverflowMenu(!showOverflowMenu)}
-                        aria-label="More options"
-                    >
-                        <span className="material-symbols-rounded">more_vert</span>
-                    </button>
-                    {showOverflowMenu && (
-                        <>
-                            <div className={styles.backdrop} onClick={() => setShowOverflowMenu(false)} />
-                            <div className="menuPopover">
-                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
-                                    <span className="material-symbols-rounded">qr_code_2</span>
-                                    Generate QR Codes
-                                </button>
-                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
-                                    <span className="material-symbols-rounded">settings</span>
-                                    Safeguard Settings
-                                </button>
-                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
-                                    <span className="material-symbols-rounded">summarize</span>
-                                    Safeguard Report
-                                </button>
-                                <div className={styles.menuDivider} />
-                                <button className="menuItem" onClick={() => { setShowOverflowMenu(false); setIsDevToolsOpen(true); }}>
-                                    <span className="material-symbols-rounded">code</span>
-                                    Developer tools
-                                </button>
-                                <div className={styles.menuDivider} />
-                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
-                                    <span className="material-symbols-rounded">download</span>
-                                    Export CSV
-                                </button>
-                                <button className="menuItem" onClick={() => setShowOverflowMenu(false)}>
-                                    <span className="material-symbols-rounded">print</span>
-                                    Print Report
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </div>
+            {/* Right: Countdown Widget (Live) or Actions (Historical) */}
+            <div className={styles.rightSection}>
+                {view === 'live' && <CountdownWidget />}
 
-                {/* Side panel toggle */}
-                <button
-                    className={`btn ${isPanelOpen ? 'active' : ''}`}
-                    data-variant="secondary"
-                    data-size="s"
-                    data-icon-only="true"
-                    onClick={onTogglePanel}
-                    aria-label="Toggle side panel"
-                    aria-pressed={isPanelOpen}
-                >
-                    <span className="material-symbols-rounded">
-                        {isPanelOpen ? 'right_panel_close' : 'right_panel_open'}
-                    </span>
-                </button>
+                {view === 'historical' && (
+                    <>
+                        <button
+                            className="btn"
+                            data-variant="secondary"
+                            data-size="s"
+                            aria-label="Export data"
+                        >
+                            Export
+                        </button>
+                        <button
+                            className="btn"
+                            data-variant="secondary"
+                            data-size="s"
+                            data-icon-only="true"
+                            aria-label="More actions"
+                        >
+                            <span className="material-symbols-rounded">more_vert</span>
+                        </button>
+
+                        <button
+                            className={`btn ${isPanelOpen ? 'active' : ''}`}
+                            data-variant="secondary"
+                            data-size="s"
+                            data-icon-only="true"
+                            onClick={onTogglePanel}
+                            aria-label="Toggle side panel"
+                            aria-pressed={isPanelOpen}
+                            style={isPanelOpen ? { borderColor: 'var(--control-border-primary)' } : undefined}
+                        >
+                            <span className="material-symbols-rounded">
+                                {isPanelOpen ? 'right_panel_close' : 'right_panel_open'}
+                            </span>
+                        </button>
+                    </>
+                )}
             </div>
         </header>
     );

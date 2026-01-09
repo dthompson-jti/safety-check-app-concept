@@ -15,15 +15,19 @@
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border-bottom: 1px solid var(--surface-border-secondary);
-  box-shadow:
-    0 3px 6px -3px rgba(0, 0, 0, 0.1),
-    0 6px 12px -4px rgba(0, 0, 0, 0.08);
 
   /* Smooth transitions for offline mode */
   transition:
     background-color 0.5s ease,
     border-bottom-color 0.5s ease,
     min-height 0.5s ease;
+}
+
+/* Drop shadow only when enabled */
+.header[data-shadow="true"] {
+  box-shadow:
+    0 3px 6px -3px rgba(0, 0, 0, 0.1),
+    0 6px 12px -4px rgba(0, 0, 0, 0.08);
 }
 
 .header[data-header-style="tertiary"] {

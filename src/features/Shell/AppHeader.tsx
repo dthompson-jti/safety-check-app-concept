@@ -90,6 +90,7 @@ export const AppHeader = () => {
       data-offline={isOffline}
       data-status={status} // For Option B Success Flash styling
       data-header-style={appConfig.headerStyle}
+      data-shadow={appConfig.showChromeShadow}
       aria-live="polite"
     >
       <div className={styles.headerContent}>

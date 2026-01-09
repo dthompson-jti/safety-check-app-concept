@@ -36,8 +36,8 @@ export const COLUMN_WIDTHS = {
         minSize: 130, // Fits "Upcoming" badge comfortably
     },
     TIMESTAMP: {
-        size: 110,
-        minSize: 100, // Fits "12:00 PM"
+        size: 180,
+        minSize: 160, // Fits merged "MM/DD/YYYY  HH:MM AM/PM" comfortably
     },
     RESIDENT: {
         size: 250,
@@ -58,5 +58,19 @@ export const COLUMN_WIDTHS = {
     NOTES: {
         size: 200,
         minSize: 150,
+    },
+    GROUP: {
+        size: 100,
+        minSize: 80,
+    },
+    UNIT: {
+        size: 80,
+        minSize: 60,
+    },
+    ALERT_ICON: {
+        size: 40,
+        minSize: 40,
+        maxSize: 40,
+        enableResizing: false,
     },
 } as const;

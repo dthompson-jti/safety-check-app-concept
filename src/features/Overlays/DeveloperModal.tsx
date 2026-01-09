@@ -228,6 +228,15 @@ export const DeveloperModal = () => {
               />
             </div>
           )}
+
+          <div className={styles.settingsItem}>
+            <label htmlFor="chrome-shadow-switch" className={styles.itemLabel}>Show chrome shadow</label>
+            <Switch
+              id="chrome-shadow-switch"
+              checked={appConfig.showChromeShadow}
+              onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, showChromeShadow: c })))}
+            />
+          </div>
         </div>
       </div>
 

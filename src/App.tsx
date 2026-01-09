@@ -145,12 +145,14 @@ function App() {
       <VignetteOverlay />
       <JumpFAB />
       {/* Persistent background wrapper prevents black flash during transitions */}
-      <div style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'var(--surface-bg-secondary, var(--splash-bg))',
-        zIndex: 0
-      }}>
+      <div
+        data-platform="mobile"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'var(--surface-bg-secondary, var(--splash-bg))',
+          zIndex: 0
+        }}>
         <AnimatePresence mode="wait">
           <Suspense fallback={
             <DelayedFallback delay={200}>
@@ -174,7 +176,7 @@ function App() {
         ))}
       </AnimatePresence>
 
-      <ToastContainer />
+      <ToastContainer platform="mobile" />
       <ReloadPrompt />
     </ToastPrimitive.Provider>
   );

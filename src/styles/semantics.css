@@ -182,6 +182,9 @@
   --control-fg-success-hover: var(--primitives-green-900);
   --control-fg-success-pressed: var(--primitives-green-950);
 
+  --control-fg-theme: var(--primitives-theme-700);
+  --control-fg-theme-hover: var(--primitives-theme-800);
+
   /* Border */
   --control-border-primary: var(--primitives-theme-700);
   --control-border-primary-hover: var(--primitives-theme-900);
@@ -261,6 +264,9 @@
   --surface-fg-theme-strong: var(--primitives-theme-200);
   --surface-fg-theme-primary: var(--primitives-theme-400);
   --surface-fg-theme-secondary: var(--primitives-theme-300);
+
+  --control-fg-theme: var(--primitives-theme-300);
+  --control-fg-theme-hover: var(--primitives-theme-200);
 
   /* Hover Text Fixes */
   --surface-fg-secondary_hover: var(--primitives-grey-200);
@@ -450,6 +456,9 @@
   --surface-fg-theme-primary: var(--primitives-theme-400);
   --surface-fg-theme-secondary: var(--primitives-theme-300);
 
+  --control-fg-theme: var(--primitives-theme-300);
+  --control-fg-theme-hover: var(--primitives-theme-200);
+
   /* Hover Text Fixes */
   --surface-fg-secondary_hover: var(--primitives-grey-200);
   --surface-fg-tertiary_hover: var(--primitives-grey-300);
@@ -638,6 +647,9 @@
   --surface-fg-theme-strong: var(--primitives-theme-200);
   --surface-fg-theme-primary: var(--primitives-theme-400);
   --surface-fg-theme-secondary: var(--primitives-theme-300);
+
+  --control-fg-theme: var(--primitives-theme-300);
+  --control-fg-theme-hover: var(--primitives-theme-200);
 
   /* Status Text - Lightened for Dark Mode */
   --surface-fg-success-primary: var(--primitives-green-400);

@@ -15,7 +15,7 @@
     height: 28px;
     background: transparent;
     border: none;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-md);
     color: var(--surface-fg-tertiary);
     cursor: pointer;
     transition: background-color 0.15s, color 0.15s;

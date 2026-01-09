@@ -15,6 +15,7 @@ import { DetailPanel } from './components/DetailPanel';
 import { ToastContainer } from '../components/ToastContainer';
 import { ToastMessage } from '../components/Toast';
 import styles from './App.module.css';
+import './desktop-overrides.css';
 
 /**
  * Desktop Application Root
@@ -35,20 +36,19 @@ export default function App() {
     // Panel width for grid layout
     const panelWidth = useAtomValue(panelWidthAtom);
 
-    const handleTogglePanel = () => {
-        setIsPanelOpen(!isPanelOpen);
-    };
+    const showPanel = view === 'historical' && isPanelOpen;
 
     return (
         <ToastPrimitive.Provider swipeDirection="right" swipeThreshold={80}>
             <div
                 className={styles.app}
-                data-panel-open={isPanelOpen}
+                data-platform="desktop"
+                data-panel-open={showPanel}
                 style={{ '--panel-width': `${panelWidth}px` } as React.CSSProperties}
             >
                 <div className={styles.mainWrapper}>
                     <DesktopHeader
-                        onTogglePanel={handleTogglePanel}
+                        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
                         isPanelOpen={isPanelOpen}
                     />
                     <DesktopToolbar />
@@ -64,7 +64,7 @@ export default function App() {
                 </div>
 
                 <AnimatePresence>
-                    {isPanelOpen && (
+                    {showPanel && (
                         <DetailPanel record={activeRecord} selectedCount={totalSelected} />
                     )}
                 </AnimatePresence>
@@ -80,15 +80,15 @@ export default function App() {
                 >
                     <DeveloperModal />
                 </FullScreenModal>
-            </div>
 
-            {/* Toast System */}
-            <AnimatePresence>
-                {toasts.map((toast) => (
-                    <ToastMessage key={toast.id} {...toast} />
-                ))}
-            </AnimatePresence>
-            <ToastContainer />
+                {/* Toast System */}
+                <AnimatePresence>
+                    {toasts.map((toast) => (
+                        <ToastMessage key={toast.id} {...toast} />
+                    ))}
+                </AnimatePresence>
+                <ToastContainer platform="desktop" />
+            </div>
         </ToastPrimitive.Provider>
     );
 }

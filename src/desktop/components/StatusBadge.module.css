@@ -19,9 +19,7 @@
     font-variation-settings: 'opsz' 14, 'wght' 600;
 }
 
-.label {
-    /* Ensure label alignment */
-}
+/* Label has no specific styles - inherits from badge */
 
 /* Missed */
 .badge[data-status='missed'] {
@@ -57,4 +55,11 @@
     background: var(--surface-bg-error-primary);
     color: var(--surface-fg-alert-primary);
     border-color: var(--surface-border-alert);
+}
+
+/* Done (neutral grey - visible badge) */
+.badge[data-status='done'] {
+    background: var(--surface-bg-secondary);
+    color: var(--surface-fg-secondary);
+    border-color: var(--surface-border-secondary);
 }

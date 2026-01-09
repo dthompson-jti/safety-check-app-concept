@@ -127,6 +127,15 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Critical Rule:** Always define explicit `color` on `.itemLabel` classes. Inherited colors can cause faded text.
 *   **Anti-Pattern:** Do not use `--surface-fg-tertiary` for field labels—it's too faint.
 
+### 26. Desktop-Mobile Style Separation (Platform Scoping)
+*   **The Problem:** Desktop UI updates causing regressions in mobile due to shared CSS and tokens.
+*   **The Strategy:** Use `[data-platform="desktop|mobile"]` on app roots and coordinate with portaled components.
+*   **Implementation:**
+    1.  **Apps Roots:** Add `data-platform="desktop"` to `src/desktop/App.tsx` and `data-platform="mobile"` to `src/App.tsx`.
+    2.  **Overrides:** Create `desktop-overrides.css` to redefine `--control-height-*` tokens for desktop (e.g., `md` = 36px vs mobile 44px).
+    3.  **Portal Portability:** Portaled components (Toasts, Menus) must accept or derive a `platform` attribute to apply to their detached DOM nodes.
+*   **Key Files:** `src/desktop/desktop-overrides.css`, `ToastContainer.tsx`, `App.tsx`.
+
 ## CSS Architecture
 *   **Directive:** Prefer CSS Modules (`*.module.css`) for feature-specific styles. Use Global CSS (`src/styles/*.css`) only for reusable design patterns (buttons, lists, inputs).
 

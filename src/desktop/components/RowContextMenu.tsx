@@ -4,12 +4,18 @@ import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './RowContextMenu.module.css';
 
-interface RowContextMenuProps {
-    onAddNote: () => void;
-    isVerified: boolean;
+interface RowAction {
+    label: string;
+    icon: string;
+    onClick: () => void;
+    destructive?: boolean;
 }
 
-export const RowContextMenu = ({ onAddNote, isVerified }: RowContextMenuProps) => {
+interface RowContextMenuProps {
+    actions: RowAction[];
+}
+
+export const RowContextMenu = ({ actions }: RowContextMenuProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -20,7 +26,7 @@ export const RowContextMenu = ({ onAddNote, isVerified }: RowContextMenuProps) =
             const rect = buttonRef.current.getBoundingClientRect();
             setMenuPosition({
                 top: rect.bottom + 4,
-                left: rect.right - 180, // Menu width is ~180px, align to right edge
+                left: rect.right - 220, // Menu min-width is 220px, align right edges
             });
         }
         setIsOpen(!isOpen);
@@ -59,27 +65,25 @@ export const RowContextMenu = ({ onAddNote, isVerified }: RowContextMenuProps) =
                     <div className={styles.backdrop} onClick={() => setIsOpen(false)} />
                     <div
                         className={styles.menu}
+                        data-platform="desktop"
                         style={{
                             position: 'fixed',
                             top: menuPosition.top,
                             left: menuPosition.left,
                         }}
                     >
-                        <button
-                            className={styles.menuItem}
-                            onClick={() => handleAction(onAddNote)}
-                        >
-                            <span className="material-symbols-rounded">edit_note</span>
-                            <span>{isVerified ? 'Edit Note' : 'Add Note'}</span>
-                        </button>
-                        <div className={styles.separator} />
-                        <button
-                            className={`${styles.menuItem} ${styles.destructive}`}
-                            onClick={() => handleAction(() => console.log('Flag for review'))}
-                        >
-                            <span className="material-symbols-rounded">flag</span>
-                            <span>Flag for Review</span>
-                        </button>
+                        {actions.map((action, idx) => (
+                            <div key={action.label}>
+                                <button
+                                    className={`${styles.menuItem} ${action.destructive ? styles.destructive : ''}`}
+                                    onClick={() => handleAction(action.onClick)}
+                                >
+                                    <span className="material-symbols-rounded">{action.icon}</span>
+                                    <span>{action.label}</span>
+                                </button>
+                                {idx < actions.length - 1 && <div className={styles.separator} />}
+                            </div>
+                        ))}
                     </div>
                 </>,
                 document.body
