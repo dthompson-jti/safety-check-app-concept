@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { appConfigAtom, sessionAtom, userPreferencesAtom } from '../../data/atoms';
 import { featureFlagsAtom } from '../../data/featureFlags';
 import { useHaptics } from '../../data/useHaptics';
-import { useTheme } from '../../data/useTheme';
+import { useTheme, Theme } from '../../data/useTheme';
 import { generateAvatarHue } from '../../data/users';
 
 import { SegmentedControl } from '../../components/SegmentedControl';
@@ -121,7 +121,7 @@ export const SettingsModal = () => {
               value={theme === 'light' ? 'light' : 'dark-c'}
               onValueChange={(val) => {
                 triggerHaptic('selection');
-                setTheme(val as any);
+                setTheme(val as Theme);
               }}
             />
           </div>

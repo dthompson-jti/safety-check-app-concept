@@ -178,8 +178,8 @@ export const NfcWriteSheet = () => {
               </span>
             </div>
 
-            <h3 className={styles.title}>{content.title}</h3>
-            <p className={styles.description}>{content.desc}</p>
+            <Drawer.Title className={styles.title}>{content.title}</Drawer.Title>
+            <Drawer.Description className={styles.description}>{content.desc}</Drawer.Description>
 
             {/* Error Actions - Layout: Retry (Primary/Left), Cancel (Secondary/Right) */}
             {workflow.status === 'error' && (

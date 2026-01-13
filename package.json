@@ -27,7 +27,6 @@
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-toolbar": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@tanstack/react-table": "^8.21.3",
     "@yudiel/react-qr-scanner": "^2.4.1",
     "framer-motion": "^12.23.22",
     "immer": "^10.1.3",

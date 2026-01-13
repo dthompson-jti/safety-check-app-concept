@@ -1,7 +1,7 @@
 import { atom, useAtom } from 'jotai';
 import { useEffect } from 'react';
 
-type Theme = 'light' | 'dark-a' | 'dark-b' | 'dark-c';
+export type Theme = 'light' | 'dark-a' | 'dark-b' | 'dark-c';
 
 // The atom holds the user's theme preference.
 export const themeAtom = atom<Theme>((() => {

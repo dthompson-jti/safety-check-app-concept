@@ -3,6 +3,7 @@ import { atomWithStorage } from 'jotai/utils';
 import { useCallback } from 'react';
 import { useTheme } from './useTheme';
 import { appConfigAtom } from './atoms';
+import { STORAGE_PREFIX } from '../config';
 
 /**
  * Future Ideas Feature Flags
@@ -15,7 +16,7 @@ export type PulseStyle = 'none' | 'basic' | 'gradient';
 export type ScanAnimationStyle = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
 // Unlock state for Future Ideas section
-export const futureIdeasUnlockedAtom = atomWithStorage('future-ideas-unlocked', false);
+export const futureIdeasUnlockedAtom = atomWithStorage(`${STORAGE_PREFIX}future-ideas-unlocked`, false);
 
 // Feature flags control which experimental features are enabled
 export interface FeatureFlags {
@@ -40,9 +41,9 @@ export interface FeatureFlags {
 }
 
 const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
-    useSoundEnabled: false,
-    useHapticsEnabled: false,
-    enableDynamicAvatarColor: false,
+    useSoundEnabled: true,
+    useHapticsEnabled: true,
+    enableDynamicAvatarColor: true,
     // Late Check Concepts - Pulse defaults to 'none'
     feat_glass_pulse: 'none',
     feat_card_pulse: 'none',
@@ -54,13 +55,13 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     feat_card_border: false,
     feat_hazard_texture: false,
     feat_invert_card: false,
-    feat_invert_badge: false,
+    feat_invert_badge: true,
     feat_badge_mode: 'none',
     feat_jump_fab: false,
     feat_scan_animation: 'E',
 };
 
-export const featureFlagsAtom = atomWithStorage<FeatureFlags>('feature-flags', DEFAULT_FEATURE_FLAGS);
+export const featureFlagsAtom = atomWithStorage<FeatureFlags>(`${STORAGE_PREFIX}feature-flags`, DEFAULT_FEATURE_FLAGS);
 
 // Hook with stable callbacks for Future Ideas unlock state
 export const useFutureIdeas = () => {

@@ -2,6 +2,7 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification, NfcScanState } from '../types';
+import { STORAGE_PREFIX } from '../config';
 
 // =================================================================
 //                      Global Time State (Heartbeat)
@@ -16,7 +17,7 @@ export const slowTickerAtom = atom<number>(Date.now());
 // =================================================================
 
 export type AppView = 'sideMenu' | 'dashboardTime';
-export const appViewAtom = atomWithStorage<AppView>('sc_view', 'dashboardTime');
+export const appViewAtom = atomWithStorage<AppView>(`${STORAGE_PREFIX}view`, 'dashboardTime');
 
 // =================================================================
 //                      Session State
@@ -41,7 +42,7 @@ interface UserPreferences {
   };
 }
 
-export const userPreferencesAtom = atomWithStorage<UserPreferences>('sc_user_prefs', {});
+export const userPreferencesAtom = atomWithStorage<UserPreferences>(`${STORAGE_PREFIX}user_prefs`, {});
 
 // =================================================================
 //                  Context Selection State
@@ -128,7 +129,7 @@ export const isFutureIdeasModalOpenAtom = atom(false);
 export const isUserSettingsModalOpenAtom = atom(false); // Future Idea: Enhanced Avatar
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
-export const isOfflineToggleVisibleAtom = atomWithStorage('sc_feat_offline_toggle', false);
+export const isOfflineToggleVisibleAtom = atomWithStorage(`${STORAGE_PREFIX}feat_offline_toggle`, false);
 export const nfcProvisioningGroupIdAtom = atom<string | null>(null);
 export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 
@@ -192,7 +193,7 @@ interface AppConfig {
   showChromeShadow: boolean;
 }
 
-export const appConfigAtom = atomWithStorage<AppConfig>('sc_config', {
+export const appConfigAtom = atomWithStorage<AppConfig>(`${STORAGE_PREFIX}config`, {
   scanMode: 'qr',
   hapticsEnabled: true,
   audioEnabled: true,
