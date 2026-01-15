@@ -244,9 +244,9 @@
    /* Background (Elevation = Lightness, high fidelity) */
    --surface-bg-secondary: var(--primitives-grey-940);
    /* Deepest (Body) */
-   --surface-bg-secondary_subtle: var(--primitives-grey-950);
+   --surface-bg-secondary_subtle: var(--primitives-grey-930);
    /* Even deeper */
-   --surface-bg-secondary_strong: var(--primitives-grey-920);
+   --surface-bg-secondary_strong: var(--primitives-grey-950);
    --surface-bg-secondary_hover: var(--primitives-grey-930);
    --surface-bg-primary: var(--primitives-grey-910);
    /* Elevated 1 (Cards) */

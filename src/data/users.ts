@@ -56,8 +56,8 @@ export function generateAvatarHue(username: string): number {
  * @returns CSS oklch() string
  */
 export function getAvatarColor(hue: number): string {
-    const L = 0.65; // Lightness (constant for good contrast with white text)
-    const C = 0.18; // Chroma (constant for vibrant but not neon)
+    const L = 0.497; // Lightness (Precise value per user request)
+    const C = 0.19;  // Chroma (Precise value per user request)
 
     return `oklch(${L} ${C} ${hue})`;
 }

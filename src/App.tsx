@@ -10,6 +10,7 @@ import { dispatchActionAtom } from './data/appDataAtoms';
 import { useCheckLifecycle } from './data/useCheckLifecycle';
 import { useFutureIdeas } from './data/featureFlags';
 import { useKonamiCode } from './hooks/useKonamiCode';
+import { useCheckErrorToasts } from './hooks/useCheckErrorToasts';
 
 import { VignetteOverlay } from './features/LateEffects/VignetteOverlay';
 import { JumpFAB } from './features/LateEffects/JumpFAB';
@@ -82,6 +83,28 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [dispatch, addToast]);
+
+  // -- DEBUG: Temporary Triggers for Rich Error Toasts --
+  // Ctrl+Shift+F -> Fetch Error
+  // Ctrl+Shift+S -> Sync Error
+  const { triggerFetchError, triggerSyncError } = useCheckErrorToasts();
+
+  useEffect(() => {
+    const handleDebugKeys = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey) {
+        if (e.key === 'F') {
+          e.preventDefault();
+          triggerFetchError();
+        } else if (e.key === 'S') {
+          e.preventDefault();
+          triggerSyncError();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleDebugKeys);
+    return () => window.removeEventListener('keydown', handleDebugKeys);
+  }, [triggerFetchError, triggerSyncError]);
+  // ---------------------------------------------------
 
 
 

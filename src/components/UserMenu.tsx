@@ -2,7 +2,7 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { sessionAtom, appConfigAtom, userPreferencesAtom } from '../data/atoms';
 import { useTheme, Theme } from '../data/useTheme';
-import { generateAvatarHue } from '../data/users';
+import { generateAvatarHue, getAvatarColor } from '../data/users';
 import { Button } from './Button';
 import { SegmentedControl } from './SegmentedControl';
 import { ColorSlider } from './ColorSlider';
@@ -36,7 +36,7 @@ export const UserMenu = ({ displayName }: UserMenuProps) => {
     const { username, initials } = session.user;
     const customHue = userPreferences[username]?.avatarHue;
     const currentHue = customHue !== undefined ? customHue : generateAvatarHue(username);
-    const avatarColor = `oklch(0.65 0.18 ${currentHue})`;
+    const avatarColor = getAvatarColor(currentHue);
 
     const handleLogout = () => {
         setSession({ isAuthenticated: false, user: null });

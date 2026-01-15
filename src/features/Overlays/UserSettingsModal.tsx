@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { sessionAtom, appConfigAtom, userPreferencesAtom } from '../../data/atoms';
 import { futureIdeasUnlockedAtom } from '../../data/featureFlags';
 import { useTheme, Theme } from '../../data/useTheme';
-import { generateAvatarHue } from '../../data/users';
+import { generateAvatarHue, getAvatarColor } from '../../data/users';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ColorSlider } from '../../components/ColorSlider';
 import { Switch } from '../../components/Switch';
@@ -31,7 +31,7 @@ export const UserSettingsModal = () => {
     const { username, initials, displayName } = session.user;
     const customHue = userPreferences[username]?.avatarHue;
     const currentHue = customHue !== undefined ? customHue : generateAvatarHue(username);
-    const avatarColor = `oklch(0.65 0.18 ${currentHue})`;
+    const avatarColor = getAvatarColor(currentHue);
 
     const handleLogout = () => {
         setSession({ isAuthenticated: false, user: null });

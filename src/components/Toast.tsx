@@ -10,7 +10,7 @@ import { removeToastAtom, Toast } from '../data/toastAtoms';
  * with Framer Motion to handle animations, adhering to the project's canonical
  * 'spring' animation principle for a consistent, high-craft feel.
  */
-export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp, action, persistent }: Toast) => {
+export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp, action, persistent, details, errorCode }: Toast) => {
   const removeToast = useSetAtom(removeToastAtom);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -54,7 +54,12 @@ export const ToastMessage = ({ id, message, icon, variant = 'neutral', timestamp
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       >
         <span className="material-symbols-rounded toast-icon">{icon}</span>
-        <ToastPrimitive.Description className="toast-description">{message}</ToastPrimitive.Description>
+
+        <div className="toast-content">
+          <ToastPrimitive.Description className="toast-message">{message}</ToastPrimitive.Description>
+          {details && <p className="toast-details">{details}</p>}
+          {errorCode && <p className="toast-error-code">{errorCode}</p>}
+        </div>
 
         {action && (
           <button

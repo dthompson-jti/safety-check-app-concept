@@ -38,7 +38,8 @@
   gap: 16px;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  /* Align to top for multiline toasts */
   /* justify-content removed to allow natural flow with close button */
 
   /* Typography */
@@ -61,12 +62,34 @@
   flex-shrink: 0;
 }
 
-.toast-description {
-  white-space: pre-line;
-  /* Support \n for multi-line error messages */
-  margin: 0;
-  /* Allow text to grow but not shrink below content size */
+.toast-content {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
+  gap: 4px;
+  min-width: 0;
+  /* Enable text truncation if needed */
+}
+
+.toast-message {
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.toast-details {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.toast-error-code {
+  margin: 0;
+  margin-top: 4px;
+  font-family: var(--font-family-mono);
+  font-size: 0.75rem;
+  opacity: 0.7;
 }
 
 /* --- Action Button --- */
