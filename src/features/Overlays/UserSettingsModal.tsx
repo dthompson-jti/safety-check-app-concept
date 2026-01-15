@@ -1,8 +1,8 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
 import { sessionAtom, appConfigAtom, userPreferencesAtom } from '../../data/atoms';
-import { featureFlagsAtom } from '../../data/featureFlags';
-import { useTheme } from '../../data/useTheme';
+import { futureIdeasUnlockedAtom } from '../../data/featureFlags';
+import { useTheme, Theme } from '../../data/useTheme';
 import { generateAvatarHue } from '../../data/users';
 import { SegmentedControl } from '../../components/SegmentedControl';
 import { ColorSlider } from '../../components/ColorSlider';
@@ -12,9 +12,9 @@ import { useHaptics } from '../../data/useHaptics';
 import styles from './UserSettingsModal.module.css';
 
 /**
- * UserSettingsModal - Future Ideas Feature
+ * UserSettingsModal - Promoted to Standard Production Feature
  * 
- * A full-screen modal for user-specific settings, triggered by the Enhanced Avatar.
+ * A full-screen modal for user settings, triggered by the Avatar.
  * Slides in from the right with user profile header and controls.
  */
 export const UserSettingsModal = () => {
@@ -22,7 +22,7 @@ export const UserSettingsModal = () => {
     const setSession = useSetAtom(sessionAtom);
     const [appConfig, setAppConfig] = useAtom(appConfigAtom);
     const [userPreferences, setUserPreferences] = useAtom(userPreferencesAtom);
-    const [featureFlags] = useAtom(featureFlagsAtom);
+    const isExperimentalEnabled = useAtomValue(futureIdeasUnlockedAtom);
     const { theme, setTheme } = useTheme();
     const { trigger: triggerHaptic } = useHaptics();
 
@@ -39,7 +39,7 @@ export const UserSettingsModal = () => {
 
     const handleThemeChange = (value: string) => {
         triggerHaptic('light');
-        setTheme(value as 'light' | 'dark-a' | 'dark-b' | 'dark-c');
+        setTheme(value as Theme);
     };
 
     const handleScanModeChange = (value: string) => {
@@ -70,21 +70,22 @@ export const UserSettingsModal = () => {
                 <h2 className={styles.userName}>{displayName}</h2>
             </div>
 
-            {/* Settings Section */}
+            {/* Appearance Section */}
             <div className={styles.settingsSection}>
-                <h3 className={styles.sectionTitle}>Appearance</h3>
                 <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
                         <label className={styles.itemLabel}>Theme</label>
                         <SegmentedControl
                             id="user-theme-toggle"
                             options={[
-                                { value: 'light', label: 'Light' },
-                                { value: 'dark-c', label: 'Dark' },
+                                { value: 'system', label: 'System', icon: 'desktop_windows' },
+                                { value: 'light', label: 'Light', icon: 'light_mode' },
+                                { value: 'dark', label: 'Dark', icon: 'dark_mode' },
                             ]}
-                            value={theme === 'light' ? 'light' : 'dark-c'}
+                            value={theme}
                             onValueChange={handleThemeChange}
                             layout="row"
+                            itemDirection="column"
                         />
                     </div>
 
@@ -98,8 +99,8 @@ export const UserSettingsModal = () => {
                 </div>
             </div>
 
+            {/* Preferences Section */}
             <div className={styles.settingsSection}>
-                <h3 className={styles.sectionTitle}>Preferences</h3>
                 <div className={styles.settingsGroup}>
                     <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
                         <label className={styles.itemLabel}>Scan Mode</label>
@@ -115,36 +116,36 @@ export const UserSettingsModal = () => {
                         />
                     </div>
 
-                    {/* Haptics: Only visible when useHapticsEnabled feature flag is on */}
-                    {featureFlags.useHapticsEnabled && (
-                        <div className={styles.settingsItem}>
-                            <label htmlFor="user-haptics-switch" className={styles.itemLabel}>
-                                Haptic Feedback
-                            </label>
-                            <Switch
-                                id="user-haptics-switch"
-                                checked={appConfig.hapticsEnabled}
-                                onCheckedChange={(checked) => {
-                                    triggerHaptic('light');
-                                    setAppConfig(cur => ({ ...cur, hapticsEnabled: checked }));
-                                }}
-                            />
-                        </div>
-                    )}
+                    {/* Experimental Section: Haptics & Sound (Only visible if Future Ideas unlocked via logo) */}
+                    {isExperimentalEnabled && (
+                        <div className={styles.experimentalSection} style={{ marginTop: 'var(--spacing-4)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)' }}>
+                            <div className={styles.settingsItem}>
+                                <label htmlFor="user-haptics-switch" className={styles.itemLabel}>
+                                    Haptic Feedback
+                                </label>
+                                <Switch
+                                    id="user-haptics-switch"
+                                    checked={appConfig.hapticsEnabled}
+                                    onCheckedChange={(checked) => {
+                                        triggerHaptic('light');
+                                        setAppConfig(cur => ({ ...cur, hapticsEnabled: checked }));
+                                    }}
+                                />
+                            </div>
 
-                    {/* Audio: Only visible when useSoundEnabled feature flag is on */}
-                    {featureFlags.useSoundEnabled && (
-                        <div className={styles.settingsItem}>
-                            <label htmlFor="user-audio-switch" className={styles.itemLabel}>
-                                Audio Feedback
-                            </label>
-                            <Switch
-                                id="user-audio-switch"
-                                checked={appConfig.audioEnabled}
-                                onCheckedChange={(checked) =>
-                                    setAppConfig(cur => ({ ...cur, audioEnabled: checked }))
-                                }
-                            />
+                            <div className={styles.settingsItem}>
+                                <label htmlFor="user-audio-switch" className={styles.itemLabel}>
+                                    Audio Feedback
+                                </label>
+                                <Switch
+                                    id="user-audio-switch"
+                                    checked={appConfig.audioEnabled}
+                                    onCheckedChange={(checked) => {
+                                        triggerHaptic('light');
+                                        setAppConfig(cur => ({ ...cur, audioEnabled: checked }));
+                                    }}
+                                />
+                            </div>
                         </div>
                     )}
                 </div>
@@ -152,7 +153,6 @@ export const UserSettingsModal = () => {
 
             {/* Account Section */}
             <div className={styles.settingsSection}>
-                <h3 className={styles.sectionTitle}>Account</h3>
                 <Button
                     variant="secondary"
                     onClick={handleLogout}

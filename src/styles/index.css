@@ -32,7 +32,7 @@
 @import url('./buttons.css') layer(components);
 @import url('./menu.css') layer(components);
 @import url('./tabs.css') layer(components);
-@import url('./toggles.css') layer(components);
+
 @import url('./appearance.css') layer(components);
 @import url('./list.css') layer(components);
 /* Added new list pattern */

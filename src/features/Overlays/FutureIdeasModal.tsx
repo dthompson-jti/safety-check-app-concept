@@ -128,17 +128,6 @@ export const FutureIdeasModal = () => {
                     )}
                 </div>
 
-                {/* Dynamic Avatar */}
-                <div className={styles.settingsGroup}>
-                    <div className={styles.settingsItem}>
-                        <label htmlFor="dynamic-avatar-switch" className={styles.itemLabel}>Dynamic Avatar Color</label>
-                        <Switch
-                            id="dynamic-avatar-switch"
-                            checked={featureFlags.enableDynamicAvatarColor}
-                            onCheckedChange={handleSwitch((c) => setFeatureFlags(cur => ({ ...cur, enableDynamicAvatarColor: c })))}
-                        />
-                    </div>
-                </div>
 
                 {/* Late Check Concepts */}
                 <h3 className={styles.sectionHeader}>Late Check Concepts</h3>

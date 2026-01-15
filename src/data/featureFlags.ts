@@ -22,7 +22,6 @@ export const futureIdeasUnlockedAtom = atomWithStorage(`${STORAGE_PREFIX}future-
 export interface FeatureFlags {
     useSoundEnabled: boolean;
     useHapticsEnabled: boolean;
-    enableDynamicAvatarColor: boolean;
     // Late Check Concepts - Pulse Effects
     feat_glass_pulse: PulseStyle;  // Header/Footer pulse style
     feat_card_pulse: PulseStyle;   // Card background pulse style
@@ -43,7 +42,6 @@ export interface FeatureFlags {
 const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     useSoundEnabled: true,
     useHapticsEnabled: true,
-    enableDynamicAvatarColor: true,
     // Late Check Concepts - Pulse defaults to 'none'
     feat_glass_pulse: 'none',
     feat_card_pulse: 'none',
@@ -55,7 +53,7 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     feat_card_border: false,
     feat_hazard_texture: false,
     feat_invert_card: false,
-    feat_invert_badge: true,
+    feat_invert_badge: false,
     feat_badge_mode: 'none',
     feat_jump_fab: false,
     feat_scan_animation: 'E',
@@ -83,11 +81,10 @@ export const useFutureIdeas = () => {
             }));
             setFeatureFlags(cur => ({
                 ...cur,
-                // ON: Haptics, Audio, Dynamic Avatar, Invert Badge
-                enableDynamicAvatarColor: true,
+                // ON: Haptics, Audio, Invert Badge
                 useHapticsEnabled: true,
                 useSoundEnabled: true,
-                feat_invert_badge: true,
+                feat_invert_badge: false,
                 // OFF: Pulse effects, everything else
                 feat_glass_pulse: 'none',
                 feat_card_pulse: 'none',

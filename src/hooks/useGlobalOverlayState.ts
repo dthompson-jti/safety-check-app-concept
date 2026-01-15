@@ -1,7 +1,6 @@
 import { useAtomValue } from 'jotai';
 import {
     appViewAtom,
-    isSettingsModalOpenAtom,
     isDevToolsModalOpenAtom,
     isFutureIdeasModalOpenAtom,
     isUserSettingsModalOpenAtom,
@@ -21,7 +20,6 @@ import {
  */
 export const useGlobalOverlayState = () => {
     const appView = useAtomValue(appViewAtom);
-    const isSettingsOpen = useAtomValue(isSettingsModalOpenAtom);
     const isDevToolsOpen = useAtomValue(isDevToolsModalOpenAtom);
     const isFutureIdeasOpen = useAtomValue(isFutureIdeasModalOpenAtom);
     const isUserSettingsOpen = useAtomValue(isUserSettingsModalOpenAtom);
@@ -34,7 +32,6 @@ export const useGlobalOverlayState = () => {
 
     // 2. Full Screen Modals
     const isAnyModalOpen =
-        isSettingsOpen ||
         isDevToolsOpen ||
         isFutureIdeasOpen ||
         isUserSettingsOpen ||

@@ -48,5 +48,4 @@ export const PulseEffectsManager = () => {
     return null;
 };
 
-// Legacy export for backward compatibility
-export { PulseEffectsManager as GlassTintOverlay };
+

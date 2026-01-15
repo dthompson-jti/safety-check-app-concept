@@ -122,14 +122,17 @@ export const isManualCheckModalOpenAtom = atom(false);
 export const isWriteNfcModalOpenAtom = atom(
   (get) => get(workflowStateAtom).view === 'provisioning'
 );
-export const isSettingsModalOpenAtom = atom(false);
 export const isDevToolsModalOpenAtom = atom(false);
 export const isRingAnimationTestOpenAtom = atom(false);
 export const isFutureIdeasModalOpenAtom = atom(false);
 export const isUserSettingsModalOpenAtom = atom(false); // Future Idea: Enhanced Avatar
+export const isForbiddenErrorVisibleAtom = atom(false);
+
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
 export const isOfflineToggleVisibleAtom = atomWithStorage(`${STORAGE_PREFIX}feat_offline_toggle`, false);
+export type BlockingErrorType = 'forbidden' | 'unavailable' | 'offline' | 'timeout' | null;
+export const blockingErrorTypeAtom = atom<BlockingErrorType>(null);
 export const nfcProvisioningGroupIdAtom = atom<string | null>(null);
 export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 

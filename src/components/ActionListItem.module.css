@@ -1,8 +1,0 @@
-/* src/components/ActionListItem.module.css */
-/* 
-  This file is intentionally empty or minimal because the core styles 
-  are now handled by the global src/styles/list.css layer.
-  
-  We keep this file if we need specific React-scoped overrides later,
-  but for now, the component uses global utility classes for consistency.
-*/

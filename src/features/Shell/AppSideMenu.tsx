@@ -3,12 +3,12 @@ import { useSetAtom, useAtomValue } from 'jotai';
 import { useCallback } from 'react';
 import {
   sessionAtom,
-  isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
   selectedFacilityUnitAtom,
   isFutureIdeasModalOpenAtom,
+  isUserSettingsModalOpenAtom,
   workflowStateAtom,
 } from '../../data/atoms';
 import { addToastAtom } from '../../data/toastAtoms';
@@ -23,9 +23,9 @@ import { appConfigAtom } from '../../data/atoms';
 import styles from './AppSideMenu.module.css';
 
 export const AppSideMenu = () => {
-  const setIsSettingsOpen = useSetAtom(isSettingsModalOpenAtom);
   const setIsDevToolsOpen = useSetAtom(isDevToolsModalOpenAtom);
   const setIsFutureIdeasOpen = useSetAtom(isFutureIdeasModalOpenAtom);
+  const setIsUserSettingsOpen = useSetAtom(isUserSettingsModalOpenAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
   const setSession = useSetAtom(sessionAtom);
@@ -121,7 +121,7 @@ export const AppSideMenu = () => {
 
         <div className={styles.separator} />
 
-        <button className={styles.userProfileCard} onClick={() => setIsSettingsOpen(true)} aria-label="Settings">
+        <button className={styles.userProfileCard} onClick={() => setIsUserSettingsOpen(true)} aria-label="Settings">
           <span className={styles.userName}>{session.user?.displayName || 'Unknown User'}</span>
           <span className="material-symbols-rounded">settings</span>
         </button>

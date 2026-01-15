@@ -6,7 +6,9 @@ import {
   hardwareSimulationAtom,
   connectionStatusAtom,
   isOfflineToggleVisibleAtom,
+  blockingErrorTypeAtom,
   ConnectionStatus,
+  BlockingErrorType,
 } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { addToastAtom, toastsAtom, ToastVariant } from '../../data/toastAtoms';
@@ -40,6 +42,7 @@ export const DeveloperModal = () => {
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
   const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
   const [isOfflineToggleVisible, setIsOfflineToggleVisible] = useAtom(isOfflineToggleVisibleAtom);
+  const [blockingErrorType, setBlockingErrorType] = useAtom(blockingErrorTypeAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const addToast = useSetAtom(addToastAtom);
   const activeToasts = useAtomValue(toastsAtom);
@@ -299,6 +302,25 @@ export const DeveloperModal = () => {
               id="nfc-off-switch"
               checked={simulation.nfcTurnedOff}
               onCheckedChange={handleSwitch((checked) => setSimulation(c => ({ ...c, nfcTurnedOff: checked })))}
+            />
+          </div>
+          {/* Simulation: Blocking Errors */}
+          <div className={styles.settingsItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--spacing-2)' }}>
+            <label className={styles.itemLabel}>Forced blocking error</label>
+            <SegmentedControl
+              id="blocking-error-toggle"
+              options={[
+                { value: 'none', label: 'None' },
+                { value: 'forbidden', label: '403' },
+                { value: 'unavailable', label: '5xx' },
+                { value: 'offline', label: 'Offline' },
+                { value: 'timeout', label: 'Timeout' },
+              ]}
+              value={blockingErrorType || 'none'}
+              onValueChange={(val) => {
+                triggerHaptic('selection');
+                setBlockingErrorType(val === 'none' ? null : (val as BlockingErrorType));
+              }}
             />
           </div>
 

@@ -47,15 +47,6 @@
     gap: var(--spacing-3);
 }
 
-.sectionTitle {
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    color: var(--surface-fg-secondary);
-    /* Tier 2: Section organizer */
-    padding-bottom: var(--spacing-2);
-    border-bottom: 1px solid var(--surface-border-secondary);
-    margin: 0;
-}
 
 .settingsGroup {
     display: flex;

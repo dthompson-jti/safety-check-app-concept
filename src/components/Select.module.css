@@ -22,10 +22,7 @@
   user-select: none;
 }
 
-/* Desktop: Secondary style with visible border */
-[data-platform="desktop"] .selectTrigger {
-  border-color: var(--control-border-secondary);
-}
+
 
 .selectTrigger:hover:not(:disabled) {
   background-color: var(--control-bg-secondary-hover);

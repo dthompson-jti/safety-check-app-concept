@@ -43,8 +43,6 @@
 }
 
 /* Dark mode: deeper backdrop for more contrast */
-[data-theme='dark-a'] .backdrop,
-[data-theme='dark-b'] .backdrop,
 [data-theme='dark-c'] .backdrop {
   background-color: rgba(0, 0, 0, 0.85);
 }

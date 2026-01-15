@@ -1,7 +1,7 @@
 // src/components/UserMenu.tsx
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { sessionAtom, appConfigAtom, userPreferencesAtom } from '../data/atoms';
-import { useTheme } from '../data/useTheme';
+import { useTheme, Theme } from '../data/useTheme';
 import { generateAvatarHue } from '../data/users';
 import { Button } from './Button';
 import { SegmentedControl } from './SegmentedControl';
@@ -44,7 +44,7 @@ export const UserMenu = ({ displayName }: UserMenuProps) => {
 
     const handleThemeChange = (value: string) => {
         triggerHaptic('light');
-        setTheme(value as 'light' | 'dark-a' | 'dark-b' | 'dark-c');
+        setTheme(value as Theme);
     };
 
     const handleScanModeChange = (value: string) => {
@@ -73,12 +73,14 @@ export const UserMenu = ({ displayName }: UserMenuProps) => {
                 <SegmentedControl
                     id="user-menu-appearance"
                     options={[
-                        { value: 'light', label: 'Light' },
-                        { value: 'dark-c', label: 'Dark' },
+                        { value: 'system', label: 'System', icon: 'desktop_windows' },
+                        { value: 'light', label: 'Light', icon: 'light_mode' },
+                        { value: 'dark', label: 'Dark', icon: 'dark_mode' },
                     ]}
-                    value={theme === 'light' ? 'light' : 'dark-c'}
+                    value={theme}
                     onValueChange={handleThemeChange}
                     layout="row"
+                    itemDirection="column"
                 />
             </div>
 

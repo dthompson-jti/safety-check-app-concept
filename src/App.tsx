@@ -37,7 +37,7 @@ import { FacilitySelectionSkeleton } from './components/FacilitySelectionSkeleto
 import { DelayedFallback } from './components/DelayedFallback';
 import { facilityData } from './data/mock/facilityData';
 
-
+import { NetworkBarrier } from './features/Shell/NetworkBarrier';
 
 
 function App() {
@@ -111,19 +111,21 @@ function App() {
           zIndex: 0
         }}>
         <AnimatePresence mode="wait">
-          <Suspense fallback={
-            <DelayedFallback delay={200}>
-              {/* Context-aware fallback: 
-                  - If > 1 facility group, we'll see Facility Selection first -> Show List Skeleton
-                  - If 1 facility group, we bump straight to Dashboard -> Show App Shell Skeleton
-              */}
-              {session.isAuthenticated ? (
-                facilityData.length > 1 ? <FacilitySelectionSkeleton /> : <AppShellSkeleton />
-              ) : <SplashView />}
-            </DelayedFallback>
-          }>
-            {session.isAuthenticated ? <AppShell /> : <LoginView />}
-          </Suspense>
+          <NetworkBarrier>
+            <Suspense fallback={
+              <DelayedFallback delay={200}>
+                {/* Context-aware fallback: 
+                    - If > 1 facility group, we'll see Facility Selection first -> Show List Skeleton
+                    - If 1 facility group, we bump straight to Dashboard -> Show App Shell Skeleton
+                */}
+                {session.isAuthenticated ? (
+                  facilityData.length > 1 ? <FacilitySelectionSkeleton /> : <AppShellSkeleton />
+                ) : <SplashView />}
+              </DelayedFallback>
+            }>
+              {session.isAuthenticated ? <AppShell /> : <LoginView />}
+            </Suspense>
+          </NetworkBarrier>
         </AnimatePresence>
       </div>
 

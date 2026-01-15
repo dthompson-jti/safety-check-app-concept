@@ -26,14 +26,14 @@
 .badge[data-status='due'] {
   background: var(--surface-bg-warning-primary);
   color: var(--surface-fg-warning-primary);
-  border-color: var(--surface-border-warning);
+  border-color: var(--surface-border-warning_subtle);
 }
 
 /* Variant: Supplemental */
 .badge[data-status='supplemental'] {
   background: var(--surface-bg-info);
   color: var(--surface-fg-info-primary);
-  border-color: var(--surface-border-info);
+  border-color: var(--surface-border-info_subtle);
 }
 
 /* Variant: Completed */
@@ -41,14 +41,14 @@
 .badge[data-status='completing'] {
   background: var(--surface-bg-success);
   color: var(--surface-fg-success-primary);
-  border-color: var(--surface-border-success);
+  border-color: var(--surface-border-success_subtle);
 }
 
 /* Variant: Missed (Alert - urgent attention needed) */
 .badge[data-status='missed'] {
   background: var(--surface-bg-error-primary);
   color: var(--surface-fg-alert-primary);
-  border-color: var(--surface-border-alert);
+  border-color: var(--surface-border-alert_subtle);
 }
 
 /* Variant: Queued (in offline queue, grey) */

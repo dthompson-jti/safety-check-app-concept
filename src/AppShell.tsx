@@ -4,7 +4,6 @@ import { useAtomValue, useAtom } from 'jotai';
 import { motion, AnimatePresence, useTransform, animate } from 'framer-motion';
 import {
   workflowStateAtom,
-  isSettingsModalOpenAtom,
   isDevToolsModalOpenAtom,
   isRingAnimationTestOpenAtom,
   isFutureIdeasModalOpenAtom,
@@ -22,7 +21,6 @@ import { CheckEntryView } from './features/Workflow/CheckEntryView';
 import { NfcWriteView } from './features/Workflow/NfcWriteView';
 import { ManualCheckSelectorSheet } from './features/Overlays/ManualCheckSelectorSheet';
 import { FullScreenModal } from './components/FullScreenModal';
-import { SettingsModal } from './features/Overlays/SettingsModal';
 import { DeveloperModal } from './features/Overlays/DeveloperModal';
 import { FutureIdeasModal } from './features/Overlays/FutureIdeasModal';
 import { UserSettingsModal } from './features/Overlays/UserSettingsModal';
@@ -46,7 +44,6 @@ const AppShellContent = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const workflowState = useAtomValue(workflowStateAtom);
 
-  const [isSettingsOpen, setIsSettingsOpen] = useAtom(isSettingsModalOpenAtom);
   const [isDevToolsOpen, setIsDevToolsOpen] = useAtom(isDevToolsModalOpenAtom);
   const [isFutureIdeasOpen, setIsFutureIdeasOpen] = useAtom(isFutureIdeasModalOpenAtom);
   const [isUserSettingsOpen, setIsUserSettingsOpen] = useAtom(isUserSettingsModalOpenAtom);
@@ -274,16 +271,6 @@ const AppShellContent = () => {
 
       <ManualCheckSelectorSheet />
       <FacilitySelectionModal />
-
-      <FullScreenModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        title="Settings"
-        transitionType="slide-horizontal"
-        actionType="back"
-      >
-        <SettingsModal />
-      </FullScreenModal>
 
       <FullScreenModal
         isOpen={isDevToolsOpen}
