@@ -59,7 +59,11 @@ export const AppFooter = () => {
 
   return (
     <footer className={styles.footer} ref={footerRef} data-footer-style={appConfig.headerStyle} data-shadow={appConfig.showChromeShadow}>
-      {appConfig.scanMode === 'nfc' ? (
+      {appConfig.isViewOnlyMode ? (
+        <div className={styles.viewOnlyBar}>
+          <span>View Only Mode</span>
+        </div>
+      ) : appConfig.scanMode === 'nfc' ? (
         <NfcScanButton />
       ) : (
         <Button variant="primary" className={styles.scanButton} onClick={handleQrClick}>

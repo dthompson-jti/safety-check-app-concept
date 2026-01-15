@@ -7,8 +7,7 @@ export const useCheckErrorToasts = () => {
 
     const triggerFetchError = useCallback(() => {
         addToast({
-            message: 'Sync error',
-            details: 'Unable to download updates. Retrying automatically.',
+            message: 'Unable to download updates. Retrying automatically.',
             icon: 'sync_disabled',
             variant: 'warning',
             persistent: true,
@@ -23,8 +22,7 @@ export const useCheckErrorToasts = () => {
 
     const triggerSyncError = useCallback(() => {
         addToast({
-            message: 'Sync error',
-            details: 'Unable to upload completed checks. Retrying automatically.',
+            message: 'Unable to upload completed checks. Retrying automatically.',
             icon: 'sync_problem',
             variant: 'alert', // Alert variant for outgoing data failure
             persistent: true,

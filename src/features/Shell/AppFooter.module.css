@@ -213,3 +213,20 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
 
   color: var(--surface-fg-primary);
 }
+
+.viewOnlyBar {
+  width: 100%;
+  height: var(--footer-action-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  border-radius: var(--spacing-3);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  background-color: var(--surface-bg-tertiary);
+  color: var(--surface-fg-secondary);
+  border: 1px solid var(--surface-border-secondary);
+  user-select: none;
+  cursor: default;
+}

@@ -101,7 +101,8 @@ const groupChecksByRoute = (checks: SafetyCheck[]) => {
 
 export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
-  const { isSlowLoadEnabled } = useAtomValue(appConfigAtom);
+  const appConfig = useAtomValue(appConfigAtom);
+  const { isSlowLoadEnabled } = appConfig;
   const [isLoading, setIsLoading] = useAtom(isScheduleLoadingAtom);
   const isRefreshing = useAtomValue(isScheduleRefreshingAtom);
   const searchQuery = useAtomValue(scheduleSearchQueryAtom);
@@ -168,7 +169,7 @@ export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
             ...group.checks.map(check => {
               // Animation-spec.md Ghost Item Contract: completing checks MUST render
               // so AnimatePresence can animate their exit transition
-              return <CheckCard key={check.id} check={check} transition={listTransition} />;
+              return <CheckCard key={check.id} check={check} transition={listTransition} isReadOnly={appConfig.isViewOnlyMode} />;
             })
           ])}
         </AnimatePresence>

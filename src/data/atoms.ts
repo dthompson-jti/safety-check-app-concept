@@ -194,6 +194,7 @@ interface AppConfig {
   showEnvironmentName: boolean;
   environmentName: string;
   showChromeShadow: boolean;
+  isViewOnlyMode: boolean;
 }
 
 export const appConfigAtom = atomWithStorage<AppConfig>(`${STORAGE_PREFIX}config`, {
@@ -217,6 +218,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>(`${STORAGE_PREFIX}config
   showEnvironmentName: false,
   environmentName: 'https://vicbc-qa-symphony.logan-symphony.com',
   showChromeShadow: true,
+  isViewOnlyMode: true,
 });
 
 // =================================================================

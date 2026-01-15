@@ -16,6 +16,7 @@ import styles from './CheckCard.module.css';
 interface CheckCardProps {
   check: SafetyCheck;
   transition: Transition; // Accept the shared transition object
+  isReadOnly?: boolean;
 }
 
 const ResidentListItem = ({ resident, check }: { resident: Resident; check: SafetyCheck }) => {
@@ -39,7 +40,7 @@ const ResidentListItem = ({ resident, check }: { resident: Resident; check: Safe
 
 
 
-export const CheckCard = ({ check, transition }: CheckCardProps) => {
+export const CheckCard = ({ check, transition, isReadOnly = false }: CheckCardProps) => {
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const recentlyCompletedCheckId = useAtomValue(recentlyCompletedCheckIdAtom);
   const { showStatusIndicators } = useAtomValue(appConfigAtom);
@@ -57,10 +58,10 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
 
   const dueDate = useMemo(() => new Date(check.dueDate), [check.dueDate]);
   const relativeTime = useCountdown(dueDate, check.status);
-  const isActionable = !['complete', 'supplemental', 'completing', 'queued'].includes(check.status);
+  const isActionable = !['complete', 'supplemental', 'completing', 'queued'].includes(check.status) && !isReadOnly;
 
   const handleCardClick = () => {
-    if (isActionable) {
+    if (isActionable && !isReadOnly) {
       setWorkflowState({
         view: 'form',
         type: 'scheduled',
@@ -99,7 +100,8 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
     isLate && feat_invert_card ? styles.cardInvert : ''
   ].filter(Boolean).join(' ');
 
-
+  // Read Only Override for Cursor
+  const finalStyle = isReadOnly ? { cursor: 'default' } : undefined;
 
   // Nested Motion Divs Pattern:
   // - Outer div: Controls height/margin collapse (delayed start)
@@ -140,12 +142,13 @@ export const CheckCard = ({ check, transition }: CheckCardProps) => {
           }
         }}
         className={cardEffectClasses}
+        style={finalStyle}
         data-status={check.status}
         data-check-id={check.id}
         data-indicators-visible={showStatusIndicators}
         onClick={handleCardClick}
-        aria-disabled={!isActionable}
-        whileTap={isActionable ? { scale: 0.98 } : {}}
+        aria-disabled={!isActionable || !!isReadOnly}
+        whileTap={(isActionable && !isReadOnly) ? { scale: 0.98 } : {}}
       >
         {showStatusIndicators && showIndicator && <div className={styles.statusIndicator} data-status={check.status} />}
 

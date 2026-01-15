@@ -33,8 +33,8 @@ interface ToastDefinition {
 
 const toastDefinitions: ToastDefinition[] = [
   { label: 'Sync Complete', message: 'Data synced', icon: 'cloud_done', variant: 'success', logic: 'Reconnection after offline.' },
-  { label: 'Sync error: Fetch', message: 'Sync error', icon: 'sync_disabled', variant: 'warning', logic: 'Simulated incoming data failure.', details: 'Unable to download updates. Retrying automatically.' },
-  { label: 'Sync error: Push', message: 'Sync error', icon: 'sync_problem', variant: 'alert', logic: 'Simulated outgoing data failure.', details: 'Unable to upload completed checks. Retrying automatically.' },
+  { label: 'Sync error: Fetch', message: 'Unable to download updates. Retrying automatically.', icon: 'sync_disabled', variant: 'warning', logic: 'Simulated incoming data failure.' },
+  { label: 'Sync error: Push', message: 'Unable to upload completed checks. Retrying automatically.', icon: 'sync_problem', variant: 'alert', logic: 'Simulated outgoing data failure.' },
   { label: 'Missed Check', message: 'Check for Room 101 missed', icon: 'history', variant: 'warning', logic: 'Ticker passes due + interval.', stableId: 'lifecycle-missed-check' },
   { label: 'Camera Error', message: 'Camera not responding.\nTry restarting your device.', icon: 'no_photography', variant: 'alert', logic: 'Simulated camera failure.' },
   { label: 'NFC Error', message: 'Tag not read.\nHold phone steady against the tag.', icon: 'wifi_tethering_error', variant: 'alert', logic: 'Simulated NFC read failure.' },
@@ -143,6 +143,14 @@ export const DeveloperModal = () => {
                 id="check-type-switch"
                 checked={appConfig.isCheckTypeEnabled}
                 onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, isCheckTypeEnabled: c })))}
+              />
+            </div>
+            <div className={styles.settingsItem}>
+              <label htmlFor="view-only-mode-switch" className={styles.itemLabel}>View only mode</label>
+              <Switch
+                id="view-only-mode-switch"
+                checked={appConfig.isViewOnlyMode}
+                onCheckedChange={handleSwitch((c) => setAppConfig(cur => ({ ...cur, isViewOnlyMode: c })))}
               />
             </div>
           </div>
