@@ -18,7 +18,6 @@ export interface Toast {
   };
   persistent?: boolean;
   details?: string;
-  errorCode?: string;
 }
 
 export const toastsAtom = atom<Toast[]>([]);
@@ -33,7 +32,6 @@ export const addToastAtom = atom(
     action,
     persistent,
     details,
-    errorCode
   }: {
     message: string;
     icon: string;
@@ -42,7 +40,6 @@ export const addToastAtom = atom(
     action?: { label: string; onClick: () => void };
     persistent?: boolean;
     details?: string;
-    errorCode?: string;
   }) => {
     const currentToasts = get(toastsAtom);
     const now = Date.now();
@@ -63,7 +60,6 @@ export const addToastAtom = atom(
           action,      // Update action if provided
           persistent,  // Update persistence if provided
           details,     // Update details
-          errorCode,   // Update errorCode
           timestamp: now // Reset timer
         };
         set(toastsAtom, updatedToasts);
@@ -84,7 +80,6 @@ export const addToastAtom = atom(
       action,
       persistent,
       details,
-      errorCode
     };
 
     if (currentToasts.length > 0 && currentToasts[currentToasts.length - 1].message === message && !stableId) {

@@ -28,10 +28,13 @@ interface ToastDefinition {
   variant: ToastVariant;
   logic: string;
   stableId?: string;
+  details?: string;
 }
 
 const toastDefinitions: ToastDefinition[] = [
   { label: 'Sync Complete', message: 'Data synced', icon: 'cloud_done', variant: 'success', logic: 'Reconnection after offline.' },
+  { label: 'Sync error: Fetch', message: 'Sync error', icon: 'sync_disabled', variant: 'warning', logic: 'Simulated incoming data failure.', details: 'Unable to download updates. Retrying automatically.' },
+  { label: 'Sync error: Push', message: 'Sync error', icon: 'sync_problem', variant: 'alert', logic: 'Simulated outgoing data failure.', details: 'Unable to upload completed checks. Retrying automatically.' },
   { label: 'Missed Check', message: 'Check for Room 101 missed', icon: 'history', variant: 'warning', logic: 'Ticker passes due + interval.', stableId: 'lifecycle-missed-check' },
   { label: 'Camera Error', message: 'Camera not responding.\nTry restarting your device.', icon: 'no_photography', variant: 'alert', logic: 'Simulated camera failure.' },
   { label: 'NFC Error', message: 'Tag not read.\nHold phone steady against the tag.', icon: 'wifi_tethering_error', variant: 'alert', logic: 'Simulated NFC read failure.' },
@@ -89,7 +92,8 @@ export const DeveloperModal = () => {
       message: message,
       icon: def.icon,
       variant: def.variant,
-      stableId: def.stableId
+      stableId: def.stableId,
+      details: def.details
     });
   };
 

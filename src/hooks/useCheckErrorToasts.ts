@@ -7,17 +7,15 @@ export const useCheckErrorToasts = () => {
 
     const triggerFetchError = useCallback(() => {
         addToast({
-            message: 'Data Retrieval Failed',
-            details: 'Could not load checks from the server. Detailed error logs have been sent to support.',
-            errorCode: 'Error: 500 Internal Server Error',
-            icon: 'cloud_off',
-            variant: 'alert',
+            message: 'Sync error',
+            details: 'Unable to download updates. Retrying automatically.',
+            icon: 'sync_disabled',
+            variant: 'warning',
             persistent: true,
             action: {
                 label: 'Retry',
                 onClick: () => {
                     // Placeholder for retry logic
-                    console.log('Retry fetch clicked');
                 }
             }
         });
@@ -25,17 +23,15 @@ export const useCheckErrorToasts = () => {
 
     const triggerSyncError = useCallback(() => {
         addToast({
-            message: 'Sync Failed',
-            details: 'Changes could not be saved to the server. Your data is safe locally and will be retried automatically.',
-            errorCode: 'Error: Sync Timeout',
+            message: 'Sync error',
+            details: 'Unable to upload completed checks. Retrying automatically.',
             icon: 'sync_problem',
-            variant: 'warning', // Warning because data is safe locally
+            variant: 'alert', // Alert variant for outgoing data failure
             persistent: true,
             action: {
                 label: 'Retry Now',
                 onClick: () => {
                     // Placeholder for sync retry
-                    console.log('Retry sync clicked');
                 }
             }
         });

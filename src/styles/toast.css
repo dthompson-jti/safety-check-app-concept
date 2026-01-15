@@ -33,12 +33,12 @@
   /* Metrics Spec */
   width: auto;
   max-width: calc(100vw - 32px);
-  padding: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-xl);
   gap: 16px;
 
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   /* Align to top for multiline toasts */
   /* justify-content removed to allow natural flow with close button */
 
