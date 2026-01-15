@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Generic Blocking Error Pattern (403, 5xx, Offline, Timeout)
 - Segmented control in Developer Modal for error simulation
 - `bg-quinary` icon styling with 50% opacity for system errors
-- Contrast Audit Tool (`scripts/audit-contrast.js`) with multi-screen navigation and OKLCH support.
+- **Contrast Scanner:** Refactored automated accessibility tooling into `scripts/contrast-scanner` with expanded coverage (Settings, Scan View) and improved logging.
 
 ### Changed
 - **Toast Styling:** Refined toast UI for better centering (`align-items: center`) and reduced vertical padding (`12px`).

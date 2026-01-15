@@ -1,7 +1,8 @@
 /**
- * Fast Runtime Contrast Audit (v21 - THE FINAL WORD)
+ * Contrast Scanner v1.0
  * 
- * Uses Puppeteer + Axe-Core + Advanced Color Resolution.
+ * Automated accessibility audit tool using Puppeteer and Axe-Core.
+ * Scans multiple application states for color contrast violations.
  */
 
 import puppeteer from 'puppeteer';
@@ -11,8 +12,26 @@ const APP_URL = 'http://localhost:5173';
 const AXE_CORE_PATH = './node_modules/axe-core/axe.min.js';
 const REPORT_PATH = './docs/audit-results.md';
 
+function logHeader(title) {
+    console.log('\n========================================');
+    console.log(`  ${title.toUpperCase()}`);
+    console.log('========================================');
+}
+
+function logStep(message) {
+    console.log(`[STEP] ${message}`);
+}
+
+function logInfo(message) {
+    console.log(`   > ${message}`);
+}
+
+function logError(message) {
+    console.error(`[ERROR] ${message}`);
+}
+
 async function runAudit() {
-    console.log('🚀 Starting Definitive Multi-Screen Contrast Audit...');
+    logHeader('Starting Multi-Screen Contrast Audit');
 
     const browser = await puppeteer.launch({
         headless: true,
@@ -21,7 +40,14 @@ async function runAudit() {
     const page = await browser.newPage();
     await page.setViewport({ width: 450, height: 900 });
 
-    const axeSource = readFileSync(AXE_CORE_PATH, 'utf8');
+    let axeSource;
+    try {
+        axeSource = readFileSync(AXE_CORE_PATH, 'utf8');
+    } catch (e) {
+        logError(`Could not load axe-core from ${AXE_CORE_PATH}`);
+        process.exit(1);
+    }
+
     const scanResults = [];
 
     try {
@@ -33,28 +59,34 @@ async function runAudit() {
         await page.reload({ waitUntil: 'networkidle2' });
 
         // --- AUTH ---
-        console.log('🔑 Login...');
+        logStep('Authentication');
+        logInfo('Locating shortcut login...');
         await page.waitForSelector('svg[aria-label="Developer Shortcut Login"]');
         await page.click('svg[aria-label="Developer Shortcut Login"]');
 
         // --- FACILITY ---
-        console.log('🏢 Selecting Facility...');
+        logStep('Facility Selection');
+        logInfo('Selecting "Juvenile Detention Center"...');
         await page.waitForSelector('text/Juvenile Detention Center', { timeout: 15000 });
         await page.click('text/Juvenile Detention Center');
 
         // --- UNIT ---
-        console.log('🏘️ Selecting Unit...');
+        logStep('Unit Selection');
+        logInfo('Selecting "A-Wing"...');
         await page.waitForSelector('text/A-Wing', { timeout: 10000 });
         await page.click('text/A-Wing');
 
         // --- DASHBOARD (LIGHT) ---
-        console.log('⏳ Loading Dashboard (Light)...');
+        logStep('Dashboard (Light Mode)');
+        logInfo('Waiting for dashboard load...');
         await page.waitForSelector('[data-check-id]', { timeout: 15000 });
         await new Promise(r => setTimeout(r, 1000));
         scanResults.push(await runAxe(page, axeSource, 'Dashboard (Light)'));
 
         // --- SETTINGS ---
-        console.log('⚙️ Opening Settings...');
+        logStep('User Settings');
+        logInfo('Navigating to settings via side menu...');
+        // Ensure side menu is open
         await page.click('aria/Open navigation menu');
         await page.waitForSelector('aria/Settings', { timeout: 5000 });
         await page.click('aria/Settings');
@@ -62,32 +94,55 @@ async function runAudit() {
         scanResults.push(await runAxe(page, axeSource, 'User Settings'));
 
         // CLOSE MODALS & SIDE MENU
+        logInfo('Closing settings and menu...');
         await page.click('aria/Back');
+        await new Promise(r => setTimeout(r, 500));
+        await page.click('aria/Open navigation menu'); // Closes side menu
         await new Promise(r => setTimeout(r, 1000));
 
+        // --- SCAN VIEW ---
+        logStep('Scan View');
+        logInfo('Opening Scan View...');
+        await page.click('text/Scan');
+        await page.waitForSelector('text/Scan Room QR Code', { timeout: 5000 });
+        await new Promise(r => setTimeout(r, 500));
+        scanResults.push(await runAxe(page, axeSource, 'Scan View'));
+
+        logInfo('Closing Scan View...');
+        try {
+            await page.waitForSelector('text/Scan Room QR Code', { timeout: 5000 });
+            await page.evaluate(() => {
+                const btn = document.querySelector('button[aria-label="Close scanner"]');
+                if (btn) btn.click();
+            });
+            await new Promise(r => setTimeout(r, 1000));
+        } catch (e) {
+            logInfo('Warning: Could not verify scanner closure, proceeding...');
+        }
+
         // --- DARK MODE ---
-        console.log('🌙 Switching to Dark Mode...');
+        logStep('Dashboard (Dark Mode)');
+        logInfo('Switching theme to "dark-c"...');
         await page.evaluate(() => {
             document.documentElement.setAttribute('data-theme', 'dark-c');
         });
-        // Ensure UI is ready
-        await page.waitForSelector('[data-check-id]', { timeout: 10000 });
         await new Promise(r => setTimeout(r, 2000));
         scanResults.push(await runAxe(page, axeSource, 'Dashboard (Dark)'));
 
         generateFinalReport(scanResults);
 
     } catch (err) {
-        console.error('❌ Audit Error:', err.message);
+        logError(`Audit failed: ${err.message}`);
         generateFinalReport(scanResults);
     } finally {
         await browser.close();
-        console.log(`📄 Definitive Report saved to ${REPORT_PATH}`);
+        logHeader('Audit Complete');
+        logInfo(`Report saved to ${REPORT_PATH}`);
     }
 }
 
 async function runAxe(page, axeSource, screenName) {
-    console.log(`🔍 Scanning ${screenName}...`);
+    logInfo(`Running Axe analysis on: ${screenName}`);
     await page.evaluate(axeSource);
     const results = await page.evaluate(runDeepAuditInBrowser);
     return { screenName, ...results };
@@ -152,13 +207,10 @@ async function runDeepAuditInBrowser() {
                 const style = window.getComputedStyle(targetEl);
                 fg = style.color;
 
-                // Detection logic for avatars
                 const isAvatar = selector.includes('avatar') || targetEl.className.includes('avatar');
 
                 bg = resolveBackground(targetEl);
 
-                // FINAL OVERRIDE: If it's an avatar and we resolved some generic surface color, 
-                // try once more to grab precisely the inline style.
                 if (isAvatar && bg.includes('249')) {
                     if (targetEl.style.backgroundColor) bg = targetEl.style.backgroundColor;
                 }
