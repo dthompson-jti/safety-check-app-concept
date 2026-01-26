@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { sessionAtom, appConfigAtom } from '../../data/atoms';
+import { addToastAtom } from '../../data/toastAtoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { findUser } from '../../data/users';
 import { Button } from '../../components/Button';
@@ -35,6 +36,8 @@ export const LoginView = () => {
     offset: 20
   });
 
+  const addToast = useSetAtom(addToastAtom);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsAttempted(true);
@@ -52,6 +55,23 @@ export const LoginView = () => {
       hasError = true;
     }
     if (hasError) return;
+
+    // Special case: VPN Simulation Account
+    if (username.trim().toLowerCase() === 'jsiemens' && password.trim().toUpperCase() === 'VPN') {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        addToast({
+          stableId: 'vpn-error',
+          message: 'Access Denied',
+          details: 'Check your VPN connection or account permissions, then try again.',
+          icon: 'vpn_lock',
+          variant: 'alert',
+          persistent: true,
+        });
+      }, 500);
+      return;
+    }
 
     // Validate password first (always 'test')
     if (password.trim() !== 'test') {

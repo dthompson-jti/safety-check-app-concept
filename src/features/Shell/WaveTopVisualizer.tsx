@@ -13,7 +13,7 @@ interface WaveTopVisualizerProps {
  * Wave Top Visualizer
  * 
  * Single set of 4 wave arcs rotated upward, centered horizontally.
- * Includes the "Hold near Tag" text below for proper stacked layout.
+ * Includes the "Hold near tag" text below for proper stacked layout.
  */
 export const WaveTopVisualizer: React.FC<WaveTopVisualizerProps> = ({
     isEnabled,
@@ -66,7 +66,7 @@ export const WaveTopVisualizer: React.FC<WaveTopVisualizerProps> = ({
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
             >
-                Hold near Tag
+                Hold near tag
             </motion.div>
         </div>
     );

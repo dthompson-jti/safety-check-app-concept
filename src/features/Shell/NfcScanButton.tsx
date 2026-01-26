@@ -239,7 +239,7 @@ const FeedbackVisualizer = () => {
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
                     >
-                        Hold near Tag
+                        Hold near tag
                     </motion.div>
                 )}
 

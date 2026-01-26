@@ -8,15 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-- **Toast Styling Overhaul:** Full redesign to high-contrast solid backgrounds (`success-solid`, `error-solid`, etc.) with white foregrounds.
-- **Responsive Toasts:** Center-aligned on mobile, bottom-right on desktop with standardized 16px screen edge padding.
-- **Token Update:** Added `--z-toast` semantic token (9999).
-- **Sync Error Toasts:** Implemented dedicated "Fetch" (warning) and "Push" (alert) error toasts with neutral wording.
-- **Dev Tools:** Added "Sync error: Fetch" and "Sync error: Push" triggers to the Developer Tools "Toast Playground".
-- Generic Blocking Error Pattern (403, 5xx, Offline, Timeout)
-- Segmented control in Developer Modal for error simulation
-- `bg-quinary` icon styling with 50% opacity for system errors
+- **VPN Connection Simulation:** Added mock account `jsiemens` / `vpn` to simulate connection failures.
+- **Persistent VPN Error Toast:** Implemented a persistent alert toast for "Access Denied" (VPN) errors on the login screen, replacing the full-screen blocking error for this scenario.
+- **Toast Messaging:** Refined VPN error wording to "Check your VPN connection or account permissions, then try again."
 - **Contrast Scanner:** Refactored automated accessibility tooling into `scripts/contrast-scanner` with expanded coverage (Settings, Scan View) and improved logging.
+
+### Added
+- VPN simulation mock credentials on Login screen.
+
+### Changed
+- **VPN Error Presentation:** Transitioned from a full-screen blocking error to an in-line toast for improved login UX.
 
 ### Changed
 - **Toast Styling:** Refined toast UI for better centering (`align-items: center`) and reduced vertical padding (`12px`).

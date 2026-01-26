@@ -150,7 +150,7 @@ export const ScanAnimationE: React.FC<ScanAnimationEProps> = ({ isEnabled }) => 
                 />
             </svg>
 
-            {/* Hold near Tag text */}
+            {/* Hold near tag text */}
             <motion.span
                 className={styles.nfcIconLabel}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -158,7 +158,7 @@ export const ScanAnimationE: React.FC<ScanAnimationEProps> = ({ isEnabled }) => 
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
             >
-                Hold near Tag
+                Hold near tag
             </motion.span>
         </div>
     );

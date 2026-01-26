@@ -15,7 +15,7 @@ const ERROR_METADATA: Record<NonNullable<BlockingErrorType>, ErrorMetadata> = {
     forbidden: {
         icon: 'vpn_lock',
         headline: 'Access Denied',
-        body: 'Connection was blocked by the server. Check your VPN connection or account permissions, then try again.',
+        body: 'VPN connection required. Please ensure you are connected to the clinical network and try again.',
         code: 'Error: 403 Forbidden',
     },
     unavailable: {
@@ -30,11 +30,11 @@ const ERROR_METADATA: Record<NonNullable<BlockingErrorType>, ErrorMetadata> = {
         body: 'No internet connection detected. Application data cannot be loaded.',
         code: 'Connection Failed',
     },
-    timeout: {
-        icon: 'timer_off',
-        headline: 'Connection Timeout',
-        body: 'The server responded too slowly. It may be under heavy load or your connection is weak.',
-        code: 'Error: Request Timeout',
+    generic: {
+        icon: 'error_outline',
+        headline: 'An Error Occurred',
+        body: 'The application encountered a problem. If this persists, please contact support.',
+        code: 'System Error',
     },
 };
 

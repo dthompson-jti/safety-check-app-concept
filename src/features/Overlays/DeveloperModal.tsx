@@ -326,7 +326,7 @@ export const DeveloperModal = () => {
                 { value: 'forbidden', label: '403' },
                 { value: 'unavailable', label: '5xx' },
                 { value: 'offline', label: 'Offline' },
-                { value: 'timeout', label: 'Timeout' },
+                { value: 'generic', label: 'Error' },
               ]}
               value={blockingErrorType || 'none'}
               onValueChange={(val) => {
