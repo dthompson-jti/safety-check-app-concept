@@ -14,82 +14,69 @@ To maintain a high-craft, low-friction user experience, the application adheres 
 ## 2. Design Specifications
 
 ### Visual Architecture
-Toasts are high-elevation floating surfaces that prioritize readability and touch targets.
+Toasts are high-contrast, solid surfaces designed for maximum visibility and accessibility.
 
 *   **Dimensions & Metrics:**
-    *   **Border Radius:** 12px (`var(--radius-xl)`)
-    *   **Padding:** 16px (`var(--spacing-4)`)
-    *   **Content Gap:** 16px (`var(--spacing-4)`)
-    *   **Shadow:** `var(--surface-shadow-md)`
-    *   **Elevation:** Layer 200 (Above Content, Navigation, and Floating Buttons)
-    *   **Dismissal:** Includes a dedicated 'x' close button on the right edge.
-    *   **Content Formatting:** Supports `white-space: pre-line` to allow explicit line breaks (`\n`) for separating problems from solutions.
+    *   **Border Radius:** 10px (`var(--radius-lg)`)
+    *   **Padding:** 12px (`var(--spacing-3)`)
+    *   **Internal Gap:** 12px (`var(--spacing-3)`) between icon and content.
+    *   **Content Gap:** 4px (`var(--spacing-1)`) between Title and Description.
+    *   **Shadow:** `var(--surface-shadow-xl)`
+    *   **Z-Index:** `var(--z-toast)` (9999)
+    *   **Dismissal:** Includes a dedicated white 'x' close button.
+    *   **Content Alignment:** Vertically centered (`align-items: center`).
 
-*   **Typography:**
-    *   **Weight:** 500 (Medium)
-    *   **Size:** 0.9rem (14px-15px)
-    *   **Color:** `var(--surface-fg-secondary)` for all variants to ensure consistent readability.
+*   **Typography & Iconography:**
+    *   **Icon Size:** 24px (`var(--icon-size-lg)`)
+    *   **Title/Description Weight:** Title (600), Description (400)
+    *   **Size:** 14px (`var(--font-size-sm)`)
+    *   **Color:** `var(--surface-fg-on-solid)` (White) for all variant foregrounds.
 
-*   **Iconography:**
-    *   **Size:** 20px
-    *   **Alignment:** Center-aligned with the first line of text.
+### Semantic Variants (High-Contrast Solid)
 
-### Content Guidelines (NEW)
-*   **Error Messages:** Must be actionable. Follow the pattern: `[Problem description].\n[Actionable resolution].`
-    *   *Bad:* "NFC Error"
-    *   *Good:* "Tag not read.\nHold phone steady against the tag."
-
-### Semantic Variants
-
-We define strict variants using Data Attributes (`data-variant="..."`).
+We define variants using **Solid** background tokens. All foreground elements use `var(--surface-fg-on-solid)`.
 
 #### 1. Neutral (`data-variant="neutral"`)
-*Default.* Used for system state changes that are neither successes nor failures (e.g., "Dev Tools Reset", "Offline Mode Enabled").
-*   **Background:** `var(--surface-bg-primary)` (White)
-*   **Border:** 1px solid `var(--surface-border-secondary)`
-*   **Icon:** `info`
-*   **Icon Color:** `var(--surface-fg-secondary)`
+Used for system state changes.
+*   **Background:** `var(--surface-bg-primary-solid)` (#0A0C12)
+*   **Border:** 1px solid `var(--surface-border-primary)` (#414651)
 
 #### 2. Success (`data-variant="success"`)
-Used for confirming background actions where no view transition occurs (e.g., "Simple Submit" or "Supplemental Check Saved").
-*   **Background:** `var(--surface-bg-success)`
-*   **Border:** 1px solid `var(--surface-border-success)`
-*   **Icon:** `check_circle`
-*   **Icon Color:** `var(--surface-fg-success-primary)`
+Used for confirming background actions.
+*   **Background:** `var(--surface-bg-success-solid)` (#0D935A)
+*   **Border:** `rgba(0, 0, 0, 0.1)` (Integrated/Subtle)
 
 #### 3. Warning (`data-variant="warning"`)
-Used for non-critical issues or passive alerts that require attention but do not block workflow (e.g., "Missed Checks").
-*   **Background:** `var(--surface-bg-warning-primary)`
-*   **Border:** 1px solid `var(--surface-border-warning)`
-*   **Icon:** `history` or `warning`
-*   **Icon Color:** `var(--surface-fg-warning-primary)`
+Used for non-critical issues.
+*   **Background:** `var(--surface-bg-warning-solid)` (#C45500)
+*   **Border:** `rgba(0, 0, 0, 0.1)`
 
 #### 4. Alert (`data-variant="alert"`)
-Used for critical system failures or hardware errors.
-*   **Background:** `var(--surface-bg-error-primary)`
-*   **Border:** 1px solid `var(--surface-border-alert)`
-*   **Icon:** `error`
-*   **Icon Color:** `var(--surface-fg-alert-primary)`
+Used for critical failures.
+*   **Background:** `var(--surface-bg-error-solid)` (#D63230)
+*   **Border:** `rgba(0, 0, 0, 0.1)`
 
 #### 5. Info (`data-variant="info"`)
-Used for informational messages that are distinct from system status (e.g., specific help tips).
-*   **Background:** `var(--surface-bg-info)`
-*   **Border:** 1px solid `var(--surface-border-info)`
-*   **Icon:** `info`
-*   **Icon Color:** `var(--surface-fg-info-primary)`
+Used for informational messages.
+*   **Background:** `var(--surface-bg-info-solid)` (#0085C9)
+*   **Border:** `rgba(0, 0, 0, 0.1)`
 
-### Placement & Motion Logic
+### Action Links
+Toast actions are styled as **Underlined Action Links** with 4px offset, inheriting the white foreground color.
 
-*   **Positioning:** Bottom Center.
-*   **Dynamic Stacking:**
-    Toasts utilize the **Component Variable Contract**. The CSS respects the `--footer-height` variable to ensure toasts never cover floating action buttons or navigation bars.
+### Placement & Positioning
+
+*   **Desktop Positioning:** Bottom Right (16px from edge).
+*   **Mobile Positioning:** Bottom Center (centered horizontally).
+*   **Dynamic Stacking:** Toasts respect the `--footer-height` variable.
     ```css
     bottom: calc(var(--footer-height, 0px) + var(--spacing-4));
     ```
+
+### Motion Logic
 *   **Animation (Framer Motion):**
     *   **Enter:** Slide Y (-20px) + Scale (0.95 -> 1.0) + Opacity (Spring: `stiffness: 400, damping: 30`).
-    *   **Exit:** Scale (1.0 -> 0.95) + Opacity (Tween, 150ms, `easeOut`).
-    *   **Constraint:** The `layout` prop is **disabled** on the Toast component to prevent conflicts with Radix UI's CSS transform-based swipe gestures.
+    *   **Exit:** Scale (1.0 -> 0.95) + Opacity (Tween, 100ms, `easeOut`).
 
 *   **Gestures:**
     *   **Swipe Direction:** Right (`swipeDirection="right"`).

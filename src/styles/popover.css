@@ -23,6 +23,8 @@
   border: 1px solid var(--primitives-grey-800);
   user-select: none;
   z-index: 1100;
+  max-width: calc(100vw - var(--spacing-8));
+  text-align: center;
 }
 
 .popover-arrow {

@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Added
+- **Toast Styling Overhaul:** Full redesign to high-contrast solid backgrounds (`success-solid`, `error-solid`, etc.) with white foregrounds.
+- **Responsive Toasts:** Center-aligned on mobile, bottom-right on desktop with standardized 16px screen edge padding.
+- **Token Update:** Added `--z-toast` semantic token (9999).
 - **Sync Error Toasts:** Implemented dedicated "Fetch" (warning) and "Push" (alert) error toasts with neutral wording.
 - **Dev Tools:** Added "Sync error: Fetch" and "Sync error: Push" triggers to the Developer Tools "Toast Playground".
 - Generic Blocking Error Pattern (403, 5xx, Offline, Timeout)

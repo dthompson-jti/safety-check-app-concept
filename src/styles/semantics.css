@@ -221,6 +221,9 @@
    /* Focus Rings */
    --control-focus-ring-standard: var(--primitives-blue-500);
    --control-focus-ring-error: var(--primitives-red-500);
+
+   /* Z-Index */
+   --z-toast: 9999;
 }
 
 /* EXPLORATORY VARIATION: DARK A (Cards Lighter)

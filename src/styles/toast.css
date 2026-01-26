@@ -8,18 +8,18 @@
     Floats above the footer (if present) + standard spacing.
   */
   bottom: calc(var(--footer-height, 0px) + var(--spacing-4));
-  left: 0;
-  right: 0;
+  right: var(--spacing-4);
 
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  /* Spec: Breadth Alignment: Flex-end (in viewport) to align to the right edge. */
+  align-items: flex-end;
+  gap: var(--spacing-3);
 
   margin: 0;
   padding: 0;
   list-style: none;
-  z-index: 2147483647;
+  z-index: var(--z-toast);
   outline: none;
 
   /* Clicks should pass through the viewport to the content underneath. */
@@ -31,25 +31,20 @@
   pointer-events: auto;
 
   /* Metrics Spec */
+  min-width: 320px;
+  max-width: min(440px, calc(100vw - var(--spacing-8)));
   width: auto;
-  max-width: calc(100vw - 32px);
-  padding: var(--spacing-3) var(--spacing-4);
-  border-radius: var(--radius-xl);
-  gap: 16px;
+
+  padding: var(--spacing-3);
+  border-radius: var(--radius-lg);
+  gap: var(--spacing-3);
 
   display: flex;
+  /* Spec: Vertical Alignment: Centered */
   align-items: center;
-  /* Align to top for multiline toasts */
-  /* justify-content removed to allow natural flow with close button */
-
-  /* Typography */
-  font-family: var(--font-family-sans);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--surface-fg-secondary);
 
   /* Depth */
-  box-shadow: var(--surface-shadow-md);
+  box-shadow: var(--surface-shadow-xl);
 
   /* Interaction */
   /* CRITICAL: touch-action: none is required for Radix Swipe to work on mobile */
@@ -58,38 +53,39 @@
 }
 
 .toast-root .material-symbols-rounded {
-  font-size: var(--icon-size-md);
+  font-size: var(--icon-size-lg);
+  /* 1.5rem / 24px */
   flex-shrink: 0;
+  color: var(--surface-fg-on-solid);
 }
 
 .toast-content {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  gap: 4px;
+  /* Spec: Content Gap: var(--spacing-1) (4px) */
+  gap: var(--spacing-1);
   min-width: 0;
-  /* Enable text truncation if needed */
 }
 
 .toast-message {
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  /* 14px */
+  font-weight: var(--font-weight-semibold);
+  /* 600 */
+  color: var(--surface-fg-on-solid);
   margin: 0;
   line-height: 1.4;
 }
 
 .toast-details {
   margin: 0;
-  font-size: 0.85rem;
-  opacity: 0.9;
+  font-size: var(--font-size-sm);
+  /* 14px */
+  font-weight: var(--font-weight-regular);
+  /* 400 */
+  color: var(--surface-fg-on-solid);
   line-height: 1.4;
-}
-
-.toast-error-code {
-  margin: 0;
-  margin-top: 4px;
-  font-family: var(--font-family-mono);
-  font-size: 0.75rem;
-  opacity: 0.7;
 }
 
 /* --- Action Button --- */
@@ -99,30 +95,30 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  font-weight: 600;
+
+  /* Spec: Decoration: Underline (Offset 4px) */
+  text-decoration: underline;
+  text-underline-offset: 4px;
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
 
-  /* Semantic Colors */
-  background-color: var(--surface-bg-primary);
-  color: var(--surface-fg-primary);
-  border: 1px solid var(--surface-border-primary);
-  box-shadow: var(--surface-shadow-sm);
+  /* Spec: Color: White */
+  color: var(--surface-fg-on-solid);
 
-  transition: transform 0.1s, background-color 0.2s;
+  /* Reset previous button styles */
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
 
-  /* Separate from text and close button */
   margin-left: 8px;
   margin-right: 4px;
   white-space: nowrap;
 }
 
 .toast-action:active {
-  transform: scale(0.96);
-  background-color: var(--surface-bg-secondary);
+  opacity: 0.8;
 }
 
 /* --- Close Button --- */
@@ -139,74 +135,64 @@
   flex-shrink: 0;
   cursor: pointer;
   background: none;
-  color: var(--surface-fg-tertiary);
+  /* Spec: Color: White */
+  color: var(--surface-fg-on-solid);
   transition: background-color 0.2s, opacity 0.2s;
   margin-left: auto;
-  /* Push to right if container expands */
 }
 
 .toast-close-button:hover {
-  background-color: var(--utility-alpha-black-10);
+  background-color: var(--utility-alpha-white-20);
 }
 
 .toast-close-button .material-symbols-rounded {
   font-size: var(--icon-size-md);
+  color: var(--surface-fg-on-solid);
 }
 
 /* --- Semantic Variants --- */
 
 /* Neutral (Default) */
 .toast-root[data-variant='neutral'] {
-  background-color: var(--surface-bg-primary);
-  border: 1px solid var(--surface-border-secondary);
-}
-
-.toast-root[data-variant='neutral'] .toast-icon {
-  color: var(--surface-fg-secondary);
+  background-color: var(--surface-bg-primary-solid);
+  /* #0A0C12 */
+  border: 1px solid var(--surface-border-primary);
+  /* #414651 */
 }
 
 /* Success */
 .toast-root[data-variant='success'] {
-  background-color: var(--surface-bg-success);
-  border: 1px solid var(--surface-border-success);
-}
-
-.toast-root[data-variant='success'] .toast-icon {
-  color: var(--surface-fg-success-primary);
-  font-variation-settings: 'FILL' 0;
+  background-color: var(--surface-bg-success-solid);
+  /* #0D935A */
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Alert / Error */
 .toast-root[data-variant='alert'] {
-  background-color: var(--surface-bg-error-primary);
-  border: 1px solid var(--surface-border-alert);
-}
-
-.toast-root[data-variant='alert'] .toast-icon {
-  color: var(--surface-fg-alert-primary);
-  font-variation-settings: 'FILL' 0;
+  background-color: var(--surface-bg-error-solid);
+  /* #D63230 */
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Warning */
 .toast-root[data-variant='warning'] {
-  background-color: var(--surface-bg-warning-primary);
-  border: 1px solid var(--surface-border-warning);
-}
-
-.toast-root[data-variant='warning'] .toast-icon {
-  color: var(--surface-fg-warning-primary);
-  font-variation-settings: 'FILL' 0;
+  background-color: var(--surface-bg-warning-solid);
+  /* #C45500 */
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Info */
 .toast-root[data-variant='info'] {
-  background-color: var(--surface-bg-info);
-  border: 1px solid var(--surface-border-info);
+  background-color: var(--surface-bg-info-solid);
+  /* #0085C9 */
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.toast-root[data-variant='info'] .toast-icon {
-  color: var(--surface-fg-info-primary);
-  font-variation-settings: 'FILL' 0;
+/* Specific icon color overrides if needed are removed as all are now white/on-solid */
+.toast-root[data-variant] .toast-icon {
+  color: var(--surface-fg-on-solid);
+  font-variation-settings: 'FILL' 1;
+  /* Filled icons generally look better on solid backgrounds */
 }
 
 /* Radix Swipe Transformations */
@@ -221,4 +207,18 @@
 
 .toast-root[data-swipe='end'] {
   animation: fadeOut 100ms ease-out forwards;
+}
+
+@media (max-width: 768px) {
+  .toast-viewport {
+    right: 0;
+    left: 0;
+    align-items: center;
+  }
+
+  .toast-root {
+    min-width: unset;
+    width: auto;
+    max-width: calc(100vw - var(--spacing-8));
+  }
 }

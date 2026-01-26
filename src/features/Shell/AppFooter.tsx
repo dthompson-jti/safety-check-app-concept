@@ -9,6 +9,7 @@ import { lateCheckCountAtom } from '../../data/appDataAtoms';
 import { useHaptics } from '../../data/useHaptics';
 import { useWaapiSync } from '../../hooks/useWaapiSync';
 import { Button } from '../../components/Button';
+import { Popover } from '../../components/Popover';
 import { NfcScanButton } from './NfcScanButton';
 import styles from './AppFooter.module.css';
 
@@ -60,9 +61,18 @@ export const AppFooter = () => {
   return (
     <footer className={styles.footer} ref={footerRef} data-footer-style={appConfig.headerStyle} data-shadow={appConfig.showChromeShadow}>
       {appConfig.isViewOnlyMode ? (
-        <div className={styles.viewOnlyBar}>
-          <span>View Only Mode</span>
-        </div>
+        <Popover
+          trigger={
+            <div className={styles.viewOnlyBar}>
+              <span>View only</span>
+            </div>
+          }
+          variant="tooltip"
+        >
+          <div style={{ padding: 'var(--spacing-2) var(--spacing-3)' }}>
+            <p style={{ margin: 0, fontWeight: 500, fontSize: 'var(--font-size-sm)' }}>You do not have permissions to perform room checks</p>
+          </div>
+        </Popover>
       ) : appConfig.scanMode === 'nfc' ? (
         <NfcScanButton />
       ) : (

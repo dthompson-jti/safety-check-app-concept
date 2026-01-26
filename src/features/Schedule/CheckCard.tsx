@@ -165,7 +165,9 @@ export const CheckCard = ({ check, transition, isReadOnly = false }: CheckCardPr
                 <ResidentListItem key={resident.id} resident={resident} check={check} />
               ))}
             </ul>
-            <div className={styles.timeDisplay}>{isActionable ? relativeTime : null}</div>
+            <div className={styles.timeDisplay}>
+              {!['complete', 'supplemental', 'completing', 'queued'].includes(check.status) ? relativeTime : null}
+            </div>
           </div>
         </div>
       </motion.div>
