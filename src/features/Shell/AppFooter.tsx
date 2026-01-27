@@ -69,9 +69,7 @@ export const AppFooter = () => {
           }
           variant="tooltip"
         >
-          <div style={{ padding: 'var(--spacing-2) var(--spacing-3)' }}>
-            <p style={{ margin: 0, fontWeight: 500, fontSize: 'var(--font-size-sm)' }}>You do not have permissions to perform room checks</p>
-          </div>
+          <p style={{ margin: 0, fontWeight: 500, fontSize: 'var(--font-size-sm)' }}>You do not have permissions to perform room checks</p>
         </Popover>
       ) : appConfig.scanMode === 'nfc' ? (
         <NfcScanButton />
