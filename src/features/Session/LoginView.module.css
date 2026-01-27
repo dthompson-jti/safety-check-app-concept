@@ -165,8 +165,6 @@
 .formError {
   background-color: var(--surface-bg-error-primary);
   color: var(--surface-fg-alert-primary);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
   padding: var(--spacing-3);
   border-radius: var(--radius-md);
   text-align: left;
@@ -176,6 +174,29 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+}
+
+.formError[data-has-details="true"] {
+  align-items: flex-start;
+}
+
+.formErrorText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0-5);
+}
+
+.formErrorTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+}
+
+.formErrorDetails {
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  line-height: var(--line-height-relaxed);
+  opacity: 0.9;
 }
 
 .formError .material-symbols-rounded {

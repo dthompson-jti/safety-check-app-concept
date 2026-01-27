@@ -59,12 +59,12 @@ export const AppFooter = () => {
   };
 
   return (
-    <footer className={styles.footer} ref={footerRef} data-footer-style={appConfig.headerStyle} data-shadow={appConfig.showChromeShadow}>
+    <footer className={styles.footer} ref={footerRef} data-footer-style={appConfig.headerStyle} data-shadow={appConfig.showChromeShadow} data-view-only={appConfig.isViewOnlyMode}>
       {appConfig.isViewOnlyMode ? (
         <Popover
           trigger={
             <div className={styles.viewOnlyBar}>
-              <span>View only</span>
+              <span>Read only</span>
             </div>
           }
           variant="tooltip"

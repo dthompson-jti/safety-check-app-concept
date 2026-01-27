@@ -8,16 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- **Read-only Footer:** Updated "View only" footer to "Read only" with a more compact vertical profile for better visual balance.
 - **VPN Connection Simulation:** Added mock account `jsiemens` / `vpn` to simulate connection failures.
-- **Persistent VPN Error Toast:** Implemented a persistent alert toast for "Access Denied" (VPN) errors on the login screen, replacing the full-screen blocking error for this scenario.
-- **Toast Messaging:** Refined VPN error wording to "Check your VPN connection or account permissions, then try again."
+- **Persistent VPN Error Alert:** Implemented a persistent inline alert for "Access Denied" (VPN) errors on the login screen, replacing the transient toast pattern.
+- **Error Messaging:** Refined VPN error wording with detailed guidance: "Check your VPN connection or account permissions, then try again."
 - **Contrast Scanner:** Refactored automated accessibility tooling into `scripts/contrast-scanner` with expanded coverage (Settings, Scan View) and improved logging.
 
 ### Added
 - VPN simulation mock credentials on Login screen.
 
 ### Changed
-- **VPN Error Presentation:** Transitioned from a full-screen blocking error to an in-line toast for improved login UX.
+- **VPN Error Presentation:** Transitioned from a toast notification to a structured inline alert for better proximity and visibility during auth failures.
 
 ### Changed
 - **Toast Styling:** Refined toast UI for better centering (`align-items: center`) and reduced vertical padding (`12px`).

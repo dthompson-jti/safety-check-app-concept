@@ -14,6 +14,12 @@
   padding: var(--spacing-4);
   /* Safe area handling for modern mobile devices (iPhone Home Indicator) */
   padding-bottom: calc(var(--spacing-4) + env(safe-area-inset-bottom));
+  transition: padding 200ms ease-out;
+}
+
+.footer[data-view-only="true"] {
+  padding: var(--spacing-3);
+  padding-bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom));
 }
 
 /* Drop shadow only when enabled */
@@ -216,7 +222,8 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
 
 .viewOnlyBar {
   width: 100%;
-  height: var(--footer-action-height);
+  height: 2.5rem;
+  /* Reduced from 3rem (var(--footer-action-height)) */
   display: flex;
   align-items: center;
   justify-content: center;

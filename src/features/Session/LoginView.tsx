@@ -3,7 +3,6 @@ import { useState, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { sessionAtom, appConfigAtom } from '../../data/atoms';
-import { addToastAtom } from '../../data/toastAtoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { findUser } from '../../data/users';
 import { Button } from '../../components/Button';
@@ -20,6 +19,7 @@ export const LoginView = () => {
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [formError, setFormError] = useState('');
+  const [formErrorDetails, setFormErrorDetails] = useState('');
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -36,14 +36,13 @@ export const LoginView = () => {
     offset: 20
   });
 
-  const addToast = useSetAtom(addToastAtom);
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsAttempted(true);
     setUsernameError('');
     setPasswordError('');
     setFormError('');
+    setFormErrorDetails('');
 
     let hasError = false;
     if (username.trim() === '') {
@@ -61,14 +60,8 @@ export const LoginView = () => {
       setIsSubmitting(true);
       setTimeout(() => {
         setIsSubmitting(false);
-        addToast({
-          stableId: 'vpn-error',
-          message: 'Access Denied',
-          details: 'Check your VPN connection or account permissions, then try again.',
-          icon: 'vpn_lock',
-          variant: 'alert',
-          persistent: true,
-        });
+        setFormError('Access Denied');
+        setFormErrorDetails('Check your VPN connection or account permissions, then try again.');
       }, 500);
       return;
     }
@@ -110,13 +103,19 @@ export const LoginView = () => {
   const handleUsernameChange = (val: string) => {
     setUsername(val);
     if (usernameError) setUsernameError('');
-    if (formError) setFormError('');
+    if (formError) {
+      setFormError('');
+      setFormErrorDetails('');
+    }
   };
 
   const handlePasswordChange = (val: string) => {
     setPassword(val);
     if (passwordError) setPasswordError('');
-    if (formError) setFormError('');
+    if (formError) {
+      setFormError('');
+      setFormErrorDetails('');
+    }
   };
 
   const shakeAnimation = {
@@ -184,9 +183,14 @@ export const LoginView = () => {
                 onAnimationComplete={() => setIsAttempted(false)}
               >
                 {formError && (
-                  <div className={styles.formError}>
+                  <div className={styles.formError} data-has-details={!!formErrorDetails}>
                     <ErrorIcon size={20} />
-                    <span>{formError}</span>
+                    <div className={styles.formErrorText}>
+                      <span className={styles.formErrorTitle}>{formError}</span>
+                      {formErrorDetails && (
+                        <span className={styles.formErrorDetails}>{formErrorDetails}</span>
+                      )}
+                    </div>
                   </div>
                 )}
               </motion.div>
