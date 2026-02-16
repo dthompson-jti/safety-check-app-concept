@@ -4,10 +4,8 @@ import { motion } from 'framer-motion';
 import {
   appConfigAtom,
   hardwareSimulationAtom,
-  connectionStatusAtom,
   isOfflineToggleVisibleAtom,
   blockingErrorTypeAtom,
-  ConnectionStatus,
   BlockingErrorType,
 } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
@@ -40,10 +38,19 @@ const toastDefinitions: ToastDefinition[] = [
   { label: 'NFC Error', message: 'Tag not read.\nHold phone steady against the tag.', icon: 'wifi_tethering_error', variant: 'alert', logic: 'Simulated NFC read failure.' },
 ];
 
+import { useConnectionManager } from '../../hooks/useConnectionManager'; // Add Import
+
+// ...
+
 export const DeveloperModal = () => {
   const [appConfig, setAppConfig] = useAtom(appConfigAtom);
   const [simulation, setSimulation] = useAtom(hardwareSimulationAtom);
-  const [connectionStatus, setConnectionStatus] = useAtom(connectionStatusAtom);
+  // Keep connectionStatus atom read-write? No, use the hook for actions.
+  // Actually, we can keep the atom for reading 'connectionStatus' if needed, or use hook's status.
+  // The code already reads `connectionStatus`. But wait, DeveloperModal uses `connectionStatus` variable. 
+
+  const { status: connectionStatus, goOnline, goOffline } = useConnectionManager(); // Use hook
+
   const [isOfflineToggleVisible, setIsOfflineToggleVisible] = useAtom(isOfflineToggleVisibleAtom);
   const [blockingErrorType, setBlockingErrorType] = useAtom(blockingErrorTypeAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
@@ -270,8 +277,8 @@ export const DeveloperModal = () => {
               ]}
               value={connectionStatus === 'offline' ? 'offline' : 'online'}
               onValueChange={(val) => {
-                triggerHaptic('selection');
-                setConnectionStatus(val as ConnectionStatus);
+                if (val === 'online') goOnline();
+                else goOffline();
               }}
               itemDirection="column"
             />

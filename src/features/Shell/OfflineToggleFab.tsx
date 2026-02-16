@@ -1,28 +1,17 @@
 // src/features/Shell/OfflineToggleFab.tsx
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { motion, AnimatePresence } from 'framer-motion';
-import { connectionStatusAtom, isOfflineToggleVisibleAtom } from '../../data/atoms';
-import { dispatchActionAtom } from '../../data/appDataAtoms';
-import { useHaptics } from '../../data/useHaptics';
+import { isOfflineToggleVisibleAtom } from '../../data/atoms';
+import { useConnectionManager } from '../../hooks/useConnectionManager';
 import styles from './OfflineToggleFab.module.css';
 
 export const OfflineToggleFab = () => {
     const isVisible = useAtomValue(isOfflineToggleVisibleAtom);
-    const [status, setStatus] = useAtom(connectionStatusAtom);
-    const dispatch = useSetAtom(dispatchActionAtom);
-    const { trigger: triggerHaptic } = useHaptics();
+    const { status, toggleConnection } = useConnectionManager();
+    // Removed local dispatch/haptic/atom usage
 
     const handleToggle = () => {
-        triggerHaptic('selection');
-        if (status === 'online') {
-            setStatus('offline');
-        } else {
-            // Going back online - clear queue and show connected state
-            dispatch({ type: 'SYNC_QUEUED_CHECKS', payload: { syncTime: new Date().toISOString() } });
-            triggerHaptic('success');
-            setStatus('connected');
-            setTimeout(() => setStatus('online'), 1000);
-        }
+        toggleConnection();
     };
 
     return (

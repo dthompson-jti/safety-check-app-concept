@@ -302,7 +302,27 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   /* No shadow */
   box-shadow: none;
 
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 
+   When header is NOT offline (i.e. Syncing or Connected), 
+   the header background is light/translucent. 
+   We need to ensure the pill (grey solid) stands out.
+   FORCE DARK BACKGROUND to match User Preference for "Solid BG".
+   
+   !MISSING SEMANTIC TOKEN!
+   We need a semantic token for "Dark Control Background" in Light Mode that maps to grey-800.
+   Current 'secondary-solid' (grey-600) is too light for this specific high-contrast pill.
+   Using primitive temporarily.
+*/
+.header:not([data-offline="true"]) .offlineBar {
+  background-color: var(--primitives-grey-800);
+  /* Use a slightly darker border for contrast on light background */
+  border-color: rgba(0, 0, 0, 0.1);
+  /* Optional: Add a subtle shadow if needed for lift */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  color: var(--primitives-base-white);
 }
 
 .offlineBar:active {
@@ -312,6 +332,12 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
 .offlineBar:hover {
   /* Highlight entire row on hover */
   background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Dark Mode specific overrides for hover if needed handled by global tokens usually */
+.header:not([data-offline="true"]) .offlineBar[data-status="connected"],
+.header:not([data-offline="true"]) .offlineBar[data-status="synced"] {
+  background-color: var(--primitives-green-600) !important;
 }
 
 .offlineBarContent {
@@ -325,6 +351,9 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   position: relative;
   overflow: hidden;
 }
+
+/* When not offline, ensure text color is readable on secondary-solid */
+/* secondary-solid is dark grey usually, so white text is correct. */
 
 .offlineContentRow {
   display: flex;

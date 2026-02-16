@@ -14,7 +14,7 @@ import { STORAGE_PREFIX } from './config';
 // --- VERSION BOMB ---
 // This forces a clear of localStorage if the version doesn't match.
 // Useful for clearing out old/incompatible data from previous prototypes.
-const APP_VERSION = 'v5'; // Increment this to wipe everyone's data
+const APP_VERSION = 'v6'; // Increment this to wipe everyone's data
 const STORAGE_VERSION_KEY = `${STORAGE_PREFIX}version_marker`;
 
 try {

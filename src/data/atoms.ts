@@ -140,7 +140,7 @@ export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 //                App Configuration & Dev Tools State
 // =================================================================
 
-export type ConnectionStatus = 'online' | 'offline' | 'syncing' | 'connected';
+export type ConnectionStatus = 'online' | 'offline' | 'syncing' | 'connected' | 'synced';
 const _connectionStatusAtom = atom<ConnectionStatus>('online');
 export const offlineTimestampAtom = atom<number | null>(null);
 
@@ -218,7 +218,7 @@ export const appConfigAtom = atomWithStorage<AppConfig>(`${STORAGE_PREFIX}config
   showEnvironmentName: false,
   environmentName: 'https://vicbc-qa-symphony.logan-symphony.com',
   showChromeShadow: true,
-  isViewOnlyMode: true,
+  isViewOnlyMode: false,
 });
 
 // =================================================================

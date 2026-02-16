@@ -1,12 +1,12 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
-import { appViewAtom, connectionStatusAtom, offlineTimestampAtom, appConfigAtom } from '../../data/atoms';
+import { appViewAtom, offlineTimestampAtom, appConfigAtom } from '../../data/atoms';
 import { headerHeightAtom } from '../../data/layoutAtoms';
-import { lateCheckCountAtom, queuedChecksCountAtom, dispatchActionAtom } from '../../data/appDataAtoms';
+import { lateCheckCountAtom, queuedChecksCountAtom } from '../../data/appDataAtoms';
 import { useLayoutRegistration } from '../../data/useLayoutRegistration';
 import { useWaapiSync } from '../../hooks/useWaapiSync';
-import { useHaptics } from '../../data/useHaptics';
+import { useConnectionManager } from '../../hooks/useConnectionManager';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 import { StatusBar } from './StatusBar';
@@ -23,11 +23,12 @@ const formatDuration = (ms: number): string => {
 export const AppHeader = () => {
   const [appView, setAppView] = useAtom(appViewAtom);
   const lateCount = useAtomValue(lateCheckCountAtom);
-  const [status, setStatus] = useAtom(connectionStatusAtom);
+  const { status, toggleConnection: triggerSyncFlow } = useConnectionManager();
+
   const offlineTimestamp = useAtomValue(offlineTimestampAtom);
   const queuedCount = useAtomValue(queuedChecksCountAtom);
-  const dispatch = useSetAtom(dispatchActionAtom);
-  const { trigger: triggerHaptic } = useHaptics();
+  // dispatch removed (handled by hook)
+  // triggerHaptic removed (handled by hook)
   const appConfig = useAtomValue(appConfigAtom);
 
   const [duration, setDuration] = useState('0:00');
@@ -68,26 +69,17 @@ export const AppHeader = () => {
   };
 
   const handleSync = () => {
-    setStatus('syncing');
-    triggerHaptic('medium');
-    setTimeout(() => {
-      dispatch({ type: 'SYNC_QUEUED_CHECKS', payload: { syncTime: new Date().toISOString() } });
-      triggerHaptic('success');
-      setStatus('connected');
-
-      // Return to online after brief confirmation
-      setTimeout(() => setStatus('online'), 1000);
-    }, 2000);
+    triggerSyncFlow();
   };
 
-
-  const isOffline = status !== 'online';
+  const isOfflineHeader = status === 'offline';
+  const showPill = status === 'offline' || status === 'syncing' || status === 'connected' || (status as string) === 'synced';
 
   return (
     <header
       className={styles.header}
       ref={combinedRef}
-      data-offline={isOffline}
+      data-offline={isOfflineHeader}
       data-status={status} // For Option B Success Flash styling
       data-header-style={appConfig.headerStyle}
       data-shadow={appConfig.showChromeShadow}
@@ -102,7 +94,7 @@ export const AppHeader = () => {
               iconOnly
               onClick={handleMenuClick}
               aria-label="Open navigation menu"
-              className={isOffline ? styles.offlineButton : ''}
+              className={isOfflineHeader ? styles.offlineButton : ''}
             >
               <span className="material-symbols-rounded">menu</span>
             </Button>
@@ -114,16 +106,16 @@ export const AppHeader = () => {
           <motion.div
             className={styles.statusBadgesWrapper}
             animate={{
-              y: isOffline ? -2 : 0,
+              y: isOfflineHeader ? -2 : 0,
             }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <StatusBar variant={isOffline ? 'solid' : 'default'} />
+            <StatusBar variant={isOfflineHeader ? 'solid' : 'default'} />
           </motion.div>
 
           {/* Offline Pill - Appears below status badges when offline */}
           <AnimatePresence>
-            {isOffline && (
+            {showPill && (
               <motion.div
                 key="offline-pill"
                 className={styles.offlinePillWrapper}
@@ -153,14 +145,14 @@ export const AppHeader = () => {
                             className={`material-symbols-rounded ${styles.spinning}`}
                             style={{
                               color: 'var(--surface-fg-on-solid)',
-                              marginRight: '2px' // Optical adjustment: Material Symbols have built-in padding
+                              marginRight: '6px' // Increased spacing for cleaner look
                             }}
                           >sync</span>
-                          <span className={styles.offlineTimer}>Connecting...</span>
+                          <span className={styles.offlineTimer}>Uploading {queuedCount} checks</span>
                         </motion.div>
-                      ) : status === 'connected' ? (
+                      ) : status === 'connected' || status === 'synced' ? (
                         <motion.div
-                          key="connected"
+                          key="success-state"
                           className={styles.offlineContentRow}
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }}
@@ -170,10 +162,13 @@ export const AppHeader = () => {
                             className="material-symbols-rounded"
                             style={{
                               color: 'var(--surface-fg-on-solid)',
-                              marginRight: '2px' // Optical adjustment: Material Symbols have built-in padding
+                              marginLeft: '-4px', // Offset internal icon padding for better optical centering
+                              marginRight: '2px'
                             }}
                           >check</span>
-                          <span className={styles.offlineTimer}>Connected</span>
+                          <span className={styles.offlineTimer}>
+                            {status === 'synced' ? 'Complete' : 'Connected'}
+                          </span>
                         </motion.div>
                       ) : (
                         <motion.div
@@ -199,7 +194,7 @@ export const AppHeader = () => {
         </div>
 
         <div className={styles.rightActions}>
-          <UserAvatar className={isOffline ? styles.offlineAvatar : ''} />
+          <UserAvatar className={isOfflineHeader ? styles.offlineAvatar : ''} />
         </div>
       </div>
     </header>
