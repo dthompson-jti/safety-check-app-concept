@@ -26,7 +26,7 @@ const getStatusConfig = (status: SafetyCheckStatus): { label: string; icon: stri
     case 'complete':
       return { label: 'Completed', icon: 'check_circle' };
     case 'queued':
-      return { label: 'Queued', icon: 'cloud_off' };
+      return { label: 'Queued', icon: 'share_eta' };
     default:
       // early, pending return no badge
       return { label: '', icon: null };

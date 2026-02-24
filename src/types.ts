@@ -41,6 +41,7 @@ export interface SafetyCheck {
   // Lifecycle Fields
   generationId: number; // 1, 2, 3... The iteration count for this room
   baseInterval: number; // Minutes between checks (e.g., 15)
+  isEstimated?: boolean; // If true, the dueDate was calculated while offline
 }
 
 export type ScheduleFilter = 'all' | 'due' | 'missed' | 'queued';

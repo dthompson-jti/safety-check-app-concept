@@ -1,7 +1,7 @@
 // src/data/atoms.ts
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification, NfcScanState } from '../types';
+import { Resident, ScheduleFilter, HistoryFilter, SpecialClassification, NfcScanState, SafetyCheck } from '../types';
 import { STORAGE_PREFIX } from '../config';
 
 // =================================================================
@@ -127,6 +127,9 @@ export const isRingAnimationTestOpenAtom = atom(false);
 export const isFutureIdeasModalOpenAtom = atom(false);
 export const isUserSettingsModalOpenAtom = atom(false); // Future Idea: Enhanced Avatar
 export const isForbiddenErrorVisibleAtom = atom(false);
+
+export const isDuplicateScanSheetOpenAtom = atom(false);
+export const pendingDuplicateCheckAtom = atom<SafetyCheck | null>(null);
 
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);

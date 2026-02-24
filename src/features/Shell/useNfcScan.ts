@@ -6,6 +6,8 @@ import {
     appConfigAtom,
     workflowStateAtom,
     hardwareSimulationAtom,
+    isDuplicateScanSheetOpenAtom,
+    pendingDuplicateCheckAtom,
 } from '../../data/atoms';
 import { timeSortedChecksAtom } from '../../data/appDataAtoms';
 import { useHaptics } from '../../data/useHaptics';
@@ -25,6 +27,9 @@ export const useNfcScan = () => {
     const setWorkflowState = useSetAtom(workflowStateAtom);
     const { trigger: triggerHaptic } = useHaptics();
     const { completeCheck } = useCompleteCheck();
+
+    const setIsDuplicateSheetOpen = useSetAtom(isDuplicateScanSheetOpenAtom);
+    const setPendingCheck = useSetAtom(pendingDuplicateCheckAtom);
 
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -90,6 +95,14 @@ export const useNfcScan = () => {
 
         // Simple Scan ON = auto-complete (skip form)
         if (targetCheck && appConfig.simpleSubmitEnabled) {
+            if (targetCheck.status === 'early') {
+                setPendingCheck(targetCheck as any);
+                setIsDuplicateSheetOpen(true);
+                setScanState('idle'); // Stop NFC scanning state
+                setScanStartTime(null);
+                return;
+            }
+
             const defaultStatuses = targetCheck.residents.reduce(
                 (acc, resident) => {
                     acc[resident.id] = 'Awake';
@@ -111,7 +124,7 @@ export const useNfcScan = () => {
         setScanState('success');
         setScanStartTime(null);
         triggerHaptic('success');
-    }, [scanState, simulation.nfcFails, setScanState, setScanStartTime, triggerHaptic, timeSortedChecks, appConfig.simpleSubmitEnabled, completeCheck]);
+    }, [scanState, simulation.nfcFails, setScanState, setScanStartTime, triggerHaptic, timeSortedChecks, appConfig.simpleSubmitEnabled, completeCheck, setIsDuplicateSheetOpen, setPendingCheck]);
 
     // Start scanning
     const startScan = useCallback(() => {

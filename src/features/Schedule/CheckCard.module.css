@@ -252,6 +252,10 @@
   flex-shrink: 0;
 }
 
+.timeDisplay.isEstimated {
+  font-style: italic;
+}
+
 /* PRD-006: Secondary time style for Dual mode (absolute time on top) */
 .dualSecondary {
   font-size: var(--font-size-sm);

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **VPN Connection Simulation:** Added mock account `jsiemens` / `vpn` to simulate connection failures.
 - **Persistent VPN Error Alert:** Implemented a persistent inline alert for "Access Denied" (VPN) errors on the login screen, replacing the transient toast pattern.
 - **Error Messaging:** Refined VPN error wording with detailed guidance: "Check your VPN connection or account permissions, then try again."
+- **Offline Time Estimation:** Implemented "Estimated in" time display for checks generated while offline. Added `isEstimated` state tracking to ensure visual persistence and clarity during network transitions.
 - **Contrast Scanner:** Refactored automated accessibility tooling into `scripts/contrast-scanner` with expanded coverage (Settings, Scan View) and improved logging.
 
 ### Added

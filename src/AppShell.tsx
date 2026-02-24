@@ -19,6 +19,7 @@ import { OfflineToggleFab } from './features/Shell/OfflineToggleFab';
 import { ScanView } from './features/Workflow/ScanView';
 import { CheckEntryView } from './features/Workflow/CheckEntryView';
 import { NfcWriteView } from './features/Workflow/NfcWriteView';
+import { DuplicateScanSheet } from './features/Workflow/DuplicateScanSheet';
 import { ManualCheckSelectorSheet } from './features/Overlays/ManualCheckSelectorSheet';
 import { FullScreenModal } from './components/FullScreenModal';
 import { DeveloperModal } from './features/Overlays/DeveloperModal';
@@ -271,6 +272,7 @@ const AppShellContent = () => {
 
       <ManualCheckSelectorSheet />
       <FacilitySelectionModal />
+      <DuplicateScanSheet />
 
       <FullScreenModal
         isOpen={isDevToolsOpen}

@@ -1,23 +1,30 @@
-# Walkthrough - Disabling Live View (Read-Only Mode) by Default
+# Walkthrough - Offline Check Time Estimation Display
 
-The application default mode has been updated to be interactive upon first load, effectively "turning off" the default Read-Only (Monitor) state.
+Implemented a visual indicator for safety checks that are generated and scheduled while the application is in an offline state. These checks are now clearly marked as "Estimated" to reflect that their timing is based on local calculations rather than server-side confirmation.
 
 ## Changes
 
-### 1. Configuration Update
-Modified `src/data/atoms.ts` to set the default value of `isViewOnlyMode` to `false` in the `appConfigAtom`. This ensures that new users (or users with cleared storage) will land in the interactive "Action Mode" where they can perform safety checks.
+### 1. Data Model
+Added an `isEstimated` boolean flag to the `SafetyCheck` interface in `src/types.ts`. This allows us to persist the "estimated" status of a check throughout its lifecycle, ensuring the label remains even if the app returns to an online state.
 
-### 2. Version Bomb Increment
-To ensure these changes apply to current active sessions and local development environments, I've incremented the internal `APP_VERSION` from `v5` to `v6` in `src/main.tsx`. This triggers a one-time `localStorage.clear()` upon the next application load, forcing the app to pick up the new configuration defaults.
+### 2. Data Layer Logic
+Updated the `appDataAtom` reducer and the `generateNextCheck` utility in `src/data/appDataAtoms.ts` to subscribe to the current `connectionStatusAtom`. When a new check is generated (after a completion or a missed event) while the app is `offline`, the `isEstimated` flag is now automatically set to `true`.
 
-### 3. Visual Version Update
-Updated the visual version in `src/config.ts` from `v4.42` to `v4.43` for consistency and tracking.
+### 3. Countdown Loop
+Modified the `useCountdown` hook in `src/data/useCountdown.ts` to recognize `queued` checks as "actionable." This ensures that checks sitting in the offline sync queue still show a dynamically updating relative time display.
+
+### 4. UI Rendering
+Refined the `CheckCard` component in `src/features/Schedule/CheckCard.tsx` and its associated CSS module:
+- Checks flagged with `isEstimated: true` now display the prefix **"Estimated in"** before the relative time.
+- The entire time display for estimated checks is styled with **italics** for distinct visual separation.
+- Ensured a clean layout by removing unnecessary icons and relying on clear text and typography.
 
 ## Verification Results
 
-- **Linting**: Passed successfully (`npm run lint`).
-- **Logic**: 
-    - `isViewOnlyMode: false` correctly enables the "Scan" action in the footer.
-    - `APP_VERSION: v6` ensures existing states are reset to the new default.
-
-The application should now load in interactive mode by default.
+- **Technical Build**: Passed successfully (`npm run build`).
+- **Functional Testing**:
+    - Triggered offline mode via `OfflineToggleFab`.
+    - Performed checks and verified that the next generated checks were correctly flagged as estimated.
+    - Verified that "Queued" items in the schedule show the italicized "Estimated in" time.
+    - Verified that the status remains consistent even after toggling back to online mode until the check is formally completed.
+- **Linting**: Passed with no new errors introduced.

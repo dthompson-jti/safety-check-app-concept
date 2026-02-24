@@ -6,6 +6,8 @@ import { Scanner } from '@yudiel/react-qr-scanner';
 import {
   workflowStateAtom,
   hardwareSimulationAtom,
+  isDuplicateScanSheetOpenAtom,
+  pendingDuplicateCheckAtom,
 } from '../../data/atoms';
 import {
   safetyChecksAtom,
@@ -40,6 +42,9 @@ export const ScanView = () => {
   const { trigger: triggerHaptic } = useHaptics();
   const { play: playSound } = useAppSound();
   const { completeCheck } = useCompleteCheck();
+
+  const setIsDuplicateSheetOpen = useSetAtom(isDuplicateScanSheetOpenAtom);
+  const setPendingCheck = useSetAtom(pendingDuplicateCheckAtom);
 
   const [scanViewState, setScanViewState] = useState<ScanViewState>('scanning');
   const [preScanAlert, setPreScanAlert] = useState<PreScanAlertInfo | null>(null);
@@ -96,7 +101,17 @@ export const ScanView = () => {
     setTimeout(() => {
       const checkId = result.startsWith('room:') ? result.split(':')[1] : result;
 
-      const check = allChecks.find(c => c.id === checkId && c.status !== 'complete');
+      let check = allChecks.find(c => c.id === checkId && c.status !== 'complete');
+
+      // If not found by ID (common in duplicate scans where ID changes), 
+      // try to find by room name or room ID prefix
+      if (!check) {
+        check = allChecks.find(c =>
+          c.status !== 'complete' &&
+          (c.residents[0]?.location === checkId ||
+            c.id.startsWith(`chk_${checkId.toLowerCase().replace(/[\s']/g, '_')}`))
+        );
+      }
 
       if (check) {
         triggerHaptic('success');
@@ -104,6 +119,13 @@ export const ScanView = () => {
         setScanViewState('success');
 
         if (appConfig.simpleSubmitEnabled) {
+          if (check.status === 'early') {
+            setPendingCheck(check as any);
+            setIsDuplicateSheetOpen(true);
+            setScanViewState('scanning');
+            return;
+          }
+
           const defaultStatuses = check.residents.reduce((acc, resident) => {
             acc[resident.id] = 'Awake';
             return acc;

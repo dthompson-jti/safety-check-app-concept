@@ -14,7 +14,8 @@ import {
   manualSearchQueryAtom,
   isGlobalSearchActiveAtom,
   completingChecksAtom,
-  recentlyCompletedCheckIdAtom
+  recentlyCompletedCheckIdAtom,
+  connectionStatusAtom
 } from './atoms';
 import { draftFormsAtom } from './formAtoms';
 import { initialChecks, generateInitialChecks } from './mock/checkData';
@@ -129,7 +130,7 @@ export type AppAction =
 
 // Anchor Logic: Next Check = Completion Time + Base Interval.
 // Schedule drift is allowed by design. No clamping to previous due date.
-const generateNextCheck = (previousCheck: SafetyCheck, originTime: string): SafetyCheck => {
+const generateNextCheck = (previousCheck: SafetyCheck, originTime: string, isOffline: boolean = false): SafetyCheck => {
   const anchorTimestamp = new Date(originTime).getTime();
 
   const intervalMs = previousCheck.baseInterval * 60 * 1000;
@@ -144,6 +145,7 @@ const generateNextCheck = (previousCheck: SafetyCheck, originTime: string): Safe
     lastChecked: undefined,
     completionStatus: undefined,
     notes: undefined,
+    isEstimated: isOffline || undefined, // Set if generated while offline
   };
 };
 
@@ -151,6 +153,7 @@ const appDataAtom = atom<AppData, [AppAction], void>(
   (get) => ({ checks: get(baseChecksAtom) }),
   (get, set, action) => {
     const currentChecks = get(baseChecksAtom);
+    const isOffline = get(connectionStatusAtom) === 'offline';
 
     if (action.type === 'RESET_DATA') {
       // Use factory function to generate fresh timestamps
@@ -177,9 +180,10 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
+            check.isEstimated = isOffline || undefined;
 
             // Anchor: Completion Time
-            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.completionTime);
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.completionTime, isOffline);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
@@ -188,8 +192,9 @@ const appDataAtom = atom<AppData, [AppAction], void>(
           const check = draft.checks.find(c => c.id === action.payload.checkId);
           if (check) {
             check.status = 'missed';
+            check.isEstimated = isOffline || undefined;
             // Anchor: Missed Time (passed from lifecycle hook)
-            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.missedTime);
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.missedTime, isOffline);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;
@@ -201,9 +206,10 @@ const appDataAtom = atom<AppData, [AppAction], void>(
             check.lastChecked = action.payload.completionTime;
             check.completionStatus = Object.values(action.payload.statuses)[0] || 'Complete';
             check.notes = action.payload.notes;
+            check.isEstimated = isOffline || undefined;
 
             // Anchor: Completion Time (even if queued)
-            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.completionTime);
+            const nextCheck = generateNextCheck(check as unknown as SafetyCheck, action.payload.completionTime, isOffline);
             draft.checks.push(nextCheck as Draft<SafetyCheck>);
           }
           break;

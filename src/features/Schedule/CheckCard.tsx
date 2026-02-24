@@ -165,8 +165,13 @@ export const CheckCard = ({ check, transition, isReadOnly = false }: CheckCardPr
                 <ResidentListItem key={resident.id} resident={resident} check={check} />
               ))}
             </ul>
-            <div className={styles.timeDisplay}>
-              {!['complete', 'supplemental', 'completing', 'queued'].includes(check.status) ? relativeTime : null}
+            <div className={`${styles.timeDisplay} ${check.isEstimated ? styles.isEstimated : ''}`}>
+              {(!['complete', 'supplemental', 'completing'].includes(check.status)) ? (
+                <>
+                  {check.isEstimated ? 'Estimated in ' : ''}
+                  {relativeTime}
+                </>
+              ) : null}
             </div>
           </div>
         </div>

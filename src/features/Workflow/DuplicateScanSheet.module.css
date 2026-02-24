@@ -1,0 +1,85 @@
+/* src/features/Workflow/DuplicateScanSheet.module.css */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 121;
+    background-color: var(--surface-bg-primary);
+    border-top-left-radius: var(--radius-2xl);
+    border-top-right-radius: var(--radius-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    outline: none;
+    padding-bottom: calc(var(--spacing-8) + env(safe-area-inset-bottom));
+}
+
+.handleContainer {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-4) 0;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.handle {
+    width: 40px;
+    height: 4px;
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-border-primary);
+}
+
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-1);
+    margin-top: var(--spacing-1);
+}
+
+.heroIcon {
+    font-size: var(--font-size-6xl);
+    color: var(--surface-fg-secondary);
+    font-variation-settings: 'FILL' 0;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--surface-fg-primary);
+    margin: 0;
+}
+
+.roomSubtitle {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--surface-fg-secondary);
+    margin: var(--spacing-1) 0 0 0;
+}
+
+.description {
+    font-size: 1rem;
+    color: var(--surface-fg-secondary);
+    margin: var(--spacing-4) var(--spacing-4) 0;
+    line-height: 1.5;
+    max-width: var(--max-width-scanner);
+}
+
+.footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-3);
+    width: 100%;
+    margin-top: var(--spacing-6);
+    padding: 0 var(--spacing-4);
+}
