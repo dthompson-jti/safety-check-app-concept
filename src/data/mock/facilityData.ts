@@ -50,4 +50,17 @@ export const facilityData: FacilityGroup[] = [
       },
     ],
   },
+  {
+    id: 'empty-test',
+    name: 'Empty Test Group',
+    facilities: [
+      {
+        id: 'empty-facility',
+        name: 'Empty Test Facility',
+        units: [
+          { id: 'empty-unit', name: 'Empty Unit' },
+        ],
+      },
+    ],
+  },
 ];

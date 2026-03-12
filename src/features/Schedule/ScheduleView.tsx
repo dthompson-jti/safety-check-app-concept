@@ -2,13 +2,16 @@
 import { useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { AnimatePresence, motion, Transition } from 'framer-motion';
-import { timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
+import { safetyChecksAtom, timeSortedChecksAtom, routeSortedChecksAtom } from '../../data/appDataAtoms';
 import {
   appConfigAtom,
   isScheduleLoadingAtom,
   scheduleSearchQueryAtom,
   isScheduleRefreshingAtom,
   scheduleFilterAtom,
+  selectedFacilityGroupAtom,
+  selectedFacilityAtom,
+  selectedFacilityUnitAtom,
 } from '../../data/atoms';
 import { SafetyCheck, ScheduleFilter } from '../../types';
 import { CheckCard } from './CheckCard';
@@ -16,6 +19,7 @@ import { ScheduleSkeleton } from '../../components/ScheduleSkeleton';
 import { EmptyStateMessage } from '../../components/EmptyStateMessage';
 import { FilterIndicatorChip } from './FilterIndicatorChip';
 import { FilteredEmptyState } from '../../components/FilteredEmptyState';
+import { getFacilityContextForLocation } from '../../data/mock/facilityUtils';
 import styles from './ScheduleView.module.css';
 
 const listTransition: Transition = {
@@ -35,6 +39,9 @@ const filterLabelMap: Record<Exclude<ScheduleFilter, 'all'>, string> = {
   due: 'Due',
   queued: 'Queued',
 };
+
+// Alternatives worth trying: 'checklist', 'fact_check', 'assignment_turned_in', 'task_alt'
+const EMPTY_FACILITY_ICON = 'info';
 
 const groupChecksByTime = (checks: SafetyCheck[]) => {
   // Simplified 3-state model: Missed, Due, Upcoming
@@ -101,13 +108,25 @@ const groupChecksByRoute = (checks: SafetyCheck[]) => {
 
 export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
   const checks = useAtomValue(viewType === 'time' ? timeSortedChecksAtom : routeSortedChecksAtom);
+  const allChecks = useAtomValue(safetyChecksAtom);
   const appConfig = useAtomValue(appConfigAtom);
   const { isSlowLoadEnabled } = appConfig;
   const [isLoading, setIsLoading] = useAtom(isScheduleLoadingAtom);
   const isRefreshing = useAtomValue(isScheduleRefreshingAtom);
   const searchQuery = useAtomValue(scheduleSearchQueryAtom);
   const [filter, setFilter] = useAtom(scheduleFilterAtom);
+  const selectedGroupId = useAtomValue(selectedFacilityGroupAtom);
+  const selectedFacilityId = useAtomValue(selectedFacilityAtom);
+  const selectedUnitId = useAtomValue(selectedFacilityUnitAtom);
   const setIsRefreshing = useSetAtom(isScheduleRefreshingAtom);
+
+  const hasAnyChecksInSelectedUnit = Boolean(selectedGroupId && selectedFacilityId && selectedUnitId) && allChecks.some((check) => {
+    if (check.type === 'supplemental' || !check.residents[0]) return false;
+    const context = getFacilityContextForLocation(check.residents[0].location);
+    return context?.groupId === selectedGroupId
+      && context?.facilityId === selectedFacilityId
+      && context?.unitId === selectedUnitId;
+  });
 
   useEffect(() => {
     if (isLoading) {
@@ -143,10 +162,27 @@ export const ScheduleView = ({ viewType }: ScheduleViewProps) => {
     }
 
     if (checks.length === 0) {
-      if (searchQuery) return <EmptyStateMessage title="No Results Found" message={`Your search for "${searchQuery}" did not return any results.`} />;
-      if (isFilterActive) return <FilteredEmptyState filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />;
-      // Fallback for empty state if no search/filter
-      return <EmptyStateMessage title="All Checks Complete" message="There are no checks due at this time." />;
+      let emptyState;
+
+      if (searchQuery) {
+        emptyState = <EmptyStateMessage title="No Results Found" message={`Your search for "${searchQuery}" did not return any results.`} />;
+      } else if (isFilterActive) {
+        emptyState = <FilteredEmptyState filterLabel={filterLabelMap[filter]} onClear={handleClearFilter} />;
+      } else if (selectedGroupId && selectedFacilityId && selectedUnitId && !hasAnyChecksInSelectedUnit) {
+        emptyState = (
+          <EmptyStateMessage
+            icon={EMPTY_FACILITY_ICON}
+            iconFilled={false}
+            titleTone="quaternary"
+            title="This unit has no scheduled safety checks."
+          />
+        );
+      } else {
+        // Fallback for empty state if no search/filter
+        emptyState = <EmptyStateMessage title="All Checks Complete" message="There are no checks due at this time." />;
+      }
+
+      return <div className={styles.emptyStateWrapper}>{emptyState}</div>;
     }
 
     const groups = viewType === 'time' ? groupChecksByTime(checks) : groupChecksByRoute(checks);

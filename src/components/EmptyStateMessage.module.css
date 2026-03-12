@@ -21,14 +21,36 @@
     'opsz' 64;
 }
 
-.emptyStateMessage {
+.emptyStateTitle {
   margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.emptyStateTitlePrimary {
+  color: var(--surface-fg-primary);
+}
+
+.emptyStateTitleQuaternary {
+  color: var(--surface-fg-quaternary);
+}
+
+.emptyStateMessage {
+  margin: var(--spacing-1) 0 0;
   font-size: 0.9em;
   line-height: 1.5;
   color: var(--surface-fg-tertiary);
+  max-width: var(--max-width-empty-state);
 }
 
 .emptyStateQuery {
   font-weight: 600;
   color: var(--surface-fg-primary);
+}
+
+.actionContainer {
+  margin-top: var(--spacing-4);
+  width: 100%;
+  max-width: var(--max-width-empty-state);
 }
