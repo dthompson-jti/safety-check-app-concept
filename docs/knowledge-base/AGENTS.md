@@ -273,7 +273,7 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 ### Feature Flag Presets
 *   **Lesson:** For "Demo" or "Playground" modes, distinct "Unlock" and "Lock" actions are safer than individual toggles.
 *   **Pattern:**
-    *   **Unlock:** Applies a curated "Best View" preset (e.g., Dark C + Haptics + Glass Tint).
+    *   **Unlock:** Applies a curated "Best View" preset (e.g., Dark + Haptics + Glass Tint).
     *   **Lock:** Performs a **strict reset** to a known safe state (Light Mode, All Flags Off).
     *   **Implementation:** See `src/data/featureFlags.ts` -> `lock()` / `unlock()`.
 
@@ -295,7 +295,7 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **Semantic Token Selection (Primary Controls):**
     -   **Backgrounds:** Use `theme-800` (Dark) instead of `theme-700` (Light) for Primary Buttons.
     -   **Foregrounds:** Use `grey-50` (Dark) instead of `white` (Light) for text on Primary Buttons.
-*   **Verification Rule:** If you add a new semantic token pairing, you **MUST** verify it meets WCAG AA (4.5:1) in all themes (`dark-a`, `dark-b`, `dark-c`). Use the `contrast_audit.cjs` script if unsure.
+*   **Verification Rule:** If you add a new semantic token pairing, you **MUST** verify it meets WCAG AA (4.5:1) in all themes (`dark-a`, `dark-b`, `dark`). Use the `contrast_audit.cjs` script if unsure.
 *   **Reference:** See `docs/knowledge-base/SPEC-Dark-Mode.md` for full token mapping tables.
 
 ### Animation Synchronization Patterns (`The Zero-Time Protocol`)
@@ -582,3 +582,5 @@ For any non-trivial task (e.g., implementing a PRD), the agent must follow this 
 *   **When CSS Works:** If the element has a CSS module class directly applied (not as a descendant).
 *   **Anti-Pattern:** Adding multiple selectors with `!important` hoping specificity wins - the selector never matches.
 *   **Reference:** See `AppHeader.tsx` icon color application, comment in `AppHeader.module.css`.
+
+

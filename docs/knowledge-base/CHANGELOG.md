@@ -8,37 +8,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-- **Read-only Footer:** Updated "View only" footer to "Read only" with a more compact vertical profile for better visual balance.
-- **VPN Connection Simulation:** Added mock account `jsiemens` / `vpn` to simulate connection failures.
-- **Persistent VPN Error Alert:** Implemented a persistent inline alert for "Access Denied" (VPN) errors on the login screen, replacing the transient toast pattern.
-- **Error Messaging:** Refined VPN error wording with detailed guidance: "Check your VPN connection or account permissions, then try again."
-- **Offline Time Estimation:** Implemented "Estimated in" time display for checks generated while offline. Added `isEstimated` state tracking to ensure visual persistence and clarity during network transitions.
-- **Contrast Scanner:** Refactored automated accessibility tooling into `scripts/contrast-scanner` with expanded coverage (Settings, Scan View) and improved logging.
-
 ### Added
-- VPN simulation mock credentials on Login screen.
+- Token audit tooling: `scripts/token-audit.mjs` and npm scripts `audit:tokens` / `audit:tokens:strict`.
+- Generated Figma token CSS imports and generated token files under `src/styles/generated/`.
+- New documentation and analysis reports: color reconciliation, Figma gap/delta mapping, spacing/radius inventory, token audit summary, and contrast analysis (`docs/*.md` additions).
+- Additional local analysis artifacts currently uncommitted: `eslint_out.txt`, `lint_report.json`, `extract.js`, `extract.mjs`, `replace.mjs`, `path1_extracted.txt`, `path2_extracted.txt`, `test-svg.html`.
 
 ### Changed
-- **VPN Error Presentation:** Transitioned from a toast notification to a structured inline alert for better proximity and visibility during auth failures.
+- App context model expanded from `group -> unit` to `group -> facility -> unit` across data, selectors, modals, side-menu display, schedule filtering, and NFC provisioning state.
+- Facility selection flow upgraded to a 3-step modal (group, facility, unit) with updated context banners and commit logic.
+- Blocking-error behavior refined:
+  - Added `unauthorized` blocking type and dev toggle support.
+  - Updated `BlockingErrorPage` metadata/actions and unauthorized messaging.
+  - Moved `NetworkBarrier` wrapping into `AppShell` main content path.
+  - Hid footer during blocking errors.
+  - Standardized logout to clear blocking state and updated logout callers to use shared `logoutAtom`.
+  - Ensured successful login paths clear stale blocking errors.
+- Login/session UX updates:
+  - Added simulated `forbidden` and `unauthorized` login paths.
+  - Updated copy from "Sign in" to "Log in" and refined VPN/access-denied wording.
+  - Improved inline error presentation sizing/alignment in `LoginView`.
+- Scan workflow behavior updates:
+  - For Simple Scan OFF, transition to form immediately on successful scan (removed delayed/setTimeout path).
+  - Removed `any` casts in duplicate-scan pending-check handling.
+- Theming/token consolidation:
+  - Standardized runtime theme target to `data-theme='dark'` (migrated `dark-c` and related selectors).
+  - Updated semantic/background token usage (`surface-bg-secondary-translucent` and related replacements).
+  - Updated utility token aliases to resolve directly from primitive token vars.
+  - Updated contrast scanner dark-mode simulation and startup theme bootstrap in `index.html`.
+- Visual/layout tuning across shell and workflow surfaces (header/footer glass surfaces, dark-mode selectors, hover/border tweaks, geometry token fallbacks, backdrop/chrome z-index handling).
+- Documentation refreshes in `docs/completed/*`, `SPEC-Dark-Mode.md`, `STRATEGY-Accessibility.md`, and `AGENTS.md`.
+- App version updated to `v4.48`.
 
-### Changed
-- **Toast Styling:** Refined toast UI for better centering (`align-items: center`) and reduced vertical padding (`12px`).
-- **Cleanup:** Removed unused `errorCode` properties from the entire toast stack (UI, data, hooks).
-- **Cleanup:** Removed vestigial debug keyboard shortcuts from the App shell.
-- **Avatar Accessibility**: Optimized OKLCH lightness (L=0.497) and chroma (C=0.19) for WCAG AA compliance.
-- **Avatar Craft**: Applied `line-height: 1` to initials inside circular avatars for better optical centering.
-- **User Settings**: Refactored avatar previews to use centralized color utility.
-
-- Legacy `ForbiddenErrorPage` and associated styling
-- `enableDynamicAvatarColor` feature flag
-
-### Changed
-- **User Settings**: Promoted `UserSettingsModal` to production; removed legacy `SettingsModal`.
-- **Theming**: Standardized on "Dark C" as the primary dark theme; deprecated "Dark A" and "Dark B".
-- **Badges**: Updated semantic tint tokens (700/300) and borders (subtle) for better accessibility.
-- **Error Pages**: Refactored `ForbiddenErrorPage` into `BlockingErrorPage`.
-- **Typography**: Updated error code typography to 14px Mono with natural casing.
-- **Layout**: Tightened message block spacing and optimized outer gaps in error pages.
+### Removed
+- `docs/knowledge-base/CriticalIcons copy.tsx` (obsolete duplicate).
 
 ---
 
@@ -46,3 +49,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Initial project setup and prototype foundation
+

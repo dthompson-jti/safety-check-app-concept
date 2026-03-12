@@ -10,6 +10,7 @@ import {
   scheduleSearchQueryAtom,
   scheduleFilterAtom,
   selectedFacilityGroupAtom,
+  selectedFacilityAtom,
   selectedFacilityUnitAtom,
   manualSearchQueryAtom,
   isGlobalSearchActiveAtom,
@@ -313,9 +314,10 @@ export const safetyChecksAtom = atom<SafetyCheck[]>((get) => {
 const contextFilteredChecksAtom = atom((get) => {
   const allChecks = get(safetyChecksAtom);
   const selectedGroupId = get(selectedFacilityGroupAtom);
+  const selectedFacilityId = get(selectedFacilityAtom);
   const selectedUnitId = get(selectedFacilityUnitAtom);
 
-  if (!selectedGroupId || !selectedUnitId) {
+  if (!selectedGroupId || !selectedFacilityId || !selectedUnitId) {
     return [];
   }
 
@@ -330,7 +332,7 @@ const contextFilteredChecksAtom = atom((get) => {
     const location = check.residents[0].location;
     const context = getFacilityContextForLocation(location);
 
-    return context?.groupId === selectedGroupId && context?.unitId === selectedUnitId;
+    return context?.groupId === selectedGroupId && context?.facilityId === selectedFacilityId && context?.unitId === selectedUnitId;
   });
 });
 

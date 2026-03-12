@@ -26,7 +26,7 @@ The application uses design tokens to enforce touch target minimums:
 We use a layered approach to verification, combining static analysis for design tokens with runtime analysis for rendered DOM.
 
 ### A. Static Analysis: The "Contrast Audit" Script
-Because our design system uses CSS Variables and distinct themes (`light`, `dark-a`, `dark-b`, `dark-c`), standard browser tools often miss potential failures (e.g., a dark mode token that hasn't been rendered yet).
+Because our design system uses CSS Variables and distinct themes (`light`, `dark-a`, `dark-b`, `dark`), standard browser tools often miss potential failures (e.g., a dark mode token that hasn't been rendered yet).
 
 **Tool:** `contrast_audit.cjs` (Custom Script)
 *   **What it does:** Parses `primitives.css` and `semantics.css` directly to calculate the mathematical contrast ratio of every defined background/foreground pair logic.
@@ -76,3 +76,4 @@ When an accessibility issue is found:
     *   **Color:** Update `semantics.css` overrides. **Verify with `contrast_audit.cjs`**.
     *   **Structure:** update the React component (e.g., change `div` to `button`, add `aria-label`).
 3.  **Verify:** Re-run the relevant tool to close the loop.
+

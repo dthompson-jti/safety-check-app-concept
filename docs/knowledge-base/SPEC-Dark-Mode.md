@@ -36,21 +36,23 @@ Primary Brand buttons require specific overrides in dark mode to avoid "white te
 | Theme | `data-theme` | Description |
 |:---|:---|:---|
 | Light | *(none)* | Default light mode. |
-| Dark C | `dark-c` | **Production Dark.** High Fidelity. Granular grey scale (`940` body, `910` cards). |
+| Dark | `dark` | **Production Dark.** High Fidelity. Granular grey scale (`940` body, `910` cards). |
 | *Archive* | *`dark-a`* | *Commented out. (High Contrast)* |
 | *Archive* | *`dark-b`* | *Commented out. (Merged Surfaces)* |
 
-## 4. Reference Palette (Dark C)
+## 4. Reference Palette (Dark)
 *Active as of Dec 2024*
 
 | Token | Hex | OKLCH L | Purpose |
 |:---|:---|:---|:---|
 | `grey-950` | `#0A0C12` | ~6% | Deepest |
-| `grey-940` | `#0E1017` | ~8% | Dark C body |
-| `grey-910` | `#161A24` | ~14% | Dark C cards |
+| `grey-940` | `#0E1017` | ~8% | Dark body |
+| `grey-910` | `#161A24` | ~14% | Dark cards |
 | `theme-800` | *(mapped)* | ~30% | Primary Action Background |
 
 ## 5. Implementation Guide
 - **File:** `src/styles/semantics.css` (Contains all `[data-theme='...']` blocks).
 - **Rule:** Never use primitives (e.g., `var(--primitives-red-400)`) directly in components. usage.
 - **Hook:** `useTheme.ts` manages persistence and DOM application. **ALWAYS use this hook, never the atom directly.**
+
+

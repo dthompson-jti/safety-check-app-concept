@@ -96,7 +96,7 @@ export const useNfcScan = () => {
         // Simple Scan ON = auto-complete (skip form)
         if (targetCheck && appConfig.simpleSubmitEnabled) {
             if (targetCheck.status === 'early') {
-                setPendingCheck(targetCheck as any);
+                setPendingCheck(targetCheck);
                 setIsDuplicateSheetOpen(true);
                 setScanState('idle'); // Stop NFC scanning state
                 setScanStartTime(null);
@@ -118,6 +118,18 @@ export const useNfcScan = () => {
                 onSuccess: () => {
                     // Feedback handled by footer animation, no toast needed
                 },
+            });
+        } else if (targetCheck) {
+            // Simple Scan OFF = show form for manual entry
+            // Trigger immediately on tag read for parallel behavior
+            setWorkflowState({
+                view: 'form',
+                type: 'scheduled',
+                method: 'scan',
+                checkId: targetCheck.id,
+                roomName: targetCheck.residents[0].location,
+                residents: targetCheck.residents,
+                specialClassifications: targetCheck.specialClassifications,
             });
         }
 
@@ -215,28 +227,8 @@ export const useNfcScan = () => {
             // Simple Scan ON = auto-complete mode, restart scan for next check
             restartScan();
         } else {
-            // Simple Scan OFF = show form for manual entry
-            if (workflowState.view === 'form') {
-                setScanState('idle');
-                return;
-            }
-
-            const targetCheck = timeSortedChecks.find(
-                (c) => c.status !== 'complete' && c.type !== 'supplemental'
-            );
-
+            // Simple Scan OFF = form is already loading/showing
             setScanState('idle');
-            if (targetCheck) {
-                setWorkflowState({
-                    view: 'form',
-                    type: 'scheduled',
-                    method: 'scan',
-                    checkId: targetCheck.id,
-                    roomName: targetCheck.residents[0].location,
-                    residents: targetCheck.residents,
-                    specialClassifications: targetCheck.specialClassifications,
-                });
-            }
         }
     }, [
 

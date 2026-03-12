@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { motion } from 'framer-motion';
-import { sessionAtom, appConfigAtom, userPreferencesAtom } from '../../data/atoms';
+import { sessionAtom, appConfigAtom, userPreferencesAtom, logoutAtom } from '../../data/atoms';
 import { futureIdeasUnlockedAtom } from '../../data/featureFlags';
 import { useTheme, Theme } from '../../data/useTheme';
 import { generateAvatarHue, getAvatarColor } from '../../data/users';
@@ -19,7 +19,7 @@ import styles from './UserSettingsModal.module.css';
  */
 export const UserSettingsModal = () => {
     const session = useAtomValue(sessionAtom);
-    const setSession = useSetAtom(sessionAtom);
+    const logout = useSetAtom(logoutAtom);
     const [appConfig, setAppConfig] = useAtom(appConfigAtom);
     const [userPreferences, setUserPreferences] = useAtom(userPreferencesAtom);
     const isExperimentalEnabled = useAtomValue(futureIdeasUnlockedAtom);
@@ -34,7 +34,7 @@ export const UserSettingsModal = () => {
     const avatarColor = getAvatarColor(currentHue);
 
     const handleLogout = () => {
-        setSession({ isAuthenticated: false, user: null });
+        logout();
     };
 
     const handleThemeChange = (value: string) => {

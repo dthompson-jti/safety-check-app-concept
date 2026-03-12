@@ -9,6 +9,7 @@ import {
   isFutureIdeasModalOpenAtom,
   isUserSettingsModalOpenAtom,
   appViewAtom,
+  blockingErrorTypeAtom,
 } from './data/atoms';
 
 import { MainLayout } from './layouts/MainLayout';
@@ -30,6 +31,7 @@ import { RingAnimationTestSheet } from './features/Overlays/RingAnimationTestShe
 import { GestureProvider } from './data/GestureProvider';
 import { useGestureContext } from './data/GestureContext';
 import { useVisualViewport } from './data/useVisualViewport';
+import { NetworkBarrier } from './features/Shell/NetworkBarrier';
 import styles from './AppShell.module.css';
 
 // High-Performance Transition Configuration
@@ -49,6 +51,7 @@ const AppShellContent = () => {
   const [isFutureIdeasOpen, setIsFutureIdeasOpen] = useAtom(isFutureIdeasModalOpenAtom);
   const [isUserSettingsOpen, setIsUserSettingsOpen] = useAtom(isUserSettingsModalOpenAtom);
   const [isRingTestOpen, setIsRingTestOpen] = useAtom(isRingAnimationTestOpenAtom);
+  const blockingErrorType = useAtomValue(blockingErrorTypeAtom);
 
   // Handler to close Future Ideas - ring animation persists until manually disabled
   // or Future Ideas is locked (which resets all feature flags via useFutureIdeas.lock())
@@ -239,7 +242,9 @@ const AppShellContent = () => {
         className={styles.mainViewWrapper}
         style={{ x: mainViewX }}
       >
-        <MainLayout />
+        <NetworkBarrier>
+          <MainLayout />
+        </NetworkBarrier>
 
         <motion.div
           className={styles.backdrop}
@@ -259,9 +264,10 @@ const AppShellContent = () => {
 
         {/* 
             Layout Stability:
-            The AppFooter is always rendered to maintain consistent padding for the main content.
+            The AppFooter is generally always rendered to maintain consistent padding for the main content,
+            but it is explicitly hidden when a blocking error is present to prevent 'dead' actions.
         */}
-        <AppFooter />
+        {!blockingErrorType && <AppFooter />}
       </motion.div>
 
       <AnimatePresence>

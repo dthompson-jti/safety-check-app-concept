@@ -107,7 +107,7 @@
 
 .checkCard:not([aria-disabled='true']):not([data-status='complete']):not([data-status='supplemental']):not([data-status='completing']):not([data-status='queued']):hover {
   background-color: var(--surface-bg-primary_hover);
-  border-color: var(--control-border-tertiary-hover);
+  border-color: var(--control-border-tertiary);
 }
 
 .checkCard[data-status='complete'],
@@ -303,7 +303,7 @@
 
 /* DARK MODE: Stronger, pure red (Preserved as requested) */
 /* DARK MODE: Stronger, pure red (Preserved as requested) */
-:global([data-theme^='dark']) .cardGradient {
+:global([data-theme='dark']) .cardGradient {
   /* Dark Mode Min: 15% -> 13% */
   --magma-start: rgba(255, 59, 48, 0.13);
   --magma-mid: rgba(255, 59, 48, 0.25);
@@ -432,13 +432,13 @@
 }
 
 /* Dark mode adjustments for card pulse */
-:global([data-theme^='dark']) .cardPulseBasic {
+:global([data-theme='dark']) .cardPulseBasic {
   /* Dark Mode Min: 5% -> 7% */
   --surface-bg-pulse-min: rgba(255, 59, 48, 0.07);
   --surface-bg-pulse-max: rgba(255, 59, 48, 0.12);
 }
 
-:global([data-theme^='dark']) .cardPulseGradient::before {
+:global([data-theme='dark']) .cardPulseGradient::before {
   background:
     linear-gradient(to bottom, transparent 0%, rgba(255, 59, 48, 0.10) 100%),
     linear-gradient(135deg,
@@ -497,3 +497,4 @@
 .cardInvert .warningIcon {
   color: white !important;
 }
+

@@ -188,7 +188,7 @@ async function runAudit() {
 
             logInfo('Switching to Dark Mode...');
             await page.evaluate(() => {
-                document.documentElement.setAttribute('data-theme', 'dark-c');
+                document.documentElement.setAttribute('data-theme', 'dark');
             });
             await waitForAnimations(1000);
         });
@@ -371,3 +371,4 @@ function generateFinalReport(scanResults) {
 }
 
 runAudit();
+

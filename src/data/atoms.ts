@@ -51,6 +51,7 @@ export const userPreferencesAtom = atomWithStorage<UserPreferences>(`${STORAGE_P
 export const isContextSelectionRequiredAtom = atom(true);
 export const isContextSelectionModalOpenAtom = atom(false);
 export const selectedFacilityGroupAtom = atom<string | null>(null);
+export const selectedFacilityAtom = atom<string | null>(null);
 export const selectedFacilityUnitAtom = atom<string | null>(null);
 
 // =================================================================
@@ -134,9 +135,10 @@ export const pendingDuplicateCheckAtom = atom<SafetyCheck | null>(null);
 export const manualSearchQueryAtom = atom('');
 export const isGlobalSearchActiveAtom = atom(false);
 export const isOfflineToggleVisibleAtom = atomWithStorage(`${STORAGE_PREFIX}feat_offline_toggle`, false);
-export type BlockingErrorType = 'forbidden' | 'unavailable' | 'offline' | 'generic' | null;
+export type BlockingErrorType = 'forbidden' | 'unauthorized' | 'unavailable' | 'offline' | 'generic' | null;
 export const blockingErrorTypeAtom = atom<BlockingErrorType>(null);
 export const nfcProvisioningGroupIdAtom = atom<string | null>(null);
+export const nfcProvisioningFacilityIdAtom = atom<string | null>(null);
 export const nfcProvisioningUnitIdAtom = atom<string | null>(null);
 
 // =================================================================
@@ -230,8 +232,10 @@ export const appConfigAtom = atomWithStorage<AppConfig>(`${STORAGE_PREFIX}config
 
 export const logoutAtom = atom(null, (_get, set) => {
   set(sessionAtom, { isAuthenticated: false, user: null });
+  set(blockingErrorTypeAtom, null);
   set(isContextSelectionRequiredAtom, true);
   set(selectedFacilityGroupAtom, null);
+  set(selectedFacilityAtom, null);
   set(selectedFacilityUnitAtom, null);
   set(appViewAtom, 'dashboardTime');
   set(workflowStateAtom, { view: 'none' });

@@ -39,17 +39,19 @@ strong {
 
 /* --- NEW: Global Link Styles --- */
 a {
-  color: var(--surface-fg-theme-primary);
-  color: var(--surface-fg-theme-primary);
-  font-weight: var(--font-weight-medium);
-  text-decoration: underline;
+  color: var(--control-fg-link-default);
+  font-weight: var(--font-weight-regular);
   text-decoration: underline;
   text-underline-offset: 3px;
   transition: color 0.2s;
 }
 
 a:hover {
-  color: var(--surface-fg-theme-strong);
+  color: var(--control-fg-link-hover);
+}
+
+a:active {
+  color: var(--control-fg-link-active);
 }
 
 /* --- Global Heading Sizes --- */

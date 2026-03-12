@@ -18,9 +18,8 @@
    --surface-bg-primary-solid: var(--primitives-grey-950);
    --surface-bg-secondary-solid: var(--primitives-grey-600);
    /* The translucent, blurred background for the main app header and footer. */
-   --surface-bg-header-translucent: rgba(249, 249, 249, 0.75);
+   --surface-bg-secondary-translucent: rgba(249, 249, 249, 0.75);
    --surface-bg-tertiary-translucent: rgba(243, 243, 244, 0.75);
-   --surface-bg-quaternary-translucent: rgba(240, 240, 240, 0.85);
    --surface-bg-brand-primary: var(--primitives-theme-50);
    --surface-bg-brand-solid: var(--primitives-theme-600);
    --surface-bg-brand-solid_hover: var(--primitives-theme-700);
@@ -105,7 +104,7 @@
    --surface-shadow-pill: 0px 1px 3px 0px rgba(10, 13, 18, 0.1), 0px 1px 2px -1px rgba(10, 13, 18, 0.1);
 
    /* Shadow Colors - Semantic tokens for colored shadows */
-   --shadow-color-brand: rgba(88, 144, 237, 0.25);
+   --shadow-color-brand: var(--surface-shadows-shadow-md-01);
 
    /* The custom, theme-colored shadow for the main Scan button. */
    --surface-shadow-scan-button: 0 8px 16px 0 var(--shadow-color-brand), 0 2px 2px 0 var(--shadow-color-brand);
@@ -171,7 +170,7 @@
    --control-fg-placeholder_subtle: var(--primitives-grey-300);
    --control-fg-disabled: var(--primitives-grey-500);
    --control-fg-disabled-faint: var(--primitives-grey-400);
-   --control-fg-alert-hover: var(--primitives-base-white);
+   --control-fg-alert-hover: var(--control-fg-alert-default-hover);
    --control-fg-alert: var(--primitives-red-700);
    --control-fg-alert-faint: var(--primitives-red-600);
    --control-fg-alert-faint-hover: var(--primitives-red-100);
@@ -226,22 +225,12 @@
    --z-toast: 9999;
 }
 
-/* EXPLORATORY VARIATION: DARK A (Cards Lighter)
-   Hierarchy: secondary=950 (body), primary=900 (cards)
-   [data-theme='dark-a'] { ... content removed ... }
-*/
-
-/* EXPLORATORY VARIATION: DARK B (Cards Darker)
-   Hierarchy: primary=950 (body/cards), secondary=900 (elevated)
-   [data-theme='dark-b'] { ... content removed ... }
-*/
-
 /* ----------------------------------------- */
-/*    DARK C: High-Fidelity (Cards Lighter)  */
+/*    DARK: High-Fidelity (Cards Lighter)  */
 /* ----------------------------------------- */
 /* Uses expanded grey palette (940-860) for fine-tuned elevation.
    In the spirit of Dark A: secondary=darkest, primary=lighter (elevated). */
-[data-theme='dark-c'] {
+[data-theme='dark'] {
    /* ================== SURFACE ================== */
 
    /* Background (Elevation = Lightness, high fidelity) */
@@ -261,9 +250,8 @@
    --surface-bg-secondary-solid: var(--primitives-grey-800);
 
    /* Header/Footer Translucency - matches secondary bg (grey-940) */
-   --surface-bg-header-translucent: rgba(14, 16, 23, 0.85);
+   --surface-bg-secondary-translucent: rgba(14, 16, 23, 0.85);
    --surface-bg-tertiary-translucent: rgba(32, 37, 49, 0.85);
-   --surface-bg-quaternary-translucent: rgba(17, 20, 27, 0.9);
    --surface-bg-brand-primary: var(--primitives-theme-900);
 
    /* Text - High Contrast */
@@ -375,9 +363,9 @@
    /* Status Control Foregrounds - OKLCH high-chromacity */
    --control-fg-alert: #FF5C50;
    /* oklch(0.70 0.26 22) */
-   --control-fg-alert-hover: #FF8478;
+   --control-fg-alert-hover: var(--control-fg-alert-default-hover);
    /* oklch(0.76 0.22 20) */
-   --control-fg-alert-pressed: #FF8478;
+   --control-fg-alert-pressed: var(--control-fg-alert-default-hover);
    --control-fg-warning: #FFAA2E;
    /* oklch(0.78 0.18 75) */
    --control-fg-warning-hover: #FFC05C;
@@ -408,12 +396,12 @@
    --control-border-selected-hover: var(--primitives-theme-400);
    --control-border-disabled: var(--primitives-grey-700);
    --control-border-disabled-faint: var(--primitives-grey-860);
-   --control-border-tertiary: var(--primitives-grey-860);
+   --control-border-tertiary: var(--primitives-alpha-black-20);
    --control-border-tertiary-hover: var(--primitives-grey-840);
    --control-border-tertiary-pressed: var(--primitives-grey-700);
 
    /* Shadow Colors - Reduced opacity for dark backgrounds */
-   --shadow-color-brand: rgba(88, 144, 237, 0.15);
+   --shadow-color-brand: var(--surface-shadows-shadow-md-01);
 
    /* Shadows - Increased strength for dark mode */
    --surface-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
@@ -425,3 +413,8 @@
    --surface-shadow-3xl: 0 32px 64px -16px rgba(0, 0, 0, 0.45), 0 0 1px 0 rgba(0, 0, 0, 0.4);
    --surface-shadow-pill: 0px 1px 3px 0px rgba(0, 0, 0, 0.25), 0px 1px 2px -1px rgba(0, 0, 0, 0.25);
 }
+
+
+
+
+

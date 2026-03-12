@@ -7,7 +7,7 @@
   right: 0;
   z-index: 50;
   /* Glassmorphism base */
-  background-color: var(--surface-bg-header-translucent);
+  background-color: var(--surface-bg-secondary-translucent);
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border-top: 1px solid var(--surface-border-secondary);
@@ -34,7 +34,7 @@
 }
 
 .footer[data-footer-style='quaternary'] {
-  background-color: var(--surface-bg-quaternary-translucent);
+  background-color: var(--surface-bg-secondary-translucent);
 }
 
 /* =========================================
@@ -94,7 +94,7 @@ body[data-glass-tint="active"] .footer::before {
 }
 
 /* Dark Mode Overrides for Basic Pulse */
-body[data-theme^='dark'] .footer {
+body[data-theme='dark'] .footer {
   /* Dark Mode Min: 8% (Tuned additive) */
   --surface-bg-pulse-min: rgba(255, 59, 48, 0.08);
   /* Dark Mode Max: 15% (Tuned additive) */
@@ -130,7 +130,7 @@ body[data-glass-pulse="gradient"] .footer::before {
 }
 
 /* Dark Mode Overrides for Gradient Pulse */
-body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
+body[data-theme='dark'][data-glass-pulse="gradient"] .footer::before {
   /* Emulate Dark Mode + Min 13% opacity request */
   /* Phase Shift: Flip Stops to Mid-Start-Mid */
   /* Dark: Mid 0.64, Start 0.23 */
@@ -246,3 +246,4 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .footer::before {
   outline: none;
   box-shadow: none;
 }
+

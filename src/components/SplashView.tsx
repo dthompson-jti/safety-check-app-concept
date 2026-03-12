@@ -21,7 +21,7 @@ export const SplashView = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'var(--surface-bg-secondary, var(--splash-bg))',
+                background: 'var(--surface-bg-secondary)',
             }}
         >
             <motion.div
@@ -37,3 +37,4 @@ export const SplashView = () => {
         </div>
     );
 };
+

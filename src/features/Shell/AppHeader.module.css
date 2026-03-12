@@ -11,7 +11,7 @@
   overflow: visible;
 
   /* Online Background - glassmorphic */
-  background-color: var(--surface-bg-header-translucent);
+  background-color: var(--surface-bg-secondary-translucent);
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border-bottom: 1px solid var(--surface-border-secondary);
@@ -35,7 +35,7 @@
 }
 
 .header[data-header-style="quaternary"] {
-  background-color: var(--surface-bg-quaternary-translucent);
+  background-color: var(--surface-bg-secondary-translucent);
 }
 
 /* =========================================
@@ -73,7 +73,7 @@ body[data-glass-tint="active"] .header::before {
 }
 
 /* Dark Mode Overrides for Basic Pulse */
-body[data-theme^='dark'] .header {
+body[data-theme='dark'] .header {
   /* Dark Mode Min: 8% (Tuned additive) */
   --surface-bg-pulse-min: rgba(255, 59, 48, 0.08);
   /* Dark Mode Max: 15% (Tuned additive) */
@@ -95,14 +95,14 @@ body[data-glass-pulse="gradient"] .header {
       var(--magma-mid) 50%,
       var(--magma-end) 100%),
     linear-gradient(rgba(255, 59, 48, 0.10), rgba(255, 59, 48, 0.10)),
-    var(--surface-bg-header-translucent);
+    var(--surface-bg-secondary-translucent);
   background-size: 200% 200%, auto, auto;
   animation: pulse-gradient 4.8s ease-in-out infinite;
   animation-delay: var(--glass-sync-delay, 0ms);
 }
 
 /* Dark Mode Overrides for Gradient Pulse */
-body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
+body[data-theme='dark'][data-glass-pulse="gradient"] .header {
   /* Emulate Dark Mode + Min 13% opacity request */
   /* Phase Shift: Flip Stops to Mid-Start-Mid */
   /* Dark: Mid 0.64, Start 0.23 */
@@ -123,7 +123,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
       var(--magma-mid) 50%,
       var(--magma-end) 100%),
     linear-gradient(rgba(255, 59, 48, 0.25), rgba(255, 59, 48, 0.25)),
-    var(--surface-bg-header-translucent);
+    var(--surface-bg-secondary-translucent);
   background-size: 200% 200%, auto, auto;
 }
 
@@ -163,7 +163,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-3);
-  height: calc(var(--modal-header-height) + 6px);
+  height: calc(var(--modal-header-height) + var(--spacing-1p5));
   padding: var(--spacing-2) var(--spacing-4);
   position: relative;
   z-index: 10;
@@ -312,7 +312,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
    FORCE DARK BACKGROUND to match User Preference for "Solid BG".
    
    !MISSING SEMANTIC TOKEN!
-   We need a semantic token for "Dark Control Background" in Light Mode that maps to grey-800.
+   We need a semantic token for "Darkontrol Background" in Light Mode that maps to grey-800.
    Current 'secondary-solid' (grey-600) is too light for this specific high-contrast pill.
    Using primitive temporarily.
 */
@@ -436,3 +436,6 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
 }
 
 /* CSS Overrides cleaned up - using Props now */
+
+
+

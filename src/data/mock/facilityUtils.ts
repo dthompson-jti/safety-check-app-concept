@@ -1,13 +1,16 @@
 // src/data/mock/facilityUtils.ts
 import { facilityData } from './facilityData';
 
-// Create lookup maps for efficient searching.
 const locationToUnitMap = new Map<string, string>();
-const unitToGroupMap = new Map<string, string>();
+const unitToFacilityMap = new Map<string, string>();
+const facilityToGroupMap = new Map<string, string>();
 
 facilityData.forEach(group => {
-  group.units.forEach(unit => {
-    unitToGroupMap.set(unit.id, group.id);
+  group.facilities.forEach(facility => {
+    facilityToGroupMap.set(facility.id, group.id);
+    facility.units.forEach(unit => {
+      unitToFacilityMap.set(unit.id, facility.id);
+    });
   });
 });
 
@@ -51,23 +54,29 @@ for (const [unitId, locations] of Object.entries(sciFiLocations)) {
  * @param location The name of the resident's location.
  * @returns An object with groupId and unitId, or null if not found.
  */
-export const getFacilityContextForLocation = (location: string): { groupId: string; unitId: string } | null => {
+export const getFacilityContextForLocation = (location: string): { groupId: string; facilityId: string; unitId: string } | null => {
   // --- Strategy 1: Check for JDC prefix (e.g., "A1-101") ---
   const jdcPrefix = location.charAt(0).toLowerCase();
   if (['a', 'b', 'c'].includes(jdcPrefix) && location.includes('-')) {
     const unitId = `${jdcPrefix}-wing`;
-    const groupId = unitToGroupMap.get(unitId);
-    if (groupId) {
-      return { groupId, unitId };
+    const facilityId = unitToFacilityMap.get(unitId);
+    if (facilityId) {
+      const groupId = facilityToGroupMap.get(facilityId);
+      if (groupId) {
+        return { groupId, facilityId, unitId };
+      }
     }
   }
 
   // --- Strategy 2: Look up in the Sci-Fi map ---
   const unitId = locationToUnitMap.get(location);
   if (unitId) {
-    const groupId = unitToGroupMap.get(unitId);
-    if (groupId) {
-      return { groupId, unitId };
+    const facilityId = unitToFacilityMap.get(unitId);
+    if (facilityId) {
+      const groupId = facilityToGroupMap.get(facilityId);
+      if (groupId) {
+        return { groupId, facilityId, unitId };
+      }
     }
   }
 

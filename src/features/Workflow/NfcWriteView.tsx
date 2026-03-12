@@ -7,6 +7,7 @@ import {
   workflowStateAtom,
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
+  selectedFacilityAtom,
   selectedFacilityUnitAtom,
 } from '../../data/atoms';
 import {
@@ -15,6 +16,7 @@ import {
   nfcSearchQueryAtom,
   nfcRoomSearchResultsAtom,
   nfcProvisioningGroupIdAtom,
+  nfcProvisioningFacilityIdAtom,
   nfcProvisioningUnitIdAtom,
 } from '../../data/nfcAtoms';
 import { Button } from '../../components/Button';
@@ -35,24 +37,28 @@ export const NfcWriteView = () => {
   const filteredRooms = useAtomValue(nfcRoomSearchResultsAtom);
 
   const globalGroupId = useAtomValue(selectedFacilityGroupAtom);
+  const globalFacilityId = useAtomValue(selectedFacilityAtom);
   const globalUnitId = useAtomValue(selectedFacilityUnitAtom);
   const [modalGroupId, setModalGroupId] = useAtom(nfcProvisioningGroupIdAtom);
+  const [modalFacilityId, setModalFacilityId] = useAtom(nfcProvisioningFacilityIdAtom);
   const [modalUnitId, setModalUnitId] = useAtom(nfcProvisioningUnitIdAtom);
 
   useEffect(() => {
     setModalGroupId(globalGroupId);
+    setModalFacilityId(globalFacilityId);
     setModalUnitId(globalUnitId);
-  }, [globalGroupId, globalUnitId, setModalGroupId, setModalUnitId]);
+  }, [globalGroupId, globalFacilityId, globalUnitId, setModalGroupId, setModalFacilityId, setModalUnitId]);
 
   useEffect(() => {
     return () => {
       setSearchQuery('');
       setProvisionedIds(new Set());
       setModalGroupId(null);
+      setModalFacilityId(null);
       setModalUnitId(null);
       setNfcWorkflowState({ status: 'idle' });
     };
-  }, [setSearchQuery, setProvisionedIds, setModalGroupId, setModalUnitId, setNfcWorkflowState]);
+  }, [setSearchQuery, setProvisionedIds, setModalGroupId, setModalFacilityId, setModalUnitId, setNfcWorkflowState]);
 
   const handleClose = () => {
     setWorkflowState({ view: 'none' });
@@ -80,6 +86,7 @@ export const NfcWriteView = () => {
       <div className={styles.controlsHeader}>
         <ContextSwitcherCard
           groupId={modalGroupId}
+          facilityId={modalFacilityId}
           unitId={modalUnitId}
           onClick={() => setIsContextModalOpen(true)}
         />

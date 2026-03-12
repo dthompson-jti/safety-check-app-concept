@@ -59,7 +59,7 @@
         (function () {
             try {
                 const stored = localStorage.getItem('app-theme');
-                if (stored === 'dark-a' || stored === 'dark-b' || stored === 'dark-c') {
+                if (stored === 'dark-a' || stored === 'dark-b' || stored === 'dark') {
                     document.documentElement.setAttribute('data-theme', stored);
                 }
             } catch (e) { }

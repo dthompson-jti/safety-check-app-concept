@@ -10,6 +10,9 @@ export const themeAtom = atom<Theme>((() => {
         if (stored === 'system' || stored === 'light' || stored === 'dark') {
             return stored;
         }
+        if (stored === 'dark-a' || stored === 'dark-b' || stored === 'dark-c') {
+            return 'dark';
+        }
         return 'system'; // Default to system
     } catch {
         return 'system';
@@ -30,12 +33,12 @@ export const useTheme = () => {
             if (currentTheme === 'system') {
                 const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (isSystemDark) {
-                    root.setAttribute('data-theme', 'dark-c');
+                    root.setAttribute('data-theme', 'dark');
                 } else {
                     root.removeAttribute('data-theme');
                 }
             } else if (currentTheme === 'dark') {
-                root.setAttribute('data-theme', 'dark-c');
+                root.setAttribute('data-theme', 'dark');
             } else {
                 root.removeAttribute('data-theme');
             }
@@ -65,3 +68,5 @@ export const useTheme = () => {
 
     return { theme, setTheme };
 };
+
+

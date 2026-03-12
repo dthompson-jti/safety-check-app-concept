@@ -2847,7 +2847,7 @@ Keys in primitives: [
 | --control-fg-info on --surface-bg-quaternary | `#36BFF9` | `#414651` | 4.49 | 4.5 |
 
 
-## Theme: dark-c
+## Theme: dark
 | Pair | FG | BG | Ratio | Req |
 |---|---|---|---|---|
 | --control-fg-alert-faint on --surface-bg-error-solid | `#E3403A` | `#E3403A` | **1.00** | 4.5 |
@@ -3509,5 +3509,6 @@ Keys in primitives: [
 | --control-fg-alert-faint on --surface-bg-secondary_hover | `#E3403A` | `#11141B` | 4.44 | 4.5 |
 | --control-fg-warning-hover on --control-bg-info-pressed | `#F4C04B` | `#055986` | 4.49 | 4.5 |
 | --control-fg-warning-pressed on --control-bg-info-pressed | `#F4C04B` | `#055986` | 4.49 | 4.5 |
+
 
 

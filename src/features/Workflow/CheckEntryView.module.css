@@ -30,7 +30,7 @@
 
 /* Basic Pulse */
 body[data-glass-pulse="basic"] .header {
-  background-color: var(--surface-bg-header-translucent);
+  background-color: var(--surface-bg-secondary-translucent);
   /* Switch to glass base */
 }
 
@@ -57,7 +57,7 @@ body[data-glass-pulse="basic"] .header::before {
 }
 
 /* Dark Mode Overrides for Basic Pulse */
-body[data-theme^='dark'] .header {
+body[data-theme='dark'] .header {
   --surface-bg-pulse-min: rgba(255, 59, 48, 0.08);
   --surface-bg-pulse-max: rgba(255, 59, 48, 0.15);
 }
@@ -76,14 +76,14 @@ body[data-glass-pulse="gradient"] .header {
       var(--magma-mid) 50%,
       var(--magma-end) 100%),
     linear-gradient(rgba(255, 59, 48, 0.10), rgba(255, 59, 48, 0.10)),
-    var(--surface-bg-header-translucent);
+    var(--surface-bg-secondary-translucent);
   background-size: 200% 200%, auto, auto;
   animation: pulse-gradient 4.8s ease-in-out infinite;
   animation-delay: var(--glass-sync-delay, 0ms);
 }
 
 /* Dark Mode Overrides for Gradient Pulse */
-body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
+body[data-theme='dark'][data-glass-pulse="gradient"] .header {
   /* Dark: Mid 0.64, Start 0.23 */
   --magma-start: rgba(255, 59, 48, 0.64);
   --magma-mid: rgba(255, 59, 48, 0.23);
@@ -95,7 +95,7 @@ body[data-theme^='dark'][data-glass-pulse="gradient"] .header {
       var(--magma-mid) 50%,
       var(--magma-end) 100%),
     linear-gradient(rgba(255, 59, 48, 0.25), rgba(255, 59, 48, 0.25)),
-    var(--surface-bg-header-translucent);
+    var(--surface-bg-secondary-translucent);
   background-size: 200% 200%, auto, auto;
 }
 
@@ -165,7 +165,7 @@ body[data-glass-tint="active"] .header {
   flex-direction: column;
   gap: var(--spacing-4);
   /* Make space for the floating footer */
-  padding-bottom: calc(var(--form-footer-height, 96px) + 16px);
+  padding-bottom: calc(var(--form-footer-height, var(--spacing-24)) + var(--spacing-4));
 }
 
 .roomHeader {
@@ -351,7 +351,7 @@ body[data-glass-tint="active"] .header {
   right: 0;
   z-index: 50;
   padding: 20px 24px;
-  background-color: var(--surface-bg-header-translucent);
+  background-color: var(--surface-bg-secondary-translucent);
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border-top: 1px solid var(--surface-border-secondary);
@@ -369,3 +369,5 @@ body[data-glass-tint="active"] .header {
   width: 100%;
   height: var(--footer-action-height);
 }
+
+

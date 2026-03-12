@@ -328,9 +328,11 @@ export const DeveloperModal = () => {
             <label className={styles.itemLabel}>Forced blocking error</label>
             <SegmentedControl
               id="blocking-error-toggle"
+              layout="grid"
               options={[
                 { value: 'none', label: 'None' },
                 { value: 'forbidden', label: '403' },
+                { value: 'unauthorized', label: '403-2' },
                 { value: 'unavailable', label: '5xx' },
                 { value: 'offline', label: 'Offline' },
                 { value: 'generic', label: 'Error' },

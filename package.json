@@ -8,6 +8,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "audit:tokens": "node scripts/token-audit.mjs",
+    "audit:tokens:strict": "node scripts/token-audit.mjs --strict",
     "preview": "vite preview",
     "predeploy": "node scripts/increment-version.js && npm run build",
     "deploy": "gh-pages -d dist",

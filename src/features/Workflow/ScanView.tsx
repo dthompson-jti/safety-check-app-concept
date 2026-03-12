@@ -120,7 +120,7 @@ export const ScanView = () => {
 
         if (appConfig.simpleSubmitEnabled) {
           if (check.status === 'early') {
-            setPendingCheck(check as any);
+            setPendingCheck(check);
             setIsDuplicateSheetOpen(true);
             setScanViewState('scanning');
             return;
@@ -144,17 +144,15 @@ export const ScanView = () => {
           return;
         }
 
-        setTimeout(() => {
-          setWorkflow({
-            view: 'form',
-            type: 'scheduled',
-            method: 'scan',
-            checkId: check.id,
-            roomName: check.residents[0].location,
-            residents: check.residents,
-            specialClassifications: check.specialClassifications,
-          });
-        }, 800);
+        setWorkflow({
+          view: 'form',
+          type: 'scheduled',
+          method: 'scan',
+          checkId: check.id,
+          roomName: check.residents[0].location,
+          residents: check.residents,
+          specialClassifications: check.specialClassifications,
+        });
       } else {
         failScan();
       }

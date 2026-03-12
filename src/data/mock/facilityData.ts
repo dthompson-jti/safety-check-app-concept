@@ -5,31 +5,49 @@ export interface FacilityUnit {
   name: string;
 }
 
-export interface FacilityGroup {
+export interface Facility {
   id: string;
   name: string;
   units: FacilityUnit[];
 }
 
+export interface FacilityGroup {
+  id: string;
+  name: string;
+  facilities: Facility[];
+}
+
 export const facilityData: FacilityGroup[] = [
   {
-    id: 'jdc',
-    name: 'Juvenile Detention Center',
-    units: [
-      { id: 'a-wing', name: 'A-Wing' },
-      { id: 'b-wing', name: 'B-Wing' },
-      { id: 'c-wing', name: 'C-Wing' },
+    id: 'symphony',
+    name: 'Symphony Corporation',
+    facilities: [
+      {
+        id: 'jdc',
+        name: 'Juvenile Detention Center',
+        units: [
+          { id: 'a-wing', name: 'A-Wing' },
+          { id: 'b-wing', name: 'B-Wing' },
+          { id: 'c-wing', name: 'C-Wing' },
+        ],
+      },
     ],
   },
   {
-    id: 'sci-fi',
-    name: 'Sci-Fi Detention Center',
-    units: [
-      { id: 'star-wars', name: 'Star Wars Pod' },
-      { id: 'harry-potter', name: 'Harry Potter Pod' },
-      { id: 'terminator', name: 'Terminator Pod' },
-      { id: 'alien', name: 'Alien Pod' },
-      { id: 'expanse', name: 'The Expanse Pod' },
+    id: 'galactic',
+    name: 'Galactic Federation',
+    facilities: [
+      {
+        id: 'sci-fi',
+        name: 'Sci-Fi Detention Center',
+        units: [
+          { id: 'star-wars', name: 'Star Wars Pod' },
+          { id: 'harry-potter', name: 'Harry Potter Pod' },
+          { id: 'terminator', name: 'Terminator Pod' },
+          { id: 'alien', name: 'Alien Pod' },
+          { id: 'expanse', name: 'The Expanse Pod' },
+        ],
+      },
     ],
   },
 ];

@@ -15,20 +15,20 @@
 }
 
 /* Dark mode: brighter tint with screen blend */
-:root[data-theme^="dark"] .headerTint,
-:root[data-theme^="dark"] .footerTint {
+:root[data-theme="dark"] .headerTint,
+:root[data-theme="dark"] .footerTint {
     background: rgba(255, 59, 48, 0.15);
     mix-blend-mode: screen;
 }
 
 .headerTint {
     top: 0;
-    height: var(--header-height, 56px);
+    height: var(--header-height, var(--geom-header-height-default));
 }
 
 .footerTint {
     bottom: 0;
-    height: var(--footer-height, 96px);
+    height: var(--footer-height, var(--geom-form-footer-height-default));
 }
 
 @keyframes tint-fade-in {
@@ -49,3 +49,4 @@
         animation: none;
     }
 }
+

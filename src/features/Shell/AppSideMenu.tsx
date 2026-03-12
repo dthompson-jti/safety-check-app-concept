@@ -6,10 +6,12 @@ import {
   isDevToolsModalOpenAtom,
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
+  selectedFacilityAtom,
   selectedFacilityUnitAtom,
   isFutureIdeasModalOpenAtom,
   isUserSettingsModalOpenAtom,
   workflowStateAtom,
+  logoutAtom,
 } from '../../data/atoms';
 import { addToastAtom } from '../../data/toastAtoms';
 import { useHaptics } from '../../data/useHaptics';
@@ -28,10 +30,11 @@ export const AppSideMenu = () => {
   const setIsUserSettingsOpen = useSetAtom(isUserSettingsModalOpenAtom);
   const setWorkflowState = useSetAtom(workflowStateAtom);
   const setIsContextModalOpen = useSetAtom(isContextSelectionModalOpenAtom);
-  const setSession = useSetAtom(sessionAtom);
+  const logout = useSetAtom(logoutAtom);
 
   const session = useAtomValue(sessionAtom);
   const facilityGroupId = useAtomValue(selectedFacilityGroupAtom);
+  const facilityId = useAtomValue(selectedFacilityAtom);
   const facilityUnitId = useAtomValue(selectedFacilityUnitAtom);
   const appConfig = useAtomValue(appConfigAtom);
 
@@ -58,7 +61,7 @@ export const AppSideMenu = () => {
   const { onTap: handleFutureIdeasTap } = useTapCounter(toggleFutureIdeasWithFeedback, 7, 3000);
 
   const handleLogout = () => {
-    setSession({ isAuthenticated: false, user: null });
+    logout();
   };
 
   return (
@@ -80,6 +83,7 @@ export const AppSideMenu = () => {
       <main className={styles.content}>
         <ContextSwitcherCard
           groupId={facilityGroupId}
+          facilityId={facilityId}
           unitId={facilityUnitId}
           onClick={() => setIsContextModalOpen(true)}
         />

@@ -1,6 +1,6 @@
 // src/components/UserMenu.tsx
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { sessionAtom, appConfigAtom, userPreferencesAtom } from '../data/atoms';
+import { sessionAtom, appConfigAtom, userPreferencesAtom, logoutAtom } from '../data/atoms';
 import { useTheme, Theme } from '../data/useTheme';
 import { generateAvatarHue, getAvatarColor } from '../data/users';
 import { Button } from './Button';
@@ -25,7 +25,7 @@ interface UserMenuProps {
  */
 export const UserMenu = ({ displayName }: UserMenuProps) => {
     const session = useAtomValue(sessionAtom);
-    const setSession = useSetAtom(sessionAtom);
+    const logout = useSetAtom(logoutAtom);
     const [appConfig, setAppConfig] = useAtom(appConfigAtom);
     const [userPreferences, setUserPreferences] = useAtom(userPreferencesAtom);
     const { theme, setTheme } = useTheme();
@@ -39,7 +39,7 @@ export const UserMenu = ({ displayName }: UserMenuProps) => {
     const avatarColor = getAvatarColor(currentHue);
 
     const handleLogout = () => {
-        setSession({ isAuthenticated: false, user: null });
+        logout();
     };
 
     const handleThemeChange = (value: string) => {

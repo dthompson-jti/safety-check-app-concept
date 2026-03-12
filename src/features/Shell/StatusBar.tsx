@@ -3,6 +3,7 @@ import React from 'react';
 import { useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
 import { statusCountsAtom } from '../../data/appDataAtoms';
+import { blockingErrorTypeAtom } from '../../data/atoms';
 import { Popover } from '../../components/Popover';
 import type { ScheduleFilter } from '../../types';
 import styles from './StatusBar.module.css';
@@ -52,17 +53,21 @@ interface StatusBarProps {
 
 export const StatusBar = ({ variant = 'default' }: StatusBarProps) => {
   const counts = useAtomValue(statusCountsAtom);
+  const errorType = useAtomValue(blockingErrorTypeAtom);
+
+  const displayMissed = errorType === 'unauthorized' ? 0 : counts.missed;
+  const displayDue = errorType === 'unauthorized' ? 0 : counts.due;
 
   // Tooltips for each status
   const missedTooltip = (
     <div className={styles.popoverContent}>
-      <span>{counts.missed} Missed</span>
+      <span>{displayMissed} Missed</span>
     </div>
   );
 
   const dueTooltip = (
     <div className={styles.popoverContent}>
-      <span>{counts.due} Due</span>
+      <span>{displayDue} Due</span>
     </div>
   );
 
@@ -77,9 +82,9 @@ export const StatusBar = ({ variant = 'default' }: StatusBarProps) => {
     >
       <div className={styles.contentContainer} data-variant={variant}>
         {/* Missed pill (red) - always visible, softened when count=0 */}
-        <StatusPill count={counts.missed} icon="notifications_active" status="missed" variant={variant} tooltipContent={missedTooltip} />
+        <StatusPill count={displayMissed} icon="notifications_active" status="missed" variant={variant} tooltipContent={missedTooltip} />
         {/* Due pill (yellow/warning) - always visible, softened when count=0 */}
-        <StatusPill count={counts.due} icon="schedule" status="due" variant={variant} tooltipContent={dueTooltip} />
+        <StatusPill count={displayDue} icon="schedule" status="due" variant={variant} tooltipContent={dueTooltip} />
       </div>
     </motion.div>
   );

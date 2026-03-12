@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { motion } from 'framer-motion';
-import { sessionAtom, appConfigAtom } from '../../data/atoms';
+import { sessionAtom, appConfigAtom, blockingErrorTypeAtom } from '../../data/atoms';
 import { dispatchActionAtom } from '../../data/appDataAtoms';
 import { findUser } from '../../data/users';
 import { Button } from '../../components/Button';
@@ -25,6 +25,7 @@ export const LoginView = () => {
   const [isExiting, setIsExiting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const setSession = useSetAtom(sessionAtom);
+  const setBlockingError = useSetAtom(blockingErrorTypeAtom);
   const dispatch = useSetAtom(dispatchActionAtom);
   const appConfig = useAtomValue(appConfigAtom);
 
@@ -61,7 +62,31 @@ export const LoginView = () => {
       setTimeout(() => {
         setIsSubmitting(false);
         setFormError('Access Denied');
-        setFormErrorDetails('Check your VPN connection or account permissions, then try again.');
+        setFormErrorDetails('Access is restricted to authorized networks. Check your VPN connection or contact your administrator.');
+      }, 500);
+      return;
+    }
+
+    // Special case: Forbidden State Simulation
+    if (username.trim().toLowerCase() === 'forbidden' && password.trim() === 'test') {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setFormError('Access Denied');
+        setFormErrorDetails('Access is restricted to authorized networks. Check your VPN connection or contact your administrator.');
+      }, 500);
+      return;
+    }
+
+    // Special case: Unauthorized State Simulation (403-2)
+    if (username.trim().toLowerCase() === 'unauthorized' && password.trim() === 'test') {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        dispatch({ type: 'RESET_DATA' });
+        // Set isAuthenticated to TRUE so it transitions past Splash/Login
+        setSession({ isAuthenticated: true, user: { username: 'unauthorized', displayName: 'Unauth User', initials: 'UU' } });
+        // But instantly sets a blocking error over the app
+        setBlockingError('unauthorized');
       }, 500);
       return;
     }
@@ -79,6 +104,7 @@ export const LoginView = () => {
       setIsSubmitting(true);
       setTimeout(() => {
         dispatch({ type: 'RESET_DATA' });
+        setBlockingError(null);
         setSession({ isAuthenticated: true, user });
       }, 500);
     } else {
@@ -95,6 +121,7 @@ export const LoginView = () => {
       setIsSubmitting(true);
       setTimeout(() => {
         dispatch({ type: 'RESET_DATA' });
+        setBlockingError(null);
         setSession({ isAuthenticated: true, user });
       }, 500);
     }
@@ -184,7 +211,7 @@ export const LoginView = () => {
               >
                 {formError && (
                   <div className={styles.formError} data-has-details={!!formErrorDetails}>
-                    <ErrorIcon size={20} />
+                    <ErrorIcon size={24} className={styles.errorIcon} />
                     <div className={styles.formErrorText}>
                       <span className={styles.formErrorTitle}>{formError}</span>
                       {formErrorDetails && (
@@ -236,12 +263,12 @@ export const LoginView = () => {
               </motion.div>
 
               <motion.div variants={contentItemVariants}>
-                <Button type="submit" variant="primary" size="m" loading={isSubmitting} loadingText="Signing in..." style={{ width: '100%', marginTop: 'var(--spacing-2)' }}>
+                <Button type="submit" variant="primary" size="m" loading={isSubmitting} loadingText="Logging in..." style={{ width: '100%', marginTop: 'var(--spacing-2)' }}>
                   Log In
                 </Button>
               </motion.div>
               <motion.div variants={contentItemVariants} className={styles.supportLink}>
-                <button type="button" onClick={() => setIsHelpModalOpen(true)}>Trouble signing in?</button>
+                <button type="button" onClick={() => setIsHelpModalOpen(true)}>Trouble logging in?</button>
               </motion.div>
             </motion.form>
           </motion.div>
@@ -265,17 +292,17 @@ export const LoginView = () => {
       <Modal
         isOpen={isHelpModalOpen}
         onClose={() => setIsHelpModalOpen(false)}
-        title="How to Sign In"
+        title="How to Log In"
         width="90%"
         height="auto"
-        description="Information on how to sign in to the prototype application."
+        description="Information on how to log in to the prototype application."
       >
         <Modal.Content>
           <div className={styles.modalBodyLayout}>
             <div className={styles.modalTextContent}>
-              <h3>How to Sign In</h3>
+              <h3>How to Log In</h3>
               <p>
-                To sign-in, use your eSeries credentials. To change your password, go to eSeries and select reset password.
+                To log in, use your eSeries credentials. To change your password, go to eSeries and select reset password.
               </p>
               <div
                 className={styles.infoNote}

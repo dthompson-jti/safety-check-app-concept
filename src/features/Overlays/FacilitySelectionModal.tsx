@@ -6,6 +6,7 @@ import {
   isContextSelectionRequiredAtom,
   isContextSelectionModalOpenAtom,
   selectedFacilityGroupAtom,
+  selectedFacilityAtom,
   selectedFacilityUnitAtom,
   logoutAtom,
   appViewAtom,
@@ -17,7 +18,7 @@ import { ActionListItem } from '../../components/ActionListItem';
 import { useHaptics } from '../../data/useHaptics';
 import styles from './FacilitySelectionModal.module.css';
 
-type Step = 'group' | 'unit';
+type Step = 'group' | 'facility' | 'unit';
 
 const contentVariants = {
   enter: (direction: number) => ({
@@ -40,6 +41,7 @@ export const FacilitySelectionModal = () => {
 
   // We track global state but selection is stateless in this view until confirmed
   const [selectedGroup, setSelectedGroup] = useAtom(selectedFacilityGroupAtom);
+  const [selectedFacility, setSelectedFacility] = useAtom(selectedFacilityAtom);
   const [selectedUnit, setSelectedUnit] = useAtom(selectedFacilityUnitAtom);
 
   const logout = useSetAtom(logoutAtom);
@@ -52,6 +54,7 @@ export const FacilitySelectionModal = () => {
 
   // Temporary state for the multi-step flow
   const [tempGroupId, setTempGroupId] = useState<string | null>(selectedGroup);
+  const [tempFacilityId, setTempFacilityId] = useState<string | null>(selectedFacility);
 
   const [modalExitDirection, setModalExitDirection] = useState<'right' | 'left'>('right');
 
@@ -62,12 +65,19 @@ export const FacilitySelectionModal = () => {
       setStep('group');
       setDirection(0);
       setTempGroupId(selectedGroup);
+      setTempFacilityId(selectedFacility);
       setModalExitDirection('right');
     }
-  }, [isOpen, selectedGroup]);
+  }, [isOpen, selectedGroup, selectedFacility]);
 
   const handleLeftAction = () => {
     if (step === 'unit') {
+      // Back to Facility Selection
+      setDirection(-1);
+      setStep('facility');
+      return;
+    }
+    if (step === 'facility') {
       // Back to Group Selection
       setDirection(-1);
       setStep('group');
@@ -87,22 +97,30 @@ export const FacilitySelectionModal = () => {
     triggerHaptic('selection');
     setTempGroupId(groupId);
     setDirection(1);
+    setStep('facility');
+  };
+
+  const handleFacilitySelect = (facilityId: string) => {
+    triggerHaptic('selection');
+    setTempFacilityId(facilityId);
+    setDirection(1);
     setStep('unit');
   };
 
   const handleUnitSelect = (unitId: string) => {
     triggerHaptic('selection');
-    if (!tempGroupId) return;
+    if (!tempGroupId || !tempFacilityId) return;
 
     setModalExitDirection('left');
 
     // Trigger loading if context changed
-    if (tempGroupId !== selectedGroup || unitId !== selectedUnit) {
+    if (tempGroupId !== selectedGroup || tempFacilityId !== selectedFacility || unitId !== selectedUnit) {
       setIsScheduleLoading(true);
     }
 
     // Commit Selection
     setSelectedGroup(tempGroupId);
+    setSelectedFacility(tempFacilityId);
     setSelectedUnit(unitId);
 
     // Always navigate to dashboard and close side menu upon selection/login
@@ -122,14 +140,18 @@ export const FacilitySelectionModal = () => {
   };
 
   const currentGroup = facilityData.find(g => g.id === tempGroupId);
-  const units = currentGroup?.units || [];
+  const facilities = currentGroup?.facilities || [];
+
+  const currentFacility = facilities.find(f => f.id === tempFacilityId);
+  const units = currentFacility?.units || [];
 
   // Icon Logic: 
   // Unit Step -> Always Back
   // Group Step + Login Flow -> Back (Logout)
   // Group Step + Switch Flow -> Close
   const getTitle = () => {
-    if (step === 'group') return 'Select Facility';
+    if (step === 'group') return 'Select Facility Group';
+    if (step === 'facility') return 'Select Facility';
     return 'Select Unit';
   };
 
@@ -144,7 +166,7 @@ export const FacilitySelectionModal = () => {
     >
       <div className={styles.container}>
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
-          {step === 'group' ? (
+          {step === 'group' && (
             <motion.div
               key="group-list"
               className={styles.viewWrapper}
@@ -167,9 +189,11 @@ export const FacilitySelectionModal = () => {
                 ))}
               </div>
             </motion.div>
-          ) : (
+          )}
+
+          {step === 'facility' && (
             <motion.div
-              key="unit-list"
+              key="facility-list"
               className={styles.viewWrapper}
               custom={direction}
               variants={contentVariants}
@@ -181,6 +205,36 @@ export const FacilitySelectionModal = () => {
               <div className={styles.contextBanner}>
                 <span className="material-symbols-rounded">domain</span>
                 {currentGroup?.name}
+              </div>
+
+              <div className={styles.listContainer}>
+                {facilities.map((facility) => (
+                  <ActionListItem
+                    key={facility.id}
+                    label={facility.name}
+                    leadingIcon="business"
+                    onClick={() => handleFacilitySelect(facility.id)}
+                    showChevron
+                  />
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {step === 'unit' && (
+            <motion.div
+              key="unit-list"
+              className={styles.viewWrapper}
+              custom={direction}
+              variants={contentVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ type: 'tween', duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+            >
+              <div className={styles.contextBanner}>
+                <span className="material-symbols-rounded">business</span>
+                {currentFacility?.name}
               </div>
 
               <div className={styles.listContainer}>

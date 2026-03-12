@@ -3,6 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import {
   slowTickerAtom,
   selectedFacilityGroupAtom,
+  selectedFacilityAtom,
   selectedFacilityUnitAtom
 } from './atoms';
 import { safetyChecksAtom, dispatchActionAtom } from './appDataAtoms';
@@ -20,6 +21,7 @@ export const useCheckLifecycle = () => {
 
   // Context awareness
   const currentGroupId = useAtomValue(selectedFacilityGroupAtom);
+  const currentFacilityId = useAtomValue(selectedFacilityAtom);
   const currentUnitId = useAtomValue(selectedFacilityUnitAtom);
 
   const dispatch = useSetAtom(dispatchActionAtom);
@@ -49,5 +51,5 @@ export const useCheckLifecycle = () => {
       }
     });
 
-  }, [now, checks, dispatch, currentGroupId, currentUnitId]);
+  }, [now, checks, dispatch, currentGroupId, currentFacilityId, currentUnitId]);
 };

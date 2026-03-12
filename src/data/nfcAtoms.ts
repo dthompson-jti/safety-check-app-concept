@@ -1,6 +1,6 @@
 // src/data/nfcAtoms.ts
 import { atom } from 'jotai';
-import { nfcProvisioningGroupIdAtom, nfcProvisioningUnitIdAtom } from './atoms';
+import { nfcProvisioningGroupIdAtom, nfcProvisioningFacilityIdAtom, nfcProvisioningUnitIdAtom } from './atoms';
 import { mockResidents } from './mock/residentData';
 import { getFacilityContextForLocation } from './mock/facilityUtils';
 
@@ -38,7 +38,7 @@ export const provisionedRoomIdsAtom = atom<Set<string>>(new Set<string>());
 //        Provisioning Modal - Local Context & Search State
 // =================================================================
 
-export { nfcProvisioningGroupIdAtom, nfcProvisioningUnitIdAtom };
+export { nfcProvisioningGroupIdAtom, nfcProvisioningFacilityIdAtom, nfcProvisioningUnitIdAtom };
 
 export const nfcSearchQueryAtom = atom('');
 
@@ -59,14 +59,15 @@ const filterRoomsByQuery = (rooms: Room[], query: string) => {
 export const nfcRoomSearchResultsAtom = atom((get) => {
   const query = get(nfcSearchQueryAtom);
   const allRooms = get(allRoomsAtom);
-  const selectedUnitId = get(nfcProvisioningUnitIdAtom);
   const selectedGroupId = get(nfcProvisioningGroupIdAtom);
+  const selectedFacilityId = get(nfcProvisioningFacilityIdAtom);
+  const selectedUnitId = get(nfcProvisioningUnitIdAtom);
 
-  if (!selectedUnitId || !selectedGroupId) return [];
+  if (!selectedGroupId || !selectedFacilityId || !selectedUnitId) return [];
 
   const contextualRooms = allRooms.filter(room => {
     const context = getFacilityContextForLocation(room.name);
-    return context?.groupId === selectedGroupId && context?.unitId === selectedUnitId;
+    return context?.groupId === selectedGroupId && context?.facilityId === selectedFacilityId && context?.unitId === selectedUnitId;
   });
 
   return filterRoomsByQuery(contextualRooms, query);
